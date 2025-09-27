@@ -44,41 +44,15 @@ export type SubscriptionWithRelations = Subscription & {
 };
 
 // --- New Branded Type for Product Plans ---
-
-// Step 1: Define the specific string literals that are valid product plans.
 type ValidProductPlan = "Casual Listener" | "Free Slice" | "Curate Control";
 
-// Step 2: Create a branded type that is a string, but also one of the valid plans.
-// This ensures that only validated strings can be used for the product plan.
 export type ProductPlan = ValidProductPlan & { readonly __brand: unique symbol };
 
-// Step 3: Create a mapping object that translates the validated product plan to a PlanGate enum.
-const _productPlanToPlanGateMap: Record<ValidProductPlan, PlanGate> = {
+export const productPlanToPlanGateMap: Record<ValidProductPlan, PlanGate> = {
 	"Casual Listener": PlanGate.CASUAL_LISTENER,
 	"Free Slice": PlanGate.FREE_SLICE,
 	"Curate Control": PlanGate.CURATE_CONTROL,
 };
-
-// Step 4: A factory function to validate and convert a raw string to a type-safe object.
-// export function createProductPlan(productName: string): { productPlan: ProductPlan; planGate: PlanGate } {
-// 	// Check if the productName is a valid key in our map.
-// 	if (!(productName in productPlanToPlanGateMap)) {
-// 		throw new Error(`Invalid product plan name: "${productName}".`)
-// 	}
-
-// 	// We are certain this is a valid key, so we can cast it to satisfy TypeScript.
-// 	const validatedPlanName = productName as ValidProductPlan
-
-// 	// Create the branded type from the validated string.
-// 	const brandedProductPlan = validatedPlanName as ProductPlan
-
-// 	return {
-// 		productPlan: brandedProductPlan,
-// 		planGate: productPlanToPlanGateMap[validatedPlanName],
-// 	}
-// }
-
-// Your interface using the new type
 
 export interface PlanTier {
 	planId: PlanGate;
