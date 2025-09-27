@@ -51,7 +51,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 					<div className={'grain-background background-base'} />
 					{/* <div className={'grid-bg-one background-base'} /> */}
 					<div className={'large-blur background-base'} />
-					<div className={'layout-inset-background'} />
+					<div className={'layout-inset-background background-base'} />
 					<div className="w-[99%] p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-20 mx-0 pl-1 pr-3 md:px-2 min-w-full md:my-2 sm:ml-6 md:pl-0 md:pr-12">{children}</div>
 				</div>
 			</SidebarInset>

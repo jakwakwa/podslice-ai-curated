@@ -333,11 +333,10 @@
 		.cl-cardBox {
 			background-color: #d1d3db03 !important;
 			width: 100%;
-			/* max-width: 100%; */
-			/* max-width: 600px; */
+			max-width: 100%;
+			min-width: 300px;
 			border-radius: 40px;
 			padding: 0;
-			/* min-width: 100% !important; */
 			backdrop-filter: blur(8px) !important;
 		}
 
@@ -379,7 +378,7 @@
 			padding: 0.7rem 0.8rem;
 			background-color: #3d4c6383;
 			border-radius: 10px;
-			width: 300px;
+			width: 100%;
 			margin: 0 auto;
 		}
 
@@ -886,13 +885,22 @@
 
 
 			/* max-width: 40vw !important; */
-			max-width: 50vw;
+			max-width: 40vw;
 			min-width: none;
 
 
 
 		}
 
+		.cl-socialButtons button {
+			color: #f4f4f475 !important;
+			padding: 0.7rem 0.8rem;
+			background-color: #3d4c6383;
+			border-radius: 10px;
+			width: 60%;
+			margin: 0 auto;
+			margin-top: 20px;
+		}
 	}
 
 	@media screen and (min-width: 1000px) {
