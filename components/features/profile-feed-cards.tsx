@@ -20,7 +20,7 @@ export const ProfileFeedCards = memo(function ProfileFeedCards({ userCurationPro
 					<div className="px-4 bg-[#1D181F8C] py-4 rounded-sm ">
 						<div className=" flex flex-col items-start justify-between space-y-0 pb-2 rounded-sm">
 							<Body className=" text-left font-semibold tracking-tight mt-2 mb-2 uppercase text-sm">Bundle Selection:</Body>
-							<Typography as="h5" className="font-sans font-bold text-accent-foreground/70 ">
+							<Typography as="h4" className="font-sans font-bold text-accent-foreground/70 ">
 								{userCurationProfile.selectedBundle?.name || "No Bundle Selected"}
 							</Typography>
 						</div>

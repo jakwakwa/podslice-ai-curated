@@ -50,7 +50,7 @@ export default function EpisodesPage() {
 	return (
 		<div className="w-full episode-card-wrapper">
 			<PageHeader
-				title="Bundle Episodes"
+				title="Weekly Roundup Bundle Episodes"
 				description="Choose from our pre-curated podcast bundles. Each bundle is a fixed selection of 2-5 carefully selected shows and cannot be modified once selected."
 			/>
 
@@ -81,12 +81,6 @@ export default function EpisodesPage() {
 						<AlertTitle>No Episodes Available</AlertTitle>
 						<AlertDescription className="mt-2">There are no episodes available at the moment. Create a personal feed or select a bundle to start getting episodes.</AlertDescription>
 					</Alert>
-					<div className="mt-6 text-center">
-						<Button onClick={fetchEpisodes} variant="default">
-							<RefreshCw className="h-4 w-4 mr-2" />
-							Refresh Episodes
-						</Button>
-					</div>
 				</div>
 			) : (
 				<div className="flex episode-card-wrapper mt-4 flex-col justify-center mx-auto w-screen md:w-screen max-w-full">

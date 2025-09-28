@@ -31,9 +31,9 @@ export function EpisodeCard({ as = "div", imageUrl, title, publishedAt, duration
 	const { channelImage: youtubeChannelImage, isLoading: isChannelLoading } = useYouTubeChannel(youtubeUrl ?? null);
 
 	return (
-		<Card className="bg-card w-full px-2 py-5 relative mb-4">
+		<Card className="bg-card w-full px-2 py-5 relative">
 			<CardAction>{actions}</CardAction>
-			<div className="w-full flex flex-row gap-2 items-start md:items-center">
+			<div className="w-full flex flex-col md:flex-row gap-2 items-start md:items-center">
 				<CardHeader>
 					{(() => {
 						// For bundle episodes, use the episode's image_url

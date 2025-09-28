@@ -164,10 +164,10 @@ function UserFeedSelectorWizard() {
 			{/* Step 1: Choose User Curation Profile Type */}
 			{step === 1 && (
 				<div className="w-full">
-					<Card className="w-full" >
+					<div className="w-full" >
 						<CardHeader>
 							<CardDescription>
-								<Typography className="text-primary-forefround w-full p-0 text-lg" variant="body" as="span">
+								<Typography className="text-primary-forefround w-full p-0 text-base" variant="body" as="span">
 									Choose from expertly curated bundles tailored to your subscription plan.
 								</Typography>
 							</CardDescription>
@@ -183,9 +183,9 @@ function UserFeedSelectorWizard() {
 								variant="default"
 								size="md"
 								className="w-full md:max-w-[40%] min-h-12 h-auto mt-4">
-								Choose from pre-selected bundles
+								Choose a bundle
 							</Button>
-							<Button
+							{/* <Button
 								onClick={() => {
 									setIsBundleSelection(false);
 									setStep(2);
@@ -193,9 +193,9 @@ function UserFeedSelectorWizard() {
 								variant="secondary"
 								disabled
 								className="w-full md:max-w-[50%] min-h-12 h-auto mt-4">
-								Custom Personalised Bundles ( coming soon!)					</Button>
+								Custom Bundles				</Button> */}
 						</CardContent>
-					</Card>
+					</div>
 				</div>
 			)}
 

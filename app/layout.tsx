@@ -1,6 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import { dark, neobrutalism, shadcn } from "@clerk/themes";
-
+import { dark, shadcn } from "@clerk/themes";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -30,6 +29,9 @@ export const metadata: Metadata = {
 		siteName: "PODSLICE AI",
 		images: [{ url: "/podslice-og.jpg" }],
 	},
+	icons: {
+		icon: "/assets/icon.svg",
+	},
 	twitter: {
 		card: "summary_large_image",
 	},
@@ -53,7 +55,7 @@ export default function RootLayout({
 				<ClerkProvider
 					publishableKey={clerkPublishableKey || ""}
 					appearance={{
-						baseTheme: [dark, neobrutalism, shadcn],
+						baseTheme: [dark, shadcn],
 						variables: { colorPrimary: "#0AB38E", colorBackground: "#3932593d", colorPrimaryForeground: "#000", colorForeground: "#9cc69b", colorInputForeground: "#000000" },
 						signIn: { variables: { colorPrimaryForeground: "#3f347d", colorForeground: "#9eb1c2", colorInputForeground: "#000000", borderRadius: "2rem" } },
 					}}>

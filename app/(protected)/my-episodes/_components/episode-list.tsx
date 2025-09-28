@@ -161,13 +161,11 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 														status: episode.status,
 														duration_seconds: episode.duration_seconds,
 													};
-													console.log("MyEpisodes - Setting normalized episode:", normalizedEpisode);
-													console.log("MyEpisodes - Original episode signedAudioUrl:", episode.signedAudioUrl);
 													setEpisode(normalizedEpisode);
 												}}
 												variant="play"
 												size="sm"
-												className={episode.episode_id ? " m-0" : ""}
+												className={`inline-flex p-0 border-0 rounded-full items-center justify-center btn-playicon rounded-[14px] outline-accent outline-1 w-32`}
 												icon={<PlayIcon />}
 											/>
 										)}

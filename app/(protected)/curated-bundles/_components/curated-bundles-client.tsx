@@ -14,8 +14,51 @@ import { H3, Typography } from "@/components/ui/typography"
 import type { Bundle, Podcast } from "@/lib/types"
 import { BundleSelectionDialog } from "./bundle-selection-dialog"
 
+type BundleWithAccess = Bundle & {
+	podcasts: Podcast[]
+	canInteract?: boolean
+	lockReason?: string | null
+}
+
+type NormalizedBundle = Bundle & {
+	podcasts: Podcast[]
+	canInteract: boolean
+	lockReason: string | null
+}
+
+type PlanGateValue = Bundle["min_plan"]
+
+const PLAN_GATE_META = {
+	NONE: {
+		badgeLabel: "All plans",
+		description: "Available on every Podslice plan.",
+		statusLabel: "Included in your plan",
+	},
+	FREE_SLICE: {
+		badgeLabel: "Free Slice+",
+		description: "Requires Free Slice plan or higher.",
+		statusLabel: "Included in Free Slice and above",
+	},
+	CASUAL_LISTENER: {
+		badgeLabel: "Casual Listener+",
+		description: "Requires Casual Listener plan or higher.",
+		statusLabel: "Included in Casual Listener and Curate Control",
+	},
+	CURATE_CONTROL: {
+		badgeLabel: "Curate Control",
+		description: "Requires the Curate Control plan.",
+		statusLabel: "Curate Control exclusive",
+	},
+} satisfies Record<PlanGateValue, { badgeLabel: string; description: string; statusLabel: string }>
+
+const normalizeBundle = (bundle: BundleWithAccess): NormalizedBundle => ({
+	...bundle,
+	canInteract: bundle.canInteract ?? true,
+	lockReason: bundle.lockReason ?? null,
+})
+
 interface CuratedBundlesClientProps {
-	bundles: (Bundle & { podcasts: Podcast[] })[]
+	bundles: BundleWithAccess[]
 	error: string | null
 }
 
@@ -30,8 +73,10 @@ interface UserCurationProfile {
 
 export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientProps) {
 	const router = useRouter()
-	const [selectedBundle, setSelectedBundle] = useState<(Bundle & { podcasts: Podcast[] }) | null>(null)
+	const [bundleList, setBundleList] = useState<NormalizedBundle[]>(() => bundles.map(normalizeBundle))
+	const [selectedBundle, setSelectedBundle] = useState<NormalizedBundle | null>(null)
 	const [isDialogOpen, setIsDialogOpen] = useState(false)
+	const [dialogMode, setDialogMode] = useState<"select" | "locked">("select")
 	const [isLoading, setIsLoading] = useState(false)
 	const [userProfile, setUserProfile] = useState<UserCurationProfile | null>(null)
 
@@ -52,19 +97,86 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 		fetchUserProfile()
 	}, [])
 
-	const handleBundleClick = (bundle: Bundle & { podcasts: Podcast[] }) => {
+	useEffect(() => {
+		setBundleList(bundles.map(normalizeBundle))
+	}, [bundles])
+
+	useEffect(() => {
+		let isMounted = true
+
+		const fetchBundlesWithAccess = async () => {
+			try {
+				const response = await fetch("/api/curated-bundles")
+				if (!response.ok) {
+					return
+				}
+
+				const data = (await response.json()) as unknown
+				if (!Array.isArray(data)) {
+					return
+				}
+
+				if (isMounted) {
+					setBundleList((data as BundleWithAccess[]).map(normalizeBundle))
+				}
+			} catch (err) {
+				console.error("Failed to refresh curated bundles:", err)
+			}
+		}
+
+		fetchBundlesWithAccess()
+
+		return () => {
+			isMounted = false
+		}
+	}, [])
+
+	const handleBundleClick = (bundle: NormalizedBundle) => {
 		setSelectedBundle(bundle)
+		setDialogMode(bundle.canInteract ? "select" : "locked")
 		setIsDialogOpen(true)
 	}
 
-	const handleConfirmSelection = async (bundleId: string) => {
-		if (!userProfile) {
-			toast.error("Unable to update bundle selection. Please try again.")
+	const handleConfirmSelection = async ({ bundleId, profileName }: { bundleId: string; profileName?: string }) => {
+		if (selectedBundle && !selectedBundle.canInteract) {
+			setIsDialogOpen(false)
+			setSelectedBundle(null)
+			setDialogMode("select")
 			return
 		}
 
 		setIsLoading(true)
 		try {
+			if (!userProfile) {
+				const trimmedProfileName = profileName?.trim()
+				if (!trimmedProfileName) {
+					throw new Error("PROFILE_NAME_REQUIRED")
+				}
+
+				const response = await fetch("/api/user-curation-profiles", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						name: trimmedProfileName,
+						isBundleSelection: true,
+						selectedBundleId: bundleId,
+					}),
+				})
+
+				if (!response.ok) {
+					const errorData = await response.json().catch(() => ({}))
+					throw new Error(errorData.error || "Failed to create curated bundle profile")
+				}
+
+				const createdProfile: UserCurationProfile = await response.json()
+				setUserProfile(createdProfile)
+				toast.success("Curated bundle created successfully!")
+				router.push("/dashboard")
+				return
+			}
+
 			const response = await fetch(`/api/user-curation-profiles/${userProfile.profile_id}`, {
 				method: "PATCH",
 				headers: {
@@ -76,11 +188,10 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 			})
 
 			if (!response.ok) {
-				const errorData = await response.json()
+				const errorData = await response.json().catch(() => ({}))
 				throw new Error(errorData.error || "Failed to update bundle selection")
 			}
 
-			// Update local state
 			setUserProfile(prev =>
 				prev
 					? {
@@ -94,12 +205,14 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 			)
 
 			toast.success("Bundle selection updated successfully!")
-
-			// Redirect to dashboard after successful update
 			router.push("/dashboard")
 		} catch (error) {
 			console.error("Failed to update bundle selection:", error)
-			toast.error(error instanceof Error ? error.message : "Failed to update bundle selection")
+			const message = error instanceof Error ? error.message : "Failed to update bundle selection"
+			if (message !== "PROFILE_NAME_REQUIRED") {
+				toast.error(message)
+			}
+			throw error
 		} finally {
 			setIsLoading(false)
 		}
@@ -108,6 +221,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 	const handleCloseDialog = () => {
 		setIsDialogOpen(false)
 		setSelectedBundle(null)
+		setDialogMode("select")
 	}
 
 	if (error) {
@@ -127,7 +241,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 		)
 	}
 
-	if (bundles.length === 0) {
+	if (bundleList.length === 0) {
 		return (
 			<div className="max-w-2xl mx-auto mt-8 ">
 				<Alert>
@@ -141,57 +255,82 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 
 	return (
 		<>
-			<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-8 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-4 h-fit episode-card-wrapper">
-				{bundles.map(bundle => (
-					<Card
-						key={bundle.bundle_id}
-						className="flex flex-col sm:flex-col px-5 rounded-4xl shadow-lg bg-[#0f0d1c20]  border-6 border-[#1e27455f] w-full cursor-pointer hover:bg-[#c1bdef17]/50 transition-shadow duration-200 gap-3 bundle-card-hover xl:max-w-[500px] ease-in-out text-shadow-sm transition-all shadow-[0_4px_4px_1px_#0506062c] "
-						onClick={() => handleBundleClick(bundle)}>
-						<CardHeader className="w-full py-4 px-2">
-							<div className="w-full flex flex-col-reverse xl:flex-col-reverse gap-6">
-								<div className="flex items-start gap-3 text-sm font-normal tracking-wide flex-col w-full md:max-w-[240px]">
-									<H3 className="text-[0.8rem] text-[#a7dbe7]/70 font-black font-sans mt-2 text-shadow-sm tracking-tight uppercase leading-tight mb-0 truncate">{bundle.name}</H3>
+			<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-2 xl:px-[40px] xl:justify-around items-start  xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark">
+				{bundleList.map(bundle => {
+					const planMeta = PLAN_GATE_META[bundle.min_plan]
+					const canInteract = bundle.canInteract
 
-									<Badge variant="outline" className="font-normal tracking-wide">
-										<Lock size={8} className="mr-2" />
-										<Typography className="text-xxs">Fixed Selection</Typography>
-									</Badge>
-									<Typography className="text-[0.7rem] text-[#f1e9e9b3] font-normal leading-tight mt-0 mb-0 line-clamp-3">Included in bundle:</Typography>
-									<CardContent className="bg-[#06080a45] mx-auto shadow-sm rounded-md w-full m-0 outline-1 outline-[#96a6ba63]">
+					return (
+						<Card
+							key={bundle.bundle_id}
+							className={`flex flex-row sm:flex-col px-5 rounded-4xl shadow-lg bg-[#0f0d1c20] border-6 border-[#1e27455f] w-full transition-shadow duration-200 gap-3 bundle-card-hover xl:max-w-[500px]  xl:overflow-hidden  xl:h-[500px] ease-in-out text-shadow-sm shadow-[0_4px_4px_1px_#0506062c] ${canInteract ? "cursor-pointer hover:bg-[#c1bdef17]/50" : "cursor-pointer hover:bg-[#c1bdef17]/20 opacity-75"}`}
+							onClick={() => handleBundleClick(bundle)}>
+							<CardHeader className="w-full py-4 px-2">
+								<div className="w-full flex flex-col-reverse xl:flex-col-reverse gap-6">
+									<div className="flex items-start gap-3 text-sm font-normal tracking-wide flex-col w-full md:max-w-[240px]">
+										<H3 className="text-[0.8rem] text-[#a7dbe7]/70 font-black font-sans mt-2 text-shadow-sm tracking-tight uppercase leading-tight mb-0 truncate">{bundle.name}</H3>
 
-										<ul className="list-none px-2 m-0 flex flex-col gap-2 py-1">
-											{bundle.podcasts?.map((podcast: Podcast) => (
-												<li key={podcast.podcast_id} className=" leading-none flex w-full justify-end gap-0 p-0">
-													<div className="w-full flex flex-col gap-0 ">
-														<p className="w-full text-[0.7rem] font-semibold leading-normal my-0 px-1 mx-0 text-left text-[#f1e9e9b3] tracking-wide line-clamp-2">
-															{podcast.name}
-														</p>
-													</div>
-												</li>
-											))}
-										</ul>
-									</CardContent>
-								</div>
+										<div className="flex flex-wrap items-center gap-2">
+											<Badge variant="secondary" className="uppercase tracking-wide text-[0.6rem] font-semibold px-2 py-0.5">
+												{planMeta.badgeLabel}
+											</Badge>
+											{canInteract ? (
+												<Badge variant="outline" className="text-emerald-300 border-emerald-500/60 bg-emerald-500/10 text-[0.6rem] font-semibold px-2 py-0.5">
+													{planMeta.statusLabel}
+												</Badge>
+											) : (
+												<Badge variant="destructive" className="text-[0.6rem] font-semibold px-2 py-0.5">
+													Upgrade required
+												</Badge>
+											)}
+										</div>
 
-								<div className="flex items-start gap-2 text-sm font-normal tracking-wide w-full">
-									<div className="relative my-2 rounded-lg outline-4 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:max-w-[300px] xl:justify-end">
-										{bundle.image_url && <Image className="w-full object-cover" src={bundle.image_url} alt={bundle.name} width={190} height={110} />}
+										<Badge variant="outline" className="font-normal tracking-wide">
+											<Lock size={8} className="mr-2" />
+											<Typography className="text-xxs">Fixed Selection</Typography>
+										</Badge>
+										<Typography className="text-[0.7rem] text-[#f1e9e9b3] font-normal leading-tight mt-0 mb-0 line-clamp-3">Included in bundle:</Typography>
+										<CardContent className="bg-[#9798dc35] mx-auto shadow-sm rounded-md w-full m-0 outline-1 outline-[#96a6ba63]">
+											<ul className="list-none px-2 m-0 flex flex-col gap-0 py-1">
+												{bundle.podcasts.slice(0, 4).map((podcast: Podcast) => (
+													<li key={podcast.podcast_id} className=" leading-none flex w-full justify-end gap-0 p-0">
+														<div className="w-full flex flex-col gap-0 ">
+															<p className="w-full text-[0.7rem] font-semibold leading-normal my-0 px-1 mx-0 text-left text-[#e9f0f1b3] tracking-wide line-clamp-2">
+																{podcast.name}
+															</p>
+														</div>
+													</li>
+												))}
+												{bundle.podcasts.length > 4 ? <span className="text-[0.8rem] text-[#89d3d7b3] font-bold leading-tight mt-0 mb-0 line-clamp-3 pl-1">and more</span> : null}
+											</ul>
+										</CardContent>
+									</div>
+
+									<div className="flex items-start gap-2 text-sm font-normal tracking-wide w-full">
+										<div className="relative my-2 rounded-lg outline-4 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
+											{bundle.image_url && <Image className="w-full object-cover" src={bundle.image_url} alt={bundle.name} width={190} height={110} />}
+										</div>
 									</div>
 								</div>
-							</div>
-						</CardHeader>
-					</Card>
-				))}
+							</CardHeader>
+						</Card>
+					)
+				})}
 			</div>
 
 			<BundleSelectionDialog
 				isOpen={isDialogOpen}
 				onClose={handleCloseDialog}
 				onConfirm={handleConfirmSelection}
+				mode={dialogMode}
+				requiresProfileCreation={!userProfile}
 				selectedBundle={selectedBundle}
 				currentBundleName={userProfile?.selectedBundle?.name}
 				currentBundleId={userProfile?.selected_bundle_id}
 				isLoading={isLoading}
+				lockReason={selectedBundle?.lockReason}
+				requiredPlanLabel={selectedBundle ? PLAN_GATE_META[selectedBundle.min_plan].badgeLabel : undefined}
+				requiredPlanDescription={selectedBundle ? PLAN_GATE_META[selectedBundle.min_plan].description : undefined}
 			/>
 		</>
 	)

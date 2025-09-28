@@ -9,7 +9,7 @@ const Card = React.forwardRef<
 	<div
 		ref={ref}
 		className={cn(
-			" max-w-[95%] relative rounded-xl z-0 text-card-foreground shadow w-screen md:w-full mx-auto",
+			" max-w-[100%] my-0 relative rounded-xl z-0 text-card-foreground shadow w-screen md:w-full mx-auto",
 			className
 		)}
 		{...props}
@@ -35,7 +35,7 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<div
 		ref={ref}
-		className={cn("text-[0.7rem] text-[#e7f9f9b5] font-semibold tracking-normal md:text-[0.9rem] md:leading-5.5 pr-[20%]", className)}
+		className={cn("text-[0.8rem] text-[#e7f9f9b5] font-semibold tracking-normal md:text-[0.8rem] md:leading-5.5 pr-[20%]", className)}
 		{...props}
 	/>
 ))
@@ -61,7 +61,7 @@ const CardAction = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<div
 		ref={ref}
-		className={cn("absolute top-2 sm:top-3 md:top-4 hover:bg-card/90 cursor-pointer flex justify-center rounded-full col-start-2 row-span-2 row-start-1 self-start justify-self-end p-2  w-10 lg:w-12 hover:translate-y-0.5  transition-all duration-200",
+		className={cn("absolute top-2 sm:top-3 md:top-4 cursor-pointer flex justify-center rounded-full col-start-2 row-span-2 row-start-1 self-start justify-self-end p-2  w-10 lg:w-12  transition-all duration-200",
 			className)}
 		{...props}
 	/>
