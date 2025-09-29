@@ -11,21 +11,21 @@ export interface AppSpinnerProps extends SpinnerProps {
 	className?: string
 }
 
-export function AppSpinner({ label, size = "md", color = "primary", variant = "dots", labelColor = "default", className }: AppSpinnerProps) {
+export function AppSpinner({ label, size = "sm", color = "primary", variant = "dots", labelColor = "default", className }: AppSpinnerProps) {
 	const getLabelColorClass = (labelColor: string) => {
 		switch (labelColor) {
 			case "primary":
-				return "text-primary-forefround text-left"
+				return "text-[#fff] text-left"
 			case "secondary":
-				return "text-secondary"
+				return "text-[#fff] text-left "
 			case "success":
-				return "text-green-500"
+				return "text-teal-500 text-left"
 			case "warning":
-				return "text-yellow-500"
+				return "text-amber-500 text-left"
 			case "danger":
-				return "text-destructive"
+				return "text-red-500 text-left"
 			default:
-				return "text-muted-foreground"
+				return "text-[#fff] text-left"
 		}
 	}
 
@@ -37,16 +37,16 @@ export function AppSpinner({ label, size = "md", color = "primary", variant = "d
 				return (
 					<div className={cn("relative", baseClasses)}>
 						<div
-							className="w-full h-full border-2 border-transparent rounded-full animate-spin bg-gradient-conic from-transparent via-current to-transparent"
+							className=" h-full border-2 border-transparent rounded-full animate-spin bg-gradient-conic from-transparent via-current to-transparent"
 							style={{ background: "conic-gradient(from 0deg, transparent, currentColor, transparent)" }}
 						/>
-						<div className="absolute inset-0.5 bg-background rounded-full" />
+						<div className="absolute inset-0.5 bg-background rounded-full h-24 w-24" />
 					</div>
 				)
 
 			case "wave":
 				return (
-					<div className={cn("flex gap-1 items-center", baseClasses)}>
+					<div className={cn("flex gap-1 items-start", baseClasses)}>
 						{[...Array(5)].map((_, i) => (
 							<div
 								key={i}
@@ -63,11 +63,11 @@ export function AppSpinner({ label, size = "md", color = "primary", variant = "d
 
 			case "dots":
 				return (
-					<div className={cn("flex gap-1 items-center", baseClasses)}>
+					<div className={cn("flex gap-2 m-4 h-8 w-3 items-center", baseClasses)}>
 						{[...Array(3)].map((_, i) => (
 							<div
 								key={i}
-								className="w-2 h-2 bg-current rounded-full animate-bounce"
+								className="w-1 h-1   bg-current rounded-full animate-bounce"
 								style={{
 									animationDelay: `${i * 0.16}s`,
 									animationDuration: "1.4s",
@@ -83,7 +83,7 @@ export function AppSpinner({ label, size = "md", color = "primary", variant = "d
 						{[...Array(12)].map((_, i) => (
 							<div
 								key={i}
-								className="absolute w-0.5 h-1/4 bg-current rounded-sm left-1/2 top-1/2 origin-bottom animate-pulse"
+								className="absolute w-0.5 h-1 bg-current rounded-sm left-1/2 top-1/2 origin-bottom animate-pulse"
 								style={{
 									transform: `rotate(${i * 30}deg) translate(-50%)`,
 									animationDelay: `${i * 0.1}s`,
@@ -100,9 +100,9 @@ export function AppSpinner({ label, size = "md", color = "primary", variant = "d
 	}
 
 	return (
-		<div className={cn("flex flex-col items-center justify-center gap-3", className)}>
-			<div className="flex items-center justify-center">{renderSpinner()}</div>
-			{label && <span className={cn("text-sm text-center mt-2", getLabelColorClass(labelColor))}>{label}</span>}
+		<div className={cn("flex flex-col items-start justify-start gap-3", className)}>
+			<div className="flex items-start justify-start">{renderSpinner()}</div>
+			{label && <span className={cn("text-xs text-left", getLabelColorClass(labelColor))}>{label}</span>}
 		</div>
 	)
 }

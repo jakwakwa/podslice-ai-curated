@@ -140,7 +140,7 @@ export default function CurationProfileManagementPage() {
 			{latestBundleEpisode && (
 				<div className="w-full space-y-0 episode-card-wrapper border-dark border-b-dark">
 					<CardTitle className="mb-4 flex items-center">
-						<span className="bg-[#00675e] rounded px-1.5 py-0.5 text-xs mr-2">New</span>Episode from your activated Bundle
+						<span className="bg-[#339991] rounded-sm shadow shadow-[#1a0b2f3f]  animate-pulse ease-in-out duration-200 px-1.5 py-0.5 text-xs mr-2">New</span>Episode from your activated Bundle
 					</CardTitle>
 					<CardDescription className="text-xs opacity-90 mb-4">The most recent episode from your selected bundle: {userCurationProfile?.selectedBundle?.name}</CardDescription>
 					<CardContent className="px-0">
@@ -239,7 +239,7 @@ export default function CurationProfileManagementPage() {
 							{userEpisodes.length === 0 ? (
 								<p className="text-muted-foreground text-xs">No generated episodes yet.</p>
 							) : (
-								<ul className="bg-[#0f0f102f] px-0 pt-2 pb-0 rounded-xl flex flex-col w-full gap-3">
+								<ul className="bg-[#0f0f102f] px-0 pt-2 pb-0 rounded-xl flex flex-col w-full gap-3 lg:px-2">
 									{userEpisodes
 										.filter(e => e.status === "COMPLETED" && !!e.signedAudioUrl)
 										.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())

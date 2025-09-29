@@ -1,15 +1,17 @@
 "use client";
 
-import { ChevronDown, ChevronRight, Loader2, MessageSquareWarning, PlayCircle, YoutubeIcon } from "lucide-react";
+import { ChevronDown, ChevronRight, MessageSquareWarning, PlayCircle, YoutubeIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
 import { Button } from "@/components/ui/button";
-import { CardContent, CardDescription, CardHeader } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
+import ComponentSpinner from "@/components/ui/component-spinner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PageHeader } from "@/components/ui/page-header";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PRICING_TIER } from "@/config/paddle-config";
 import { VOICE_OPTIONS } from "@/lib/constants/voices";
@@ -292,24 +294,18 @@ export function EpisodeCreator() {
 		}
 	}
 
-	const hasReachedLimit = usage.count >= usage.limit;
+	const _hasReachedLimit = usage.count >= usage.limit;
 	const handleUpgradeMembership = () => router.push("/manage-membership");
 	const handleGoBack = () => router.back();
 
 	return (
-		<div className="w-full h-auto mb-0 px-4 py-4 md:px-8 lg:px-10 lg:py-12">
+		<div className="w-full h-auto mb-0 px-4 py-4 md:px-8 lg:px-10 lg:py-12 episode-card-wrapper bg-gradient-to-b from-[#1a0b0e] to-[#0d0305] rounded-lg border border-[#4a4e4e1a] shadow-lg">
 			<div className="w-full flex flex-col gap-3 md:gap-8">
-				<CardHeader>
-					<h1 className="text-xl text-foreground font-bold mb-2  md:mb-4">Generate a custom episode</h1>
-					<CardDescription>Provide a YouTube link. We'll handle the rest in the background.</CardDescription>
-				</CardHeader>
+				<PageHeader title="Create Episode" className="pt-0" description="Generate a summary and audio version of a	 podcast episode from any YouTube video" />
+
 				<CardContent>
 					{isLoadingUsage ? (
-						<p>Loading usage data...</p>
-					) : hasReachedLimit ? (
-						<p className="text-amber-500">
-							<span className="mr-3">⚠️</span>You have reached your monthly limit for episode creation.
-						</p>
+						<ComponentSpinner isLabel={false} />
 					) : (
 						<form
 							className="space-y-6 w-full"
@@ -325,30 +321,33 @@ export function EpisodeCreator() {
 								void handleCreate();
 							}}>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-								<div className="space-y-2 md:col-span-2">
+								<div className="space-y-2 md:col-span-2 lg:max-w-lg">
 									<Label htmlFor="youtubeUrl">YouTube URL (Max {maxDuration} minutes)</Label>
+									<p className="text-xs text-[#1debaeb8]	">
+										You have used <span className="font-semibold">{usage.count}</span> out of <span className="font-semibold">{usage.limit}</span> episodes this month.
+									</p>
 									<Input id="youtubeUrl" placeholder="https://www.youtube.com/..." value={youtubeUrl} onChange={e => setYouTubeUrl(e.target.value)} disabled={isBusy} required />
-									{isFetchingMetadata && (
-										<p className="text-sm text-muted-foreground flex items-center mt-2">
-											<Loader2 className="mr-2 h-4 w-4 animate-spin" /> Fetching video details...
-										</p>
-									)}
+									{isFetchingMetadata && <ComponentSpinner />}
 									{youtubeUrlError && (
-										<p className="bg-[#21020621] px-2.5 py-1.5 text-[#ff99a7f9] text-xs mt-2 rounded-md outline-2 outline-[#e86e7f80]"> <span className="flex gap-3">	<MessageSquareWarning width={32} /> 	{youtubeUrlError}</span>
-
+										<p className="bg-[#21020621] px-2.5 py-1.5 text-[#ff99a7f9] text-xs mt-2 rounded-md outline-2 outline-[#e86e7f80]">
+											{" "}
+											<span className="flex gap-3">
+												{" "}
+												<MessageSquareWarning width={32} /> {youtubeUrlError}
+											</span>
 										</p>
 									)}
 								</div>
 
 								{videoTitle && (
-									<div className="bg-black/30 space-y-2 md:col-span-2 py-4 px-8 rounded-xl outline-3 outline-[#94939351] shadow-lg">
-										<p className=" font-bold text-[#f54065c9] flex text-xs items-center gap-2">
-											<YoutubeIcon width={18} height={18} color="#ff1645b5" />
+									<div className="bg-black/30 space-y-1 md:col-span-2 py-3 px-4 rounded-xl outline-2 outline-teal-500 shadow-lg max-w-sm  ">
+										<p className=" font-bold text-[#e9dddfc7] flex text-xs items-center gap-2">
+											<YoutubeIcon width={18} height={18} color="#fecdd7b5" />
 											Youtube Video
 										</p>
-										<p className="text-[#efd6deb5] font-semibold text-sm">{videoTitle}</p>
+										<p className="text-[#eedde3d3] font-semibold text-xs">{videoTitle}</p>
 										{videoDuration !== null && (
-											<p className="text-xs text-[#85eeb478]">
+											<p className="text-xs text-[#c1f2ee78]">
 												Duration: {Math.floor(videoDuration / 60)}m {videoDuration % 60}s
 											</p>
 										)}

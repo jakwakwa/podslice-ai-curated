@@ -230,7 +230,7 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
 			data-slot="sidebar-trigger"
 			size="sm"
 			className={cn(
-				"inline-flex outline-0 border-0 px-1 py-3 items-center justify-center gap-2 whitespace-nowrap leading-5 tracking-wide transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 outline-none focus-visible:outline-0 focus-visible:outline-offset-0 rounded-sm bg-[#000]/0 hover:bg-[#272244]/0 text-[#afa1ff] hover:text-[#76e8ff]",
+				"inline-flex outline-0 border-0 px-1 py-3 items-center justify-center gap-2 whitespace-nowrap leading-5 tracking-wide transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 outline-none focus-visible:outline-0 focus-visible:outline-offset-0 rounded-sm bg-[#000]/0 hover:bg-[#272244]/0 text-[#d6d0f6] hover:text-[#76e8ff]",
 				className
 			)}
 			onClick={event => {
@@ -274,7 +274,7 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
 		<main
 			data-slot="sidebar-inset"
 			className={cn(
-				"relative overflow-x-hidden flex w-full flex-1 flex-col",
+				"relative overflow-x-hidden bg-[#9058cc22] flex w-full flex-1 flex-col",
 				"md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2 h-screen",
 				className
 			)}

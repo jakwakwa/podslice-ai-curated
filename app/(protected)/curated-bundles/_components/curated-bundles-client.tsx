@@ -255,7 +255,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 
 	return (
 		<>
-			<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-2 xl:px-[40px] xl:justify-around items-start  xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark">
+			<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-2 xl:px-[40px] xl:justify-around items-start  xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark lg:px-[40px]	 rounded-3xl border-1 border-[#a497cdfc] shadow-lg shadow-[0px_0px_5px_5px_#261c4b5b]  	bg-[#272839ce] backdrop-blur-[3px]  ">
 				{bundleList.map(bundle => {
 					const planMeta = PLAN_GATE_META[bundle.min_plan]
 					const canInteract = bundle.canInteract
@@ -263,7 +263,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 					return (
 						<Card
 							key={bundle.bundle_id}
-							className={`flex flex-row sm:flex-col px-5 rounded-4xl shadow-lg bg-[#0f0d1c20] border-6 border-[#1e27455f] w-full transition-shadow duration-200 gap-3 bundle-card-hover xl:max-w-[500px]  xl:overflow-hidden  xl:h-[500px] ease-in-out text-shadow-sm shadow-[0_4px_4px_1px_#0506062c] ${canInteract ? "cursor-pointer hover:bg-[#c1bdef17]/50" : "cursor-pointer hover:bg-[#c1bdef17]/20 opacity-75"}`}
+							className={`flex flex-row sm:flex-col px-5 rounded-4xl shadow-lg bg-[#3f386d7e] border-3 border-[#68739830] w-full transition-shadow duration-200 gap-3 bundle-card-hover xl:max-w-[500px]  xl:overflow-hidden 	 xl:h-[500px] ease-in-out text-shadow-sm shadow-[0_4px_4px_1px_#0506062c] ${canInteract ? "cursor-pointer hover:bg-[#c1bdef17]/50" : "cursor-pointer hover:bg-[#c1bdef17]/20 opacity-75"}`}
 							onClick={() => handleBundleClick(bundle)}>
 							<CardHeader className="w-full py-4 px-2">
 								<div className="w-full flex flex-col-reverse xl:flex-col-reverse gap-6">

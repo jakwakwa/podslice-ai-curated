@@ -1,12 +1,8 @@
-import { Loader2 } from "lucide-react"
+import type React from "react";
+import { AppSpinner } from "./app-spinner";
 
-function ComponentSpinner({ label, isLabel = false }: { label?: string; isLabel?: boolean }): React.ReactElement {
-	return (
-		<div className="flex items-center justify-center py-8">
-			<Loader2 className="w-4 h-4 animate-spin" aria-label={label} />
-			{isLabel && <span className="ml-2">{label ? `Loading ${label}...` : isLabel ? "Loading..." : null}</span>}
-		</div>
-	)
+function ComponentSpinner({ isLabel = false }: { isLabel?: boolean }): React.ReactElement {
+	return <AppSpinner variant="dots" label={isLabel ? "Loading..." : undefined} size="md" color="primary" />;
 }
 
-export default ComponentSpinner
+export default ComponentSpinner;
