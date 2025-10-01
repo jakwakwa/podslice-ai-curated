@@ -1,13 +1,13 @@
 "use client";
 
-import { PlayIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { PlayButton } from "@/components/episodes/play-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import EpisodeCard from "@/components/ui/episode-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEpisodePlayer } from "@/hooks/use-episode-player";
 import type { UserEpisode } from "@/lib/types";
-import { useAudioPlayerStore } from "@/store/audioPlayerStore";
 
 type UserEpisodeWithSignedUrl = UserEpisode & { signedAudioUrl: string | null };
 
@@ -22,7 +22,7 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 	const [error, setError] = useState<string | null>(null);
 	const [debugLogs, setDebugLogs] = useState<Record<string, unknown[]> | null>(null);
 	const enableDebug = useMemo(() => process.env.NEXT_PUBLIC_ENABLE_EPISODE_DEBUG === "true", []);
-	const { setEpisode } = useAudioPlayerStore();
+	const { playEpisode } = useEpisodePlayer();
 
 	useEffect(() => {
 		const fetchEpisodes = async () => {
@@ -67,14 +67,14 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 						status: ep.status,
 						duration_seconds: ep.duration_seconds,
 					};
-					setEpisode(normalizedEpisode);
+					playEpisode(normalizedEpisode);
 				}
 			} catch { }
 		})();
 		return () => {
 			aborted = true;
 		};
-	}, [initialEpisodeId, setEpisode]);
+	}, [initialEpisodeId, playEpisode]);
 
 	// Auto-select and open the episode if initialEpisodeId is provided (deep link)
 	useEffect(() => {
@@ -97,8 +97,8 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 			duration_seconds: match.duration_seconds,
 		};
 		// Ensure we always set fresh episode on deep link
-		setEpisode(normalizedEpisode);
-	}, [initialEpisodeId, episodes, setEpisode]);
+		playEpisode(normalizedEpisode);
+	}, [initialEpisodeId, episodes, playEpisode]);
 
 	const handleViewRunLog = async (episodeId: string): Promise<void> => {
 		try {
@@ -145,7 +145,7 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 								actions={
 									<>
 										{episode.status === "COMPLETED" && episode.signedAudioUrl && (
-											<Button
+											<PlayButton
 												onClick={() => {
 													// Create a normalized episode for the audio player
 													const normalizedEpisode: UserEpisode = {
@@ -161,12 +161,9 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 														status: episode.status,
 														duration_seconds: episode.duration_seconds,
 													};
-													setEpisode(normalizedEpisode);
+													playEpisode(normalizedEpisode);
 												}}
-												variant="play"
-												size="sm"
-												className={`inline-flex p-0 border-0 rounded-full items-center justify-center btn-playicon rounded-[14px] outline-accent outline-1 w-32`}
-												icon={<PlayIcon />}
+												aria-label={`Play ${episode.episode_title}`}
 											/>
 										)}
 										{enableDebug && (

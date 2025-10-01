@@ -1,10 +1,11 @@
 "use client";
 
-import { AlertCircle, BoxesIcon, Edit, PlayIcon } from "lucide-react";
+import { AlertCircle, BoxesIcon, Edit } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import EditUserFeedModal from "@/components/edit-user-feed-modal";
+import { PlayButton } from "@/components/episodes/play-button";
 import UserFeedSelector from "@/components/features/user-feed-selector";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AppSpinner } from "@/components/ui/app-spinner";
@@ -14,9 +15,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import EpisodeCard from "@/components/ui/episode-card";
 import { PageHeader } from "@/components/ui/page-header";
 import { Body, Typography } from "@/components/ui/typography";
+import { useEpisodePlayer } from "@/hooks/use-episode-player";
 import { useUserCurationProfileStore } from "@/lib/stores/user-curation-profile-store";
 import type { Episode, UserCurationProfile, UserCurationProfileWithRelations, UserEpisode } from "@/lib/types";
-import { useAudioPlayerStore } from "@/store/audioPlayerStore";
 
 interface SubscriptionInfo {
 	plan_type: string;
@@ -41,7 +42,7 @@ export default function CurationProfileManagementPage() {
 
 	type UserEpisodeWithSignedUrl = UserEpisode & { signedAudioUrl: string | null };
 	const [userEpisodes, setUserEpisodes] = useState<UserEpisodeWithSignedUrl[]>([]);
-	const { setEpisode } = useAudioPlayerStore();
+	const { playEpisode } = useEpisodePlayer();
 
 	const fetchAndUpdateData = useCallback(async () => {
 		try {
@@ -150,14 +151,12 @@ export default function CurationProfileManagementPage() {
 							publishedAt={latestBundleEpisode.published_at || latestBundleEpisode.created_at}
 							durationSeconds={latestBundleEpisode.duration_seconds}
 							actions={
-								<Button
-									variant="play"
+								<PlayButton
 									onClick={() => {
 										console.log("Dashboard - Setting bundle episode:", latestBundleEpisode);
-										setEpisode(latestBundleEpisode);
+										playEpisode(latestBundleEpisode);
 									}}
-									icon={<PlayIcon size={64} />}
-									size="sm"
+									aria-label={`Play ${latestBundleEpisode.title}`}
 								/>
 							}
 						/>
@@ -255,11 +254,9 @@ export default function CurationProfileManagementPage() {
 													actions={
 														episode.status === "COMPLETED" &&
 														episode.signedAudioUrl && (
-															<Button
-																size="md"
+															<PlayButton
 																onClick={() => {
 																	// Create a normalized episode for the audio player
-
 																	const normalizedEpisode: UserEpisode = {
 																		episode_id: episode.episode_id,
 																		episode_title: episode.episode_title,
@@ -275,11 +272,10 @@ export default function CurationProfileManagementPage() {
 																	};
 																	console.log("Dashboard - Setting normalized UserEpisode:", normalizedEpisode);
 																	console.log("Dashboard - Original episode signedAudioUrl:", episode.signedAudioUrl);
-																	setEpisode(normalizedEpisode);
+																	playEpisode(normalizedEpisode);
 																}}
-																variant="play"
-																className={episode.episode_id ? " m-0" : ""}
-																icon={<PlayIcon />}
+																aria-label={`Play ${episode.episode_title}`}
+																className="m-0"
 															/>
 														)
 													}

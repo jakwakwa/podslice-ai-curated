@@ -1,7 +1,8 @@
-import { Download, Music, PlayIcon } from "lucide-react";
+import { Download, Music } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { PlayButton } from "@/components/episodes/play-button";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
 import type { Episode } from "@/lib/types";
@@ -122,21 +123,12 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, onPlayEpisod
 										actions={
 											<div className="flex flex-col gap-2 md:gap-3 md:flex-row md:items-center hover:bg-none">
 												{episode.audio_url && onPlayEpisode && (
-
-
-													<Button
-
-														onClick={() => onPlayEpisode(episode)} variant="ghost" icon={<PlayIcon size={32} />}
-														type="button"
-														aria-label={"Pause Episode"}
-														aria-pressed={false}
-														size="sm"
-														className={`inline-flex p-0 border-0 rounded-full items-center justify-center btn-playicon rounded-[14px] ${playingEpisodeId === episode.episode_id ? "outline-accent outline-1 w-32" : ""}`}
-													>
-														<PlayIcon color="#358a89" width={4} height={4} />
-
-													</Button>
-
+													<PlayButton
+														onClick={() => onPlayEpisode(episode)}
+														aria-label={`Play ${episode.title}`}
+														isPlaying={playingEpisodeId === episode.episode_id}
+														className={playingEpisodeId === episode.episode_id ? "outline-accent outline-1 w-32" : ""}
+													/>
 												)}
 												{hasTier3Access() && isUserGeneratedEpisode(episode) && episode.audio_url && (
 													<Button
