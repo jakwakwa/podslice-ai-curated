@@ -71,7 +71,7 @@ export function NotificationPreferences() {
 	}, [loadPreferences])
 
 	if (isLoading) {
-		return <ComponentSpinner label="notification preferences" isLabel />
+		return <ComponentSpinner isLabel />
 	}
 
 	return (
