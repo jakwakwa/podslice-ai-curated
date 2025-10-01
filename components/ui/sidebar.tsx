@@ -296,7 +296,7 @@ function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function SidebarSeparator({ className, ...props }: React.ComponentProps<typeof Separator>) {
-	return <Separator data-slot="sidebar-separator" data-sidebar="separator" className={cn("bg-sidebar-border mx-2 w-auto", className)} {...props} />;
+	return <Separator data-slot="sidebar-separator" data-sidebar="separator" className={cn("bg-[#ffffff0c]  w-auto", className)} {...props} />;
 }
 
 function SidebarContent({ className, ...props }: React.ComponentProps<"div">) {

@@ -171,14 +171,14 @@ export default function CurationProfileManagementPage() {
 					</div>
 				</div>
 			) : userCurationProfile ? (
-				<div className="flex flex-col lg:flex-row gap-4 ">
+				<div className="flex flex-col lg:flex-row gap-4">
 					<div className="w-full lg:w-1/2 episode-card-wrapper shadow-2xl shadow-cyan-950">
 						<div className="w-full flex flex-col justify-between pb-0 rounded-2xl ">
 							<CardTitle className="mb-4 max-w-[100%]">Your Bundled Feed</CardTitle>
 
 							{/*  */}
 							{userCurationProfile?.is_bundle_selection && userCurationProfile?.selectedBundle && (
-								<div className="bg-[#3c24544a]  border-1 border-[#ffffff0a]  rounded-t-md  p-4">
+								<div className="bg-[#1a0b2967] border-b-0  border-1 border-[#0e0d0da9]  rounded-t-lg overflow-hidden p-4">
 									<Button className="inline-flex justify-end w-full px-2" variant="ghost" size="xs" onClick={() => setIsModalOpen(true)}>
 										<Edit />
 									</Button>
@@ -201,8 +201,8 @@ export default function CurationProfileManagementPage() {
 							)}
 						</div>
 
-						<div className="mt-0 w-full overflow-hidden shadow-md  shadow-[#00000011] rounded-b-2xl ">
-							<div className="bg-[#120D1D]/30   border-1 border-[#6351512a] px-4 p-4">
+						<div className="mt-0 w-full overflow-hidden shadow-md   ">
+							<div className="bg-[#120D1D]/30 border-t-0 overflow-hidden rounded-b-2xl border-1 border-[#0e0d0da9] px-4 p-4">
 								<Body className="pt-0  pb-2 text-foreground/90 uppercase font-bold font-sans text-[10px]">Weekly Bundled Feed Summary</Body>
 								<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full border rounded-md overflow-hidden pb-2 pt-0">
 									<div className="flex flex-row justify-between gap-1 items-center h-9 w-full text-primary-forefround bg-muted-foreground/10 py-3 px-2">

@@ -31,17 +31,17 @@ export function UsageDisplay() {
 	}
 
 	return (
-		<div className="bg-[#0b0a0d58] w-full px-4  mx-0   outline-0 border-l-0  lg:border-b-[#f4e5f725] lg:border-l lg:border-l-[#f4e5f725] lg:border-b-none rounded-none sm:px-5 py-2 md:p-8 lg:w-[300px]">
+		<div className="bg-[#0d081798] w-full px-6  mx-0  pt-6 lg:pt-12  pb-4 outline-0 border-l-0  lg:border-b-[#f4e5f725] lg:border-l lg:border-l-[#f4e5f725] lg:border-b-none rounded-none sm:px-5 md:p-8 lg:w-[300px]">
 			<div className="w-full flex flex-col gap-3">
-				<H2 className=" text-lg text-primary-foreground">Monthly Usage</H2>
+				<H2 className=" text-sm md:text-lg text-primary-foreground">Monthly Usage</H2>
 
-				<Body className="font-normal">
+				<Body className="font-normal text-xs md:text-md">
 					You have generated <br /> <strong>{usage.count}</strong> of your <strong>{usage.limit}</strong> monthly episodes
 				</Body>
-				<Body className="text-amber-600">
+				<Body className="text-amber-600 font-normal text-xs">
 					{usage.count === usage.limit ? (
 						<div>
-							<span className="mr-3">⚠️</span>Limit reached for the month{" "}
+							<span className="mr-3 text-sm">⚠️</span>Limit reached for the month{" "}
 						</div>
 					) : (
 						""
