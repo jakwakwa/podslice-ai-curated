@@ -24,11 +24,11 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 			<SidebarInset>
 				<header
-					className={`fixed flex h-16 backdrop-blur-[4px] shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 mt-0 w-screen justify-between px-2 md:px-4 py-0 overflow-y-scrol shadow-[0_4px_30px_-4px_rgba(0,0,0,0.5)] duration-300  z-50 ${state === "expanded" ? "" : ""}`}>
+					className={`fixed flex h-16 bg-[#161620ec] backdrop-blur-[10px] shrink-0 items-center border-1 border-b-[#0b0a0e] gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 mt-0 w-screen justify-between px-4  py-0 overflow-y-scrol shadow-[0_4px_8px_1px_rgba(0,0,0,0.5)] duration-300 z-50 ${state === "expanded" ? "" : ""}`}>
 					<div className={`flex items-center h-16 justify-between gap-2 px-2  ${state === "expanded" ? "md:px-4" : "md:px-0"}`}>
 						<Image className={`w-full max-w-[100px] ${state === "expanded" ? "inline " : "hidden"}`} src="/logo.png" width={300} height={100} alt="logo" />
 
-						<Separator orientation="vertical" className={`data-[orientation=vertical]:min-h-[8px] border-[0px] border-r-[#000] bg-[#14171600] w-[1px] ${state === "expanded" ? "ml-12" : "ml-0 mr-0"}`}>
+						<Separator orientation="vertical" className={`data-[orientation=vertical]:min-h-[8px] border-[0px] border-r-[#00000089] bg-[#14171600] w-[1px] ${state === "expanded" ? "ml-12" : "ml-0 mr-0"}`}>
 							{""}
 						</Separator>
 
@@ -36,7 +36,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 						<Separator
 							orientation="vertical"
-							className={`data-[orientation=vertical]:min-h-[8px] border-[0px] border-r-[#342d3d0] bg-[#a5adb03e] w-[1px] ${state === "expanded" ? "mr-12 ml-5.5" : "mx-2 ml-0	"}`}>
+							className={`data-[orientation=vertical]:min-h-[8px] border-[0px] border-r-[#342d3d0] bg-[#75737b3b] w-[1px] ${state === "expanded" ? "mr-12 ml-5.5" : "mx-2 ml-0	"}`}>
 							{""}
 						</Separator>
 
@@ -52,7 +52,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 					<div className={'grain-background background-base'} />
 
 					<div className={'layout-inset'} />
-					<div className="w-[99%] p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-20 mx-0 pl-1 pr-3 md:px-2 min-w-full md:my-2 sm:ml-6 md:pl-0 md:pr-12 ">{children}</div>
+					<div className=" w-screen md:w-full p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-20 mx-0 pl-0 md:pr-3 md:px-2 min-w-full md:my-2 lg:ml-6 lg:pl-0 lg:pr-12 ">{children}</div>
 				</div>
 			</SidebarInset>
 		</>

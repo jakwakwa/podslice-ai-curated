@@ -131,7 +131,7 @@ export default function CurationProfileManagementPage() {
 		_bundleEpisodes.length > 0 ? _bundleEpisodes.sort((a, b) => new Date(b.published_at || b.created_at).getTime() - new Date(a.published_at || a.created_at).getTime())[0] : null;
 
 	return (
-		<div className="flex flex-col gap-3 w-full episode-card-wrapper ">
+		<div className="flex flex-col gap-0 md:gap-3 lg:gap-6 w-full episode-card-wrapper ">
 			<PageHeader
 				title="Your dashboard"
 				description="Choose from our pre-curated podcast bundles. Each bundle is a fixed selection of 2-5 carefully selected shows and cannot be modified once selected."
@@ -238,7 +238,7 @@ export default function CurationProfileManagementPage() {
 							{userEpisodes.length === 0 ? (
 								<p className="text-muted-foreground text-xs">No generated episodes yet.</p>
 							) : (
-								<ul className="bg-[#0f0f104d] px-0 pt-2 pb-2 rounded-xl flex flex-col w-full gap-1 lg:px-2">
+								<ul className="bg-[#0f0f104d] px-2 pt-2 pb-2 rounded-xl flex flex-col w-full gap-1 lg:px-2">
 									{userEpisodes
 										.filter(e => e.status === "COMPLETED" && !!e.signedAudioUrl)
 										.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())

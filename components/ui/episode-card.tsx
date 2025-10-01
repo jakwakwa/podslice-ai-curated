@@ -67,7 +67,7 @@ export function EpisodeCard({ as = "div", imageUrl, title, publishedAt, duration
 				</CardHeader>
 
 				<div className="flex flex-col justify-start items-start content-start ">
-					<div className=" md:w-[80%] font-semibold mb-2 line-clamp-2 truncate text-[0.9rem] text-[#9fd5dd]">{title}</div>
+					<div className="w-[70%] md:w-[80%] font-semibold mb-2 line-clamp-2  text-[0.9rem] text-[#9fd5dd]">{title}</div>
 
 					<div className="w-full flex justify-between flex-row items-center gap-2">
 						<div className="flex gap-2">
