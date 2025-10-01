@@ -216,7 +216,7 @@
 		.dark {
 			--background: #000000;
 
-			--foreground: oklch(0.87 0.02 283.08 / 0.82);
+			--foreground: oklch(96.762% 0.01608 286.002 / 0.82);
 			--card: #121212;
 			--card-foreground: hsla(187.64 22.63% 47.65% / 0.8);
 			--popover: oklch(0.15 0.01 300.8);
@@ -248,7 +248,7 @@
 			--primary: hsl(213.33 7.69% 77.06%);
 			--primary-foreground: hsl(220 12.4% 76.27%);
 			--secondary: hsl(259.74 55.88% 26.67%);
-			--secondary-foreground: hsl(278.18 10.48% 79.41%);
+			--secondary-foreground: hsl(277, 47%, 91%);
 			--muted: hsl(217.2 32.6% 17.5%);
 
 			--destructive: hsl(0 62.8% 30.6%);
@@ -444,16 +444,14 @@
 
 			.episode-card-wrapper-dark {
 				position: relative;
-
 				padding: 5px 17px;
 				/* display: flex; */
 				margin: 0 !important;
 				/* border-radius: 15px !important; */
 				margin: 0 !important;
-
 				border: 1px solid #60cdbb30;
-				background-image: linear-gradient(to top, #1f1632f2 -50%, #423a78c1 150%);
-				box-shadow: inset 0px 6px 10px oklch(23.963% 0.0361 243.602 / 0.07) !important;
+				background-image: linear-gradient(to bottom, #16131c4b -50%, #423a781c 150%);
+				box-shadow: inset 0px 6px 10px oklch(23.592% 0.01072 242.259 / 0.07) !important;
 				backdrop-filter: blur(28px) !important;
 				transition: all 0.2s ease-in-out;
 			}
@@ -508,7 +506,7 @@
 		/* ============================================= */
 		@layer utilities {
 			.bg-card {
-				background-color: #3d3672ae;
+				background-color: oklch(58.843% 0.14499 283.331 / 0.843);
 				box-shadow:
 
 					2px 5px 15px 2px oklch(36.876% 0.07793 282.875 / 0.371),

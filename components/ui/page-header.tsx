@@ -31,7 +31,7 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(({ classNam
 	return (
 		<div className="backdrop-blur-lg bg-[#2b2d674e] shadow  border-1 rounded-2xl px-2 flex flex-col border-[#7c7ee5ce] justify-between mb-4">
 			<div className={cn(headerVariants({ spacing, className }))} ref={ref} {...props}>
-				<h2 className="flex text-2xl font-black px-2 md:px-0 pt-0 pb-0 md:py-0 text-shadow-md text-shadow-[#3f365e6a] text-[#8bc1ce] leading-[1.5] max-w-screen lg:max-w-4xl">{title}</h2>
+				<h2 className="flex text-2xl font-black px-2 md:px-0 pt-0 pb-0 md:py-0 text-shadow-md text-shadow-[#3f365e6a] text-[#7BDBF0] leading-[1.5] max-w-screen lg:max-w-4xl">{title}</h2>
 				{description && (
 					<Typography as="p" variant="body" className="text-sm px-2  md:px-0  md:py-1.5 text-[#d6f6f9df] leading-[1.5] max-w-screen  text-shadow-sm text-shadow-[#00000010] font-semibold w-full md:max-w-[97%]">
 						{description}

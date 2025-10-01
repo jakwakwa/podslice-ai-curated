@@ -6,7 +6,7 @@ export const typographyVariants = cva("", {
 		variant: {
 			h1: "text-[var(--text-h1)]  font-bold font-heading text-foreground-muted",
 			h2: "text-custom-h2 font-bold leading-[1.5] text-foreground",
-			h3: "text-custom-h3 font-bold text-secondary-foreground my-0 leading-[1]",
+			h3: "text-custom-h3 text-shadow text-shadow-[#000000] font-bold text-secondary-foreground my-0 leading-[1]",
 			h4: "text-custom-h4 font-bold",
 			h5: "text-[var(--text-h5)] font-sans uppercase font-semibold leading-[4px]",
 			body: "font-sans leading-[1.5]",
