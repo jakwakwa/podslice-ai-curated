@@ -16,12 +16,10 @@
 				@apply bg-background backdrop-blur-sm text-foreground;
 				width: 100%;
 				max-width: 100%;
-				background: linear-gradient(135deg, #8082aa 0%, #eeeef1a9 100%) !important;
+				background: linear-gradient(135deg, #BABCEF 0%, #E3E9FAA9 100%) !important;
 				margin: 0;
-				/* color: var(--text-foreground); */
 				padding: 0;
 				text-align: left;
-				/* overflow-y: hidden; */
 				height: auto;
 				background: #09090A;
 			}
@@ -66,8 +64,6 @@
 			}
 
 			button {
-				/* border-radius: 8px; */
-				/* margin: 10px 0; */
 				font-size: 0.75rem;
 				cursor: pointer;
 			}
@@ -89,7 +85,7 @@
 				opacity: 0.95;
 				font-size: 0.8rem !important;
 				font-weight: 700 !important;
-				color: hsla(20, 13%, 95%, 0.73);
+				color: hsl(20 75% 98.43%);
 				padding-bottom: 1.5px;
 				padding-top: 0px;
 			}
@@ -214,7 +210,7 @@
 		}
 
 		.dark {
-			--background: #000000;
+			--background: #151618;
 
 			--foreground: oklch(96.762% 0.01608 286.002 / 0.82);
 			--card: #121212;
@@ -222,9 +218,8 @@
 			--popover: oklch(0.15 0.01 300.8);
 			--popover-foreground: oklch(0.92 0.02 184.89);
 
-			--secondary-foreground: oklch(0.88 0.04 176.2 / 0.72);
 			--muted: oklch(0.274 0.006 286.033);
-			--muted-foreground: color(a98-rgb 0.72 0.7 0.73 / 0.46);
+			--muted-foreground: color(a98-rgb 0.88 0.9 0.95 / 0.82);
 			--accent: oklch(0.13 0 286.07 / 0.33);
 			--accent-foreground: oklch(0.985 0 0);
 			--destructive: oklch(0.55 0.12 20.39);
@@ -245,26 +240,25 @@
 			--sidebar-border: oklch(0.91 0.06 330.41 / 0.09);
 			--sidebar-ring: oklch(0.68 0.01 286.05);
 
-			--primary: hsl(213.33 7.69% 77.06%);
-			--primary-foreground: hsl(220 12.4% 76.27%);
+			--primary: hsl(212.73 34.37% 87.45%);
+			--primary-foreground: hsl(221.74 45.1% 90%);
 			--secondary: hsl(259.74 55.88% 26.67%);
 			--secondary-foreground: hsl(277, 47%, 91%);
-			--muted: hsl(217.2 32.6% 17.5%);
-
-			--destructive: hsl(0 62.8% 30.6%);
-			--destructive-foreground: hsl(210 40% 98%);
-			--border: hsl(187 10% 17%);
-			--input: hsla(203.64 18.64% 34.71% / 0.77);
-			--ring: hsl(254.85 40.56% 48.82%);
+			--muted: hsl(216.52 29.11% 84.51%);
+			--destructive: hsl(332.09 74.57% 33.92%);
+			--destructive-foreground: hsl(346.53 80.33% 88.04%);
+			--border: hsla(180 1.06% 36.86% / 0.38);
+			--input: hsla(221.82 18.64% 34.71% / 0.77);
+			--ring: hsl(273.87 60.19% 59.61%)
 			--chart-1: hsl(220 70% 50%);
 			--chart-2: hsl(160 60% 45%);
 			--chart-3: hsl(30 80% 55%);
 			--chart-4: hsl(280 65% 60%);
 			--chart-5: hsl(340 75% 55%);
-			--audio-sheet-bg: #131313;
+			--audio-sheet-bg: #20233B;
 			--audio-sheet-foreground: rgba(255, 255, 255, 0.66);
-			--audio-sheet-border: rgba(60, 58, 98, 0.52);
-			--audio-sheet-accent: #19B275;
+			--audio-sheet-border: rgba(60 58 98 / 0.23);
+			--audio-sheet-accent: #1FC2D1;
 		}
 
 		@theme inline {
@@ -277,16 +271,14 @@
 		/* ============================================= */
 		@layer utilities {
 			.bg-primary-card {
-				/* padding: 10px 20px; */
-				font-size: 1rem !important;
 				background-image: linear-gradient(to bottom, oklch(60.735% 0.06652 219.966 / 0.081), oklch(0.13 0.02 222.67 / 0.61)) !important;
 				border-radius: 30px;
-				outline: 1px solid #000000 !important;
-				outline-offset: 1px !important;
+				outline: 1px solid oklch(0.93 0 17.22 / 0.93) !important;
+				outline-offset: 1px;
 				mix-blend-mode: multiply;
-				transition: all 0.2s ease-in-out;
+				transition: all 0.3s ease-in-out;
 				background-blend-mode: multiply;
-				box-shadow: 1px 7px 6px 1px rgba(8 8 8 / 0.52);
+				box-shadow: 1px 7px 6px 1px rgba(8 8 8 / 0.52), 1px 2px 3px 1px rgba(225 222 222 / 0.52) inset, 1px 2px 3px 1px rgba(8 8 8 / 0.52) inset;
 			}
 
 			.sheet-hero-bg {
@@ -340,17 +332,14 @@
 				inset: 0;
 				z-index: -10 !important;
 				pointer-events: none;
-				/* background-color: #7881b3fc; */
-				background: linear-gradient(210deg, oklch(59.39% 0.2276 287.332 / 0.928) -20%, oklch(70.942% 0.13975 272.439 / 0.991) 40%, rgba(92, 98, 222, 0.927) 100%) no-repeat;
-				/* background-blend-mode: multiply; */
-				/* Layered subtle gradients		 */
-				/* z-index: -1; */
-				background-size: 110% 110% !important;
-				/* animation: gradientShift 5s ease-in-out infinite alternate; */
+				background-color: #DADCE8FC;
+				background: linear-gradient(210deg, oklab(0.93 -0.04 -0.02 / 0.93) -20%, oklch(0.9 0.06 214.8 / 0.93) 40%, oklch(80.942% 0.13975 272.439 / 0.991) 100%) no-repeat;
+				background-blend-mode: multiply, multiply, multiply, multiply;
+				mix-blend-mode: multiply, multiply, multiply, multiply;
+				background-size: 110% 110%;
 				backdrop-filter: blur(0px);
-				opacity: 0.9;
+				opacity: 1;
 				background-position: top;
-				/* mix-blend-mode: multiply, multiply, multiply, multiply; */
 			}
 
 
@@ -423,10 +412,11 @@
 
 				border: 1px solid #7ad7d200 !important;
 				border-radius: 20px;
-				box-shadow: 0px 7px 15px 0px #1a0b2f3f !important;
-				background-image: linear-gradient(oklch(89.207% 0.05733 220.349 / 0.073) 10%, oklch(44.205% 0.14785 286.408 / 0.828) 190%);
-				/* background: radial-gradient(circle at 20% 20%, oklch(46.044% 0.12886 291.778 / 0.639) 0%, oklch(27.024% 0.10684 298.969 / 0.62) 100%), radial-gradient(circle at 8% 30%, oklch(39.087% 0.03326 304.023 / 0.291) 0%, oklch(45.45% 0.10071 287.516 / 0.858) 100%); */
-				backdrop-filter: blur(14px);
+				box-shadow:  0px 6px 5px 1px #322B4455, 0px 1px 1px 1px #E3EBEC2B inset, 0px 1px 0px 1px #7A9DD921 inset;
+				background-color: oklch(0.69 0.14 283.36 / 0.05);
+				/* Gradient for the episode card wrapper */
+				background-image: linear-gradient(oklch(0.5 0.17 297.32 / 0.07) 10%, oklch(0.34 0.11 288.06 / 0.36) 190%);
+				backdrop-filter: blur(0.5px);
 				outline-offset: -1px !important;
 				z-index: 5;
 				background-repeat: no-repeat;
@@ -506,13 +496,16 @@
 		/* ============================================= */
 		@layer utilities {
 			.bg-card {
-				background-color: oklch(58.843% 0.14499 283.331 / 0.843);
+				background-color: oklch(0.61 0.13 302.53 / 0.1);
 				box-shadow:
-
-					2px 5px 15px 2px oklch(36.876% 0.07793 282.875 / 0.371),
-					1px 4px 7px 1px #14072e37;
+					inset 0px 1px 3px 0px #B8D6F551,
+					inset 0px -5px 8px 1px #483E5730,
+					inset 1px -30px 69px 5px oklab(0.26 0.01 -0.02 / 0.22),
+					2px 7px 8px 1px oklch(0.38 0.02 293.82 / 0.25),
+					1px 2px 3px 1px oklch(0.13 0.01 301.09 / 0.15);
+		
 				padding: 12px 20px;
-				border: 1px solid #9e9eee79;
+				border: 1px solid #686AAC47;
 				outline-offset: -1px;
 				outline: 1px solid #29363626 !important;
 			}
