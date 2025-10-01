@@ -20,7 +20,6 @@ interface EditUserFeedModalProps {
 
 export default function EditUserFeedModal({ isOpen, onClose, collection, onSave }: Readonly<EditUserFeedModalProps>): React.ReactElement {
 	const [name, setName] = useState(collection?.name ?? "")
-	const [status, setStatus] = useState(collection?.status ?? "Active")
 	const [selectedBundleId, setSelectedBundleId] = useState<string | undefined>(collection?.selected_bundle_id ?? undefined)
 	const [isLoading, setIsLoading] = useState(false)
 	const { bundles, fetchBundles, isLoading: isLoadingBundles } = useBundlesStore()
@@ -33,7 +32,6 @@ export default function EditUserFeedModal({ isOpen, onClose, collection, onSave 
 
 	useEffect(() => {
 		setName(collection?.name ?? "")
-		setStatus(collection?.status ?? "Active")
 		setSelectedBundleId(collection?.selected_bundle_id ?? undefined)
 	}, [collection])
 
@@ -44,7 +42,6 @@ export default function EditUserFeedModal({ isOpen, onClose, collection, onSave 
 		try {
 			const dataToSave: Partial<UserCurationProfileWithRelations> = {
 				name,
-				status,
 			}
 			if (collection.is_bundle_selection) {
 				dataToSave.selected_bundle_id = selectedBundleId
@@ -71,21 +68,6 @@ export default function EditUserFeedModal({ isOpen, onClose, collection, onSave 
 					<div className="space-y-2">
 						<Label htmlFor="name">Feed Name</Label>
 						<Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Enter feed name" required />
-					</div>
-					<div className="space-y-2">
-						<Label htmlFor="status">Status</Label>
-						<Select value={status ? status : "Active"} onValueChange={setStatus}>
-							<SelectTrigger className=" text-foreground/80">
-								<SelectValue placeholder="Select status" />
-							</SelectTrigger>
-							<SelectContent className="bg-[#000] border border-border h-auto min-h-[100px] ">
-								{["Active", "Inactive"].map(s => (
-									<SelectItem key={s} value={s}>
-										{s}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
 					</div>
 					{collection.is_bundle_selection && (
 						<div className="space-y-2">

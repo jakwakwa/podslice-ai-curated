@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function GenerateMyEpisodesPage() {
 	return (
-		<div className="w-full h-full min-h-[84vh] bg-[#a6a8b01f] flex flex-col lg:flex-row-reverse rounded-xl sm:rounded-xl md:rounded-3xl border-2 border-[#c8d3da32] shadow-lg overflow-x-hidden px-0 mx-0 mt-8 md:w-full md:mt-0">
+		<div className="w-full h-full min-h-[84vh]  generate-episode-card-wrapper p-0 flex flex-col lg:flex-row-reverse rounded-xl sm:rounded-xl md:rounded-3xl border-2 border-[#c8d3da32] shadow-lg overflow-x-hidden px-0 mx-0 mt-8 md:w-full md:mt-0">
 
 			<UsageDisplay />
 			<EpisodeCreator />

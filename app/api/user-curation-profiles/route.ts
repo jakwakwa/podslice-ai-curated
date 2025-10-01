@@ -158,7 +158,6 @@ export async function POST(request: Request) {
 				user_id: userId,
 				is_bundle_selection: isBundleSelection,
 				selected_bundle_id: isBundleSelection ? selectedBundleId : null,
-				status: "active",
 				is_active: true,
 			},
 			include: {

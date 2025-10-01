@@ -294,12 +294,12 @@ export function EpisodeCreator() {
 		}
 	}
 
-	const _hasReachedLimit = usage.count >= usage.limit;
+	// const hasReachedLimit = usage.count >= usage.limit;
 	const handleUpgradeMembership = () => router.push("/manage-membership");
 	const handleGoBack = () => router.back();
 
 	return (
-		<div className="w-full h-auto mb-0 px-4 py-4 md:px-8 lg:px-10 lg:py-12 episode-card-wrapper bg-gradient-to-b from-[#1a0b0e] to-[#0d0305] rounded-lg border border-[#4a4e4e1a] shadow-lg">
+		<div className="w-full h-auto mb-0 px-4 py-4 md:px-8 lg:px-10 lg:py-12  rounded-lg border border-[#4a4e4e1a] shadow-lg">
 			<div className="w-full flex flex-col gap-3 md:gap-8">
 				<PageHeader title="Create Episode" className="pt-0" description="Generate a summary and audio version of a	 podcast episode from any YouTube video" />
 

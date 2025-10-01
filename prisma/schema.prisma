@@ -146,7 +146,6 @@ model UserCurationProfile {
   profile_id            String           @id @default(uuid()) @map("profile_id")
   user_id               String           @unique @map("user_id")
   name                  String           @map("name")
-  status                String           @default("Draft") @map("status")
   audio_url             String?          @map("audio_url")
   image_url             String?          @map("image_url")
   created_at            DateTime         @default(now()) @map("created_at")

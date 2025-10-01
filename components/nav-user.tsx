@@ -78,14 +78,14 @@ export function NavUser({
 			<SidebarMenuItem>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<SidebarMenuButton size="lg" className="border-none outline-none data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+						<SidebarMenuButton size="lg" className="h-16 px-2 bg-[#4846b618] border-1 border-[#a075e729]  data-[state=open]:bg-[#141421] data-[state=open]:text-[#4d8fe0]">
 							<Avatar className="h-8 w-8 rounded-lg filter ">
 								<AvatarImage src={user.avatar} alt={user.name} />
 								<AvatarFallback className="rounded-lg">{getInitials(user.name)}</AvatarFallback>
 							</Avatar>
-							<div className="grid flex-1 text-left text-sm leading-tight">
+							<div className="flex flex-col my-2 p-1  flex-1 text-left text-sm leading-tight">
 								<span className="truncate font-medium text-foreground/90 text-sm">{user.name}</span>
-								<span className="truncate text-xxs text-muted-foreground/80 font-[300] mt-1">{user.email}</span>
+								<span className="truncate text-xs text-muted-foreground/80 font-[300] mt-1">{user.email}</span>
 							</div>
 							<MoreVerticalIcon className="ml-auto h-4 w-4" />
 						</SidebarMenuButton>
@@ -96,27 +96,27 @@ export function NavUser({
 						align="end"
 						sideOffset={4}>
 						<DropdownMenuLabel className="p-0 font-normal">
-							<div className="flex items-center gap-2 px-1 md:px-2 pb-4.5 text-left text-sm  text-foreground font-[400] leading-tight">
+							<div className="flex items-center gap-2 px-1 md:px-2 py-1 text-left text-sm  text-foreground font-[400] leading-tight">
 								<Avatar className="h-8 w-8 rounded-lg filter">
 									<AvatarImage src={user.avatar} alt={user.name} />
 									<AvatarFallback className="rounded-lg">{getInitials(user.name)}</AvatarFallback>
 								</Avatar>
-								<div className="grid flex-1 text-left text-xs leading-tight">
-									<span className="truncate font-medium text-sm text-secondary-foreground">{user.name}</span>
-									<span className="truncate my-0 font-[200] text-sm text-foreground/70">{user.email}</span>
+								<div className="flex flex-col gap-1 items-start justify-center flex-1 text-left text-xs leading-tight py-1 my-0">
+									<span className="truncate font-medium text-sm text-foreground">{user.name}</span>
+									<span className="truncate my-0 font-[200] text-xs text-foreground/70">{user.email}</span>
 								</div>
 							</div>
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup className="flex flex-col gap-1 py-2">
 							<DropdownMenuItem asChild>
-								<Link href="/notification-preferences">
+								<Link href="/notification-preferences" className="text-[#beb5b5] text-xs">
 									<Bell className="h-4 w-4" />
 									Notification Preferences
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem asChild>
-								<Link href="/manage-membership">
+								<Link href="/manage-membership" className="text-[#beb5b5] text-xs">
 									<CreditCard className="h-4 w-4" />
 									Subscription
 								</Link>
@@ -127,9 +127,9 @@ export function NavUser({
 								<DropdownMenuSeparator />
 								<DropdownMenuGroup>
 									<DropdownMenuItem asChild>
-										<Link href="/admin">
+										<Link href="/admin" className="text-[#beb5b5] text-xs">
 											<Shield className="h-4 w-4" />
-											Admin Portal (Restricted Access)
+											Admin Portal
 										</Link>
 									</DropdownMenuItem>
 								</DropdownMenuGroup>
@@ -137,7 +137,7 @@ export function NavUser({
 						)}
 						<DropdownMenuSeparator />
 						<DropdownMenuItem
-							className="text-sm mt-2"
+							className="text-[#beb5b5] text-xs"
 							onClick={async () => {
 								try {
 									await signOut();

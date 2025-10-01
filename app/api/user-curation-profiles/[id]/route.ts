@@ -77,9 +77,9 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 		}
 
 		const body = await request.json()
-		const { name, status, selected_bundle_id } = body
+		const { name, selected_bundle_id } = body
 
-		const hasUpdateData = name || status || selected_bundle_id
+		const hasUpdateData = name || selected_bundle_id
 		if (!hasUpdateData) {
 			return NextResponse.json({ error: "No update data provided" }, { status: 400 })
 		}
@@ -94,13 +94,11 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 
 		const dataToUpdate: {
 			name?: string
-			status?: string
 			selected_bundle_id?: string
 			is_bundle_selection?: boolean
 		} = {}
 
 		if (name) dataToUpdate.name = name
-		if (status) dataToUpdate.status = status
 
 		if (selected_bundle_id) {
 			const [bundle, sub] = await Promise.all([

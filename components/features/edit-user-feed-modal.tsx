@@ -17,7 +17,6 @@ interface EditUserFeedModalProps {
 
 export function EditUserFeedModal({ isOpen, onClose, collection, onSave }: Readonly<EditUserFeedModalProps>) {
 	const [name, setName] = useState(collection.name)
-	const [status, _setStatus] = useState(collection.status)
 	const [isLoading, setIsLoading] = useState(false)
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -27,7 +26,6 @@ export function EditUserFeedModal({ isOpen, onClose, collection, onSave }: Reado
 		try {
 			await onSave({
 				name,
-				status,
 			})
 		} catch (error) {
 			console.error("Failed to update profile:", error)

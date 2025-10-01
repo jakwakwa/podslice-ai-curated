@@ -4,7 +4,7 @@ import Image from "next/image";
 import type React from "react";
 import { useYouTubeChannel } from "@/hooks/useYouTubeChannel";
 import { Badge } from "./badge";
-import { Card, CardAction, CardHeader, CardTitle } from "./card";
+import { Card, CardAction, CardHeader } from "./card";
 import DateIndicator from "./date-indicator";
 import DurationIndicator from "./duration-indicator";
 
@@ -66,8 +66,8 @@ export function EpisodeCard({ as = "div", imageUrl, title, publishedAt, duration
 					})()}
 				</CardHeader>
 
-				<div className="flex flex-col w-full">
-					<CardTitle className="w-full mb-4 line-clamp-2">{title}</CardTitle>
+				<div className="flex flex-col justify-start items-start content-start w-4/5">
+					<p className="w-[100%]  md:w-[90%] font-semibold mb-2 line-clamp-2 truncate text-[0.9rem] text-[#9fd5dd]">{title}</p>
 
 					<div className="w-full flex justify-between flex-row items-center gap-2">
 						<div className="flex gap-2">
@@ -79,15 +79,14 @@ export function EpisodeCard({ as = "div", imageUrl, title, publishedAt, duration
 							</Badge>
 						</div>
 
-
 						{detailsHref ? (
-							<a href={detailsHref} className="inline-flex items-center px-2 py-0.5 text-[0.6rem] rounded-md border border-[#25b9c74a] hover:bg-[#ffffff0d]  bg-[#16141449] transition-colors text-[#18b3bb] ">
+							<a
+								href={detailsHref}
+								className="absolute right-6 bottom-4 md:right-6 md:bottom-6 md:flex items-center px-2 py-0.5 text-[0.6rem] rounded-md border border-[#25b9c74a] hover:bg-[#ffffff0d]  bg-[#16141449] transition-colors text-[#18b3bb] ">
 								View
 							</a>
 						) : null}
-
 					</div>
-
 				</div>
 			</div>
 		</Card>

@@ -35,14 +35,14 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<div
 		ref={ref}
-		className={cn("text-[0.8rem] text-[#e7f9f9b5] font-semibold tracking-normal md:text-[0.8rem] md:leading-5.5 pr-[20%]", className)}
+		className={cn("text-[0.8rem] font-semibold tracking-normal md:text-[1rem] md:leading-5 pr-[20%] text-shadow text-shadow-md", className)}
 		{...props}
 	/>
 ))
 CardTitle.displayName = "CardTitle"
 const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
 	({ className, ...props }, ref) => (
-		<p ref={ref} className={cn("text-base text-[#ecececb1]/80 episode-p pr-[10%] mb-1", className)} {...props} />
+		<p ref={ref} className={cn(" text-[#ECECECC9] pr-[10%] mb-1", className)} {...props} />
 	)
 );
 CardDescription.displayName = "CardDescription"
@@ -61,7 +61,7 @@ const CardAction = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<div
 		ref={ref}
-		className={cn("absolute top-2 sm:top-3 md:top-4 cursor-pointer flex justify-center rounded-full col-start-2 row-span-2 row-start-1 self-start justify-self-end p-2  w-10 lg:w-12  transition-all duration-200",
+		className={cn("absolute top-2 sm:top-3 md:top-4 cursor-pointer flex justify-center rounded-full col-start-2 row-span-2 row-start-1 self-start justify-self-end p-2 w-10 lg:w-12  transition-all duration-200",
 			className)}
 		{...props}
 	/>

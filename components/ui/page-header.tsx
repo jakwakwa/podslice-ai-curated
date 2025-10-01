@@ -29,11 +29,11 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(({ classNam
 	const _isPathAllowed = allowedPaths.includes(pathname);
 
 	return (
-		<div className="backdrop-blur-lg bg-[#2b2d674e] shadow  border-1 rounded-2xl px-2 flex flex-col border-[#7c7ee5ce] justify-between mb-4">
+		<div className="backdrop-blur-sm bg-[#01021e44] shadow  border-1 rounded-2xl px-2 flex flex-col border-[#abf2ff24] justify-between mb-4">
 			<div className={cn(headerVariants({ spacing, className }))} ref={ref} {...props}>
-				<h2 className="flex text-2xl font-black px-2 md:px-0 pt-0 pb-0 md:py-0 text-shadow-md text-shadow-[#3f365e6a] text-[#7BDBF0] leading-[1.5] max-w-screen lg:max-w-4xl">{title}</h2>
+				<h2 className="flex text-xl font-bold px-2 md:px-0 pt-0 pb-0 md:py-0 text-shadow-md text-shadow-[#3f365e6a] text-[#afb7db] leading-[1.5] max-w-screen lg:max-w-4xl">{title}</h2>
 				{description && (
-					<Typography as="p" variant="body" className="text-sm px-2  md:px-0  md:py-1.5 text-[#d6f6f9df] leading-[1.5] max-w-screen  text-shadow-sm text-shadow-[#00000010] font-semibold w-full md:max-w-[97%]">
+					<Typography as="p" variant="body" className="text-base px-2  md:px-0  md:py-1.5 text-[#d6f6f9df] leading-[1.5] max-w-screen  text-shadow-sm text-shadow-[#00000010] font-medium w-full md:max-w-[97%]">
 						{description}
 					</Typography>
 				)}
