@@ -36,7 +36,7 @@ const PRICING_TIER: PlanTier[] = [
 			"Custom Feed Selection: Our team handpicks a selection of approximately 25 high-quality podcast shows. You have the flexibility to choose up to 5 individual shows from this curated list to form your custom collection.",
 		],
 		description: "Ultimate control with unlimited custom curation profiles",
-		episodeLimit: 3,
+		episodeLimit: 100,
 		featured: false,
 	},
 ];
