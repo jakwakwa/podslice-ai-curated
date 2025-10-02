@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import LandingAudioPlayer from "@/components/demo/landing-audio-player";
 import { Button } from "@/components/ui/button";
+import { PRICING_TIER } from "@/config/paddle-config";
 import { getClerkSignInUrl } from "@/lib/env";
 import styles from "@/styles/landing-page-content.module.css";
 import { LandingPageHeader } from "../layout/LandingPageHeader";
@@ -14,44 +15,15 @@ import { Badge } from "../ui/badge";
 import { CardContent, CardHeader } from "../ui/card";
 import { Typography } from "../ui/typography";
 
-// Hardcoded subscription tiers for landing page
-const SUBSCRIPTION_TIERS = [
-	{
-		id: "freeslice",
-		name: "FreeSlice",
-		price: 0,
-		description: "Perfect for podcast discovery and light listening",
-		features: [
-			"Always free",
-			"Access to free bundled feeds: Automated Weekly Summarised Audio Episodes, centred around popular podcast shows - refreshed monthly by our team to ensure the content remains relevant and exciting.",
-		],
-		popular: false,
-	},
-	{
-		id: "casual_listener",
-		name: "Casual Listener",
-		price: 5,
-		description: "Enhanced experience with premium features and priority access",
-		features: [
-			"Stay Informed with Smart Notifications",
-			"Pre-curated Bundles: For ultimate convenience, we've created three special 'Editor's Choice' bundles. Each bundle is a thoughtfully assembled package of 5 shows centred around a specific theme refreshed monthly by our team to ensure the content remains relevant and exciting.",
-			"Custom Feed Selection: Our team handpicks a selection of approximately 25 high-quality podcast shows. You have the flexibility to choose up to 5 individual shows from this curated list to form your custom collection.",
-		],
-		popular: false,
-	},
-	{
-		id: "curate_control",
-		name: "Curate & Control",
-		price: 10,
-		description: "Ultimate control with unlimited custom curation profiles",
-		features: [
-			"Stay Informed with Smart Notifications",
-			"Pre-curated Bundles: For ultimate convenience, we've created three special 'Editor's Choice' bundles. Each bundle is a thoughtfully assembled package of 5 shows centred around a specific theme refreshed monthly by our team to ensure the content remains relevant and exciting.",
-			"Custom Feed Selection: Our team handpicks a selection of approximately 25 high-quality podcast shows. You have the flexibility to choose up to 5 individual shows from this curated list to form your custom collection.",
-		],
-		popular: true,
-	},
-];
+// Map PRICING_TIER to landing page format
+const SUBSCRIPTION_TIERS = PRICING_TIER.map(tier => ({
+	id: tier.planId.toLowerCase(),
+	name: tier.productTitle,
+	price: tier.planId === "FREE_SLICE" ? 0 : tier.planId === "CASUAL_LISTENER" ? 5 : 10,
+	description: tier.description,
+	features: tier.features,
+	popular: tier.featured,
+}));
 const _curateText = `**Key Features & How They Benefit You:**
 
 - **One Focused Bundle Per User:** To ensure the highest quality of your personalised episodes and to manage the significant costs associated with advanced AI processing (like ElevenReader), each user can now manage one primary collection at a time. This focus allows us to dedicate our resources to creating one truly exceptional weekly episode for you.
@@ -64,6 +36,8 @@ const _curateText = `**Key Features & How They Benefit You:**
     - **Weekly Email Reminders:** A helpful email will be sent out weekly, reminding you about your newly generated podcast episode and encouraging you to listen.
     - **Personalised Preferences:** You'll have full control over your notification preferences in your account settings, allowing you to tailor how and when you receive updates.
 - **Your Episodes, Always Accessible:** Should you decide to remove a collection, rest assured that any episodes previously generated from it will remain accessible in your "all podcast episodes" view. Your listening history is always preserved.`;
+
+
 export default function LandingPageContent() {
 	const _features = [
 		{
@@ -85,7 +59,7 @@ export default function LandingPageContent() {
 				"Stop frantically taking notes or rewinding endlessly. Every key point is instantly searchable and reviewable. Find that specific quote, concept, or data point in seconds instead of scrubbing through audio files for minutes.",
 		},
 		{
-			icon: <UilCheckCircle className="w-6 h-6" />,
+			icon: <UilCheckCircle className="w-6 h-5" />,
 			title: "Pinpoint the most critical information in seconds",
 			description:
 				"Cut through the noise to find what truly matters. Our intelligent extraction identifies the 3-5 most impactful insights from each episode, so you can immediately apply what you've learned instead of wondering what to do with scattered information.",
@@ -175,9 +149,7 @@ export default function LandingPageContent() {
 			<section className="my-12  w-full px-4 md:my-32">
 				<div className={styles.howItWorksContainer}>
 					<motion.div className={styles.howItWorksHeader} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }}>
-						<h2 className="text-left  sm:text-center text-[#919ceb] font-bold px-4 mt-4 md:px-0 md:mt-18  text-3xl md:text-[3rem]">
-							How it Works
-						</h2>
+						<h2 className="text-left  sm:text-center text-[#919ceb] font-bold px-4 mt-4 md:px-0 md:mt-18  text-3xl md:text-[3rem]">How it Works</h2>
 
 						<Typography className="max-w-full text-base text-left md:max-w-2xl mx-auto px-4 sm:text-center pb-8 mt-4 sm:text-[1.4rem] my-8 leading-[1.4] text-[#c1f0ff]/80">
 							Getting started with Podslice.ai is straightforward. Follow these four simple steps to create your focused content experience.
@@ -214,9 +186,7 @@ export default function LandingPageContent() {
 			<section className="my-12 w-full px-4 md:my-32">
 				<div className={styles.pricingContainer}>
 					<div>
-						<h2 className="text-left  sm:text-center text-[#5676e8] font-bold px-4 mt-4 md:px-0 md:mt-18  text-3xl md:text-[3rem]">
-							Choose Your Plan
-						</h2>
+						<h2 className="text-left  sm:text-center text-[#5676e8] font-bold px-4 mt-4 md:px-0 md:mt-18  text-3xl md:text-[3rem]">Choose Your Plan</h2>
 						<Typography className="max-w-full text-base text-left md:max-w-2xl mx-auto px-4 sm:text-center pb-8 mt-4 sm:text-[1.4rem] my-8 leading-[1.4] text-[#c1f0ff]/80">
 							From free discovery to pro-level curation control. Each plan builds on the last to give you exactly what you need.
 						</Typography>
@@ -249,11 +219,11 @@ export default function LandingPageContent() {
 										</Badge>
 									)}
 								</CardHeader>
-								<CardContent className="flex flex-col flex-1 justify-between">
+								<CardContent className="flex flex-col flex-1 justify-start">
 									<ul className="list-none p-0 m-0 mt-2">
 										{tier.features.map((feature, index) => (
-											<li key={index} className="flex items-start gap-3 py-3 text-foreground/60 text-xs font-light ">
-												<CheckCircle size={16} className="text-amber flex-shrink-0 mt-1" color={"#abf3f5"} />
+											<li key={index} className="flex content-center items-start gap-3 pb-3 text-foreground/60 text-xs font-light ">
+												<CheckCircle size={16} className="text-amber flex-shrink-0 mt-[1px]" color={"#abf3f5"} />
 												{feature}
 											</li>
 										))}
@@ -263,7 +233,7 @@ export default function LandingPageContent() {
 											className={`w-full flex items-center justify-center gap-2 mt-auto ${tier.popular ? " text-accent-foreground hover:bg-radial-gradient-secondary/80 transition-all duration-200 ease-in-out h-10" : "h-10"}`}
 											variant={tier.popular ? "default" : "default"}
 											size="lg">
-											{tier.name === "FreeSlice" ? "Start Free Trial" : "Subscribe Today"}
+											{tier.id === "free_slice" ? "Start Free Trial" : "Subscribe Today"}
 										</Button>
 									</Link>
 								</CardContent>

@@ -68,12 +68,12 @@ const ManagPlanLandingPage: React.FC = () => {
 
 	return (
 		<>
-			{hasActiveSubscription && <div className="">
+			{hasActiveSubscription && <div className=" mt-4 ">
 				<Subscriptions />
 			</div>}
 
 			{!hasActiveSubscription && (
-				<div className="flex w-full flex-col gap-12 ">
+				<div className="flex w-full flex-col gap-12 mt-4 ">
 					<PricingPlans onCheckoutCompleted={syncSubscription} onCheckoutClosed={fetchSubscription} paddleProductPlan={PRICING_TIER} />
 				</div>
 			)}
