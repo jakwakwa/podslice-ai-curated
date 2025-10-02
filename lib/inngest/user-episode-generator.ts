@@ -27,12 +27,16 @@ export const generateUserEpisode = inngest.createFunction(
 		id: "generate-user-episode-workflow",
 		name: "Generate User Episode Workflow",
 		retries: 2,
-		onFailure: async ({ error: _error, event }) => {
-			const { userEpisodeId } = (event as unknown as { data: { userEpisodeId: string } }).data;
-			await prisma.userEpisode.update({
-				where: { episode_id: userEpisodeId },
-				data: { status: "FAILED" },
-			});
+	onFailure: async ({ error: _error, event }) => {
+		const { userEpisodeId } = (event as unknown as { data: { event: { data: { userEpisodeId: string } } } }).data.event.data;
+		if (!userEpisodeId) {
+			console.error("[USER_EPISODE_FAILED] Missing userEpisodeId in failure event", event);
+			return;
+		}
+		await prisma.userEpisode.update({
+			where: { episode_id: userEpisodeId },
+			data: { status: "FAILED" },
+		});
 
 			// Best-effort in-app notification on failure
 			try {

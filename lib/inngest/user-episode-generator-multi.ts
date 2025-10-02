@@ -43,12 +43,16 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		id: "generate-user-episode-multi-workflow",
 		name: "Generate User Episode Multi-Speaker Workflow",
 		retries: 2,
-		onFailure: async ({ event }) => {
-			const { userEpisodeId } = (event as unknown as { data: { userEpisodeId: string } }).data;
-			await prisma.userEpisode.update({
-				where: { episode_id: userEpisodeId },
-				data: { status: "FAILED" },
-			});
+	onFailure: async ({ event }) => {
+		const { userEpisodeId } = (event as unknown as { data: { event: { data: { userEpisodeId: string } } } }).data.event.data;
+		if (!userEpisodeId) {
+			console.error("[USER_EPISODE_MULTI_FAILED] Missing userEpisodeId in failure event", event);
+			return;
+		}
+		await prisma.userEpisode.update({
+			where: { episode_id: userEpisodeId },
+			data: { status: "FAILED" },
+		});
 			try {
 				const episode = await prisma.userEpisode.findUnique({
 					where: { episode_id: userEpisodeId },
