@@ -1,3 +1,4 @@
+import { getProviderWindowSeconds } from "@/lib/env";
 import { writeEpisodeDebugLog, writeEpisodeDebugReport } from "@/lib/debug-logger";
 import emailService from "@/lib/email-service";
 import { inngest } from "@/lib/inngest/client";
@@ -118,15 +119,16 @@ export const transcriptionCoordinator = inngest.createFunction(
 		});
 
 		// Wait for either Gemini to succeed or fail, whichever happens first
+		const windowSec = getProviderWindowSeconds();
 		const result = await Promise.race([
 			step.waitForEvent("wait-gemini-success", {
 				event: Events.Succeeded,
-				timeout: "600s",
+				timeout: `${windowSec}s`,
 				if: `event.data.jobId == "${jobId}"`,
 			}),
 			step.waitForEvent("wait-gemini-failure", {
 				event: Events.Failed,
-				timeout: "600s",
+				timeout: `${windowSec}s`,
 				if: `event.data.jobId == "${jobId}"`,
 			}),
 		]);

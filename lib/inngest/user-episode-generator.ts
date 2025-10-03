@@ -1,3 +1,4 @@
+import { getEpisodeTargetMinutes } from "@/lib/env";
 import { generateText as genText } from "@/lib/inngest/utils/genai";
 import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
 
@@ -112,12 +113,12 @@ export const generateUserEpisode = inngest.createFunction(
 			return text;
 		});
 
-		// Step 3: Generate Podslice-hosted script (commentary over summary)
-		const script = await step.run("generate-script", async () => {
-			const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
-			const targetMinutes = Math.max(3, Number(process.env.EPISODE_TARGET_MINUTES || 1));
-			const minWords = Math.floor(targetMinutes * 140);
-			const maxWords = Math.floor(targetMinutes * 180);
+	// Step 3: Generate Podslice-hosted script (commentary over summary)
+	const script = await step.run("generate-script", async () => {
+		const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
+		const targetMinutes = getEpisodeTargetMinutes();
+		const minWords = Math.floor(targetMinutes * 140);
+		const maxWords = Math.floor(targetMinutes * 180);
 			return genText(
 				modelName2,
 				`Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (about ${targetMinutes} minutes) single-narrator podcast segment where a Podslice host explains the highlights to listeners.\n\nIdentity & framing:\n- The speaker is a Podslice host summarizing someone else's content.\n- Do NOT reenact or impersonate the original speakers.\n- Present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken words only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as “the video” or “the episode.”\n\nStructure:\n- Hook that frames this as a Podslice summary.\n- Smooth transitions between highlight clusters.\n- Clear, concise wrap-up.\n\nSUMMARY:\n${summary}`
@@ -130,11 +131,13 @@ export const generateUserEpisode = inngest.createFunction(
 		const audioChunkBase64: string[] = [];
 		for (let i = 0; i < scriptParts.length; i++) {
 			// Each chunk gets its own step to avoid long single-step runtime
-			const base64 = await step.run(`tts-chunk-${i + 1}`, async () => {
+			// Return chunk size instead of the actual audio data to avoid Inngest opcode size limits
+			await step.run(`tts-chunk-${i + 1}`, async () => {
 				const buf = await generateSingleSpeakerTts(scriptParts[i]);
-				return buf.toString("base64");
+				const base64 = buf.toString("base64");
+				audioChunkBase64.push(base64);
+				return { chunkIndex: i + 1, size: base64.length }; // Return metadata only
 			});
-			audioChunkBase64.push(base64 as string);
 		}
 
 		const { gcsAudioUrl, durationSeconds } = await step.run("combine-upload-audio", async () => {

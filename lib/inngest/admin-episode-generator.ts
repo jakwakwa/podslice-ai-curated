@@ -1,3 +1,4 @@
+import { getEpisodeTargetMinutes } from "@/lib/env";
 import { combineAndUploadWavChunks, generateSingleSpeakerTts, getTtsChunkWordLimit, splitScriptIntoChunks, uploadBufferToPrimaryBucket } from "@/lib/inngest/episode-shared";
 import { generateText as genText } from "@/lib/inngest/utils/genai";
 import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
@@ -59,12 +60,12 @@ export const generateAdminEpisode = inngest.createFunction(
 			return generateObjectiveSummary(transcript, { modelName });
 		});
 
-		// 3. Script (admin curated tone)
-		const script = await step.run("generate-script", async () => {
-			const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
-			const targetMinutes = Math.max(3, Number(process.env.EPISODE_TARGET_MINUTES || 3));
-			const minWords = Math.floor(targetMinutes * 140);
-			const maxWords = Math.floor(targetMinutes * 180);
+	// 3. Script (admin curated tone)
+	const script = await step.run("generate-script", async () => {
+		const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
+		const targetMinutes = getEpisodeTargetMinutes();
+		const minWords = Math.floor(targetMinutes * 140);
+		const maxWords = Math.floor(targetMinutes * 180);
 			return genText(
 				modelName2,
 				`Task: Based on the SOURCE SUMMARY below, write a ${minWords}-${maxWords} word (about ${targetMinutes} minutes) single-narrator podcast segment for the Podslice curated catalog.
@@ -96,11 +97,13 @@ ${summary}`
 		const scriptParts = splitScriptIntoChunks(script, chunkWordLimit);
 		const audioChunkBase64: string[] = [];
 		for (let i = 0; i < scriptParts.length; i++) {
-			const base64 = await step.run(`tts-chunk-${i + 1}`, async () => {
+			// Return metadata only to avoid Inngest opcode size limits
+			await step.run(`tts-chunk-${i + 1}`, async () => {
 				const buf = await generateSingleSpeakerTts(scriptParts[i]);
-				return buf.toString("base64");
+				const base64 = buf.toString("base64");
+				audioChunkBase64.push(base64);
+				return { chunkIndex: i + 1, size: base64.length }; // Return metadata only
 			});
-			audioChunkBase64.push(base64 as string);
 		}
 
 		// 5. Combine + upload (podcasts path)

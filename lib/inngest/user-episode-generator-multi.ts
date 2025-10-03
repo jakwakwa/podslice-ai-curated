@@ -135,12 +135,14 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		const lineAudioBase64: string[] = [];
 		for (let i = 0; i < duetLines.length; i++) {
 			const line = duetLines[i];
-			const base64 = await step.run(`tts-line-${i + 1}`, async () => {
+			// Return metadata only to avoid Inngest opcode size limits
+			await step.run(`tts-line-${i + 1}`, async () => {
 				const voice = line.speaker === "A" ? voiceA : voiceB;
 				const audio = await ttsWithVoice(line.text, voice);
-				return audio.toString("base64");
+				const base64 = audio.toString("base64");
+				lineAudioBase64.push(base64);
+				return { lineIndex: i + 1, speaker: line.speaker, size: base64.length }; // Return metadata only
 			});
-			lineAudioBase64.push(base64 as string);
 		}
 
 		const { gcsAudioUrl, durationSeconds } = await step.run("combine-upload-multi-voice", async () => {

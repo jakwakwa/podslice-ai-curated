@@ -78,3 +78,51 @@ export function getMaxDurationSeconds(): number {
 	console.log("[DEBUG] getMaxDurationSeconds - invalid parsed value, using fallback");
 	return 10000800;
 }
+
+/**
+ * Returns the provider window timeout in seconds.
+ * Reads from the `PROVIDER_WINDOW_SECONDS` environment variable.
+ * Falls back to 270 seconds (4.5 minutes) when not set or invalid.
+ * This is the maximum time allowed for transcription provider operations.
+ */
+export function getProviderWindowSeconds(): number {
+	const raw = process.env.PROVIDER_WINDOW_SECONDS;
+	if (!raw) {
+		if (process.env.NODE_ENV === "development") {
+			console.log("[ENV] PROVIDER_WINDOW_SECONDS not set, using default: 270");
+		}
+		return 270;
+	}
+	const parsed = Number.parseInt(raw, 10);
+	if (Number.isFinite(parsed) && parsed > 0) {
+		return parsed;
+	}
+	if (process.env.NODE_ENV === "development") {
+		console.log("[ENV] Invalid PROVIDER_WINDOW_SECONDS value:", raw, "- using default: 270");
+	}
+	return 270;
+}
+
+/**
+ * Returns the target episode length in minutes.
+ * Reads from the `EPISODE_TARGET_MINUTES` environment variable.
+ * Falls back to 4 minutes when not set or invalid.
+ * This controls the target length for generated podcast episodes.
+ */
+export function getEpisodeTargetMinutes(): number {
+	const raw = process.env.EPISODE_TARGET_MINUTES;
+	if (!raw) {
+		if (process.env.NODE_ENV === "development") {
+			console.log("[ENV] EPISODE_TARGET_MINUTES not set, using default: 4");
+		}
+		return 4;
+	}
+	const parsed = Number(raw);
+	if (Number.isFinite(parsed) && parsed > 0) {
+		return parsed;
+	}
+	if (process.env.NODE_ENV === "development") {
+		console.log("[ENV] Invalid EPISODE_TARGET_MINUTES value:", raw, "- using default: 4");
+	}
+	return 4;
+}

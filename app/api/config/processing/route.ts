@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getProcessingConfig } from "@/config/get-processing-config";
+import { getProcessingLimits } from "@/config/processing-limits";
 
 /**
  * API endpoint to expose client-safe processing configuration.
@@ -8,7 +8,7 @@ import { getProcessingConfig } from "@/config/get-processing-config";
  */
 export async function GET() {
 	try {
-		const config = getProcessingConfig();
+		const config = getProcessingLimits();
 
 		// Only expose values that are safe and necessary for the client
 		const clientSafeConfig = {
