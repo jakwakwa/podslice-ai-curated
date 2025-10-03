@@ -200,7 +200,7 @@ export function EpisodeCreator() {
 			}
 		}
 		fetchMetadata();
-	}, [debouncedYoutubeUrl]);
+	}, [debouncedYoutubeUrl, maxDuration]);
 
 	async function handleCreate() {
 		console.log("[DEBUG] handleCreate called with canSubmit:", canSubmit);
