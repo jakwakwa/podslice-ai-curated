@@ -280,12 +280,18 @@ export function EpisodeCreator() {
 			if (!url) {
 				const res = await fetch(`/api/tts/voice-sample?voice=${encodeURIComponent(voiceName)}`);
 				if (!res.ok) throw new Error(await res.text());
-				const blob = await res.blob();
+				// Get the array buffer and explicitly create a blob with audio/wav MIME type
+				const arrayBuffer = await res.arrayBuffer();
+				const blob = new Blob([arrayBuffer], { type: 'audio/wav' });
 				url = URL.createObjectURL(blob);
 				setAudioUrlCache(prev => ({ ...prev, [voiceName]: url }));
 			}
 			const audio = new Audio(url);
 			audio.onended = () => setIsPlaying(null);
+			audio.onerror = (e) => {
+				console.error("Audio playback error:", e);
+				throw new Error("Audio element failed to load source");
+			};
 			await audio.play();
 		} catch (err) {
 			setIsPlaying(null);
