@@ -380,8 +380,9 @@ The PODSLICE Team`;
 																			href="${data.episodeUrl}"
 																			style="margin-top:1rem;display:inline-flex;align-items:center;border-radius:9999px;background-color:#025E5F;padding-left:3rem;padding-right:3rem;padding-top:1rem;padding-bottom:1rem;text-align:center;font-weight:700;font-size:0.875rem;line-height:1.25rem;color:rgb(225 242 240);text-decoration-line:none"
 																			target="_blank"
-																			>View your episode!</a
-																		><a
+																			>View or Share</a
+																		>
+																		<a
 																			href="https://www.podslice.ai/dashboard"
 																			style="margin-top:1rem;display:block;align-items:center;text-align:center;font-weight:700;color:rgb(17,24,39);font-size:0.875rem;line-height:1.25rem;text-decoration-line:none"
 																			target="_blank"
