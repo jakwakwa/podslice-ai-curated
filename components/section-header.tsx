@@ -1,6 +1,6 @@
 interface SectionHeaderProps {
-	title: string
-	description: string
+	title: string;
+	description: string;
 }
 
 const SectionHeader = ({ title, description }: SectionHeaderProps): React.ReactElement => {
@@ -9,7 +9,7 @@ const SectionHeader = ({ title, description }: SectionHeaderProps): React.ReactE
 			<h2 className="text-2xl font-semibold tracking-tight">{title}</h2>
 			<p className="text-base leading-6 font-normal tracking-[0.025em] text-muted-foreground">{description}</p>
 		</div>
-	)
-}
+	);
+};
 
-export default SectionHeader
+export default SectionHeader;

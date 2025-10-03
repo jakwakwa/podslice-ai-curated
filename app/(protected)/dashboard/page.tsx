@@ -24,7 +24,6 @@ interface SubscriptionInfo {
 	status: string;
 }
 
-
 export default function CurationProfileManagementPage() {
 	const [userCurationProfile, setUserCurationProfile] = useState<UserCurationProfileWithRelations | null>(null);
 	const [_episodes, setEpisodes] = useState<Episode[]>([]);
@@ -134,7 +133,7 @@ export default function CurationProfileManagementPage() {
 			{/* Latest Bundle Episode Section */}
 			{latestBundleEpisode && (
 				<div className="w-full border-b-0 rounded-0 px-4 py-8  my-8 mx-0 bg-episode-card-wrapper border-[#2c2a2a17] shadow-xl shadow-slate-900/20  mt-0 pt-6 sm:pt-0  md:pt-9 md:mt-0  md:mb-8  md:px-6 border-dark md:rounded-3xl overflow-hidden  ">
-					<CardTitle className="mb-4 flex items-center text-base" >
+					<CardTitle className="mb-4 flex items-center text-base">
 						<span className="bg-[#089e69] rounded-sm shadow shadow-[#1a0b2f3f]  animate-pulse ease-in-out duration-200 px-1.5 py-0.5 text-sm md:text-sm mr-2">New</span>Latest episode from your Bundle
 					</CardTitle>
 					<CardDescription className="text-xs opacity-90 mb-4">See your latest roundup episodes here from {userCurationProfile?.selectedBundle?.name}</CardDescription>
@@ -283,8 +282,10 @@ export default function CurationProfileManagementPage() {
 			) : (
 				<div className="max-w-2xl mt-8">
 					<Alert>
-
-						<AlertTitle><AlertCircle className="h-4 w-4" />Would you like to get started with your feed?</AlertTitle>
+						<AlertTitle>
+							<AlertCircle className="h-4 w-4" />
+							Would you like to get started with your feed?
+						</AlertTitle>
 						<AlertDescription className="mt-2">You haven't created a Weekly Bundled Feed yet. Create one to start managing your podcast curation.</AlertDescription>
 						<div className="mt-4">
 							<Button variant="default" size="sm" onClick={() => setIsCreateWizardOpen(true)}>

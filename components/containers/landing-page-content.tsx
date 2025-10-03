@@ -37,7 +37,6 @@ const _curateText = `**Key Features & How They Benefit You:**
     - **Personalised Preferences:** You'll have full control over your notification preferences in your account settings, allowing you to tailor how and when you receive updates.
 - **Your Episodes, Always Accessible:** Should you decide to remove a collection, rest assured that any episodes previously generated from it will remain accessible in your "all podcast episodes" view. Your listening history is always preserved.`;
 
-
 export default function LandingPageContent() {
 	const _features = [
 		{

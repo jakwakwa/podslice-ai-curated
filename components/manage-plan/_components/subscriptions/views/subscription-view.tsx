@@ -27,7 +27,7 @@ export function SubscriptionView() {
 
 				const data = await res.json();
 				setSubscription(data);
-			} catch { }
+			} catch {}
 		};
 		fetchSubscription();
 	}, [setSubscription]);
@@ -91,7 +91,7 @@ export function SubscriptionView() {
 			}
 			const data = await res.json();
 			setSubscription(data);
-		} catch { }
+		} catch {}
 	}, [setSubscription]);
 
 	const pollingTimerRef = useRef<number | null>(null);
@@ -136,7 +136,7 @@ export function SubscriptionView() {
 				try {
 					await fetch("/api/account/subscription/sync-paddle", { method: "POST" });
 					lastSyncAtRef.current = now;
-				} catch { }
+				} catch {}
 				syncTriggeredRef.current = true;
 			}
 			try {
@@ -152,7 +152,7 @@ export function SubscriptionView() {
 					stopPortalPolling();
 					return;
 				}
-			} catch { }
+			} catch {}
 		};
 		void tick();
 		pollingTimerRef.current = window.setInterval(() => {
@@ -177,7 +177,7 @@ export function SubscriptionView() {
 				window.open(overviewUrl, "_blank");
 				startPortalPolling();
 			}
-		} catch { }
+		} catch {}
 	};
 
 	useEffect(() => {

@@ -1,15 +1,15 @@
-import { auth } from "@clerk/nextjs/server"
-import { NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
+import { auth } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
 	try {
-		const { userId } = await auth()
+		const { userId } = await auth();
 		if (!userId) {
-			return new NextResponse("Unauthorized", { status: 401 })
+			return new NextResponse("Unauthorized", { status: 401 });
 		}
 
-		const { id: episodeId } = await params
+		const { id: episodeId } = await params;
 
 		const episode = await prisma.userEpisode.findFirst({
 			where: {
@@ -25,10 +25,10 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
 				created_at: true,
 				updated_at: true,
 			},
-		})
+		});
 
 		if (!episode) {
-			return new NextResponse("Episode not found", { status: 404 })
+			return new NextResponse("Episode not found", { status: 404 });
 		}
 
 		// Map status to progress information
@@ -37,16 +37,16 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
 			PROCESSING: { step: 2, total: 5, message: "Processing transcript..." },
 			COMPLETED: { step: 5, total: 5, message: "Episode ready!" },
 			FAILED: { step: 0, total: 5, message: "Generation failed" },
-		}
+		};
 
-		const progress = progressInfo[episode.status] || progressInfo.PENDING
+		const progress = progressInfo[episode.status] || progressInfo.PENDING;
 
 		return NextResponse.json({
 			...episode,
 			progress,
-		})
+		});
 	} catch (error) {
-		console.error("[USER_EPISODE_STATUS_GET]", error)
-		return new NextResponse("Internal Error", { status: 500 })
+		console.error("[USER_EPISODE_STATUS_GET]", error);
+		return new NextResponse("Internal Error", { status: 500 });
 	}
 }

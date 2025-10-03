@@ -1,135 +1,135 @@
-"use client"
+"use client";
 
-import { useRouter } from "next/navigation"
-import { useEffect, useState, useTransition } from "react"
-import { toast } from "sonner"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { CardContent } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { usePlanGatesStore } from "@/lib/stores/plan-gates-store"
-import type { Bundle, Podcast } from "@/lib/types"
-import { createBundleAction, deleteBundleAction, updateBundleAction } from "./bundles.actions"
-import PanelHeader from "./PanelHeader"
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { usePlanGatesStore } from "@/lib/stores/plan-gates-store";
+import type { Bundle, Podcast } from "@/lib/types";
+import { createBundleAction, deleteBundleAction, updateBundleAction } from "./bundles.actions";
+import PanelHeader from "./PanelHeader";
 
 // Combine bundle + podcasts for convenience
-type BundleWithPodcasts = Bundle & { podcasts: Podcast[] }
+type BundleWithPodcasts = Bundle & { podcasts: Podcast[] };
 
-type OptimisticBundle = Partial<BundleWithPodcasts>
+type OptimisticBundle = Partial<BundleWithPodcasts>;
 
 type EditFormState = {
-	name: string
-	description: string
-	min_plan: string
-	selectedPodcastIds: string[]
-}
+	name: string;
+	description: string;
+	min_plan: string;
+	selectedPodcastIds: string[];
+};
 
 export default function BundlesPanelClient({
 	bundles,
 	availablePodcasts,
 }: {
-	bundles: (BundleWithPodcasts & { min_plan?: string; canInteract?: boolean; lockReason?: string | null })[]
-	availablePodcasts: Podcast[]
+	bundles: (BundleWithPodcasts & { min_plan?: string; canInteract?: boolean; lockReason?: string | null })[];
+	availablePodcasts: Podcast[];
 }) {
-	const router = useRouter()
-	const { options: planGateOptions, loaded: planGatesLoaded, load: loadPlanGates } = usePlanGatesStore()
+	const router = useRouter();
+	const { options: planGateOptions, loaded: planGatesLoaded, load: loadPlanGates } = usePlanGatesStore();
 
-	const [optimistic, setOptimistic] = useState<Record<string, OptimisticBundle>>({})
-	const [isPending, startTransition] = useTransition()
+	const [optimistic, setOptimistic] = useState<Record<string, OptimisticBundle>>({});
+	const [isPending, startTransition] = useTransition();
 
 	// CREATE form state
-	const [showCreateForm, setShowCreateForm] = useState(false)
+	const [showCreateForm, setShowCreateForm] = useState(false);
 	const [createForm, setCreateForm] = useState({
 		name: "",
 		description: "",
 		min_plan: "NONE",
 		selectedPodcastIds: [] as string[],
-	})
-	const [isCreating, setIsCreating] = useState(false)
+	});
+	const [isCreating, setIsCreating] = useState(false);
 
 	// EDIT form state - now inline instead of modal
-	const [editingBundleId, setEditingBundleId] = useState<string | null>(null)
+	const [editingBundleId, setEditingBundleId] = useState<string | null>(null);
 	const [editForm, setEditForm] = useState<EditFormState>({
 		name: "",
 		description: "",
 		min_plan: "NONE",
 		selectedPodcastIds: [] as string[],
-	})
+	});
 
 	useEffect(() => {
-		loadPlanGates()
-	}, [loadPlanGates])
+		loadPlanGates();
+	}, [loadPlanGates]);
 
 	// Helpers
 	const optimisticBundle = (b: BundleWithPodcasts & { min_plan?: string }): BundleWithPodcasts & { min_plan?: string } => ({
 		...b,
 		...(optimistic[b.bundle_id] || {}),
-	})
+	});
 
 	// CREATE
 	const toggleCreatePodcastSelection = (id: string) => {
 		setCreateForm(prev => ({
 			...prev,
 			selectedPodcastIds: prev.selectedPodcastIds.includes(id) ? prev.selectedPodcastIds.filter(x => x !== id) : [...prev.selectedPodcastIds, id],
-		}))
-	}
+		}));
+	};
 
 	const doCreate = async () => {
-		if (!createForm.name.trim()) return
-		const form = new FormData()
-		form.set("name", createForm.name.trim())
-		form.set("description", createForm.description.trim())
-		form.set("min_plan", createForm.min_plan)
-		createForm.selectedPodcastIds.forEach(id => form.append("podcast_ids", id))
+		if (!createForm.name.trim()) return;
+		const form = new FormData();
+		form.set("name", createForm.name.trim());
+		form.set("description", createForm.description.trim());
+		form.set("min_plan", createForm.min_plan);
+		createForm.selectedPodcastIds.forEach(id => form.append("podcast_ids", id));
 		try {
-			setIsCreating(true)
-			await createBundleAction(form)
-			setCreateForm({ name: "", description: "", min_plan: "NONE", selectedPodcastIds: [] })
-			setShowCreateForm(false)
-			router.refresh()
+			setIsCreating(true);
+			await createBundleAction(form);
+			setCreateForm({ name: "", description: "", min_plan: "NONE", selectedPodcastIds: [] });
+			setShowCreateForm(false);
+			router.refresh();
 		} catch (e) {
-			console.error(e)
-			toast.error("Failed to create bundle")
+			console.error(e);
+			toast.error("Failed to create bundle");
 		} finally {
-			setIsCreating(false)
+			setIsCreating(false);
 		}
-	}
+	};
 
 	// EDIT - now inline
 	const startEdit = (b: BundleWithPodcasts & { min_plan?: string }) => {
-		setEditingBundleId(b.bundle_id)
+		setEditingBundleId(b.bundle_id);
 		setEditForm({
 			name: b.name || "",
 			description: b.description || "",
 			min_plan: (b.min_plan as string) || "NONE",
 			selectedPodcastIds: b.podcasts.map(p => p.podcast_id),
-		})
-	}
+		});
+	};
 
 	const cancelEdit = () => {
-		setEditingBundleId(null)
+		setEditingBundleId(null);
 		setEditForm({
 			name: "",
 			description: "",
 			min_plan: "NONE",
 			selectedPodcastIds: [],
-		})
-	}
+		});
+	};
 
 	const toggleEditPodcastSelection = (id: string) => {
 		setEditForm(prev => ({
 			...prev,
 			selectedPodcastIds: prev.selectedPodcastIds.includes(id) ? prev.selectedPodcastIds.filter(x => x !== id) : [...prev.selectedPodcastIds, id],
-		}))
-	}
+		}));
+	};
 
 	const saveEdit = () => {
-		if (!editingBundleId) return
-		const id = editingBundleId
-		const prevSnapshot = optimistic[id]
+		if (!editingBundleId) return;
+		const id = editingBundleId;
+		const prevSnapshot = optimistic[id];
 		startTransition(async () => {
 			// Optimistic UI update
 			setOptimistic(prev => ({
@@ -140,46 +140,46 @@ export default function BundlesPanelClient({
 					description: editForm.description,
 					podcasts: availablePodcasts.filter(p => editForm.selectedPodcastIds.includes(p.podcast_id)),
 				},
-			}))
+			}));
 			try {
 				await updateBundleAction(id, {
 					name: editForm.name,
 					description: editForm.description,
 					min_plan: editForm.min_plan,
 					podcastIds: editForm.selectedPodcastIds,
-				})
-				setEditingBundleId(null)
-				toast.success("Bundle updated")
-				router.refresh()
+				});
+				setEditingBundleId(null);
+				toast.success("Bundle updated");
+				router.refresh();
 			} catch (e) {
-				console.error(e)
+				console.error(e);
 				// Revert on error
 				setOptimistic(prev => {
-					if (prevSnapshot) return { ...prev, [id]: prevSnapshot }
-					const { [id]: _removed, ...rest } = prev
-					return rest
-				})
-				toast.error("Failed to update bundle")
+					if (prevSnapshot) return { ...prev, [id]: prevSnapshot };
+					const { [id]: _removed, ...rest } = prev;
+					return rest;
+				});
+				toast.error("Failed to update bundle");
 			}
-		})
-	}
+		});
+	};
 
 	// DELETE
 	const deleteBundle = (b: BundleWithPodcasts) => {
-		if (!confirm(`Delete bundle "${b.name}"? This cannot be undone.`)) return
+		if (!confirm(`Delete bundle "${b.name}"? This cannot be undone.`)) return;
 		startTransition(async () => {
 			try {
-				await deleteBundleAction(b.bundle_id)
-				setOptimistic(prev => ({ ...prev, [b.bundle_id]: { name: `${b.name} (deleted)` } }))
-				router.refresh()
+				await deleteBundleAction(b.bundle_id);
+				setOptimistic(prev => ({ ...prev, [b.bundle_id]: { name: `${b.name} (deleted)` } }));
+				router.refresh();
 			} catch (e) {
-				console.error(e)
-				toast.error("Failed to delete bundle")
+				console.error(e);
+				toast.error("Failed to delete bundle");
 			}
-		})
-	}
+		});
+	};
 
-	const createButtonLabel = bundles.length === 0 ? "Add your first bundle" : "Add Another Bundle"
+	const createButtonLabel = bundles.length === 0 ? "Add your first bundle" : "Add Another Bundle";
 
 	return (
 		<div className="episode-card-wrapper">
@@ -242,8 +242,8 @@ export default function BundlesPanelClient({
 				<div className="space-y-4">
 					<h3 className="text-sm text-muted-foreground">Existing Bundles ({bundles.length})</h3>
 					{bundles.map(bundleOriginal => {
-						const bundle = optimisticBundle(bundleOriginal)
-						const isEditing = editingBundleId === bundle.bundle_id
+						const bundle = optimisticBundle(bundleOriginal);
+						const isEditing = editingBundleId === bundle.bundle_id;
 
 						return (
 							<div key={bundle.bundle_id} className={`episode-card p-4 border rounded-lg ${bundleOriginal.canInteract === false ? "opacity-60" : ""}`}>
@@ -327,11 +327,11 @@ export default function BundlesPanelClient({
 									</div>
 								)}
 							</div>
-						)
+						);
 					})}
 					{bundles.length === 0 && <p className="text-center text-muted-foreground py-8">No bundles created yet.</p>}
 				</div>
 			</CardContent>
 		</div>
-	)
+	);
 }

@@ -1,8 +1,8 @@
-import type { UserCurationProfile } from "@/lib/types"
-import { SavedCollectionCard } from "./saved-collection-card"
+import type { UserCurationProfile } from "@/lib/types";
+import { SavedCollectionCard } from "./saved-collection-card";
 
 interface SavedUserCurationProfileListProps {
-	userCurationProfiles: UserCurationProfile[]
+	userCurationProfiles: UserCurationProfile[];
 }
 
 export function SavedUserCurationProfileList({ userCurationProfiles }: Readonly<SavedUserCurationProfileListProps>) {
@@ -12,5 +12,5 @@ export function SavedUserCurationProfileList({ userCurationProfiles }: Readonly<
 				<SavedCollectionCard key={userCurationProfile.profile_id} userCurationProfile={userCurationProfile} />
 			))}
 		</div>
-	)
+	);
 }

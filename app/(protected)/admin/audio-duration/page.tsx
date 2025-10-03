@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import { Clock, Loader2, Music } from "lucide-react"
-import { useState } from "react"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Clock, Loader2, Music } from "lucide-react";
+import { useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AudioDurationPage() {
-	const [isLoading, setIsLoading] = useState(false)
-	const [result, setResult] = useState<string | null>(null)
-	const [error, setError] = useState<string | null>(null)
-	const [userStats, setUserStats] = useState<{ updated: number; failed: number } | null>(null)
-	const [episodeStats, setEpisodeStats] = useState<{ updated: number; failed: number } | null>(null)
+	const [isLoading, setIsLoading] = useState(false);
+	const [result, setResult] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>(null);
+	const [userStats, setUserStats] = useState<{ updated: number; failed: number } | null>(null);
+	const [episodeStats, setEpisodeStats] = useState<{ updated: number; failed: number } | null>(null);
 
 	const extractDurations = async (type: "user-episodes" | "episodes") => {
-		setIsLoading(true)
-		setResult(null)
-		setError(null)
+		setIsLoading(true);
+		setResult(null);
+		setError(null);
 
 		try {
 			const response = await fetch("/api/admin/audio-duration", {
@@ -25,26 +25,26 @@ export default function AudioDurationPage() {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({ type }),
-			})
+			});
 
-			const data = await response.json()
+			const data = await response.json();
 
 			if (!response.ok) {
-				throw new Error(data.error || "Failed to extract durations")
+				throw new Error(data.error || "Failed to extract durations");
 			}
 
-			setResult(data.message)
+			setResult(data.message);
 			if (type === "user-episodes") {
-				setUserStats({ updated: Number(data.updated ?? 0), failed: Number(data.failed ?? 0) })
+				setUserStats({ updated: Number(data.updated ?? 0), failed: Number(data.failed ?? 0) });
 			} else {
-				setEpisodeStats({ updated: Number(data.updated ?? 0), failed: Number(data.failed ?? 0) })
+				setEpisodeStats({ updated: Number(data.updated ?? 0), failed: Number(data.failed ?? 0) });
 			}
 		} catch (err) {
-			setError(err instanceof Error ? err.message : "An error occurred")
+			setError(err instanceof Error ? err.message : "An error occurred");
 		} finally {
-			setIsLoading(false)
+			setIsLoading(false);
 		}
-	}
+	};
 
 	return (
 		<div className="container mx-auto p-6 max-w-4xl space-y-6">
@@ -77,7 +77,9 @@ export default function AudioDurationPage() {
 							)}
 						</Button>
 						{userStats && (
-							<p className="mt-2 text-sm text-muted-foreground">Updated {userStats.updated}, failed {userStats.failed}</p>
+							<p className="mt-2 text-sm text-muted-foreground">
+								Updated {userStats.updated}, failed {userStats.failed}
+							</p>
 						)}
 					</CardContent>
 				</Card>
@@ -104,7 +106,9 @@ export default function AudioDurationPage() {
 							)}
 						</Button>
 						{episodeStats && (
-							<p className="mt-2 text-sm text-muted-foreground">Updated {episodeStats.updated}, failed {episodeStats.failed}</p>
+							<p className="mt-2 text-sm text-muted-foreground">
+								Updated {episodeStats.updated}, failed {episodeStats.failed}
+							</p>
 						)}
 					</CardContent>
 				</Card>
@@ -142,5 +146,5 @@ export default function AudioDurationPage() {
 				</CardContent>
 			</Card>
 		</div>
-	)
+	);
 }

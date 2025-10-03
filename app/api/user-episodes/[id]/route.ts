@@ -10,12 +10,12 @@ export async function GET(_request: Request, { params }: { params: { id: string 
 			return new NextResponse("Unauthorized", { status: 401 });
 		}
 
-	// Note: This fetches ALL fields including transcript & summary.
-	// Single episode should be under 4MB, but if it exceeds limits,
-	// add explicit select to exclude transcript/summary.
-	const episode = await prisma.userEpisode.findUnique({
-		where: { episode_id: params.id },
-	});
+		// Note: This fetches ALL fields including transcript & summary.
+		// Single episode should be under 4MB, but if it exceeds limits,
+		// add explicit select to exclude transcript/summary.
+		const episode = await prisma.userEpisode.findUnique({
+			where: { episode_id: params.id },
+		});
 
 		if (!episode) {
 			return new NextResponse("Episode not found", { status: 404 });

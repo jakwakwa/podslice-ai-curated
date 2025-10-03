@@ -203,7 +203,6 @@ export default function NotificationsPage() {
 											</Button>
 										)}
 										<Button variant="destructive" size="xs" onClick={() => handleDeleteNotification(notification.notification_id)} disabled={isLoading} className="text-xs px-2 py-1 h-auto">
-
 											Clear
 											<X size={12} />
 										</Button>

@@ -64,8 +64,20 @@ export async function GET(request: Request) {
 
 		const sampleText = VOICE_OPTIONS.find(v => v.name === voice)?.sample || "This is a quick voice sample for your episode.";
 
-		const buf = await generateTtsAudio(sampleText, { voiceName: voice });
-		return new NextResponse(new Uint8Array(buf), {
+		// Generate TTS audio (returns raw PCM data)
+		const pcmBuffer = await generateTtsAudio(sampleText, { voiceName: voice });
+
+		// Add WAV header to convert PCM to WAV format
+		// Google's TTS API returns 24kHz, mono, 16-bit PCM by default
+		const wavOptions: WavConversionOptions = {
+			numChannels: 1,
+			sampleRate: 24000,
+			bitsPerSample: 16,
+		};
+		const wavHeader = createWavHeader(pcmBuffer.length, wavOptions);
+		const wavBuffer = Buffer.concat([wavHeader, pcmBuffer]);
+
+		return new NextResponse(new Uint8Array(wavBuffer), {
 			headers: {
 				"Content-Type": "audio/wav",
 				"Cache-Control": "public, max-age=86400",

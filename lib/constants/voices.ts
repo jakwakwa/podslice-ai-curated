@@ -6,6 +6,6 @@ export const VOICE_OPTIONS = [
 	{ name: "Sadachbia", label: "Sadachbia — Lively", sample: "This is a quick voice sample for your episode." },
 	{ name: "Achird", label: "Achird — Friendly", sample: "This is a quick voice sample for your episode." },
 	{ name: "Schedar", label: "Schedar — Even", sample: "This is a quick voice sample for your episode." },
-] as const
+] as const;
 
-export const VOICE_NAMES = VOICE_OPTIONS.map(v => v.name) as readonly string[]
+export const VOICE_NAMES = VOICE_OPTIONS.map(v => v.name) as readonly string[];

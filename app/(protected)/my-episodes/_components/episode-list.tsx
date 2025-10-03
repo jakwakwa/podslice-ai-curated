@@ -20,8 +20,6 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 	const [episodes, setEpisodes] = useState<UserEpisodeWithSignedUrl[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	const [debugLogs, setDebugLogs] = useState<Record<string, unknown[]> | null>(null);
-	const enableDebug = useMemo(() => process.env.NEXT_PUBLIC_ENABLE_EPISODE_DEBUG === "true", []);
 	const { playEpisode } = useEpisodePlayer();
 
 	useEffect(() => {
@@ -100,17 +98,6 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 		playEpisode(normalizedEpisode);
 	}, [initialEpisodeId, episodes, playEpisode]);
 
-	const handleViewRunLog = async (episodeId: string): Promise<void> => {
-		try {
-			const res = await fetch(`/api/user-episodes/${episodeId}/debug/logs`);
-			if (!res.ok) throw new Error(await res.text());
-			const data: { events: unknown[] } = await res.json();
-			setDebugLogs(prev => ({ ...(prev || {}), [episodeId]: data.events }));
-		} catch (e) {
-			console.error(e);
-		}
-	};
-
 	if (error) {
 		return <p className="text-red-500">{error}</p>;
 	}
@@ -164,19 +151,10 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 												aria-label={`Play ${episode.episode_title}`}
 											/>
 										)}
-										{enableDebug && (
-											<Button size="sm" variant="secondary" className="ml-2" onClick={() => handleViewRunLog(episode.episode_id)}>
-												View Run Log
-											</Button>
-										)}
 									</>
 								}
+								}
 							/>
-							{enableDebug && debugLogs && debugLogs[episode.episode_id] && (
-								<div className="mt-2 p-2 bg-gray-50 rounded border">
-									<pre className="text-[11px] whitespace-pre-wrap break-words">{JSON.stringify(debugLogs[episode.episode_id], null, 2)}</pre>
-								</div>
-							)}
 						</div>
 					))
 				)}

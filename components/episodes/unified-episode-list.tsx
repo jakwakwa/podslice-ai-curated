@@ -33,10 +33,10 @@ export interface UnifiedEpisodeListProps {
 
 /**
  * Unified Episode List Component
- * 
+ *
  * A single, consolidated component for rendering lists of episodes.
  * Handles both bundle episodes and user-generated episodes consistently.
- * 
+ *
  * Features:
  * - Works with Episode and UserEpisode types
  * - Consistent PlayableEpisodeCard rendering
@@ -63,7 +63,7 @@ export function UnifiedEpisodeList({
 	// Filter episodes if needed
 	let filteredEpisodes = episodes;
 	if (filterCompleted) {
-		filteredEpisodes = episodes.filter((ep) => {
+		filteredEpisodes = episodes.filter(ep => {
 			// Check if it's a UserEpisode with COMPLETED status
 			if ("status" in ep && "signedAudioUrl" in ep) {
 				return ep.status === "COMPLETED" && !!ep.signedAudioUrl;
@@ -97,9 +97,7 @@ export function UnifiedEpisodeList({
 		);
 	}
 
-	const layoutClasses = layout === "grid" 
-		? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-		: "w-full inline-flex flex-col gap-1";
+	const layoutClasses = layout === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" : "w-full inline-flex flex-col gap-1";
 
 	return (
 		<div className="border-[#ffffff0e] relative">
@@ -107,7 +105,7 @@ export function UnifiedEpisodeList({
 			<div className="relative transition-all duration-200 text-card-foreground episode-card-wrapper-dark rounded-xl p-0 md:min-h-[420px] w-full h-fit">
 				<CardContent>
 					<ul className={layoutClasses}>
-						{filteredEpisodes.map((episode) => {
+						{filteredEpisodes.map(episode => {
 							const normalized = normalizeEpisode(episode);
 							const isSelected = selectedId === normalized.id;
 							const isPlaying = playingEpisodeId === normalized.id;

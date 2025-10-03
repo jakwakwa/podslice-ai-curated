@@ -1,55 +1,55 @@
-"use client"
+"use client";
 
-import { useState, useTransition } from "react"
-import { toast } from "sonner"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import type { Bundle, Episode } from "@/lib/types"
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import type { Bundle, Episode } from "@/lib/types";
 
 type BundleWithUserCount = Bundle & {
-	podcasts: Array<{ podcast_id: string; name: string }>
-	userCount: number
-}
+	podcasts: Array<{ podcast_id: string; name: string }>;
+	userCount: number;
+};
 
 type EmailFormData = {
-	bundleId: string
-	episodeId: string
-	subject: string
-	message: string
-}
+	bundleId: string;
+	episodeId: string;
+	subject: string;
+	message: string;
+};
 
 export default function EmailManagementClient({
 	bundles,
 	episodes,
 	usersByBundle,
 }: {
-	bundles: BundleWithUserCount[]
-	episodes: Episode[]
-	usersByBundle: Record<string, Array<{ user_id: string; email: string; name: string; profile_name: string }>>
+	bundles: BundleWithUserCount[];
+	episodes: Episode[];
+	usersByBundle: Record<string, Array<{ user_id: string; email: string; name: string; profile_name: string }>>;
 }) {
-	const [isOpen, setIsOpen] = useState(false)
-	const [isPending, startTransition] = useTransition()
+	const [isOpen, setIsOpen] = useState(false);
+	const [isPending, startTransition] = useTransition();
 	const [formData, setFormData] = useState<EmailFormData>({
 		bundleId: "",
 		episodeId: "",
 		subject: "",
 		message: "",
-	})
+	});
 
-	const selectedBundle = bundles.find(b => b.bundle_id === formData.bundleId)
-	const selectedEpisode = episodes.find(e => e.episode_id === formData.episodeId)
-	const recipientCount = selectedBundle ? usersByBundle[selectedBundle.bundle_id]?.length || 0 : 0
+	const selectedBundle = bundles.find(b => b.bundle_id === formData.bundleId);
+	const selectedEpisode = episodes.find(e => e.episode_id === formData.episodeId);
+	const recipientCount = selectedBundle ? usersByBundle[selectedBundle.bundle_id]?.length || 0 : 0;
 
 	const handleSendEmail = async () => {
-		if (!(((formData.bundleId && formData.episodeId) && formData.subject.trim()) && formData.message.trim())) {
-			toast.error("Please fill in all fields")
-			return
+		if (!(formData.bundleId && formData.episodeId && formData.subject.trim() && formData.message.trim())) {
+			toast.error("Please fill in all fields");
+			return;
 		}
 
 		startTransition(async () => {
@@ -58,23 +58,23 @@ export default function EmailManagementClient({
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify(formData),
-				})
+				});
 
-				const result = await response.json()
+				const result = await response.json();
 
 				if (!response.ok) {
-					throw new Error(result.message || "Failed to send emails")
+					throw new Error(result.message || "Failed to send emails");
 				}
 
-				toast.success(`Successfully sent ${result.sentCount} emails`)
-				setIsOpen(false)
-				setFormData({ bundleId: "", episodeId: "", subject: "", message: "" })
+				toast.success(`Successfully sent ${result.sentCount} emails`);
+				setIsOpen(false);
+				setFormData({ bundleId: "", episodeId: "", subject: "", message: "" });
 			} catch (error) {
-				console.error("Error sending emails:", error)
-				toast.error(error instanceof Error ? error.message : "Failed to send emails")
+				console.error("Error sending emails:", error);
+				toast.error(error instanceof Error ? error.message : "Failed to send emails");
 			}
-		})
-	}
+		});
+	};
 
 	return (
 		<div className="space-y-6">
@@ -113,8 +113,7 @@ export default function EmailManagementClient({
 
 							<div className="space-y-4">
 								<div>
-
-									<Select value={formData.bundleId} onValueChange={(value) => setFormData(prev => ({ ...prev, bundleId: value, episodeId: "" }))}>
+									<Select value={formData.bundleId} onValueChange={value => setFormData(prev => ({ ...prev, bundleId: value, episodeId: "" }))}>
 										<SelectTrigger>
 											<SelectValue placeholder="Choose a bundle" />
 										</SelectTrigger>
@@ -131,7 +130,7 @@ export default function EmailManagementClient({
 								{selectedBundle && (
 									<div>
 										<Label htmlFor="episode">Select Episode</Label>
-										<Select value={formData.episodeId} onValueChange={(value) => setFormData(prev => ({ ...prev, episodeId: value }))}>
+										<Select value={formData.episodeId} onValueChange={value => setFormData(prev => ({ ...prev, episodeId: value }))}>
 											<SelectTrigger>
 												<SelectValue placeholder="Choose an episode" />
 											</SelectTrigger>
@@ -150,29 +149,17 @@ export default function EmailManagementClient({
 									<div className="p-3 bg-muted rounded-lg">
 										<h4 className="font-medium">Selected Episode:</h4>
 										<p className="text-sm text-muted-foreground">{selectedEpisode.title}</p>
-
 									</div>
 								)}
 
 								<div>
 									<Label htmlFor="subject">Subject</Label>
-									<Input
-										id="subject"
-										value={formData.subject}
-										onChange={(e) => setFormData(prev => ({ ...prev, subject: e.target.value }))}
-										placeholder="Email subject"
-									/>
+									<Input id="subject" value={formData.subject} onChange={e => setFormData(prev => ({ ...prev, subject: e.target.value }))} placeholder="Email subject" />
 								</div>
 
 								<div>
 									<Label htmlFor="message">Message</Label>
-									<Textarea
-										id="message"
-										value={formData.message}
-										onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
-										placeholder="Your email message..."
-										rows={6}
-									/>
+									<Textarea id="message" value={formData.message} onChange={e => setFormData(prev => ({ ...prev, message: e.target.value }))} placeholder="Your email message..." rows={6} />
 								</div>
 
 								{recipientCount > 0 && (
@@ -187,11 +174,7 @@ export default function EmailManagementClient({
 									<Button variant="outline" onClick={() => setIsOpen(false)}>
 										Cancel
 									</Button>
-									<Button
-										variant="default"
-										onClick={handleSendEmail}
-										disabled={isPending || !formData.bundleId || !formData.episodeId || !formData.subject.trim() || !formData.message.trim()}
-									>
+									<Button variant="default" onClick={handleSendEmail} disabled={isPending || !formData.bundleId || !formData.episodeId || !formData.subject.trim() || !formData.message.trim()}>
 										{isPending ? "Sending..." : `Send to ${recipientCount} Users`}
 									</Button>
 								</div>
@@ -201,5 +184,5 @@ export default function EmailManagementClient({
 				</CardContent>
 			</Card>
 		</div>
-	)
+	);
 }

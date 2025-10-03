@@ -2,7 +2,7 @@
 // import { SiteHeader } from "@/components/ui/site-header"
 // CSS module migrated to Tailwind classes
 
-import { AppSpinner } from "@/components/ui/app-spinner"
+import { AppSpinner } from "@/components/ui/app-spinner";
 
 export default function Loading() {
 	return (
@@ -11,5 +11,5 @@ export default function Loading() {
 				<AppSpinner variant={"wave"} size="lg" />
 			</div>
 		</div>
-	)
+	);
 }

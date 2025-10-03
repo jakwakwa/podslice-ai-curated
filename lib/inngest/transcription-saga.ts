@@ -1,5 +1,4 @@
 import { getProviderWindowSeconds } from "@/lib/env";
-import { writeEpisodeDebugLog, writeEpisodeDebugReport } from "@/lib/debug-logger";
 import emailService from "@/lib/email-service";
 import { inngest } from "@/lib/inngest/client";
 import { getYouTubeVideoDetails } from "@/lib/inngest/utils/youtube";
@@ -26,15 +25,9 @@ export const transcriptionCoordinator = inngest.createFunction(
 
 		await step.run("mark-processing", async () => {
 			await prisma.userEpisode.update({ where: { episode_id: userEpisodeId }, data: { status: "PROCESSING", youtube_url: srcUrl } });
-			await writeEpisodeDebugLog(userEpisodeId, { step: "status", status: "start", message: "PROCESSING" });
 		});
 
 		const probe = await step.run("preflight-probe", async () => await preflightProbe(srcUrl));
-		await writeEpisodeDebugLog(userEpisodeId, {
-			step: "preflight",
-			status: probe.ok ? "success" : "fail",
-			meta: probe.ok ? probe.value : probe,
-		});
 
 		// Attempt metadata enrichment if missing
 		await step.run("ensure-video-metadata", async () => {
@@ -65,11 +58,6 @@ export const transcriptionCoordinator = inngest.createFunction(
 						duration_seconds: needsDuration && details.duration > 0 ? details.duration : episode?.duration_seconds,
 					},
 				});
-				await writeEpisodeDebugLog(userEpisodeId, {
-					step: "youtube-metadata",
-					status: "success",
-					meta: { enriched: true, replacedTitle: needsTitle, addedDuration: needsDuration && details.duration > 0 },
-				});
 			} catch (_err) {
 				const errorMessage = _err instanceof Error ? _err.message : "metadata enrichment error";
 				const isDurationError = errorMessage.includes("exceeds maximum allowed duration");
@@ -78,7 +66,6 @@ export const transcriptionCoordinator = inngest.createFunction(
 					// Duration validation failed - fail the entire transcription job
 					await step.run("mark-failed-duration", async () => {
 						await prisma.userEpisode.update({ where: { episode_id: userEpisodeId }, data: { status: "FAILED" } });
-						await writeEpisodeDebugLog(userEpisodeId, { step: "duration-validation", status: "fail", message: errorMessage });
 					});
 
 					await step.run("email-duration-failed", async () => {
@@ -106,8 +93,6 @@ export const transcriptionCoordinator = inngest.createFunction(
 					});
 
 					return { ok: false, jobId, error: errorMessage };
-				} else {
-					await writeEpisodeDebugLog(userEpisodeId, { step: "youtube-metadata", status: "fail", message: errorMessage });
 				}
 			}
 		});
@@ -136,11 +121,6 @@ export const transcriptionCoordinator = inngest.createFunction(
 		const successEvent = result && (result as { name?: string }).name === Events.Succeeded ? result : null;
 
 		const runFallback = async (reason: string) => {
-			await writeEpisodeDebugLog(userEpisodeId, {
-				step: "transcription",
-				status: "info",
-				message: `Falling back to orchestrator: ${reason}`,
-			});
 			const { getTranscriptOrchestrated } = await import("@/lib/inngest/transcripts");
 			const fallback = await step.run("fallback-orchestrator", async () => {
 				return await getTranscriptOrchestrated({ url: srcUrl, kind: "youtube" });
@@ -149,11 +129,6 @@ export const transcriptionCoordinator = inngest.createFunction(
 			if (!fallback.success) {
 				await step.run("mark-failed", async () => {
 					await prisma.userEpisode.update({ where: { episode_id: userEpisodeId }, data: { status: "FAILED" } });
-					await writeEpisodeDebugLog(userEpisodeId, {
-						step: "transcription",
-						status: "fail",
-						message: "Gemini transcription failed or timed out; fallback also failed",
-					});
 				});
 
 				await step.run("email-user-failed", async () => {
@@ -195,10 +170,6 @@ export const transcriptionCoordinator = inngest.createFunction(
 				name: generationMode === "multi" ? "user.episode.generate.multi.requested" : "user.episode.generate.requested",
 				data: { userEpisodeId, voiceA, voiceB },
 			});
-			await step.run("write-final-report", async () => {
-				const report = `# Transcription Saga Report\n- job: ${jobId}\n- provider: ${provider}\n- transcriptChars: ${transcriptText.length}\n`;
-				await writeEpisodeDebugReport(userEpisodeId, report);
-			});
 			await step.sendEvent("finalize-success", {
 				name: Events.Finalized,
 				data: { jobId, userEpisodeId, status: "succeeded", provider },
@@ -224,12 +195,6 @@ export const transcriptionCoordinator = inngest.createFunction(
 			});
 
 			if (!transcriptText) {
-				await writeEpisodeDebugLog(userEpisodeId, {
-					step: "transcription",
-					status: "info",
-					message: "Gemini success event missing transcript; invoking orchestrator fallback.",
-					meta: successPayload.meta,
-				});
 				return await runFallback("missing-transcript");
 			}
 		}
@@ -243,11 +208,6 @@ export const transcriptionCoordinator = inngest.createFunction(
 		await step.sendEvent("forward-generation", {
 			name: generationMode === "multi" ? "user.episode.generate.multi.requested" : "user.episode.generate.requested",
 			data: { userEpisodeId, voiceA, voiceB },
-		});
-
-		await step.run("write-final-report", async () => {
-			const report = `# Transcription Saga Report\n- job: ${jobId}\n- provider: ${successPayload.provider}\n- transcriptChars: ${ensuredTranscript.length}\n`;
-			await writeEpisodeDebugReport(userEpisodeId, report);
 		});
 
 		await step.sendEvent("finalize-success", {

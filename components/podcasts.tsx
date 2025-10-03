@@ -1,9 +1,9 @@
-import Image from "next/image"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import type { Episode } from "@/lib/types"
+import Image from "next/image";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Episode } from "@/lib/types";
 
 interface PodcastListProps {
-	episodes: Episode[]
+	episodes: Episode[];
 }
 
 export function PodcastList({ episodes }: PodcastListProps) {
@@ -35,5 +35,5 @@ export function PodcastList({ episodes }: PodcastListProps) {
 				</div>
 			</CardContent>
 		</Card>
-	)
+	);
 }

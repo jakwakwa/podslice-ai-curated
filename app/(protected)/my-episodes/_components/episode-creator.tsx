@@ -261,12 +261,12 @@ export function EpisodeCreator() {
 				body: JSON.stringify(payload),
 			});
 			if (!res.ok) throw new Error(await res.text());
-			toast.message("We're processing your episode and will email you when it's ready.", { duration: Infinity, action: { label: "Dismiss", onClick: () => { } } });
+			toast.message("We're processing your episode and will email you when it's ready.", { duration: Infinity, action: { label: "Dismiss", onClick: () => {} } });
 			resumeAfterSubmission();
 			router.push("/dashboard");
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Failed to start episode generation.");
-			toast.error((err instanceof Error ? err.message : "Failed to start episode generation.") || "", { duration: Infinity, action: { label: "Dismiss", onClick: () => { } } });
+			toast.error((err instanceof Error ? err.message : "Failed to start episode generation.") || "", { duration: Infinity, action: { label: "Dismiss", onClick: () => {} } });
 		} finally {
 			setIsCreating(false);
 		}
@@ -280,12 +280,18 @@ export function EpisodeCreator() {
 			if (!url) {
 				const res = await fetch(`/api/tts/voice-sample?voice=${encodeURIComponent(voiceName)}`);
 				if (!res.ok) throw new Error(await res.text());
-				const blob = await res.blob();
+				// Get the array buffer and explicitly create a blob with audio/wav MIME type
+				const arrayBuffer = await res.arrayBuffer();
+				const blob = new Blob([arrayBuffer], { type: "audio/wav" });
 				url = URL.createObjectURL(blob);
 				setAudioUrlCache(prev => ({ ...prev, [voiceName]: url }));
 			}
 			const audio = new Audio(url);
 			audio.onended = () => setIsPlaying(null);
+			audio.onerror = e => {
+				console.error("Audio playback error:", e);
+				throw new Error("Audio element failed to load source");
+			};
 			await audio.play();
 		} catch (err) {
 			setIsPlaying(null);
@@ -322,9 +328,9 @@ export function EpisodeCreator() {
 							}}>
 							<div className="grid grid-cols-1 md:grid-cols-2 my-8 gap-4 mx-2 md:mx-4">
 								<div className="space-y-2 md:col-span-2 lg:max-w-lg">
-									<Label htmlFor="youtubeUrl">YouTube URL<span className="pl-2 text-[0.65rem] font-mono  font-medium text-[#1debaeb8]	">
-										MAX {maxDuration}min duration
-									</span></Label>
+									<Label htmlFor="youtubeUrl">
+										YouTube URL<span className="pl-2 text-[0.65rem] font-mono  font-medium text-[#1debaeb8]	">MAX {maxDuration}min duration</span>
+									</Label>
 
 									<Input id="youtubeUrl" placeholder="https://www.youtube.com/..." value={youtubeUrl} onChange={e => setYouTubeUrl(e.target.value)} disabled={isBusy} required />
 									{isFetchingMetadata && <ComponentSpinner />}
@@ -398,7 +404,6 @@ export function EpisodeCreator() {
 													<span>
 														<strong className="text-teal-500 ">For videos over 2 hours:</strong> We recommend Single Speaker for faster processing and guaranteed success
 													</span>
-
 												</li>
 												<li className="flex items-start gap-2">
 													<span className="text-blue-500">⚡</span>
@@ -513,7 +518,7 @@ export function EpisodeCreator() {
 				</CardContent>
 			</div>
 
-			<Dialog open={showRestrictionDialog} onOpenChange={() => { }} modal={true}>
+			<Dialog open={showRestrictionDialog} onOpenChange={() => {}} modal={true}>
 				<DialogContent className="sm:max-w-md" onInteractOutside={e => e.preventDefault()} onEscapeKeyDown={e => e.preventDefault()}>
 					<DialogHeader>
 						<DialogTitle className="text-center text-xl">Episode Creation Limit Reached</DialogTitle>

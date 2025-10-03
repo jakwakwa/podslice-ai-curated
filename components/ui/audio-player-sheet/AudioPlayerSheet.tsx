@@ -172,7 +172,7 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 					const end = audio.seekable.end(audio.seekable.length - 1);
 					if (end > 0) return end;
 				}
-			} catch { }
+			} catch {}
 			return null;
 		};
 
@@ -191,7 +191,7 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 					audio.currentTime = 0;
 				}
 				setCurrentTime(0);
-			} catch { }
+			} catch {}
 			// Keep loading until actual playback starts
 		};
 		const handleDurationChange = () => {
@@ -333,12 +333,12 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 				try {
 					// Always pause before switching source to clear previous playback state
 					audio.pause();
-				} catch { }
+				} catch {}
 				// Force reload even when src strings might match (e.g., signed urls reused)
 				if (hasEpisodeChanged) {
 					try {
 						audio.removeAttribute("src");
-					} catch { }
+					} catch {}
 				}
 				audio.src = resolvedSrc;
 				lastEpisodeKeyRef.current = episodeKey;
@@ -353,7 +353,7 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 			try {
 				audio.currentTime = 0;
 				audio.load();
-			} catch { }
+			} catch {}
 		} else if (!(open || audio.paused)) {
 			audio.pause();
 			pendingPlayRef.current = false;
@@ -609,16 +609,16 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 							{episode
 								? "title" in episode
 									? (() => {
-										const e = episode as unknown as { podcast?: { name?: string } };
-										return e.podcast?.name || "Podcast episode";
-									})()
+											const e = episode as unknown as { podcast?: { name?: string } };
+											return e.podcast?.name || "Podcast episode";
+										})()
 									: (() => {
-										// For user episodes, show YouTube channel name or fallback
-										if (isChannelLoading) {
-											return "Loading...";
-										}
-										return youtubeChannelName || "User Generated Episode";
-									})()
+											// For user episodes, show YouTube channel name or fallback
+											if (isChannelLoading) {
+												return "Loading...";
+											}
+											return youtubeChannelName || "User Generated Episode";
+										})()
 								: "Podcast source"}
 						</SheetDescription>
 						<div className="flex items-center justify-center pt-3">
@@ -670,7 +670,13 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 							onClick={togglePlayPause}
 							disabled={!resolvedSrc || isLoading}
 							className={`inline-flex h-[48px] w-[48px] items-center justify-center rounded-[14px] border border-[var(--audio-sheet-border)] text-sm font-semibold shadow-sm  shadow-black/30 transition-all hover:brightness-110 active:translate-y-[2px]  disabled:opacity-90 disabled:cursor-not-allowed border-none ${isPlaying ? "bg-[radial-gradient(circle_at_30%_18%,#4c75d6f8_0%,#320576f1_100%)]" : "bg-[radial-gradient(circle_at_30%_18%,#19f8cfc0_0%,#283152ef_100%)] "}`}>
-							{isLoading ? <Loader2 className="h-[18px] w-[18px] animate-spin" color="#1ef5bf80" /> : isPlaying ? <Pause className="h-[18px] w-[18px]" /> : <Play color={"#0EF8F4DF"} className="h-[18px] w-[18px]" />}
+							{isLoading ? (
+								<Loader2 className="h-[18px] w-[18px] animate-spin" color="#1ef5bf80" />
+							) : isPlaying ? (
+								<Pause className="h-[18px] w-[18px]" />
+							) : (
+								<Play color={"#0EF8F4DF"} className="h-[18px] w-[18px]" />
+							)}
 						</button>
 					</div>
 
@@ -717,7 +723,10 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 							onClick={handleVolumeClick}
 							onKeyDown={handleVolumeKeyDown}
 							className="group relative h-[5px] w-[160px] rounded-[11px] bg-[var(--audio-sheet-border)]/40 transition-colors hover:bg-[var(--audio-sheet-border)]/30">
-							<div className="absolute inset-y-[-1px] left-0 rounded-[11px] linear-gradient(90deg, rgb(142 70 235) 0%, rgba(10 107 187 / 0.81) 70%, #08C5B2 100%) transition-all" style={{ background: "linear-gradient(90deg, rgba(56 45 210 / 0.81) 30%, #8F67E5 120%)", width: `${volumePercent}%` }} />
+							<div
+								className="absolute inset-y-[-1px] left-0 rounded-[11px] linear-gradient(90deg, rgb(142 70 235) 0%, rgba(10 107 187 / 0.81) 70%, #08C5B2 100%) transition-all"
+								style={{ background: "linear-gradient(90deg, rgba(56 45 210 / 0.81) 30%, #8F67E5 120%)", width: `${volumePercent}%` }}
+							/>
 						</div>
 					</div>
 				</div>

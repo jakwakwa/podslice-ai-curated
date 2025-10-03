@@ -11,27 +11,27 @@ function extractWavDuration(audioBuffer: Buffer): number | null {
 	try {
 		// WAV file format: Check for 'RIFF' header
 		if (audioBuffer.length < 44 || audioBuffer.toString("ascii", 0, 4) !== "RIFF") {
-			return null
+			return null;
 		}
 
 		// Extract sample rate (bytes 24-27)
-		const sampleRate = audioBuffer.readUInt32LE(24)
+		const sampleRate = audioBuffer.readUInt32LE(24);
 
 		// Extract byte rate (bytes 28-31)
-		const byteRate = audioBuffer.readUInt32LE(28)
+		const byteRate = audioBuffer.readUInt32LE(28);
 
 		// Extract data chunk size (bytes 40-43)
-		const dataSize = audioBuffer.readUInt32LE(40)
+		const dataSize = audioBuffer.readUInt32LE(40);
 
 		if (sampleRate > 0 && byteRate > 0) {
 			// Duration = data size / byte rate
-			return Math.round(dataSize / byteRate)
+			return Math.round(dataSize / byteRate);
 		}
 
-		return null
+		return null;
 	} catch (error) {
-		console.warn("Failed to extract WAV duration:", error)
-		return null
+		console.warn("Failed to extract WAV duration:", error);
+		return null;
 	}
 }
 
@@ -42,10 +42,10 @@ function extractWavDuration(audioBuffer: Buffer): number | null {
 export function extractAudioDuration(audioBuffer: Buffer, mimeType?: string): number | null {
 	// For now, we only support WAV since that's what our TTS generates
 	if (mimeType?.includes("wav") || !mimeType) {
-		return extractWavDuration(audioBuffer)
+		return extractWavDuration(audioBuffer);
 	}
 
 	// Could add support for other formats in the future if needed
-	console.warn(`Unsupported audio format for duration extraction: ${mimeType}`)
-	return null
+	console.warn(`Unsupported audio format for duration extraction: ${mimeType}`);
+	return null;
 }

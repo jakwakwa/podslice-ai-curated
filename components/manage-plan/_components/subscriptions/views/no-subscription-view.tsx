@@ -1,7 +1,7 @@
-import Link from "next/link"
+import Link from "next/link";
 // import { DashboardPageHeader } from "@/components/dashboard/layout/dashboard-page-header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function NoSubscriptionView() {
 	return (
@@ -25,5 +25,5 @@ export function NoSubscriptionView() {
 				</Card>
 			</div>
 		</>
-	)
+	);
 }

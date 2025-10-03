@@ -123,11 +123,7 @@
 				"noSparseArray": "error",
 				"noConsole": {
 					"options": {
-						"allow": [
-							"assert",
-							"error",
-							"warn"
-						]
+						"allow": ["assert", "error", "warn"]
 					},
 					"fix": "safe"
 				}

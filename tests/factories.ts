@@ -1,4 +1,4 @@
-import { prisma } from "../lib/prisma"
+import { prisma } from "../lib/prisma";
 
 export async function createUser(overrides: Partial<Parameters<typeof prisma.user.create>[0]["data"]> = {}) {
 	return prisma.user.create({
@@ -10,7 +10,7 @@ export async function createUser(overrides: Partial<Parameters<typeof prisma.use
 			is_admin: overrides.is_admin ?? false,
 			...overrides,
 		},
-	})
+	});
 }
 
 export async function createPodcast(overrides: Partial<Parameters<typeof prisma.podcast.create>[0]["data"]> = {}) {
@@ -26,7 +26,7 @@ export async function createPodcast(overrides: Partial<Parameters<typeof prisma.
 			owner_user_id: overrides.owner_user_id ?? null,
 			...overrides,
 		},
-	})
+	});
 }
 
 export async function createBundle(overrides: Partial<Parameters<typeof prisma.bundle.create>[0]["data"]> = {}) {
@@ -42,5 +42,5 @@ export async function createBundle(overrides: Partial<Parameters<typeof prisma.b
 			owner_user_id: overrides.owner_user_id ?? null,
 			...overrides,
 		},
-	})
+	});
 }

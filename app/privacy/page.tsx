@@ -233,10 +233,13 @@ export default function PrivacyPage() {
 						</li>
 						<li>We carefully select third-party service providers who share our commitment to privacy and transparency. Below are the specific services we use:</li>
 
-						<li>We advise you to read the privacy policy of each
-							third party website and decide whether you agree to their privacy practices and policies, as these third party websites may also be collecting or sharing your Personal Information</li>
+						<li>
+							We advise you to read the privacy policy of each third party website and decide whether you agree to their privacy practices and policies, as these third party websites may also be
+							collecting or sharing your Personal Information
+						</li>
 
-						<li><h4 className="font-bold text-lg mb-2 mt-6">Authentication Services</h4>
+						<li>
+							<h4 className="font-bold text-lg mb-2 mt-6">Authentication Services</h4>
 						</li>
 						<ul className="list-disc pl-6 space-y-2">
 							<li className="mb-2">
@@ -245,11 +248,12 @@ export default function PrivacyPage() {
 							</li>
 						</ul>
 
-						<li><h4 className="font-bold text-lg mb-2 mt-6">Payment Processing</h4>
+						<li>
+							<h4 className="font-bold text-lg mb-2 mt-6">Payment Processing</h4>
 							<ul className="list-disc pl-6 space-y-2">
 								<li className="mb-2">
-									<strong>Paddle</strong> - We use Paddle for secure payment processing and subscription management. Paddle processes your payment information, billing details, and subscription data to
-									facilitate transactions.
+									<strong>Paddle</strong> - We use Paddle for secure payment processing and subscription management. Paddle processes your payment information, billing details, and subscription data
+									to facilitate transactions.
 									<ul className="list-disc pl-6 space-y-2">
 										<li className="mb-4">
 											<Link
@@ -284,8 +288,8 @@ export default function PrivacyPage() {
 							</ul>
 						</li>
 
-
-						<li><h4 className="font-bold text-lg mb-2 mt-6">Cloud Storage Services</h4>
+						<li>
+							<h4 className="font-bold text-lg mb-2 mt-6">Cloud Storage Services</h4>
 						</li>
 
 						<ul className="list-disc pl-6 space-y-2">
@@ -302,42 +306,20 @@ export default function PrivacyPage() {
 								</li>
 							</ul>
 						</ul>
-						<li><h4 className="font-bold text-lg mb-2 mt-6">Other Service Providers</h4>
+						<li>
+							<h4 className="font-bold text-lg mb-2 mt-6">Other Service Providers</h4>
 						</li>
 						<ul className="list-disc pl-6 space-y-2">
 							<li className="mb-2">
 								<strong>Cloud providers with robust security certifications</strong> - We use Cloud providers with robust security certifications for secure storage of audio files.
 							</li>
 						</ul>
-
 					</ol>
 
 					<p className="mt-4">
-						We maintain data processing agreements with all service providers and ensure they meet our privacy standards. We do not sell, rent, or trade your personal information to third parties
-						for marketing purposes.
+						We maintain data processing agreements with all service providers and ensure they meet our privacy standards. We do not sell, rent, or trade your personal information to third parties for
+						marketing purposes.
 					</p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 					<div className="mb-8">
 						<CardHeader className="my-4 text-xl font-bold">
@@ -385,20 +367,12 @@ export default function PrivacyPage() {
 							use such third party websites, and you do so at your own risk.
 						</li>
 
-
-
 						<li>
 							If this Privacy Notice or any provision in this Privacy Notice is regulated by or subject to the Consumer Protection Act, the Protection of Personal Information Act, 2013 ("POPIA") or
 							other laws, it is not intended that any provision of this Privacy Notice contravenes any provision of the Consumer Protection Act, POPIA or such other laws. Therefore all provisions of
 							this Privacy Notice must be treated as being qualified, to the extent necessary, to ensure that the provisions of the Consumer Protection Act, POPIA and such other laws are complied
 							with.
 						</li>
-
-
-
-
-
-
 
 						<li>No provision of this Privacy Notice:</li>
 						<ol className="list-disc pl-6 space-y-2">
@@ -409,14 +383,16 @@ export default function PrivacyPage() {
 							<li>requires you to assume risk or liability for the kind of liability or loss, to the extent that the law does not allow such an assumption of risk or liability; or</li>
 							<li>
 								limits or excludes any warranties or obligations which are implied into this Privacy Notice by the Consumer Protection Act (to the extent applicable), POPIA (to the extent applicable),
-								or other applicable laws or which we give under the Consumer Protection Act (to the extent applicable), POPIA (to the extent applicable), or other applicable laws, to the extent that the
-								law does not allow them to be limited or excluded.
+								or other applicable laws or which we give under the Consumer Protection Act (to the extent applicable), POPIA (to the extent applicable), or other applicable laws, to the extent that
+								the law does not allow them to be limited or excluded.
 							</li>
 						</ol>
 					</ol>
 
 					<ol>
-						<li><h4 className="font-bold text-lg mb-2 mt-6">13. GENERAL</h4></li>
+						<li>
+							<h4 className="font-bold text-lg mb-2 mt-6">13. GENERAL</h4>
+						</li>
 						<ol className="list-decimal pl-6 space-y-2">
 							<li>
 								You agree that this Privacy Notice our relationship and any dispute of whatsoever nature relating to or arising out of this Privacy Notice whether directly or indirectly is governed by
@@ -425,42 +401,37 @@ export default function PrivacyPage() {
 
 							<li>Our failure to exercise or enforce any right or provision of this Privacy Notice shall not constitute a waiver of such right or provision.</li>
 
-
-
 							<ul className="list-disc pl-6 space-y-2">
 								<li>Our failure to exercise or enforce any right or provision of this Privacy Notice shall not constitute a waiver of such right or provision.</li>
 
 								<li>
-									Each provision of this Privacy Notice, and each part of any provision, is removable and detachable from the others. As far as the law allows, if any provision (or part of a provision) of
-									this Privacy Notice is found by a court or authority of competent jurisdiction to be illegal, invalid or unenforceable (including without limitation, because it is not consistent with
-									the law of another jurisdiction), it must be treated as if it was not included in this Privacy Notice and the rest of this Privacy Notice will still be valid and enforceable.
+									Each provision of this Privacy Notice, and each part of any provision, is removable and detachable from the others. As far as the law allows, if any provision (or part of a
+									provision) of this Privacy Notice is found by a court or authority of competent jurisdiction to be illegal, invalid or unenforceable (including without limitation, because it is not
+									consistent with the law of another jurisdiction), it must be treated as if it was not included in this Privacy Notice and the rest of this Privacy Notice will still be valid and
+									enforceable.
 								</li>
 							</ul>
 						</ol>
 					</ol>
 					<ol>
-
-
 						<li className="font-bold text-lg mb-2 mt-6">
 							<h5 className="font-bold text-lg mb-2 mt-6">14. QUERIES AND CONTACT DETAILS OF THE INFORMATION REGULATOR</h5>
 						</li>
 
 						<ol className="list-decimal pl-6 space-y-2">
 							<li>
-								Should you feel that your rights in respect of your Personal Information have been infringed, please address your concerns to the Podslice Information Officer at compliance@podslice.ai.
+								Should you feel that your rights in respect of your Personal Information have been infringed, please address your concerns to the Podslice Information Officer at
+								compliance@podslice.ai.
 							</li>
 
-
-
 							<li>
-								If you feel that the attempts by Podslice to resolve the matter have been inadequate, you may lodge a complaint with the South African Information Regulator by accessing their website at
-								https://inforegulator.org.za/.
+								If you feel that the attempts by Podslice to resolve the matter have been inadequate, you may lodge a complaint with the South African Information Regulator by accessing their website
+								at https://inforegulator.org.za/.
 							</li>
 						</ol>
 					</ol>
 				</div>
-			</div >
-
+			</div>
 
 			<div className="mb-8">
 				<div className="text-left mt-4 pt-8 border-t">

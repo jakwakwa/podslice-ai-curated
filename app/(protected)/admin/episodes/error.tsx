@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import { AlertTriangle } from "lucide-react"
-import { useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { AlertTriangle } from "lucide-react";
+import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AdminEpisodesError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
 	useEffect(() => {
-		console.error("[Admin Episodes] error boundary:", error)
-	}, [error])
+		console.error("[Admin Episodes] error boundary:", error);
+	}, [error]);
 
 	return (
 		<div className="container mx-auto p-6 max-w-6xl">
@@ -30,5 +30,5 @@ export default function AdminEpisodesError({ error, reset }: { error: Error & { 
 				</CardContent>
 			</Card>
 		</div>
-	)
+	);
 }

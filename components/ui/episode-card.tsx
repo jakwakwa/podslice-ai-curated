@@ -51,7 +51,13 @@ export function EpisodeCard({ as = "div", imageUrl, title, publishedAt, duration
 							if (youtubeChannelImage) {
 								return (
 									<div className="aspect-video h-18 md:h-18 lg:h-17 shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#1f2e54ed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0911199e] relative">
-										<Image src={youtubeChannelImage} alt={title} className="h-42 w-100 inline-flex justify-center content-center object-cover mix-blend-screen absolute my-auto shadow-zinc-600 bottom-0 top-2 opacity-60 " width={300} height={100} />
+										<Image
+											src={youtubeChannelImage}
+											alt={title}
+											className="h-42 w-100 inline-flex justify-center content-center object-cover mix-blend-screen absolute my-auto shadow-zinc-600 bottom-0 top-2 opacity-60 "
+											width={300}
+											height={100}
+										/>
 									</div>
 								);
 							}
@@ -69,15 +75,15 @@ export function EpisodeCard({ as = "div", imageUrl, title, publishedAt, duration
 				</CardHeader>
 
 				<div className="flex w-full flex-col justify-center items-start content-start py-0">
-					<div className="w-full text-[0.9rem] w-[98%] font-bold md:w-[90%] md:text-[0.85] md:font-bold sm:mb-4 md:mb-1 mt-0 leading-normal line-clamp-2 text-shadow-sm lg:text-[0.85rem] text-[#9fc1dd]">{title}</div>
+					<div className="w-full text-[0.9rem] w-[98%] font-bold md:w-[90%] md:text-[0.85] md:font-bold sm:mb-4 md:mb-1 mt-0 leading-normal line-clamp-2 text-shadow-sm lg:text-[0.85rem] text-[#9fc1dd]">
+						{title}
+					</div>
 
 					<div className="w-full flex justify-between flex-row items-center gap-2">
 						<div className="flex flex-row-reverse justify-between w-full gap-2 items-end mt-2">
 							{detailsHref ? (
 								<Button variant="outline" className="bg-slate-800/65 rounded-lg px-4 py-1" size="xs">
-									<Link className="text-[0.75rem] font-medium"
-										href={detailsHref}>
-
+									<Link className="text-[0.75rem] font-medium" href={detailsHref}>
 										Summary Details
 									</Link>
 								</Button>
@@ -90,7 +96,6 @@ export function EpisodeCard({ as = "div", imageUrl, title, publishedAt, duration
 									<DurationIndicator seconds={durationSeconds ?? null} />
 								</Badge>
 							</div>
-
 						</div>
 					</div>
 				</div>

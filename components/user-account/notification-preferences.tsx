@@ -1,81 +1,81 @@
-"use client"
+"use client";
 
-import { Check as CheckIcon, Loader2, Mail, Radio, Smartphone, StopCircleIcon, X } from "lucide-react"
-import { useEffect, useState } from "react"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import ComponentSpinner from "@/components/ui/component-spinner"
-import DateIndicator from "@/components/ui/date-indicator"
-import { Separator } from "@/components/ui/separator"
-import SubmitBtn from "@/components/ui/submit-btn"
-import { useNotificationStore } from "@/lib/stores/notification-store"
+import { Check as CheckIcon, Loader2, Mail, Radio, Smartphone, StopCircleIcon, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ComponentSpinner from "@/components/ui/component-spinner";
+import DateIndicator from "@/components/ui/date-indicator";
+import { Separator } from "@/components/ui/separator";
+import SubmitBtn from "@/components/ui/submit-btn";
+import { useNotificationStore } from "@/lib/stores/notification-store";
 
 type NotificationSettingsProps = {
-	emailNotifications: boolean
-	inAppNotifications: boolean
-	updatedAt: Date
-}
+	emailNotifications: boolean;
+	inAppNotifications: boolean;
+	updatedAt: Date;
+};
 
 export function NotificationPreferences() {
-	const { preferences, isLoading, loadPreferences, updatePreferences, toggleInAppNotifications, toggleEmailNotifications } = useNotificationStore()
-	const [isUpdating, setIsUpdating] = useState(false)
+	const { preferences, isLoading, loadPreferences, updatePreferences, toggleInAppNotifications, toggleEmailNotifications } = useNotificationStore();
+	const [isUpdating, setIsUpdating] = useState(false);
 
 	const toggleNotifications = async (settingType: "emailNotifications" | "inAppNotifications") => {
 		if (settingType === "emailNotifications") {
-			return await toggleEmailNotifications()
+			return await toggleEmailNotifications();
 		}
-		return await toggleInAppNotifications()
-	}
+		return await toggleInAppNotifications();
+	};
 
 	const handleNotificationToggle = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const settingType = event.currentTarget.value as "emailNotifications" | "inAppNotifications"
-		setIsUpdating(true)
+		const settingType = event.currentTarget.value as "emailNotifications" | "inAppNotifications";
+		setIsUpdating(true);
 		try {
-			const result = await toggleNotifications(settingType)
+			const result = await toggleNotifications(settingType);
 			if ("error" in result) {
-				toast.error(result.error)
+				toast.error(result.error);
 			} else {
-				toast.success(`${settingType} notifications updated`)
+				toast.success(`${settingType} notifications updated`);
 			}
 		} catch {
-			toast.error(`Failed to update ${settingType} notifications`)
+			toast.error(`Failed to update ${settingType} notifications`);
 		} finally {
-			setIsUpdating(false)
+			setIsUpdating(false);
 		}
-	}
+	};
 
 	const handleSaveAll: React.MouseEventHandler<HTMLButtonElement> = async () => {
-		if (!preferences) return
+		if (!preferences) return;
 
-		setIsUpdating(true)
+		setIsUpdating(true);
 		try {
 			const result = await updatePreferences({
 				emailNotifications: preferences.emailNotifications,
 				inAppNotifications: preferences.inAppNotifications,
-			})
+			});
 			if ("error" in result) {
-				toast.error(result.error)
+				toast.error(result.error);
 			} else {
-				toast.success("Notification preferences saved")
+				toast.success("Notification preferences saved");
 			}
 		} catch {
-			toast.error("Failed to save preferences")
+			toast.error("Failed to save preferences");
 		} finally {
-			setIsUpdating(false)
+			setIsUpdating(false);
 		}
-	}
+	};
 
 	useEffect(() => {
-		loadPreferences()
-	}, [loadPreferences])
+		loadPreferences();
+	}, [loadPreferences]);
 
 	if (isLoading) {
-		return <ComponentSpinner isLabel />
+		return <ComponentSpinner isLabel />;
 	}
 
 	return (
-		<div className="episode-card-wrapper flex flex-col pb-12 w-full px-4 gap-4 md:p-2" >
+		<div className="episode-card-wrapper flex flex-col pb-12 w-full px-4 gap-4 md:p-2">
 			<div className="space-y-6 w-full">
 				{/* Email Notifications */}
 				<div className="space-y-4">
@@ -128,7 +128,7 @@ export function NotificationPreferences() {
 				</Card>
 			)}
 		</div>
-	)
+	);
 }
 
 function SettingsToggle({
@@ -138,11 +138,11 @@ function SettingsToggle({
 	settingType,
 	isUpdating = false,
 }: {
-	preferences: NotificationSettingsProps
-	label: string
-	toggleHandler?: React.MouseEventHandler<HTMLButtonElement>
-	settingType: "emailNotifications" | "inAppNotifications"
-	isUpdating?: boolean
+	preferences: NotificationSettingsProps;
+	label: string;
+	toggleHandler?: React.MouseEventHandler<HTMLButtonElement>;
+	settingType: "emailNotifications" | "inAppNotifications";
+	isUpdating?: boolean;
 }): React.ReactElement {
 	return (
 		<div className="flex items-center justify-between gap-4">
@@ -158,7 +158,7 @@ function SettingsToggle({
 				</div>
 			</div>
 		</div>
-	)
+	);
 }
 
-export { SettingsToggle }
+export { SettingsToggle };

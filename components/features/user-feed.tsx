@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { ArrowRight, Plus, Sparkles } from "lucide-react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import type { UserCurationProfileWithRelations } from "@/lib/types"
-import { SavedCollectionCard } from "./saved-feed-card"
+import { ArrowRight, Plus, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import type { UserCurationProfileWithRelations } from "@/lib/types";
+import { SavedCollectionCard } from "./saved-feed-card";
 
 interface UserFeedProps {
-	userCurationProfiles: UserCurationProfileWithRelations[]
+	userCurationProfiles: UserCurationProfileWithRelations[];
 }
 
 export function UserFeed({ userCurationProfiles }: UserFeedProps) {
 	// Filter for active profiles only
-	const activeProfiles = userCurationProfiles.filter(profile => profile.is_active)
+	const activeProfiles = userCurationProfiles.filter(profile => profile.is_active);
 
 	if (activeProfiles.length === 0) {
 		return (
@@ -45,7 +45,7 @@ export function UserFeed({ userCurationProfiles }: UserFeedProps) {
 					</div>
 				</CardContent>
 			</Card>
-		)
+		);
 	}
 
 	return (
@@ -68,5 +68,5 @@ export function UserFeed({ userCurationProfiles }: UserFeedProps) {
 				))}
 			</div>
 		</div>
-	)
+	);
 }

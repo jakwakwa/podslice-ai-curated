@@ -1,55 +1,55 @@
-"use client"
+"use client";
 
-import { AlertCircle } from "lucide-react"
-import { useCallback, useEffect, useState } from "react"
-import { toast } from "sonner"
-import EditUserFeedModal from "@/components/edit-user-feed-modal"
-import EmptyStateCard from "@/components/empty-state-card"
-import { EpisodeList } from "@/components/episode-list"
-import { ProfileFeedCards } from "@/components/features/profile-feed-cards"
-import UserFeedSelector from "@/components/features/user-feed-selector"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { AppSpinner } from "@/components/ui/app-spinner"
-import { Card } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { PageHeader } from "@/components/ui/page-header"
-import { Typography } from "@/components/ui/typography"
-import { useEpisodesStore } from "@/lib/stores/episodes-store"
-import { useAudioPlayerStore } from "@/store/audioPlayerStore"
-import type { Episode, UserCurationProfile, UserCurationProfileWithRelations } from "@/lib/types"
-import { useUserCurationProfileStore } from "../../../lib/stores/user-curation-profile-store"
+import { AlertCircle } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import EditUserFeedModal from "@/components/edit-user-feed-modal";
+import EmptyStateCard from "@/components/empty-state-card";
+import { EpisodeList } from "@/components/episode-list";
+import { ProfileFeedCards } from "@/components/features/profile-feed-cards";
+import UserFeedSelector from "@/components/features/user-feed-selector";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AppSpinner } from "@/components/ui/app-spinner";
+import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { PageHeader } from "@/components/ui/page-header";
+import { Typography } from "@/components/ui/typography";
+import { useEpisodesStore } from "@/lib/stores/episodes-store";
+import { useAudioPlayerStore } from "@/store/audioPlayerStore";
+import type { Episode, UserCurationProfile, UserCurationProfileWithRelations } from "@/lib/types";
+import { useUserCurationProfileStore } from "../../../lib/stores/user-curation-profile-store";
 
 export default function Page() {
-	const [isModalOpen, setIsModalOpen] = useState(false)
-	const [isCreateWizardOpen, setIsCreateWizardOpen] = useState(false)
-	const { setEpisode } = useAudioPlayerStore()
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [isCreateWizardOpen, setIsCreateWizardOpen] = useState(false);
+	const { setEpisode } = useAudioPlayerStore();
 
 	// Use the episodes store
-	const { combinedEpisodes, userCurationProfile, isLoading, error, fetchEpisodes, fetchUserCurationProfile, refreshData, clearError } = useEpisodesStore()
+	const { combinedEpisodes, userCurationProfile, isLoading, error, fetchEpisodes, fetchUserCurationProfile, refreshData, clearError } = useEpisodesStore();
 
 	// Fetch data on component mount
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				await Promise.all([fetchEpisodes(), fetchUserCurationProfile()])
+				await Promise.all([fetchEpisodes(), fetchUserCurationProfile()]);
 			} catch (error: unknown) {
-				const message = error instanceof Error ? error.message : String(error)
-				toast.error(`Failed to load dashboard data: ${message}`)
+				const message = error instanceof Error ? error.message : String(error);
+				toast.error(`Failed to load dashboard data: ${message}`);
 			}
-		}
+		};
 
-		fetchData()
-	}, [fetchEpisodes, fetchUserCurationProfile])
+		fetchData();
+	}, [fetchEpisodes, fetchUserCurationProfile]);
 
 	// Clear error when component unmounts
 	useEffect(() => {
 		return () => {
-			clearError()
-		}
-	}, [clearError])
+			clearError();
+		};
+	}, [clearError]);
 
 	const handleSaveUserCurationProfile = async (updatedData: Partial<UserCurationProfile>) => {
-		if (!userCurationProfile) return
+		if (!userCurationProfile) return;
 		try {
 			const response = await fetch(`/api/user-curation-profiles/${userCurationProfile.profile_id}`, {
 				method: "PATCH",
@@ -57,31 +57,34 @@ export default function Page() {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify(updatedData),
-			})
+			});
 
 			if (!response.ok) {
-				const errorData = await response.json()
-				throw new Error(errorData.error || errorData.message || "Failed to update user curation profile")
+				const errorData = await response.json();
+				throw new Error(errorData.error || errorData.message || "Failed to update user curation profile");
 			}
 
 			// Refresh data after successful update
-			await refreshData()
+			await refreshData();
 
-			toast.success("Personalized Feed updated successfully!")
-			setIsModalOpen(false)
+			toast.success("Personalized Feed updated successfully!");
+			setIsModalOpen(false);
 		} catch (error: unknown) {
-			const message = error instanceof Error ? error.message : String(error)
-			toast.error(`Failed to update Personalized Feed: ${message}`)
+			const message = error instanceof Error ? error.message : String(error);
+			toast.error(`Failed to update Personalized Feed: ${message}`);
 		}
-	}
+	};
 
-	const handlePlayEpisode = useCallback((episode: Episode) => {
-		setEpisode(episode)
-	}, [setEpisode])
+	const handlePlayEpisode = useCallback(
+		(episode: Episode) => {
+			setEpisode(episode);
+		},
+		[setEpisode]
+	);
 
 	const _handleRefreshData = async () => {
-		await refreshData()
-	}
+		await refreshData();
+	};
 
 	if (isLoading) {
 		return (
@@ -90,7 +93,7 @@ export default function Page() {
 					<AppSpinner variant={"wave"} size="lg" label="Generating your personal Podslice Hub..." />
 				</div>
 			</div>
-		)
+		);
 	}
 
 	if (error) {
@@ -103,7 +106,7 @@ export default function Page() {
 					<AlertDescription>{error}</AlertDescription>
 				</Alert>
 			</div>
-		)
+		);
 	}
 
 	return (
@@ -160,8 +163,8 @@ export default function Page() {
 						</DialogHeader>
 						<UserFeedWizardWrapper
 							onSuccess={async () => {
-								setIsCreateWizardOpen(false)
-								await refreshData()
+								setIsCreateWizardOpen(false);
+								await refreshData();
 							}}
 						/>
 					</DialogContent>
@@ -169,20 +172,20 @@ export default function Page() {
 				{/* Portal audio player to global container */}
 			</Card>
 		</div>
-	)
+	);
 }
 
 function UserFeedWizardWrapper({ onSuccess }: { onSuccess: () => void }) {
 	// Use a local state to track if the profile was created
-	const { userCurationProfile } = useUserCurationProfileStore()
-	const [hasCreated, setHasCreated] = useState(false)
+	const { userCurationProfile } = useUserCurationProfileStore();
+	const [hasCreated, setHasCreated] = useState(false);
 
 	useEffect(() => {
 		if (userCurationProfile && !hasCreated) {
-			setHasCreated(true)
-			onSuccess()
+			setHasCreated(true);
+			onSuccess();
 		}
-	}, [userCurationProfile, hasCreated, onSuccess])
+	}, [userCurationProfile, hasCreated, onSuccess]);
 
-	return <UserFeedSelector />
+	return <UserFeedSelector />;
 }

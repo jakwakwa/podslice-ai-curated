@@ -1,4 +1,3 @@
-import { writeEpisodeDebugLog } from "@/lib/debug-logger";
 import { inngest } from "@/lib/inngest/client";
 import { transcribeWithGeminiFromUrl } from "@/lib/inngest/transcripts/gemini-video";
 import { getYouTubeVideoDetails } from "@/lib/inngest/utils/youtube";
@@ -219,14 +218,6 @@ export const geminiVideoWorker = inngest.createFunction(
 	async ({ event, step }) => {
 		const { jobId, userEpisodeId, srcUrl } = ProviderStartedSchema.parse(event.data);
 
-		await step.run("log-start", async () => {
-			await writeEpisodeDebugLog(userEpisodeId, {
-				step: "gemini",
-				status: "start",
-				meta: { jobId },
-			});
-		});
-
 		try {
 			/**
 			 * Step 1: Fetches video metadata from YouTube to determine its total duration.
@@ -255,12 +246,6 @@ export const geminiVideoWorker = inngest.createFunction(
 					endOffset: `${Math.min(i + CHUNK_DURATION_SECONDS, duration)}s`,
 				});
 			}
-
-			await writeEpisodeDebugLog(userEpisodeId, {
-				step: "gemini-chunking",
-				status: "info",
-				message: `Video of ${duration}s split into ${chunks.length} chunks.`,
-			});
 
 			/**
 			 * Step 3: Fan-Out - Processes all generated chunks in parallel.
@@ -306,22 +291,8 @@ export const geminiVideoWorker = inngest.createFunction(
 				{ segments: [], errors: [] }
 			);
 
-			if (errors.length > 0) {
-				await writeEpisodeDebugLog(userEpisodeId, {
-					step: "gemini",
-					status: "info",
-					message: `Transcription failed for ${errors.length} chunk(s). Continuing with remaining segments.`,
-					meta: { errors, severity: "warn" },
-				});
-			}
-
 			if (segments.length === 0) {
 				const message = errors.length > 0 ? `All ${errors.length} transcription chunk(s) failed.` : "Gemini returned no usable transcript chunks.";
-				await writeEpisodeDebugLog(userEpisodeId, {
-					step: "gemini",
-					status: "fail",
-					message,
-				});
 				await step.sendEvent("failed", {
 					name: "transcription.failed",
 					data: {
@@ -337,17 +308,6 @@ export const geminiVideoWorker = inngest.createFunction(
 
 			const { kept: filteredSegments, discarded } = filterLowQualitySegments(segments);
 
-			if (discarded.length > 0) {
-				await writeEpisodeDebugLog(userEpisodeId, {
-					step: "gemini-filter",
-					status: "info",
-					message: `Filtered out ${discarded.length} low-quality chunk(s).`,
-					meta: {
-						discarded,
-					},
-				});
-			}
-
 			const finalTranscript = filteredSegments
 				.map(segment => segment.text)
 				.join(" ")
@@ -359,12 +319,6 @@ export const geminiVideoWorker = inngest.createFunction(
 						where: { episode_id: userEpisodeId },
 						data: { transcript: finalTranscript },
 					});
-				});
-
-				await writeEpisodeDebugLog(userEpisodeId, {
-					step: "gemini",
-					status: "success",
-					message: `Gemini transcript stored (${finalTranscript.length} chars).`,
 				});
 
 				await step.sendEvent("succeeded", {
@@ -389,11 +343,6 @@ export const geminiVideoWorker = inngest.createFunction(
 					filteredSegments.length === 0
 						? "All transcription chunks were filtered out as low quality."
 						: `Gemini returned empty transcript despite ${filteredSegments.length}/${chunks.length} quality-checked chunks.`;
-				await writeEpisodeDebugLog(userEpisodeId, {
-					step: "gemini",
-					status: "fail",
-					message,
-				});
 				await step.sendEvent("failed", {
 					name: "transcription.failed",
 					data: {
@@ -406,11 +355,6 @@ export const geminiVideoWorker = inngest.createFunction(
 				});
 			}
 		} catch (e) {
-			await writeEpisodeDebugLog(userEpisodeId, {
-				step: "gemini",
-				status: "fail",
-				message: e instanceof Error ? e.message : String(e),
-			});
 			const { errorType, errorMessage } = classifyError(e);
 			await step.sendEvent("failed", {
 				name: "transcription.failed",

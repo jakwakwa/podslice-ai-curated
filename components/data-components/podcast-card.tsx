@@ -1,12 +1,12 @@
-import { Calendar, Clock, PlayCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import type { Episode } from "@/lib/types"
+import { Calendar, Clock, PlayCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Episode } from "@/lib/types";
 // CSS module migrated to Tailwind classes
 
 interface PodcastCardProps {
-	episode: Episode
-	onPlayEpisode: (episode: Episode) => void
+	episode: Episode;
+	onPlayEpisode: (episode: Episode) => void;
 }
 
 /* JS DOC */
@@ -42,5 +42,5 @@ export function PodcastCard({ episode, onPlayEpisode }: PodcastCardProps) {
 				</Button>
 			</CardFooter>
 		</Card>
-	)
+	);
 }

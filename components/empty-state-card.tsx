@@ -1,17 +1,17 @@
-import { AlertCircle } from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface EmptyStateCardProps {
-	title: string
+	title: string;
 	message: {
-		description: string
-		notificationTitle: string
-		notificationDescription: string
-		selectStateActionText: string
-	}
-	selectStateAction?: () => void
+		description: string;
+		notificationTitle: string;
+		notificationDescription: string;
+		selectStateActionText: string;
+	};
+	selectStateAction?: () => void;
 }
 
 const EmptyStateCard = ({ title, message, selectStateAction }: EmptyStateCardProps): React.ReactElement => {
@@ -35,7 +35,7 @@ const EmptyStateCard = ({ title, message, selectStateAction }: EmptyStateCardPro
 				)}
 			</CardContent>
 		</Card>
-	)
-}
+	);
+};
 
-export default EmptyStateCard
+export default EmptyStateCard;

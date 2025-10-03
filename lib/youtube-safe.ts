@@ -79,12 +79,12 @@ export type YouTubeTranscriptItem = { text: string; duration: number; offset: nu
  * Parse an ISO-8601 YouTube duration (e.g., PT1H2M30S) to total seconds
  */
 function parseISODurationToSeconds(iso: string): number {
-    const match = iso.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?$/);
-    if (!match) return 0;
-    const hours = match[1] ? parseInt(match[1], 10) : 0;
-    const minutes = match[2] ? parseInt(match[2], 10) : 0;
-    const seconds = match[3] ? parseFloat(match[3]) : 0;
-    return hours * 3600 + minutes * 60 + seconds;
+	const match = iso.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?$/);
+	if (!match) return 0;
+	const hours = match[1] ? parseInt(match[1], 10) : 0;
+	const minutes = match[2] ? parseInt(match[2], 10) : 0;
+	const seconds = match[3] ? parseFloat(match[3]) : 0;
+	return hours * 3600 + minutes * 60 + seconds;
 }
 
 /**
@@ -92,24 +92,24 @@ function parseISODurationToSeconds(iso: string): number {
  * Returns duration in seconds, or null if unavailable/misconfigured.
  */
 export async function getYouTubeVideoDurationSeconds(urlOrId: string): Promise<number | null> {
-    const apiKey = process.env.YOUTUBE_API_KEY;
-    if (!apiKey) return null;
+	const apiKey = process.env.YOUTUBE_API_KEY;
+	if (!apiKey) return null;
 
-    const videoId = extractYouTubeVideoId(urlOrId);
-    if (!videoId) return null;
+	const videoId = extractYouTubeVideoId(urlOrId);
+	if (!videoId) return null;
 
-    const endpoint = new URL("https://www.googleapis.com/youtube/v3/videos");
-    endpoint.searchParams.set("part", "contentDetails");
-    endpoint.searchParams.set("id", videoId);
-    endpoint.searchParams.set("key", apiKey);
+	const endpoint = new URL("https://www.googleapis.com/youtube/v3/videos");
+	endpoint.searchParams.set("part", "contentDetails");
+	endpoint.searchParams.set("id", videoId);
+	endpoint.searchParams.set("key", apiKey);
 
-    const res = await fetch(endpoint.toString(), { next: { revalidate: 3600 } });
-    if (!res.ok) return null;
+	const res = await fetch(endpoint.toString(), { next: { revalidate: 3600 } });
+	if (!res.ok) return null;
 
-    const data = (await res.json()) as { items?: Array<{ contentDetails?: { duration?: string } }> };
-    const iso = data.items?.[0]?.contentDetails?.duration;
-    if (!iso) return null;
-    return parseISODurationToSeconds(iso);
+	const data = (await res.json()) as { items?: Array<{ contentDetails?: { duration?: string } }> };
+	const iso = data.items?.[0]?.contentDetails?.duration;
+	if (!iso) return null;
+	return parseISODurationToSeconds(iso);
 }
 
 /**

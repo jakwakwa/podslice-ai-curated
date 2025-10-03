@@ -1,13 +1,13 @@
-import type { Metadata } from "next"
-import { ManagPlanLandingPage } from "@/components/manage-plan"
-import { PageHeader } from "@/components/ui/page-header"
+import type { Metadata } from "next";
+import { ManagPlanLandingPage } from "@/components/manage-plan";
+import { PageHeader } from "@/components/ui/page-header";
 
-export const revalidate = 0
+export const revalidate = 0;
 
 export const metadata: Metadata = {
 	title: "Subscription",
 	description: "Manage your subscription",
-}
+};
 
 export default function Page() {
 	return (
@@ -16,5 +16,5 @@ export default function Page() {
 			<ManagPlanLandingPage />
 			{/* <Suspense fallback={<div>Loading…</div>}></Suspense> */}
 		</div>
-	)
+	);
 }

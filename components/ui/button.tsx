@@ -11,7 +11,8 @@ const buttonVariants = cva(
 				default: "btn-default text-primary-foreground shadow  md:min-w-[100px] h-auto text-lg px-3 leading-0",
 				destructive: "bg-destructive text-destructive-foreground shadow-[0 -2px 2px 1px #000000BA]",
 				outline: "border border-[#DEECEE1A] bg-[#0B101011] px-6 rounded-2xl shadow-sm text-[0.9rem] font-bold",
-				secondary: "bg-[#4559a1] disabled:bg-[#5E5C6F] rounded-lg border-1 border-[#31c5be] text-foreground shadow-[0px_4px_rgba(26, 40, 46, 0.9)] w-full md:max-w-fit px-4  text-[1rem] shadow-lg shadow-black",
+				secondary:
+					"bg-[#4559a1] disabled:bg-[#5E5C6F] rounded-lg border-1 border-[#31c5be] text-foreground shadow-[0px_4px_rgba(26, 40, 46, 0.9)] w-full md:max-w-fit px-4  text-[1rem] shadow-lg shadow-black",
 				ghost: "",
 				link: "text-primary-forefround underline-offset-4 hover:underline",
 				play: "p-0 m-0",

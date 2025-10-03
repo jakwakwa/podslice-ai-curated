@@ -1,24 +1,24 @@
-"use client"
+"use client";
 
-import { Link2 } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { useState, useTransition } from "react"
-import { toast } from "sonner"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import type { Podcast } from "@/lib/types"
-import PanelHeader from "./PanelHeader"
-import { createPodcastAction, deletePodcastAction, updatePodcastAction } from "./podcasts.actions"
+import { Link2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import type { Podcast } from "@/lib/types";
+import PanelHeader from "./PanelHeader";
+import { createPodcastAction, deletePodcastAction, updatePodcastAction } from "./podcasts.actions";
 
 export default function PodcastsPanelClient({ podcasts }: { podcasts: Podcast[] }) {
-	const router = useRouter()
-	const [optimistic, setOptimistic] = useState<Record<string, Partial<Podcast>>>({})
-	const [isPending, startTransition] = useTransition()
+	const router = useRouter();
+	const [optimistic, setOptimistic] = useState<Record<string, Partial<Podcast>>>({});
+	const [isPending, startTransition] = useTransition();
 
 	const [createForm, setCreateForm] = useState({
 		name: "",
@@ -26,60 +26,61 @@ export default function PodcastsPanelClient({ podcasts }: { podcasts: Podcast[] 
 		description: "",
 		image_url: "",
 		category: "",
-	})
-	const [showCreateForm, setShowCreateForm] = useState(false)
+	});
+	const [showCreateForm, setShowCreateForm] = useState(false);
 
-	const [editOpen, setEditOpen] = useState(false)
-	const [editingPodcastId, setEditingPodcastId] = useState<string | null>(null)
+	const [editOpen, setEditOpen] = useState(false);
+	const [editingPodcastId, setEditingPodcastId] = useState<string | null>(null);
 	const [editForm, setEditForm] = useState({
 		name: "",
 		url: "",
 		description: "",
 		image_url: "",
 		category: "",
-	})
+	});
 
-	const optimisticPodcast = (p: Podcast): Podcast => (({
-		...p,
-		...(optimistic[p.podcast_id] || {})
-	}) as Podcast)
+	const optimisticPodcast = (p: Podcast): Podcast =>
+		({
+			...p,
+			...(optimistic[p.podcast_id] || {}),
+		}) as Podcast;
 
 	const doCreate = () => {
-		if (!(createForm.name.trim() && createForm.url.trim())) return
+		if (!(createForm.name.trim() && createForm.url.trim())) return;
 		startTransition(async () => {
 			try {
-				const form = new FormData()
-				form.set("name", createForm.name.trim())
-				form.set("url", createForm.url.trim())
-				if (createForm.description.trim()) form.set("description", createForm.description.trim())
-				if (createForm.image_url.trim()) form.set("image_url", createForm.image_url.trim())
-				if (createForm.category.trim()) form.set("category", createForm.category.trim())
-				await createPodcastAction(form)
-				setCreateForm({ name: "", url: "", description: "", image_url: "", category: "" })
-				setShowCreateForm(false)
-				router.refresh()
+				const form = new FormData();
+				form.set("name", createForm.name.trim());
+				form.set("url", createForm.url.trim());
+				if (createForm.description.trim()) form.set("description", createForm.description.trim());
+				if (createForm.image_url.trim()) form.set("image_url", createForm.image_url.trim());
+				if (createForm.category.trim()) form.set("category", createForm.category.trim());
+				await createPodcastAction(form);
+				setCreateForm({ name: "", url: "", description: "", image_url: "", category: "" });
+				setShowCreateForm(false);
+				router.refresh();
 			} catch (e) {
-				console.error(e)
+				console.error(e);
 			}
-		})
-	}
+		});
+	};
 
 	const openEdit = (p: Podcast) => {
-		setEditingPodcastId(p.podcast_id)
+		setEditingPodcastId(p.podcast_id);
 		setEditForm({
 			name: p.name || "",
 			url: p.url || "",
 			description: p.description || "",
 			image_url: p.image_url || "",
 			category: p.category || "",
-		})
-		setEditOpen(true)
-	}
+		});
+		setEditOpen(true);
+	};
 
 	const saveEdit = () => {
-		if (!editingPodcastId) return
-		const id = editingPodcastId
-		const prevSnapshot = optimistic[id]
+		if (!editingPodcastId) return;
+		const id = editingPodcastId;
+		const prevSnapshot = optimistic[id];
 		startTransition(async () => {
 			// Optimistically update the item in-place
 			setOptimistic(prev => ({
@@ -92,7 +93,7 @@ export default function PodcastsPanelClient({ podcasts }: { podcasts: Podcast[] 
 					image_url: editForm.image_url,
 					category: editForm.category,
 				},
-			}))
+			}));
 			try {
 				await updatePodcastAction(id, {
 					...(editForm.name ? { name: editForm.name } : {}),
@@ -100,56 +101,56 @@ export default function PodcastsPanelClient({ podcasts }: { podcasts: Podcast[] 
 					...(editForm.url ? { url: editForm.url } : {}),
 					...(editForm.image_url !== undefined ? { image_url: editForm.image_url || null } : {}),
 					...(editForm.category ? { category: editForm.category } : {}),
-				})
-				setEditOpen(false)
-				router.refresh()
+				});
+				setEditOpen(false);
+				router.refresh();
 			} catch (e) {
 				// Revert on error
 				setOptimistic(prev => {
-					if (prevSnapshot) return { ...prev, [id]: prevSnapshot }
-					const { [id]: _removed, ...rest } = prev
-					return rest
-				})
-				console.error(e)
+					if (prevSnapshot) return { ...prev, [id]: prevSnapshot };
+					const { [id]: _removed, ...rest } = prev;
+					return rest;
+				});
+				console.error(e);
 			}
-		})
-	}
+		});
+	};
 
 	const toggleActive = (p: Podcast) => {
 		startTransition(async () => {
-			setOptimistic(prev => ({ ...prev, [p.podcast_id]: { is_active: !p.is_active } }))
+			setOptimistic(prev => ({ ...prev, [p.podcast_id]: { is_active: !p.is_active } }));
 			try {
-				await updatePodcastAction(p.podcast_id, { is_active: !p.is_active })
-				router.refresh()
+				await updatePodcastAction(p.podcast_id, { is_active: !p.is_active });
+				router.refresh();
 			} catch (e) {
 				// revert on error
-				setOptimistic(prev => ({ ...prev, [p.podcast_id]: { is_active: p.is_active } }))
-				console.error(e)
+				setOptimistic(prev => ({ ...prev, [p.podcast_id]: { is_active: p.is_active } }));
+				console.error(e);
 			}
-		})
-	}
+		});
+	};
 
 	const deletePodcast = (p: Podcast) => {
-		if (!confirm(`Delete podcast "${p.name}"? This cannot be undone.`)) return
+		if (!confirm(`Delete podcast "${p.name}"? This cannot be undone.`)) return;
 		startTransition(async () => {
 			try {
-				await deletePodcastAction(p.podcast_id)
-				setOptimistic(prev => ({ ...prev, [p.podcast_id]: { is_active: false, name: `${p.name} (deleted)` } }))
-				router.refresh()
+				await deletePodcastAction(p.podcast_id);
+				setOptimistic(prev => ({ ...prev, [p.podcast_id]: { is_active: false, name: `${p.name} (deleted)` } }));
+				router.refresh();
 			} catch (e) {
-				console.error(e)
+				console.error(e);
 			}
-		})
-	}
+		});
+	};
 
 	const copyUrl = async (url: string) => {
 		try {
-			await navigator.clipboard.writeText(url)
-			toast.success("Feed URL copied to clipboard")
+			await navigator.clipboard.writeText(url);
+			toast.success("Feed URL copied to clipboard");
 		} catch {
-			toast.error("Failed to copy URL")
+			toast.error("Failed to copy URL");
 		}
-	}
+	};
 
 	return (
 		<Card>
@@ -197,7 +198,7 @@ export default function PodcastsPanelClient({ podcasts }: { podcasts: Podcast[] 
 					{/* Right: list */}
 					<div className="space-y-3">
 						{podcasts.map((podcast: Podcast) => {
-							const p = optimisticPodcast(podcast)
+							const p = optimisticPodcast(podcast);
 							return (
 								<div key={p.podcast_id} className="p-3 border rounded-lg bg-card content">
 									{/* Row 1: title */}
@@ -209,9 +210,7 @@ export default function PodcastsPanelClient({ podcasts }: { podcasts: Podcast[] 
 										<Button type="button" variant="ghost" size="sm" onClick={() => copyUrl(p.url)} title="Copy feed URL" aria-label="Copy feed URL">
 											<Link2 className="w-4 h-4" />
 										</Button>
-										<Badge variant={p.is_active ? "default" : "default"}>
-											{p.is_active ? "Active" : "Inactive"}
-										</Badge>
+										<Badge variant={p.is_active ? "default" : "default"}>{p.is_active ? "Active" : "Inactive"}</Badge>
 									</div>
 									{/* Row 3: actions */}
 									<div className="flex items-center gap-2">
@@ -265,12 +264,12 @@ export default function PodcastsPanelClient({ podcasts }: { podcasts: Podcast[] 
 										</Button>
 									</div>
 								</div>
-							)
+							);
 						})}
 						{podcasts.length === 0 && <p className="text-center text-muted-foreground py-4">No podcasts yet.</p>}
 					</div>
 				</div>
 			</CardContent>
 		</Card>
-	)
+	);
 }

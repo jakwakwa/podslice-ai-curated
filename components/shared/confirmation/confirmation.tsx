@@ -1,13 +1,13 @@
-import type { ReactNode } from "react"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import type { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface Props {
-	isOpen: boolean
-	title: ReactNode
-	description: ReactNode
-	onClose: (open: boolean) => void
-	onConfirm: () => void
+	isOpen: boolean;
+	title: ReactNode;
+	description: ReactNode;
+	onClose: (open: boolean) => void;
+	onConfirm: () => void;
 }
 
 export function Confirmation({ isOpen, onClose, title, description, onConfirm }: Props) {
@@ -30,5 +30,5 @@ export function Confirmation({ isOpen, onClose, title, description, onConfirm }:
 				</div>
 			</DialogContent>
 		</Dialog>
-	)
+	);
 }

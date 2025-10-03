@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useShallow } from "zustand/shallow"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { PAYMENT_CONFIG } from "@/config/ai"
-import { useSubscriptionStore } from "@/lib/stores/subscription-store-paddlejs"
+import { useState } from "react";
+import { useShallow } from "zustand/shallow";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { PAYMENT_CONFIG } from "@/config/ai";
+import { useSubscriptionStore } from "@/lib/stores/subscription-store-paddlejs";
 
 export function SubscriptionTestControlsPaddle() {
 	const { setSubscription, subscription } = useSubscriptionStore(
@@ -14,8 +14,8 @@ export function SubscriptionTestControlsPaddle() {
 			setSubscription: state.setSubscription,
 			subscription: state.subscription,
 		}))
-	)
-	const [isVisible, setIsVisible] = useState(true)
+	);
+	const [isVisible, setIsVisible] = useState(true);
 
 	// Mock subscription states for testing
 	const mockSubscriptions = {
@@ -100,12 +100,12 @@ export function SubscriptionTestControlsPaddle() {
 			created_at: new Date("2023-12-15"),
 			updated_at: new Date("2024-01-15"),
 		},
-	}
+	};
 
 	const getCurrentPlanName = () => {
-		if (!subscription) return "FreeSlice"
-		return subscription.plan_type === "casual_listener" ? "Casual Listener" : "Curate & Control"
-	}
+		if (!subscription) return "FreeSlice";
+		return subscription.plan_type === "casual_listener" ? "Casual Listener" : "Curate & Control";
+	};
 
 	return (
 		<div className="fixed bottom-4 right-4 z-50">
@@ -177,5 +177,5 @@ export function SubscriptionTestControlsPaddle() {
 				</Card>
 			)}
 		</div>
-	)
+	);
 }

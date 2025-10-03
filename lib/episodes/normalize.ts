@@ -82,10 +82,7 @@ export function normalizeEpisode(episode: Episode | UserEpisode): NormalizedEpis
 /**
  * Gets the artwork URL for an episode, with fallback logic
  */
-export function getArtworkUrlForEpisode(
-	episode: Episode | UserEpisode,
-	youtubeChannelImage?: string | null
-): string | null {
+export function getArtworkUrlForEpisode(episode: Episode | UserEpisode, youtubeChannelImage?: string | null): string | null {
 	if (isBundleEpisode(episode)) {
 		return episode.image_url || null;
 	}

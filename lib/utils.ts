@@ -1,8 +1,8 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-	return twMerge(clsx(inputs))
+	return twMerge(clsx(inputs));
 }
 
 /**
@@ -16,12 +16,7 @@ export function withTimeout<T>(
 	timeoutMs: number = 280000, // 280 seconds (20s buffer before Vercel's 300s limit)
 	errorMessage: string = "Operation timed out"
 ): Promise<T> {
-	return Promise.race([
-		promise,
-		new Promise<never>((_, reject) =>
-			setTimeout(() => reject(new Error(errorMessage)), timeoutMs)
-		),
-	])
+	return Promise.race([promise, new Promise<never>((_, reject) => setTimeout(() => reject(new Error(errorMessage)), timeoutMs))]);
 }
 
 /**
@@ -33,7 +28,7 @@ export function withDatabaseTimeout<T>(
 	promise: Promise<T>,
 	timeoutMs: number = 30000 // 30 seconds for database operations
 ): Promise<T> {
-	return withTimeout(promise, timeoutMs, "Database operation timed out")
+	return withTimeout(promise, timeoutMs, "Database operation timed out");
 }
 
 /**
@@ -45,5 +40,5 @@ export function withUploadTimeout<T>(
 	promise: Promise<T>,
 	timeoutMs: number = 120000 // 2 minutes for file uploads
 ): Promise<T> {
-	return withTimeout(promise, timeoutMs, "File upload timed out")
+	return withTimeout(promise, timeoutMs, "File upload timed out");
 }

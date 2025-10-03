@@ -1,32 +1,32 @@
-"use client"
+"use client";
 
-import { AlertCircle, Lock } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import { toast } from "sonner"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { H3, Typography } from "@/components/ui/typography"
-import type { Bundle, Podcast } from "@/lib/types"
-import { BundleSelectionDialog } from "./bundle-selection-dialog"
+import { AlertCircle, Lock } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { H3, Typography } from "@/components/ui/typography";
+import type { Bundle, Podcast } from "@/lib/types";
+import { BundleSelectionDialog } from "./bundle-selection-dialog";
 
 type BundleWithAccess = Bundle & {
-	podcasts: Podcast[]
-	canInteract?: boolean
-	lockReason?: string | null
-}
+	podcasts: Podcast[];
+	canInteract?: boolean;
+	lockReason?: string | null;
+};
 
 type NormalizedBundle = Bundle & {
-	podcasts: Podcast[]
-	canInteract: boolean
-	lockReason: string | null
-}
+	podcasts: Podcast[];
+	canInteract: boolean;
+	lockReason: string | null;
+};
 
-type PlanGateValue = Bundle["min_plan"]
+type PlanGateValue = Bundle["min_plan"];
 
 const PLAN_GATE_META = {
 	NONE: {
@@ -49,108 +49,108 @@ const PLAN_GATE_META = {
 		description: "Requires the Curate Control plan.",
 		statusLabel: "Curate Control exclusive",
 	},
-} satisfies Record<PlanGateValue, { badgeLabel: string; description: string; statusLabel: string }>
+} satisfies Record<PlanGateValue, { badgeLabel: string; description: string; statusLabel: string }>;
 
 const normalizeBundle = (bundle: BundleWithAccess): NormalizedBundle => ({
 	...bundle,
 	canInteract: bundle.canInteract ?? true,
 	lockReason: bundle.lockReason ?? null,
-})
+});
 
 interface CuratedBundlesClientProps {
-	bundles: BundleWithAccess[]
-	error: string | null
+	bundles: BundleWithAccess[];
+	error: string | null;
 }
 
 interface UserCurationProfile {
-	profile_id: string
-	name: string
-	selected_bundle_id?: string
+	profile_id: string;
+	name: string;
+	selected_bundle_id?: string;
 	selectedBundle?: {
-		name: string
-	}
+		name: string;
+	};
 }
 
 export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientProps) {
-	const router = useRouter()
-	const [bundleList, setBundleList] = useState<NormalizedBundle[]>(() => bundles.map(normalizeBundle))
-	const [selectedBundle, setSelectedBundle] = useState<NormalizedBundle | null>(null)
-	const [isDialogOpen, setIsDialogOpen] = useState(false)
-	const [dialogMode, setDialogMode] = useState<"select" | "locked">("select")
-	const [isLoading, setIsLoading] = useState(false)
-	const [userProfile, setUserProfile] = useState<UserCurationProfile | null>(null)
+	const router = useRouter();
+	const [bundleList, setBundleList] = useState<NormalizedBundle[]>(() => bundles.map(normalizeBundle));
+	const [selectedBundle, setSelectedBundle] = useState<NormalizedBundle | null>(null);
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [dialogMode, setDialogMode] = useState<"select" | "locked">("select");
+	const [isLoading, setIsLoading] = useState(false);
+	const [userProfile, setUserProfile] = useState<UserCurationProfile | null>(null);
 
 	// Fetch current user profile on mount
 	useEffect(() => {
 		const fetchUserProfile = async () => {
 			try {
-				const response = await fetch("/api/user-curation-profiles")
+				const response = await fetch("/api/user-curation-profiles");
 				if (response.ok) {
-					const profile = await response.json()
-					setUserProfile(profile)
+					const profile = await response.json();
+					setUserProfile(profile);
 				}
 			} catch (error) {
-				console.error("Failed to fetch user profile:", error)
+				console.error("Failed to fetch user profile:", error);
 			}
-		}
+		};
 
-		fetchUserProfile()
-	}, [])
-
-	useEffect(() => {
-		setBundleList(bundles.map(normalizeBundle))
-	}, [bundles])
+		fetchUserProfile();
+	}, []);
 
 	useEffect(() => {
-		let isMounted = true
+		setBundleList(bundles.map(normalizeBundle));
+	}, [bundles]);
+
+	useEffect(() => {
+		let isMounted = true;
 
 		const fetchBundlesWithAccess = async () => {
 			try {
-				const response = await fetch("/api/curated-bundles")
+				const response = await fetch("/api/curated-bundles");
 				if (!response.ok) {
-					return
+					return;
 				}
 
-				const data = (await response.json()) as unknown
+				const data = (await response.json()) as unknown;
 				if (!Array.isArray(data)) {
-					return
+					return;
 				}
 
 				if (isMounted) {
-					setBundleList((data as BundleWithAccess[]).map(normalizeBundle))
+					setBundleList((data as BundleWithAccess[]).map(normalizeBundle));
 				}
 			} catch (err) {
-				console.error("Failed to refresh curated bundles:", err)
+				console.error("Failed to refresh curated bundles:", err);
 			}
-		}
+		};
 
-		fetchBundlesWithAccess()
+		fetchBundlesWithAccess();
 
 		return () => {
-			isMounted = false
-		}
-	}, [])
+			isMounted = false;
+		};
+	}, []);
 
 	const handleBundleClick = (bundle: NormalizedBundle) => {
-		setSelectedBundle(bundle)
-		setDialogMode(bundle.canInteract ? "select" : "locked")
-		setIsDialogOpen(true)
-	}
+		setSelectedBundle(bundle);
+		setDialogMode(bundle.canInteract ? "select" : "locked");
+		setIsDialogOpen(true);
+	};
 
 	const handleConfirmSelection = async ({ bundleId, profileName }: { bundleId: string; profileName?: string }) => {
 		if (selectedBundle && !selectedBundle.canInteract) {
-			setIsDialogOpen(false)
-			setSelectedBundle(null)
-			setDialogMode("select")
-			return
+			setIsDialogOpen(false);
+			setSelectedBundle(null);
+			setDialogMode("select");
+			return;
 		}
 
-		setIsLoading(true)
+		setIsLoading(true);
 		try {
 			if (!userProfile) {
-				const trimmedProfileName = profileName?.trim()
+				const trimmedProfileName = profileName?.trim();
 				if (!trimmedProfileName) {
-					throw new Error("PROFILE_NAME_REQUIRED")
+					throw new Error("PROFILE_NAME_REQUIRED");
 				}
 
 				const response = await fetch("/api/user-curation-profiles", {
@@ -163,18 +163,18 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 						isBundleSelection: true,
 						selectedBundleId: bundleId,
 					}),
-				})
+				});
 
 				if (!response.ok) {
-					const errorData = await response.json().catch(() => ({}))
-					throw new Error(errorData.error || "Failed to create curated bundle profile")
+					const errorData = await response.json().catch(() => ({}));
+					throw new Error(errorData.error || "Failed to create curated bundle profile");
 				}
 
-				const createdProfile: UserCurationProfile = await response.json()
-				setUserProfile(createdProfile)
-				toast.success("Curated bundle created successfully!")
-				router.push("/dashboard")
-				return
+				const createdProfile: UserCurationProfile = await response.json();
+				setUserProfile(createdProfile);
+				toast.success("Curated bundle created successfully!");
+				router.push("/dashboard");
+				return;
 			}
 
 			const response = await fetch(`/api/user-curation-profiles/${userProfile.profile_id}`, {
@@ -185,44 +185,44 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 				body: JSON.stringify({
 					selected_bundle_id: bundleId,
 				}),
-			})
+			});
 
 			if (!response.ok) {
-				const errorData = await response.json().catch(() => ({}))
-				throw new Error(errorData.error || "Failed to update bundle selection")
+				const errorData = await response.json().catch(() => ({}));
+				throw new Error(errorData.error || "Failed to update bundle selection");
 			}
 
 			setUserProfile(prev =>
 				prev
 					? {
-						...prev,
-						selected_bundle_id: bundleId,
-						selectedBundle: {
-							name: selectedBundle?.name || "",
-						},
-					}
+							...prev,
+							selected_bundle_id: bundleId,
+							selectedBundle: {
+								name: selectedBundle?.name || "",
+							},
+						}
 					: null
-			)
+			);
 
-			toast.success("Bundle selection updated successfully!")
-			router.push("/dashboard")
+			toast.success("Bundle selection updated successfully!");
+			router.push("/dashboard");
 		} catch (error) {
-			console.error("Failed to update bundle selection:", error)
-			const message = error instanceof Error ? error.message : "Failed to update bundle selection"
+			console.error("Failed to update bundle selection:", error);
+			const message = error instanceof Error ? error.message : "Failed to update bundle selection";
 			if (message !== "PROFILE_NAME_REQUIRED") {
-				toast.error(message)
+				toast.error(message);
 			}
-			throw error
+			throw error;
 		} finally {
-			setIsLoading(false)
+			setIsLoading(false);
 		}
-	}
+	};
 
 	const handleCloseDialog = () => {
-		setIsDialogOpen(false)
-		setSelectedBundle(null)
-		setDialogMode("select")
-	}
+		setIsDialogOpen(false);
+		setSelectedBundle(null);
+		setDialogMode("select");
+	};
 
 	if (error) {
 		return (
@@ -238,7 +238,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 					</Button>
 				</div>
 			</div>
-		)
+		);
 	}
 
 	if (bundleList.length === 0) {
@@ -250,15 +250,15 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 					<AlertDescription className="mt-2">There are no PODSLICE Bundles available at the moment. Please check back later or contact support if this problem persists.</AlertDescription>
 				</Alert>
 			</div>
-		)
+		);
 	}
 
 	return (
 		<>
 			<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-2 xl:px-[40px] xl:justify-around items-start  xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark lg:px-[40px]	 rounded-3xl border-1 border-[#a497cdfc] shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]  ">
 				{bundleList.map(bundle => {
-					const planMeta = PLAN_GATE_META[bundle.min_plan]
-					const canInteract = bundle.canInteract
+					const planMeta = PLAN_GATE_META[bundle.min_plan];
+					const canInteract = bundle.canInteract;
 
 					return (
 						<Card
@@ -295,9 +295,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 												{bundle.podcasts.slice(0, 4).map((podcast: Podcast) => (
 													<li key={podcast.podcast_id} className=" leading-none flex w-full justify-end gap-0 p-0">
 														<div className="w-full flex flex-col gap-0 ">
-															<p className="w-full text-[0.7rem] font-semibold leading-normal my-0 px-1 mx-0 text-left text-[#e9f0f1b3] tracking-wide line-clamp-2">
-																{podcast.name}
-															</p>
+															<p className="w-full text-[0.7rem] font-semibold leading-normal my-0 px-1 mx-0 text-left text-[#e9f0f1b3] tracking-wide line-clamp-2">{podcast.name}</p>
 														</div>
 													</li>
 												))}
@@ -314,7 +312,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 								</div>
 							</CardHeader>
 						</Card>
-					)
+					);
 				})}
 			</div>
 
@@ -333,5 +331,5 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 				requiredPlanDescription={selectedBundle ? PLAN_GATE_META[selectedBundle.min_plan].description : undefined}
 			/>
 		</>
-	)
+	);
 }

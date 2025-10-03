@@ -1,61 +1,61 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useBundlesStore } from "@/lib/stores/bundles-store"
-import type { Bundle, UserCurationProfileWithRelations } from "@/lib/types"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useBundlesStore } from "@/lib/stores/bundles-store";
+import type { Bundle, UserCurationProfileWithRelations } from "@/lib/types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
-type BundleWithInteraction = Bundle & { canInteract?: boolean }
+type BundleWithInteraction = Bundle & { canInteract?: boolean };
 
 interface EditUserFeedModalProps {
-	isOpen: boolean
-	onClose: () => void
-	collection: UserCurationProfileWithRelations
-	onSave: (updatedData: Partial<UserCurationProfileWithRelations>) => Promise<void>
+	isOpen: boolean;
+	onClose: () => void;
+	collection: UserCurationProfileWithRelations;
+	onSave: (updatedData: Partial<UserCurationProfileWithRelations>) => Promise<void>;
 }
 
 export default function EditUserFeedModal({ isOpen, onClose, collection, onSave }: Readonly<EditUserFeedModalProps>): React.ReactElement {
-	const [name, setName] = useState(collection?.name ?? "")
-	const [selectedBundleId, setSelectedBundleId] = useState<string | undefined>(collection?.selected_bundle_id ?? undefined)
-	const [isLoading, setIsLoading] = useState(false)
-	const { bundles, fetchBundles, isLoading: isLoadingBundles } = useBundlesStore()
+	const [name, setName] = useState(collection?.name ?? "");
+	const [selectedBundleId, setSelectedBundleId] = useState<string | undefined>(collection?.selected_bundle_id ?? undefined);
+	const [isLoading, setIsLoading] = useState(false);
+	const { bundles, fetchBundles, isLoading: isLoadingBundles } = useBundlesStore();
 
 	useEffect(() => {
 		if (isOpen && collection?.is_bundle_selection) {
-			fetchBundles()
+			fetchBundles();
 		}
-	}, [isOpen, collection, fetchBundles])
+	}, [isOpen, collection, fetchBundles]);
 
 	useEffect(() => {
-		setName(collection?.name ?? "")
-		setSelectedBundleId(collection?.selected_bundle_id ?? undefined)
-	}, [collection])
+		setName(collection?.name ?? "");
+		setSelectedBundleId(collection?.selected_bundle_id ?? undefined);
+	}, [collection]);
 
 	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault()
-		setIsLoading(true)
+		e.preventDefault();
+		setIsLoading(true);
 
 		try {
 			const dataToSave: Partial<UserCurationProfileWithRelations> = {
 				name,
-			}
+			};
 			if (collection.is_bundle_selection) {
-				dataToSave.selected_bundle_id = selectedBundleId
-				dataToSave.is_bundle_selection = true
+				dataToSave.selected_bundle_id = selectedBundleId;
+				dataToSave.is_bundle_selection = true;
 			}
-			await onSave(dataToSave)
+			await onSave(dataToSave);
 		} catch (error) {
-			console.error("Failed to update profile:", error)
+			console.error("Failed to update profile:", error);
 		} finally {
-			setIsLoading(false)
+			setIsLoading(false);
 		}
-	}
+	};
 
-	const availableBundles = bundles.filter((b: BundleWithInteraction) => b.canInteract)
+	const availableBundles = bundles.filter((b: BundleWithInteraction) => b.canInteract);
 
 	return (
 		<Dialog open={isOpen} onOpenChange={onClose}>
@@ -108,5 +108,5 @@ export default function EditUserFeedModal({ isOpen, onClose, collection, onSave 
 				</form>
 			</DialogContent>
 		</Dialog>
-	)
+	);
 }

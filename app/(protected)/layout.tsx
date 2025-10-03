@@ -28,7 +28,9 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 					<div className={`flex items-center h-16 justify-between gap-2 px-2  ${state === "expanded" ? "md:px-4" : "md:px-0"}`}>
 						<Image className={`w-full max-w-[100px] ${state === "expanded" ? "inline " : "hidden"}`} src="/logo.png" width={300} height={100} alt="logo" />
 
-						<Separator orientation="vertical" className={`data-[orientation=vertical]:min-h-[8px] border-[0px] border-r-[#00000089] bg-[#14171600] w-[1px] ${state === "expanded" ? "ml-12" : "ml-0 mr-0"}`}>
+						<Separator
+							orientation="vertical"
+							className={`data-[orientation=vertical]:min-h-[8px] border-[0px] border-r-[#00000089] bg-[#14171600] w-[1px] ${state === "expanded" ? "ml-12" : "ml-0 mr-0"}`}>
 							{""}
 						</Separator>
 
@@ -47,11 +49,11 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 				<div
 					className={`flex flex-col flex-grow transition-all duration-300 ease-in-out px-0 md:px-0 mt-8 md:mt-0 mb-2 m-0 p-0 h-screen ${state === "expanded" ? "ml-0 w-full md:ml-3 md:pr-2 " : "ml-0 md:ml-12 w-full md:max-w-[95vw]"}`}>
-					<div className={'grain-blur '} />
-					<div className={'grid-bg-one '} />
-					<div className={'grain-background background-base'} />
+					<div className={"grain-blur "} />
+					<div className={"grid-bg-one "} />
+					<div className={"grain-background background-base"} />
 
-					<div className={'layout-inset'} />
+					<div className={"layout-inset"} />
 					<div className=" w-screen md:w-full p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-20 mx-0 pl-0 md:pr-3 md:px-2 min-w-full md:my-2 lg:ml-6 lg:pl-0 lg:pr-12 ">{children}</div>
 				</div>
 			</SidebarInset>

@@ -1,13 +1,11 @@
-
-
-import { SubscriptionView } from "./views/subscription-view"
+import { SubscriptionView } from "./views/subscription-view";
 
 export function Subscriptions() {
 	// const { data: subscriptions } = await getSubscriptions()
 
 	// if (subscriptions) {
 
-	return <SubscriptionView />
+	return <SubscriptionView />;
 }
 // }
 // return <SubscriptionErrorView />

@@ -1,5 +1,5 @@
-import { CheckIcon, Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { CheckIcon, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 function SubmitBtn({ isUpdating, handleSaveAll }: { isUpdating: boolean; handleSaveAll: React.MouseEventHandler<HTMLButtonElement> }): React.ReactElement {
 	return (
@@ -9,7 +9,7 @@ function SubmitBtn({ isUpdating, handleSaveAll }: { isUpdating: boolean; handleS
 				Save
 			</Button>
 		</div>
-	)
+	);
 }
 
-export default SubmitBtn
+export default SubmitBtn;

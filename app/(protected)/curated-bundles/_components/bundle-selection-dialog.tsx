@@ -173,18 +173,10 @@ export function BundleSelectionDialog({
 		<Dialog open={isOpen} onOpenChange={onClose}>
 			<DialogContent className="max-w-2xl">
 				<DialogHeader>
-					<DialogTitle>
-						{isLocked
-							? "Upgrade required"
-							: isAlreadySelected
-								? "Just a reminder!"
-								: isFirstSelection
-									? "Activate curated bundle"
-									: "Switching Bundle Selection..."}
-					</DialogTitle>
+					<DialogTitle>{isLocked ? "Upgrade required" : isAlreadySelected ? "Just a reminder!" : isFirstSelection ? "Activate curated bundle" : "Switching Bundle Selection..."}</DialogTitle>
 					<DialogDescription className="mt-4">
 						{isLocked
-							? lockReason ?? `'${sanitizedSelectedBundleName}' requires the ${requiredPlanText} plan.`
+							? (lockReason ?? `'${sanitizedSelectedBundleName}' requires the ${requiredPlanText} plan.`)
 							: isAlreadySelected
 								? `You already have "${sanitizeText(selectedBundle.name)}" selected`
 								: isFirstSelection

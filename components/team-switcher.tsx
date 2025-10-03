@@ -59,6 +59,6 @@ export function TeamSwitcher({
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</SidebarMenuItem>
-		</SidebarMenu >
+		</SidebarMenu>
 	);
 }

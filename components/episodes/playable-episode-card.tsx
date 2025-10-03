@@ -32,10 +32,10 @@ export interface PlayableEpisodeCardProps {
 
 /**
  * Unified Playable Episode Card
- * 
+ *
  * This component provides a consistent way to render episode cards
  * across the application, handling both bundle episodes and user episodes.
- * 
+ *
  * Features:
  * - Automatic episode normalization
  * - Consistent play button styling
@@ -43,16 +43,7 @@ export interface PlayableEpisodeCardProps {
  * - Extensible actions
  * - Accessibility built-in
  */
-export function PlayableEpisodeCard({
-	episode,
-	onPlay,
-	showDownload = false,
-	renderActions,
-	selected = false,
-	className,
-	as = "div",
-	isPlaying = false,
-}: PlayableEpisodeCardProps) {
+export function PlayableEpisodeCard({ episode, onPlay, showDownload = false, renderActions, selected = false, className, as = "div", isPlaying = false }: PlayableEpisodeCardProps) {
 	const { playEpisode: defaultPlayEpisode } = useEpisodePlayer();
 	const [isDownloading, setIsDownloading] = useState(false);
 
@@ -117,24 +108,11 @@ export function PlayableEpisodeCard({
 			actions={
 				<div className="flex flex-col gap-2 md:gap-3 md:flex-row md:items-center">
 					{/* Play Button */}
-					{hasAudio && (
-						<PlayButton
-							onClick={handlePlay}
-							aria-label={`Play ${normalized.title}`}
-							isPlaying={isPlaying}
-							className={selected ? "outline-accent outline-2" : ""}
-						/>
-					)}
+					{hasAudio && <PlayButton onClick={handlePlay} aria-label={`Play ${normalized.title}`} isPlaying={isPlaying} className={selected ? "outline-accent outline-2" : ""} />}
 
 					{/* Download Button (for tier 3 users) */}
 					{showDownload && hasAudio && normalized.source === "user" && (
-						<Button
-							onClick={handleDownload}
-							variant="outline"
-							size="sm"
-							disabled={isDownloading}
-							className="h-8"
-						>
+						<Button onClick={handleDownload} variant="outline" size="sm" disabled={isDownloading} className="h-8">
 							<Download className="w-4 h-4" />
 							{isDownloading ? "Downloading..." : "Download"}
 						</Button>

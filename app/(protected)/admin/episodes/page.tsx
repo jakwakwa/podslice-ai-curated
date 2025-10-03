@@ -1,7 +1,7 @@
-import { Suspense } from "react"
-import EpisodeGenerationPanel from "../_components/EpisodeGenerationPanel.server"
+import { Suspense } from "react";
+import EpisodeGenerationPanel from "../_components/EpisodeGenerationPanel.server";
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 export default function EpisodesAdminPage() {
 	return (
@@ -11,5 +11,5 @@ export default function EpisodesAdminPage() {
 				<EpisodeGenerationPanel />
 			</Suspense>
 		</div>
-	)
+	);
 }

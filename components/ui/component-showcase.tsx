@@ -1,6 +1,6 @@
-import { Button } from "./button"
-import { PageHeader } from "./page-header"
-import { Body, H1, H2, H3, Muted } from "./typography"
+import { Button } from "./button";
+import { PageHeader } from "./page-header";
+import { Body, H1, H2, H3, Muted } from "./typography";
 
 // This component demonstrates how to use the new unified component system
 // It replaces all the scattered styling patterns with consistent components
@@ -65,5 +65,5 @@ export function ComponentShowcase() {
 				</div>
 			</div>
 		</div>
-	)
+	);
 }

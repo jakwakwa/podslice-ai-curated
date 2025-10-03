@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import type { Source } from "@/lib/types"
-import { Card } from "../ui/card"
+import Image from "next/image";
+import type { Source } from "@/lib/types";
+import { Card } from "../ui/card";
 
 export function SourceListItem({ source }: { source: Source }) {
 	return (
@@ -15,5 +15,5 @@ export function SourceListItem({ source }: { source: Source }) {
 				<p className="text-xs text-muted-foreground truncate">{source.url}</p>
 			</div>
 		</Card>
-	)
+	);
 }

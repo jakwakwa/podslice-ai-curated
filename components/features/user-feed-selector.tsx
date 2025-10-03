@@ -164,7 +164,7 @@ function UserFeedSelectorWizard() {
 			{/* Step 1: Choose User Curation Profile Type */}
 			{step === 1 && (
 				<div className="w-full">
-					<div className="w-full" >
+					<div className="w-full">
 						<CardHeader>
 							<CardDescription>
 								<Typography className="text-primary-forefround w-full p-0 text-base" variant="body" as="span">
@@ -300,11 +300,9 @@ function UserFeedSelectorWizard() {
 			{/* Step 3: Review and Create */}
 			{step === 3 && (
 				<div className="w-full">
-					<Card className="w-full" >
+					<Card className="w-full">
 						<CardHeader>
-							<CardDescription className="text-base">
-								Review your Bundled Feed Details
-							</CardDescription>
+							<CardDescription className="text-base">Review your Bundled Feed Details</CardDescription>
 						</CardHeader>
 						<CardContent className="flex flex-col gap-2">
 							<div className="border-2 bg-primary-card p-6 rounded-xl">

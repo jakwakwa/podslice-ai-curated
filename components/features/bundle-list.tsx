@@ -1,51 +1,51 @@
-"use client"
+"use client";
 
-import { Lock } from "lucide-react"
-import Image from "next/image"
-import { useCallback, useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardTitle } from "@/components/ui/card"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import type { Bundle, Podcast } from "@/lib/types"
-import { AppSpinner } from "../ui/app-spinner"
-import { PageHeader } from "../ui/page-header"
+import { Lock } from "lucide-react";
+import Image from "next/image";
+import { useCallback, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import type { Bundle, Podcast } from "@/lib/types";
+import { AppSpinner } from "../ui/app-spinner";
+import { PageHeader } from "../ui/page-header";
 
 // Type for bundle with podcasts array from API
-type BundleWithPodcasts = (Bundle & { podcasts: Podcast[] }) & { canInteract?: boolean; lockReason?: string | null }
+type BundleWithPodcasts = (Bundle & { podcasts: Podcast[] }) & { canInteract?: boolean; lockReason?: string | null };
 
 interface BundleListProps {
-	onBundleSelect: (bundle: BundleWithPodcasts) => void
-	selectedBundleId?: string
+	onBundleSelect: (bundle: BundleWithPodcasts) => void;
+	selectedBundleId?: string;
 }
 
 export function BundleList({ onBundleSelect }: BundleListProps) {
-	const [curatedBundles, setCuratedBundles] = useState<BundleWithPodcasts[]>([])
-	const [isLoading, setIsLoading] = useState(true)
-	const [error, setError] = useState<string | null>(null)
+	const [curatedBundles, setCuratedBundles] = useState<BundleWithPodcasts[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 
 	const fetchCuratedBundles = useCallback(async () => {
 		try {
-			setIsLoading(true)
-			setError(null)
+			setIsLoading(true);
+			setError(null);
 
-			const response = await fetch("/api/curated-bundles")
+			const response = await fetch("/api/curated-bundles");
 			if (!response.ok) {
-				throw new Error(`Failed to load PODSLICE Bundles. Server responded with status ${response.status}.`)
+				throw new Error(`Failed to load PODSLICE Bundles. Server responded with status ${response.status}.`);
 			}
 
-			const data = await response.json()
-			setCuratedBundles(data)
+			const data = await response.json();
+			setCuratedBundles(data);
 		} catch (error) {
-			console.error("Error fetching PODSLICE Bundles:", error)
-			setError(error instanceof Error ? error.message : "An unexpected error occurred while loading PODSLICE Bundles.")
+			console.error("Error fetching PODSLICE Bundles:", error);
+			setError(error instanceof Error ? error.message : "An unexpected error occurred while loading PODSLICE Bundles.");
 		} finally {
-			setIsLoading(false)
+			setIsLoading(false);
 		}
-	}, [])
+	}, []);
 
 	useEffect(() => {
-		fetchCuratedBundles()
-	}, [fetchCuratedBundles])
+		fetchCuratedBundles();
+	}, [fetchCuratedBundles]);
 
 	if (isLoading) {
 		return (
@@ -57,7 +57,7 @@ export function BundleList({ onBundleSelect }: BundleListProps) {
 					</div>
 				</div>
 			</div>
-		)
+		);
 	}
 
 	if (error) {
@@ -70,7 +70,7 @@ export function BundleList({ onBundleSelect }: BundleListProps) {
 					</Button>
 				</div>
 			</div>
-		)
+		);
 	}
 
 	if (curatedBundles.length === 0) {
@@ -83,14 +83,13 @@ export function BundleList({ onBundleSelect }: BundleListProps) {
 					</Button>
 				</div>
 			</div>
-		)
+		);
 	}
 
 	return (
 		<div className="flex flex-col gap-2 justify-center items-center w-full max-w-md">
 			{curatedBundles.map(bundle => {
-
-				const disabled = bundle.canInteract === false
+				const disabled = bundle.canInteract === false;
 				return (
 					<Card key={bundle.bundle_id} className={`w-full ${disabled ? "opacity-60" : ""}`} onClick={() => onBundleSelect(bundle)}>
 						<CardContent className="p-2">
@@ -116,10 +115,7 @@ export function BundleList({ onBundleSelect }: BundleListProps) {
 											<div className="mb-3">
 												<Tooltip>
 													<TooltipTrigger asChild>
-														<p className="text-sm text-muted-foreground line-clamp-2 leading-tight">
-															{bundle.description}
-
-														</p>
+														<p className="text-sm text-muted-foreground line-clamp-2 leading-tight">{bundle.description}</p>
 													</TooltipTrigger>
 													<TooltipContent side="top" className="max-w-xs">
 														<p>{bundle.description}</p>
@@ -148,14 +144,14 @@ export function BundleList({ onBundleSelect }: BundleListProps) {
 									{/* Fixed selection indicator */}
 									<div className="flex items-center gap-2 text-sm text-muted-foreground p-4">
 										<Lock size={12} />
-										<span className="truncate">{disabled ? (bundle.lockReason || "Requires higher plan") : "Fixed Selection"}</span>
+										<span className="truncate">{disabled ? bundle.lockReason || "Requires higher plan" : "Fixed Selection"}</span>
 									</div>
 								</div>
 							</div>
 						</CardContent>
 					</Card>
-				)
+				);
 			})}
 		</div>
-	)
+	);
 }

@@ -1,31 +1,31 @@
-"use client"
+"use client";
 
-import type { LucideIcon } from "lucide-react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import type { LucideIcon } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator, useSidebar } from "@/components/ui/sidebar"
-import { cn } from "@/lib/utils"
+import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator, useSidebar } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 
 export function NavMain({
 	items,
 }: {
 	items: {
-		title: string
-		url: string
-		icon?: LucideIcon
-		separator?: boolean
-	}[]
+		title: string;
+		url: string;
+		icon?: LucideIcon;
+		separator?: boolean;
+	}[];
 }) {
-	const pathname = usePathname()
-	const { isMobile, setOpenMobile } = useSidebar()
+	const pathname = usePathname();
+	const { isMobile, setOpenMobile } = useSidebar();
 
 	const handleLinkClick = () => {
 		// Close sidebar on mobile when navigation item is clicked
 		if (isMobile) {
-			setOpenMobile(false)
+			setOpenMobile(false);
 		}
-	}
+	};
 
 	return (
 		<SidebarGroup>
@@ -46,5 +46,5 @@ export function NavMain({
 				<SidebarSeparator className="my-2" />
 			</SidebarMenu>
 		</SidebarGroup>
-	)
+	);
 }

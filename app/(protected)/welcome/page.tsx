@@ -36,7 +36,7 @@ export default function WelcomePage() {
 		},
 	];
 
-	const _handleUpgrade = async (_planCode: string | undefined) => { };
+	const _handleUpgrade = async (_planCode: string | undefined) => {};
 
 	return (
 		<div className="bg-sidebar rounded-3xl px-4">

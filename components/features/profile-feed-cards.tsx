@@ -1,15 +1,15 @@
-import { memo } from "react"
-import { Body, Typography } from "@/components/ui/typography"
-import type { UserCurationProfileWithRelations } from "@/lib/types"
+import { memo } from "react";
+import { Body, Typography } from "@/components/ui/typography";
+import type { UserCurationProfileWithRelations } from "@/lib/types";
 
 interface ProfileFeedCardsProps {
-	userCurationProfile: UserCurationProfileWithRelations | null
-	showProfileCard?: boolean
+	userCurationProfile: UserCurationProfileWithRelations | null;
+	showProfileCard?: boolean;
 }
 
 export const ProfileFeedCards = memo(function ProfileFeedCards({ userCurationProfile, showProfileCard = true }: ProfileFeedCardsProps) {
 	if (!userCurationProfile) {
-		return null
+		return null;
 	}
 
 	return (
@@ -28,5 +28,5 @@ export const ProfileFeedCards = memo(function ProfileFeedCards({ userCurationPro
 				)}
 			</div>
 		</div>
-	)
-})
+	);
+});

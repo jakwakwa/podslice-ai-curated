@@ -35,7 +35,7 @@ const ManagPlanLandingPage: React.FC = () => {
 		const run = async () => {
 			try {
 				await fetch("/api/account/subscription/sync-paddle", { method: "POST" });
-			} catch { }
+			} catch {}
 			await fetchSubscription();
 		};
 		void run();
@@ -68,9 +68,11 @@ const ManagPlanLandingPage: React.FC = () => {
 
 	return (
 		<>
-			{hasActiveSubscription && <div className=" mt-4 ">
-				<Subscriptions />
-			</div>}
+			{hasActiveSubscription && (
+				<div className=" mt-4 ">
+					<Subscriptions />
+				</div>
+			)}
 
 			{!hasActiveSubscription && (
 				<div className="flex w-full flex-col gap-12 mt-4 ">

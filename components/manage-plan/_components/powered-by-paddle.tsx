@@ -1,7 +1,7 @@
-import { ArrowUpRight } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import { Separator } from "@/components/ui/separator"
+import { ArrowUpRight } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 
 export function PoweredByPaddle() {
 	return (
@@ -33,5 +33,5 @@ export function PoweredByPaddle() {
 				</div>
 			</div>
 		</>
-	)
+	);
 }

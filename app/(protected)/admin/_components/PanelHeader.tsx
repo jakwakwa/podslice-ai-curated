@@ -1,21 +1,21 @@
-import type { ReactNode } from "react"
-import { Button } from "@/components/ui/button"
-import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import type { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface PanelHeaderProps {
-	title: string | ReactNode
-	description: string
+	title: string | ReactNode;
+	description: string;
 	actionButton?: {
-		label: string
-		onClick: () => void
-		disabled?: boolean
-	}
+		label: string;
+		onClick: () => void;
+		disabled?: boolean;
+	};
 	secondaryButton?: {
-		label: string
-		onClick: () => void
-		variant?: "outline" | "ghost" | "default"
-		size?: "sm" | "default" | "md"
-	}
+		label: string;
+		onClick: () => void;
+		variant?: "outline" | "ghost" | "default";
+		size?: "sm" | "default" | "md";
+	};
 }
 
 export default function PanelHeader({ title, description, actionButton, secondaryButton }: PanelHeaderProps) {
@@ -38,5 +38,5 @@ export default function PanelHeader({ title, description, actionButton, secondar
 				)}
 			</div>
 		</CardHeader>
-	)
+	);
 }

@@ -20,35 +20,27 @@ export interface PlayButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
 
 /**
  * Canonical Play Button for Episode Cards
- * 
+ *
  * This is the standard play button used across all episode cards in the application.
  * It enforces consistent styling and behavior.
- * 
+ *
  * Standard Props:
  * - variant: "play"
  * - size: "sm"
  * - icon: PlayIcon
  * - className: "btn-playicon rounded-[14px]"
- * 
+ *
  * Interactions:
  * - Keyboard: Enter and Space activate play
  * - Focus: visible focus ring consistent across themes
  * - Hover and active states: consistent with design system
  * - Disabled state when the episode is locked or has no audio
- * 
+ *
  * Accessibility:
  * - aria-label: defaults to "Play episode"
  * - aria-pressed: reflects playing state if isPlaying is true
  */
-export function PlayButton({
-	"aria-label": ariaLabel = "Play episode",
-	isPlaying = false,
-	iconSize,
-	className,
-	onClick,
-	disabled,
-	...props
-}: PlayButtonProps) {
+export function PlayButton({ "aria-label": ariaLabel = "Play episode", isPlaying = false, iconSize, className, onClick, disabled, ...props }: PlayButtonProps) {
 	return (
 		<Button
 			variant="play"
@@ -57,10 +49,7 @@ export function PlayButton({
 			disabled={disabled}
 			aria-label={ariaLabel}
 			aria-pressed={isPlaying}
-			className={cn(
-				"inline-flex p-0 border-0 rounded-full items-center justify-center btn-playicon rounded-[14px]",
-				className
-			)}
+			className={cn("inline-flex p-0 border-0 rounded-full items-center justify-center btn-playicon rounded-[14px]", className)}
 			icon={<PlayIcon size={iconSize} />}
 			type="button"
 			{...props}

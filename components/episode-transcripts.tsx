@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 // CSS module migrated to Tailwind classes
-import { Button } from "./ui/button"
+import { Button } from "./ui/button";
 
 export function EpisodeTranscript({ transcript }: { transcript: string }) {
-	const [show, setShow] = useState(false)
+	const [show, setShow] = useState(false);
 	return (
 		<div className="mt-4">
 			{!show ? (
@@ -16,5 +16,5 @@ export function EpisodeTranscript({ transcript }: { transcript: string }) {
 				<div className="max-h-[25rem] overflow-y-auto border rounded p-2 bg-background mt-2 whitespace-pre-line">{transcript}</div>
 			)}
 		</div>
-	)
+	);
 }

@@ -34,15 +34,14 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(({ classNam
 			<div className={cn(headerVariants({ spacing, className }))} ref={ref} {...props}>
 				<h2 className="flex text-xl font-bold px-0 md:px-0 pt-0 pb-0 md:py-0 text-shadow-md text-shadow-[#3f365e6a] text-[#afb7db] leading-[1.5] max-w-screen lg:max-w-4xl">{title}</h2>
 				{description && (
-					<Typography as="p" variant="body" className="text-sm md:text-[0.9rem] px-0  md:px-0  md:py-1 text-[#999cbb] leading-[1.5] max-w-screen  text-shadow-sm text-shadow-[#00000010] font-medium w-full md:max-w-[97%]">
+					<Typography
+						as="p"
+						variant="body"
+						className="text-sm md:text-[0.9rem] px-0  md:px-0  md:py-1 text-[#999cbb] leading-[1.5] max-w-screen  text-shadow-sm text-shadow-[#00000010] font-medium w-full md:max-w-[97%]">
 						{description}
 					</Typography>
 				)}
-				{button && (
-					<div className="flex justify-end absolute right-4 top-8	">
-						{button}
-					</div>
-				)}
+				{button && <div className="flex justify-end absolute right-4 top-8	">{button}</div>}
 			</div>
 		</div>
 	);
