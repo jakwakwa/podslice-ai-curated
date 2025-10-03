@@ -35,13 +35,13 @@ export function EpisodeCard({ as = "div", imageUrl, title, publishedAt, duration
 	return (
 		<Card className="bg-card w-full h-[230px] md:h-[250px]  lg:h-34">
 			<CardAction>{actions}</CardAction>
-			<div className="w-full h-full flex flex-col md:flex-col     lg:flex-row gap-2 lg:gap-6 items-start lg:items-center justify-evenly py-4 lg:py-2 lg:px-0 content-center relative">
+			<div className="w-full h-full flex flex-col md:flex-col     lg:flex-row gap-2 lg:gap-3 items-start lg:items-center justify-evenly py-4 lg:py-2 lg:px-0 content-center relative">
 				<CardHeader>
 					{(() => {
 						// For bundle episodes, use the episode's image_url
 						if (imageUrl) {
 							return (
-								<div className="aspect-video h-20 md:h-18 lg:h-22 shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#1f2e54ed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0911199e]">
+								<div className="aspect-video h-18 md:h-18 lg:h-17 shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#1f2e54ed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0911199e]">
 									<Image src={imageUrl} alt={title} className="h-full w-full inline-flex content-center object-cover mix-blend-exclusion  shadow-zinc-800  opacity-80 " width={200} height={80} />
 								</div>
 							);
@@ -50,7 +50,7 @@ export function EpisodeCard({ as = "div", imageUrl, title, publishedAt, duration
 						if (youtubeUrl) {
 							if (youtubeChannelImage) {
 								return (
-									<div className="aspect-video h-19 md:h-22 lg:18 shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#050e3bcf] shadow-black/35 border-[#1f2254ed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0911199e] relative">
+									<div className="aspect-video h-18 md:h-18 lg:h-17 shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#1f2e54ed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0911199e] relative">
 										<Image src={youtubeChannelImage} alt={title} className="h-42 w-100 inline-flex justify-center content-center object-cover mix-blend-screen absolute my-auto shadow-zinc-600 bottom-0 top-2 opacity-60 " width={300} height={100} />
 									</div>
 								);
@@ -69,7 +69,7 @@ export function EpisodeCard({ as = "div", imageUrl, title, publishedAt, duration
 				</CardHeader>
 
 				<div className="flex w-full flex-col justify-center items-start content-start py-0">
-					<div className="w-full text-[0.9rem]  font-bold md:w-[90%] md:text-base md:font-bold sm:mb-4 md:mb-1 mt-0 leading-normal line-clamp-2 text-shadow-sm  text-[#9fc1dd]">{title}</div>
+					<div className="w-full text-[0.9rem] w-[98%] font-bold md:w-[90%] md:text-[0.85] md:font-bold sm:mb-4 md:mb-1 mt-0 leading-normal line-clamp-2 text-shadow-sm lg:text-[0.85rem] text-[#9fc1dd]">{title}</div>
 
 					<div className="w-full flex justify-between flex-row items-center gap-2">
 						<div className="flex flex-row-reverse justify-between w-full gap-2 items-end mt-2">

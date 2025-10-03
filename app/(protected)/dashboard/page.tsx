@@ -24,12 +24,6 @@ interface SubscriptionInfo {
 	status: string;
 }
 
-// CSS module migrated to Tailwind classes
-
-const _formatDate = (date: Date | null | undefined) => {
-	if (!date) return "N/A";
-	return new Date(date).toLocaleString();
-};
 
 export default function CurationProfileManagementPage() {
 	const [userCurationProfile, setUserCurationProfile] = useState<UserCurationProfileWithRelations | null>(null);
@@ -131,7 +125,7 @@ export default function CurationProfileManagementPage() {
 		_bundleEpisodes.length > 0 ? _bundleEpisodes.sort((a, b) => new Date(b.published_at || b.created_at).getTime() - new Date(a.published_at || a.created_at).getTime())[0] : null;
 
 	return (
-		<div className="flex flex-col gap-0 md:gap-3 lg:gap-6 w-full episode-card-wrapper ">
+		<div className=" h-full min-h-[84vh] overflow-hidden rounded-none bg-episode-card-wrapper px-0 mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:border-2 md:border-[#c8d3da32] md:rounded-4xl shadow-lg md:mt-4 md:p-8 md:w-full">
 			<PageHeader
 				title="Your dashboard"
 				description="Choose from our pre-curated podcast bundles. Each bundle is a fixed selection of 2-5 carefully selected shows and cannot be modified once selected."
@@ -139,11 +133,11 @@ export default function CurationProfileManagementPage() {
 
 			{/* Latest Bundle Episode Section */}
 			{latestBundleEpisode && (
-				<div className="w-full space-y-0 episode-card-wrapper border-dark border-b-dark">
-					<CardTitle className="mb-4 flex items-center">
-						<span className="bg-[#339991] rounded-sm shadow shadow-[#1a0b2f3f]  animate-pulse ease-in-out duration-200 px-1.5 py-0.5 text-xs mr-2">New</span>Episode from your activated Bundle
+				<div className="w-full border-b-0 rounded-0 px-4 py-8  my-8 mx-0 bg-episode-card-wrapper border-[#2c2a2a17] shadow-xl shadow-slate-900/20  mt-0 pt-6 sm:pt-0  md:pt-9 md:mt-0  md:mb-8  md:px-6 border-dark md:rounded-3xl overflow-hidden  ">
+					<CardTitle className="mb-4 flex items-center text-base" >
+						<span className="bg-[#089e69] rounded-sm shadow shadow-[#1a0b2f3f]  animate-pulse ease-in-out duration-200 px-1.5 py-0.5 text-sm md:text-sm mr-2">New</span>Latest episode from your Bundle
 					</CardTitle>
-					<CardDescription className="text-xs opacity-90 mb-4">The most recent episode from your selected bundle: {userCurationProfile?.selectedBundle?.name}</CardDescription>
+					<CardDescription className="text-xs opacity-90 mb-4">See your latest roundup episodes here from {userCurationProfile?.selectedBundle?.name}</CardDescription>
 					<CardContent className="px-0">
 						<EpisodeCard
 							imageUrl={latestBundleEpisode.image_url}
@@ -165,20 +159,19 @@ export default function CurationProfileManagementPage() {
 			)}
 
 			{isLoading ? (
-				<div className="p-0 max-w-[1200px] mx-auto">
+				<div className="p-0 w-full mx-auto">
 					<div className="flex items-center justify-center min-h-[400px]">
 						<AppSpinner variant="wave" size="lg" label="Loading Personalized Feed..." />
 					</div>
 				</div>
 			) : userCurationProfile ? (
-				<div className="flex flex-col lg:flex-row gap-4">
-					<div className="w-full lg:w-1/2 episode-card-wrapper shadow-2xl shadow-cyan-950">
-						<div className="w-full flex flex-col justify-between pb-0 rounded-2xl ">
-							<CardTitle className="mb-4 max-w-[100%]">Your Bundled Feed</CardTitle>
+				<div className=" w-full  flex flex-col gap-0 justify-center items-baseline  mt-0 md:m-0 lg:flex-row md:gap-4 mb-12 pt-0 md:mb-0">
+					<div className="w-full lg:max-w-[360px] pt-0 mt-0 px-5  pb-12 md:mx-3 flex flex-col  md:bg-episode-card-wrapper lg:flex-col shadow-xl shadow-slate-900/30 md:p-8 sm:pt-0  md:pt-9 md:mt-0  md:mb-8  border-dark  md:bg-[#00000000] md:bg-episode-card-wrapper md:rounded-3xl overflow-hidden ">
+						<div className="w-full flex flex-col justify-between p-0 rounded-2xl ">
+							<CardTitle className="pt-0  md:px-0 pb-6 text-base max-w-[100%]">Your Bundled Feed</CardTitle>
 
-							{/*  */}
 							{userCurationProfile?.is_bundle_selection && userCurationProfile?.selectedBundle && (
-								<div className="bg-[#1a0b2967] border-b-0  border-1 border-[#0e0d0da9]  rounded-t-lg overflow-hidden p-4">
+								<div className="bg-[#1a0b2967] border-b-0  border-1 border-[#0e0d0da9] mx-auto px-5 w-full  rounded-t-lg overflow-hidden p-4">
 									<Button className="inline-flex justify-end w-full px-2" variant="ghost" size="xs" onClick={() => setIsModalOpen(true)}>
 										<Edit />
 									</Button>
@@ -188,7 +181,7 @@ export default function CurationProfileManagementPage() {
 										</Typography>
 										{/* <Typography className="text-xs text-foreground/50 mb-6"> Custom Description: {userCurationProfile.selectedBundle.description}</Typography> */}
 
-										<div className="px-2 py-1 border-[#d4b1e125] rounded border-1 w-fit">
+										<div className="px-2 md:px-8 py-1 border-[#d4b1e125] rounded border-1 w-fit md:w-auto">
 											<Typography className="text-[12px] font-bold uppercase">
 												<span className="text-[11px] text-[#94a2e7] flex gap-2 items-center font-sans font-bold">
 													<BoxesIcon color={"#b6a5e5"} size={16} />
@@ -218,11 +211,11 @@ export default function CurationProfileManagementPage() {
 							</div>
 						</div>
 					</div>
-					<div className="w-full episode-card-wrapper px-4 mx-0 md:px-12 border-dark border-b-dark">
-						<CardTitle className="w-full mb-4">Your recently generated episodes</CardTitle>
-						<CardDescription className="text-xs opacity-90">View and manage your recently generated episodes.</CardDescription>
+					<div className="w-full pb-4 border-b-dark  mx-auto px-6 mb-0 bg-[#1410325b] rounded-none lg:flex-col shadow-xl shadow-slate-900/20  mt-0 pt-6 sm:pt-0  md:pt-9 md:mt-0  md:mb-8  md:px-12 border-dark  md:bg-[#00000000] md:generate-episode-card-wrapper md:rounded-3xl overflow-hidden  md:mix-blend-normal  ">
+						<CardTitle className="w-full  px-0  md:px-0 text-base mb-4">Your recently created episodes</CardTitle>
+						<CardDescription className="px-0 md:px-0 text-sm opacity-90">View and manage your recently generated episodes.</CardDescription>
 						{(subscription?.plan_type || "").toLowerCase() === "curate_control" && (
-							<Link href="/my-episodes" passHref className="mr-4">
+							<Link href="/my-episodes" passHref className="px-0 mr-4">
 								<Button variant="default" size="sm" className="mt-4">
 									My Episodes
 								</Button>
@@ -234,11 +227,11 @@ export default function CurationProfileManagementPage() {
 							</Button>
 						</Link>
 
-						<CardContent className="px-0">
+						<CardContent className="px-1">
 							{userEpisodes.length === 0 ? (
 								<p className="text-muted-foreground text-xs">No generated episodes yet.</p>
 							) : (
-								<ul className="bg-[#0f0f104d] px-2 pt-2 pb-2 rounded-xl flex flex-col w-full gap-1 lg:px-2">
+								<ul className="bg-[#12122129]  md:bg-[#1d1d3760]  px-3 md:px-2 pt-2 pb-2 rounded-xl flex flex-col w-full overflow-hidden gap-2 lg:px-2">
 									{userEpisodes
 										.filter(e => e.status === "COMPLETED" && !!e.signedAudioUrl)
 										.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())

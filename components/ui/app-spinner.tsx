@@ -15,17 +15,17 @@ export function AppSpinner({ label, size = "sm", color = "primary", variant = "d
 	const getLabelColorClass = (labelColor: string) => {
 		switch (labelColor) {
 			case "primary":
-				return "text-[#fff] text-left"
+				return "text-[#fff] text-center"
 			case "secondary":
-				return "text-[#fff] text-left "
+				return "text-[#fff] text-center "
 			case "success":
-				return "text-teal-500 text-left"
+				return "text-teal-500 text-center"
 			case "warning":
-				return "text-amber-500 text-left"
+				return "text-amber-500 text-center"
 			case "danger":
-				return "text-red-500 text-left"
+				return "text-red-500 text-center"
 			default:
-				return "text-[#fff] text-left"
+				return "text-[#fff] text-center"
 		}
 	}
 

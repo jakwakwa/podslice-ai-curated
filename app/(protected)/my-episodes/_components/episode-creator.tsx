@@ -320,7 +320,7 @@ export function EpisodeCreator() {
 								console.log("[DEBUG] Form submission proceeding to handleCreate");
 								void handleCreate();
 							}}>
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mx-4">
+							<div className="grid grid-cols-1 md:grid-cols-2 my-8 gap-4 mx-2 md:mx-4">
 								<div className="space-y-2 md:col-span-2 lg:max-w-lg">
 									<Label htmlFor="youtubeUrl">YouTube URL<span className="pl-2 text-[0.65rem] font-mono  font-medium text-[#1debaeb8]	">
 										MAX {maxDuration}min duration
@@ -340,7 +340,7 @@ export function EpisodeCreator() {
 								</div>
 
 								{videoTitle && (
-									<div className="bg-black/30 space-y-1 md:col-span-2 py-3 px-4 rounded-xl outline-2 outline-teal-500 shadow-lg max-w-sm  ">
+									<div className="bg-black/30 space-y-1 md:col-span-2 py-3 px-2 rounded-xl outline-2 outline-teal-500 shadow-lg max-w-sm  ">
 										<p className=" font-bold text-[#e9dddfc7] flex text-xs items-center gap-2">
 											<YoutubeIcon width={18} height={18} color="#fecdd7b5" />
 											Youtube Video
@@ -362,7 +362,7 @@ export function EpisodeCreator() {
 								</div>
 							</div>
 
-							<div className="space-y-6 border-2 border-[rgba(81,143,205,0.48)] rounded-xl md:rounded-4xl shadow-md px-10 pt-8 pb-6 bg-[#110d1737]">
+							<div className="space-y-6 border-2 border-[rgba(81,143,205,0.48)] rounded-xl md:rounded-4xl shadow-md px-4 md:px-10 pt-8 pb-6 bg-[#110d1737]">
 								<div className="space-y-2">
 									<Label>Voice Settings</Label>
 									<div className="flex flex-row gap-3 mt-4">
@@ -381,26 +381,33 @@ export function EpisodeCreator() {
 									</button>
 
 									{showTips && (
-										<div className="space-y-3 p-4 bg-muted/50 rounded-lg border">
-											<p className="text-xs text-foreground">
+										<div className="space-y-3 p-4 bg-[#00000074]/40	 rounded-xl border-1 border-[#151723af] ">
+											<p className="text-xs font-semibold foreground/80">
 												Both options can handle 90% of any youtube URL you provide! The quality of your generated episode depends on the content you choose to upload. These tips can help you decide if
 												you're unsure:
 											</p>
-											<ul className="space-y-2 leading-relaxed text-foreground text-xs mt-1">
+											<ul className="space-y-2 leading-relaxed text-foreground/80 text-xs mt-1">
 												<li className="flex items-start gap-2">
-													<span className="text-orange-500 mt-1">⏱️</span>
+													<span className="text-indigo-100">💡</span>
+													<span>
+														<strong className="text-indigo-300">Pro tip:</strong> If you're unsure, start with Single Speaker - it's our most reliable option for any content type
+													</span>
+												</li>
+												<li className="flex my-1 content-center gap-2">
+													<span className="text-orange-500">⏱️</span>
 													<span>
 														<strong className="text-teal-500 ">For videos over 2 hours:</strong> We recommend Single Speaker for faster processing and guaranteed success
 													</span>
+
 												</li>
 												<li className="flex items-start gap-2">
-													<span className="text-blue-500 mt-1">⚡</span>
+													<span className="text-blue-500">⚡</span>
 													<span>
 														<strong className="text-teal-500">Single Speaker</strong> processes faster and is ideal for solo presentations, tutorials, or monologues
 													</span>
 												</li>
 												<li className="flex items-start gap-2">
-													<span className="text-green-200 mt-1">🎙️</span>
+													<span className="text-green-200">🎙️</span>
 													<span>
 														<strong className="text-teal-500">Multi Speaker</strong> results will be generated into two speaker conversational podcast syled episode. For more engaging information
 														consumption. May not be suite for all types of content.
@@ -408,21 +415,15 @@ export function EpisodeCreator() {
 												</li>
 
 												<li className="flex items-start gap-2">
-													<span className="text-purple-500 mt-1">🎯</span>
+													<span className="text-purple-500">🎯</span>
 													<span>
 														<strong className="text-teal-500">Best results come from:</strong> Clear audio, minimal background noise, and well-structured content
 													</span>
 												</li>
 												<li className="flex items-start gap-2">
-													<span className="text-red-500 mt-1">⚠️</span>
+													<span className="text-red-500">⚠️</span>
 													<span>
-														<strong className="text-amber-500">Avoid:</strong> Music-heavy content, very fast speech, or videos with poor audio quality
-													</span>
-												</li>
-												<li className="flex items-start gap-2">
-													<span className="text-indigo-100 mt-1">💡</span>
-													<span>
-														<strong className="text-indigo-400">Pro tip:</strong> If you're unsure, start with Single Speaker - it's our most reliable option for any content type
+														<strong className="text-amber-400">Avoid:</strong> Music-heavy content, very fast speech, or videos with poor audio quality
 													</span>
 												</li>
 											</ul>

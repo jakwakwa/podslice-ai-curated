@@ -25,7 +25,7 @@ const buttonVariants = cva(
 				xs: "p-2 text-xs",
 				icon: "h-48 w-48",
 				play: "btn-playicon",
-				playSmall: "btn-playicon-sm",
+				playSmall: "btn-playicon-sm ",
 				playLarge: "btn-playicon-lg",
 			},
 		},
