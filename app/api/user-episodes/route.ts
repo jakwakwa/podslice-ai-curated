@@ -40,8 +40,21 @@ export async function GET(request: Request) {
 		}
 
 		// Return all episodes (for general listing)
+		// Exclude transcript and summary to avoid Prisma 4MB response limit
 		const episodes = await prisma.userEpisode.findMany({
 			where: { user_id: userId },
+			select: {
+				episode_id: true,
+				user_id: true,
+				episode_title: true,
+				youtube_url: true,
+				gcs_audio_url: true,
+				duration_seconds: true,
+				status: true,
+				created_at: true,
+				updated_at: true,
+				// Explicitly exclude: transcript, summary (too large)
+			},
 			orderBy: { created_at: "desc" },
 			cacheStrategy: {
 				swr: 60,

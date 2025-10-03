@@ -125,30 +125,64 @@ export const generateUserEpisode = inngest.createFunction(
 			);
 		});
 
-		// Step 4: Convert to Audio - Process all TTS in a single step to avoid opcode size issues
-		// (Multiple small steps returning base64 can exceed Inngest's total step output limit)
-		const audioChunkBase64 = await step.run("generate-all-tts-chunks", async () => {
+		// Step 4: Convert to Audio - Upload chunks to GCS immediately to avoid memory/opcode limits
+		const chunkUrls = await step.run("generate-and-upload-tts-chunks", async () => {
 			const chunkWordLimit = getTtsChunkWordLimit();
 			const scriptParts = splitScriptIntoChunks(script, chunkWordLimit);
-			const chunks: string[] = [];
+			const urls: string[] = [];
+			const tempPath = `user-episodes/${userEpisodeId}/temp-chunks`;
 			
 			for (let i = 0; i < scriptParts.length; i++) {
-				console.log(`[TTS] Generating chunk ${i + 1}/${scriptParts.length}`);
+				console.log(`[TTS] Generating and uploading chunk ${i + 1}/${scriptParts.length}`);
 				const buf = await generateSingleSpeakerTts(scriptParts[i]);
-				chunks.push(buf.toString("base64"));
+				// Upload immediately to GCS, return only the URL
+				const chunkFileName = `${tempPath}/chunk-${i}.wav`;
+				const gcsUrl = await uploadBufferToPrimaryBucket(buf, chunkFileName);
+				urls.push(gcsUrl);
 			}
 			
-			return chunks;
+			console.log(`[TTS] Uploaded ${urls.length} chunks to GCS`);
+			return urls; // Only return URLs (small), not base64 data
 		});
 
-		const { gcsAudioUrl, durationSeconds } = await step.run("combine-upload-audio", async () => {
-			// combineAndUploadWavChunks now auto-detects if chunks are already WAV or raw PCM.
-			// If raw, it wraps them using mime from TTS_RAW_MIME_TYPE (default audio/L16; rate=24000).
-			const fileName = `user-episodes/${userEpisodeId}-${Date.now()}.wav`;
-			const { finalBuffer, durationSeconds } = combineAndUploadWavChunks(audioChunkBase64, fileName);
-			const gcsUrl = await uploadBufferToPrimaryBucket(finalBuffer, fileName);
-			return { gcsAudioUrl: gcsUrl, durationSeconds };
-		});
+	const { gcsAudioUrl, durationSeconds } = await step.run("download-combine-upload-audio", async () => {
+		// Download chunks from GCS, combine them, and upload final file
+		const { getStorageReader, parseGcsUri } = await import("@/lib/inngest/utils/gcs");
+		const storageReader = getStorageReader();
+		
+		console.log(`[COMBINE] Downloading ${chunkUrls.length} chunks from GCS`);
+		const audioChunkBase64: string[] = [];
+		
+		for (const gcsUrl of chunkUrls) {
+			const parsed = parseGcsUri(gcsUrl);
+			if (!parsed) {
+				throw new Error(`Invalid GCS URI: ${gcsUrl}`);
+			}
+			const [buffer] = await storageReader.bucket(parsed.bucket).file(parsed.object).download();
+			audioChunkBase64.push(buffer.toString("base64"));
+		}
+		
+		console.log(`[COMBINE] Downloaded ${audioChunkBase64.length} chunks, combining`);
+		const fileName = `user-episodes/${userEpisodeId}-${Date.now()}.wav`;
+		const { finalBuffer, durationSeconds } = combineAndUploadWavChunks(audioChunkBase64, fileName);
+		const gcsUrl = await uploadBufferToPrimaryBucket(finalBuffer, fileName);
+		
+		// Clean up temporary chunk files
+		try {
+			const tempPath = `user-episodes/${userEpisodeId}/temp-chunks`;
+			console.log(`[CLEANUP] Deleting temp chunks at ${tempPath}`);
+			for (const chunkUrl of chunkUrls) {
+				const parsed = parseGcsUri(chunkUrl);
+				if (parsed) {
+					await storageReader.bucket(parsed.bucket).file(parsed.object).delete().catch(() => {});
+				}
+			}
+		} catch (cleanupError) {
+			console.warn(`[CLEANUP] Failed to delete temp chunks:`, cleanupError);
+		}
+		
+		return { gcsAudioUrl: gcsUrl, durationSeconds };
+	});
 
 		// Step 4: Finalize Episode
 		await step.run("finalize-episode", async () => {

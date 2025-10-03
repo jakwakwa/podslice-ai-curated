@@ -92,27 +92,55 @@ ${summary}`
 			);
 		});
 
-		// 4. TTS in chunks - Process all in a single step to avoid opcode size issues
-		const audioChunkBase64 = await step.run("generate-all-tts-chunks", async () => {
+		// 4. TTS in chunks - Upload to GCS immediately
+		const chunkUrls = await step.run("generate-and-upload-tts-chunks", async () => {
 			const chunkWordLimit = getTtsChunkWordLimit();
 			const scriptParts = splitScriptIntoChunks(script, chunkWordLimit);
-			const chunks: string[] = [];
+			const urls: string[] = [];
+			const tempPath = `podcasts/${podcastId}/temp-chunks/${Date.now()}`;
 			
 			for (let i = 0; i < scriptParts.length; i++) {
-				console.log(`[TTS] Generating admin chunk ${i + 1}/${scriptParts.length}`);
+				console.log(`[TTS] Generating and uploading admin chunk ${i + 1}/${scriptParts.length}`);
 				const buf = await generateSingleSpeakerTts(scriptParts[i]);
-				chunks.push(buf.toString("base64"));
+				const chunkFileName = `${tempPath}/chunk-${i}.wav`;
+				const gcsUrl = await uploadBufferToPrimaryBucket(buf, chunkFileName);
+				urls.push(gcsUrl);
 			}
 			
-			return chunks;
+			console.log(`[TTS] Uploaded ${urls.length} admin chunks to GCS`);
+			return urls;
 		});
 
-		// 5. Combine + upload (podcasts path)
-		const { gcsAudioUrl, durationSeconds } = await step.run("combine-upload", async () => {
-			// Auto converts raw PCM (Gemini) to a single WAV before upload.
+		// 5. Download, combine, and upload final audio
+		const { gcsAudioUrl, durationSeconds } = await step.run("download-combine-upload", async () => {
+			const { getStorageReader, parseGcsUri } = await import("@/lib/inngest/utils/gcs");
+			const storageReader = getStorageReader();
+			
+			console.log(`[COMBINE] Downloading ${chunkUrls.length} admin chunks from GCS`);
+			const audioChunkBase64: string[] = [];
+			
+			for (const gcsUrl of chunkUrls) {
+				const parsed = parseGcsUri(gcsUrl);
+				if (!parsed) throw new Error(`Invalid GCS URI: ${gcsUrl}`);
+				const [buffer] = await storageReader.bucket(parsed.bucket).file(parsed.object).download();
+				audioChunkBase64.push(buffer.toString("base64"));
+			}
+			
+			console.log(`[COMBINE] Downloaded ${audioChunkBase64.length} chunks, combining`);
 			const fileName = `podcasts/${podcastId}/admin-${Date.now()}.wav`;
 			const { finalBuffer, durationSeconds } = combineAndUploadWavChunks(audioChunkBase64, fileName);
 			const gcsUrl = await uploadBufferToPrimaryBucket(finalBuffer, fileName);
+			
+			// Clean up temporary chunks
+			try {
+				for (const chunkUrl of chunkUrls) {
+					const parsed = parseGcsUri(chunkUrl);
+					if (parsed) await storageReader.bucket(parsed.bucket).file(parsed.object).delete().catch(() => {});
+				}
+			} catch (cleanupError) {
+				console.warn(`[CLEANUP] Failed to delete temp chunks:`, cleanupError);
+			}
+			
 			return { gcsAudioUrl: gcsUrl, durationSeconds };
 		});
 

@@ -131,27 +131,58 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 			return coerceJsonArray(text);
 		});
 
-		// TTS for all dialogue lines - Process in a single step to avoid opcode size issues
-		const lineAudioBase64 = await step.run("generate-all-dialogue-audio", async () => {
-			const chunks: string[] = [];
+		// TTS for all dialogue lines - Upload chunks to GCS immediately
+		const lineChunkUrls = await step.run("generate-and-upload-dialogue-audio", async () => {
+			const urls: string[] = [];
+			const tempPath = `user-episodes/${userEpisodeId}/temp-dialogue-chunks`;
 			
 			for (let i = 0; i < duetLines.length; i++) {
 				const line = duetLines[i];
-				console.log(`[TTS] Generating dialogue line ${i + 1}/${duetLines.length} (Speaker ${line.speaker})`);
+				console.log(`[TTS] Generating and uploading line ${i + 1}/${duetLines.length} (Speaker ${line.speaker})`);
 				const voice = line.speaker === "A" ? voiceA : voiceB;
 				const audio = await ttsWithVoice(line.text, voice);
-				chunks.push(audio.toString("base64"));
+				// Upload immediately to GCS
+				const chunkFileName = `${tempPath}/line-${i}.wav`;
+				const gcsUrl = await uploadBufferToPrimaryBucket(audio, chunkFileName);
+				urls.push(gcsUrl);
 			}
 			
-			return chunks;
+			console.log(`[TTS] Uploaded ${urls.length} dialogue chunks to GCS`);
+			return urls;
 		});
 
-		const { gcsAudioUrl, durationSeconds } = await step.run("combine-upload-multi-voice", async () => {
-			const fileName = `user-episodes/${userEpisodeId}-duet-${Date.now()}.wav`;
-			const { finalBuffer, durationSeconds } = combineAndUploadWavChunks(lineAudioBase64, fileName);
-			const gcsUrl = await uploadBufferToPrimaryBucket(finalBuffer, fileName);
-			return { gcsAudioUrl: gcsUrl, durationSeconds };
-		});
+	const { gcsAudioUrl, durationSeconds } = await step.run("download-combine-upload-multi-voice", async () => {
+		// Download chunks from GCS, combine them, and upload final file
+		const { getStorageReader, parseGcsUri } = await import("@/lib/inngest/utils/gcs");
+		const storageReader = getStorageReader();
+		
+		console.log(`[COMBINE] Downloading ${lineChunkUrls.length} dialogue chunks from GCS`);
+		const lineAudioBase64: string[] = [];
+		
+		for (const gcsUrl of lineChunkUrls) {
+			const parsed = parseGcsUri(gcsUrl);
+			if (!parsed) throw new Error(`Invalid GCS URI: ${gcsUrl}`);
+			const [buffer] = await storageReader.bucket(parsed.bucket).file(parsed.object).download();
+			lineAudioBase64.push(buffer.toString("base64"));
+		}
+		
+		console.log(`[COMBINE] Downloaded ${lineAudioBase64.length} chunks, combining`);
+		const fileName = `user-episodes/${userEpisodeId}-duet-${Date.now()}.wav`;
+		const { finalBuffer, durationSeconds } = combineAndUploadWavChunks(lineAudioBase64, fileName);
+		const gcsUrl = await uploadBufferToPrimaryBucket(finalBuffer, fileName);
+		
+		// Clean up temporary chunk files
+		try {
+			for (const chunkUrl of lineChunkUrls) {
+				const parsed = parseGcsUri(chunkUrl);
+				if (parsed) await storageReader.bucket(parsed.bucket).file(parsed.object).delete().catch(() => {});
+			}
+		} catch (cleanupError) {
+			console.warn(`[CLEANUP] Failed to delete temp chunks:`, cleanupError);
+		}
+		
+		return { gcsAudioUrl: gcsUrl, durationSeconds };
+	});
 
 		await step.run("finalize-episode", async () => {
 			return await prisma.userEpisode.update({
