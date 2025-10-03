@@ -58,6 +58,7 @@ export function EpisodeCreator() {
 	const [voiceA, setVoiceA] = useState<string>("Zephyr");
 	const [voiceB, setVoiceB] = useState<string>("Kore");
 	const [isPlaying, setIsPlaying] = useState<string | null>(null);
+	const [isLoadingSample, setIsLoadingSample] = useState<string | null>(null);
 	const [audioUrlCache, setAudioUrlCache] = useState<Record<string, string>>({});
 	const [maxDuration, setMaxDuration] = useState<number | null>(120); // Default to 120 minutes
 	const [isCreating, setIsCreating] = useState(false);
@@ -72,7 +73,7 @@ export function EpisodeCreator() {
 	const [showTips, setShowTips] = useState(false);
 
 	const isBusy = isCreating || isFetchingMetadata;
-	const isAudioPlaying = isPlaying !== null;
+	const isAudioBusy = isPlaying !== null || isLoadingSample !== null;
 
 	const isDurationValid = videoDuration !== null && (maxDuration ? videoDuration <= maxDuration * 60 : videoDuration <= YT_MAX_DURATION_SECONDS);
 	const canSubmit =
@@ -274,10 +275,12 @@ export function EpisodeCreator() {
 
 	async function playSample(voiceName: string) {
 		try {
-			setIsPlaying(voiceName);
 			const cached = audioUrlCache[voiceName];
 			let url = cached;
+			
+			// If not cached, set loading state and fetch
 			if (!url) {
+				setIsLoadingSample(voiceName);
 				const res = await fetch(`/api/tts/voice-sample?voice=${encodeURIComponent(voiceName)}`);
 				if (!res.ok) throw new Error(await res.text());
 				// Get the array buffer and explicitly create a blob with audio/wav MIME type
@@ -285,7 +288,11 @@ export function EpisodeCreator() {
 				const blob = new Blob([arrayBuffer], { type: 'audio/wav' });
 				url = URL.createObjectURL(blob);
 				setAudioUrlCache(prev => ({ ...prev, [voiceName]: url }));
+				setIsLoadingSample(null);
 			}
+			
+			// Set playing state and play audio
+			setIsPlaying(voiceName);
 			const audio = new Audio(url);
 			audio.onended = () => setIsPlaying(null);
 			audio.onerror = (e) => {
@@ -295,6 +302,7 @@ export function EpisodeCreator() {
 			await audio.play();
 		} catch (err) {
 			setIsPlaying(null);
+			setIsLoadingSample(null);
 			console.error("Failed to play sample", err);
 			toast.error("Could not load voice sample");
 		}
@@ -434,10 +442,37 @@ export function EpisodeCreator() {
 												</li>
 											</ul>
 										</div>
-									)}
-								</div>
+								)}
+							</div>
 
-								{generationMode === "multi" && (
+							{generationMode === "single" && (
+								<div className="space-y-4">
+									<div>
+										<div className="py-2 pl-2 uppercase font-bold text-[#79c4ca] text-xs">Voice</div>
+										<Select value={voiceA} onValueChange={setVoiceA}>
+											<SelectTrigger className="w-full" disabled={isBusy}>
+												<SelectValue placeholder="Select Voice" />
+											</SelectTrigger>
+											<SelectContent>
+												{VOICE_OPTIONS.map(v => (
+													<SelectItem key={v.name} value={v.name}>
+														<div className="flex items-center justify-between w-full gap-3">
+															<span>{v.label}</span>
+														</div>
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+										<div className="mt-2">
+											<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceA)} disabled={isBusy || isAudioBusy}>
+												<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceA ? "Loading sample" : isPlaying === voiceA ? "Playing" : "Play sample"}
+											</Button>
+										</div>
+									</div>
+								</div>
+							)}
+
+							{generationMode === "multi" && (
 									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 										<div>
 											<div className="py-2 pl-2 uppercase font-bold text-[#79c4ca] text-xs">Voice A</div>
@@ -467,8 +502,8 @@ export function EpisodeCreator() {
 												</SelectContent>
 											</Select>
 											<div className="mt-2">
-												<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceA)} disabled={isBusy || isAudioPlaying}>
-													<PlayCircle className="mr-2 h-4 w-4" /> {isPlaying === voiceA ? "Playing" : "Play sample"}
+												<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceA)} disabled={isBusy || isAudioBusy}>
+													<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceA ? "Loading sample" : isPlaying === voiceA ? "Playing" : "Play sample"}
 												</Button>
 											</div>
 										</div>
@@ -501,8 +536,8 @@ export function EpisodeCreator() {
 												</SelectContent>
 											</Select>
 											<div className="mt-2">
-												<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceB)} disabled={isBusy || isAudioPlaying}>
-													<PlayCircle className="mr-2 h-4 w-4" /> {isPlaying === voiceB ? "Playing" : "Play sample"}
+												<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceB)} disabled={isBusy || isAudioBusy}>
+													<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceB ? "Loading sample" : isPlaying === voiceB ? "Playing" : "Play sample"}
 												</Button>
 											</div>
 										</div>
