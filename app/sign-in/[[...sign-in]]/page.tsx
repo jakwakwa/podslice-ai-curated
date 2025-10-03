@@ -8,7 +8,7 @@ export default function SignInPage() {
 			<div className="grid-bg background-base heroSection rounded-none" />
 			{/* <div className="large-blur background-base" /> */}
 			{/* <div className="background-overlay" /> */}
-			<div className=" flex items-start justify-center  pt-12  min-h-screen relative z-10 rounded-none">
+			<div className=" flex items-center	 justify-center   min-h-screen relative z-10 rounded-none">
 				<SignIn />
 			</div>
 		</>

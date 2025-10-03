@@ -16,12 +16,12 @@
 				@apply backdrop-blur-sm text-foreground;
 				width: 100%;
 				max-width: 100%;
-				/* background: linear-gradient(135deg, #BABCEF 0%, #E3E9FAA9 100%) !important; */
+				background: linear-gradient(135deg, #10181CEF 0%, #020102E7 100%) !important;
 				margin: 0;
 				padding: 0;
 				text-align: left;
 				height: auto;
-				/* background: #0E0E13; */
+				background: #160031;
 			}
 
 			/* For WebKit-based browsers (Chrome, Safari, Edge) */
@@ -361,42 +361,60 @@
 				width: 100%;
 				max-width: 100%;
 				min-width: 300px;
+				overflow: hidden;
 				border-radius: 40px;
 				padding: 0;
-				backdrop-filter: blur(8px) !important;
+				gap: 0;
+				backdrop-filter: blur(18px) !important;
 			}
 
 			.cl-card {
-				padding: 20px 20px 0px 20px !important;
-				border-radius: 0;
+				/* padding: 30px 200px 110px 20px !important; */
+				/* border-radius: 40px; */
+				gap: 0;
 			}
 
 			.cl-card {
-				margin-bottom: 20px !important;
-
-				gap: 10px;
+				/* margin-bottom: 20px !important; */
+				position: relative;
+				/* gap: 0px !important; */
 			}
 
 			img.cl-logoImage {
-				margin-top: 40px;
-				height: 40px;
+				position: relative;
+				margin-top: 10px;
+				left: 0%;
+				right: 0%;
+				/* width: 40%; */
+				height: 60px;
+				margin: 10px;
+				top: 20px;
 			}
 
 			.cl-card {
-				padding: 20px !important;
-				padding: 10px 30px !important;
+				margin-top: -20px;
+					margin-bottom: -20px;
+				/* padding: 20px !important; */
+				padding: 20px 30px !important;
 
 			}
 
 			h1.cl-headerTitle {
 				display: none !important;
+				height: 100px !important;
 			}
-
+				
 			.cl-headerSubtitle {
-				font-size: 0.8rem;
+				font-size: 0.9rem;
 				color: #8a999ff8 !important;
-				font-weight: 300;
+				font-weight: 400;
+				/* padding: 0; */
+	
+				position: relative;
+				margin-top: 0;
 				padding-top: 2rem;
+				line-height: 1.2;
+				/* padding: 0px; */
 			}
 
 			.cl-socialButtons button {
@@ -415,14 +433,15 @@
 				box-shadow: 1px 5px 12px 0px #00000073 !important;
 			}
 
+	
 		
 		
 			.generate-episode-card-wrapper,
 			.episode-card-wrapper {
 				border: 0px solid #7ad7d200 !important;
-			
-				box-shadow: 0px 6px 5px 1px #1A16242D, 0px 2px 4px 0px #1A162457, 0px 1px 2px 0px #69E1F016 inset, 0px 1px 3px 0px #76E3D643 inset;
-				background-color: oklch(0.83 0.09 231.1 / 0.07);
+				border-radius: 30px;
+				box-shadow: 0px 6px 5px 1px #1A16242D, 0px 2px 4px 0px #1A162457, 0px 1px 150px 0px #69A3F00D inset, 0px 1px 1px 0px #D5FCF711 inset;
+				background-color: oklch(0.76 0.12 233.19 / 0.07);
 				background-image: linear-gradient(oklch(0.78 0.08 279.61 / 0.03) -10%, oklch(0.22 0.12 287.06 / 0.14) 100%);
 				backdrop-filter: blur(3px);
 				outline-offset: -1px !important;
@@ -430,7 +449,15 @@
 				background-repeat: no-repeat;
 				background-blend-mode: multiply;
 			}
-
+			.generate-episode-card-wrapper {
+							background-image: linear-gradient( 120deg, oklch(0.66 0.11 255.37 / 0.37) -50%, oklch(0.32 0.06 235.91 / 0.8) 190%);
+						background-color: oklch(0.35 0.19 291.82 / 0.22);
+							/* backdrop-filter: blur(30px); */
+				/* outline-offset: -1px !important; */
+				/* z-index: 5; */
+				/* background-repeat: no-repeat; */
+				/* background-blend-mode: multiply; */
+				}
 		
 			.episode-card-wrapper {
 				padding: 30px;
@@ -511,16 +538,16 @@
 		/* ============================================= */
 		@layer utilities {
 			.bg-card {
-				background-color: oklch(0.31 0.07 277.01 / 0.67);
-				background-image: linear-gradient(160deg, oklch(0.71 0.13 220.5 / 0.38) -40%,
-						oklch(0.44 0.12 283.89 / 0.37) 77%, oklab(0.26 0.02 -0.09 / 0.26) 120%);
+				background-color: oklch(0.34 0.13 288.17 / 0.87);
+				background-image: linear-gradient(160deg, oklch(0.74 0.11 215.83) -90%,
+						oklch(0.44 0.1 269.76 / 0.66) 37%, oklab(0.4 -0.01 -0.04 / 0.5) 110%);
 				box-shadow:
-					inset 0.5px 1px 1px 0px #BBD6F22F,
-					inset -1px -2px 1px 0px #1E2730B8,
-					inset 0px -5px 28px 1px #312C597C,
-					inset 1px -30px 89px 5px oklab(0.16 0.01 -0.02 / 0.19),
-					0px 7px 5px 0px oklch(0.08 0 0 / 0.13),
-					0px 1px 3px 1px oklch(0.23 0.03 283.65 / 0.36);
+					inset 0.5px 1px 1px 0px #8ABDF52F,
+					inset -1px -2px 1px 0px #131B23B8,
+					inset 0px -5px 28px 1px #0C0E177C,
+					inset 1px -30px 89px 5px oklab(0.18 0.01 -0.01 / 0.19),
+					0px 7px 5px 0px oklch(0.11 0 17.62 / 0.13),
+					0px 3px 3px 1px oklch(0.23 0.03 283.65 / 0.36);
 
 					margin: 0px auto;
 					margin-bottom: 5px;
@@ -798,12 +825,13 @@
 			}
 
 			label {
-				font-size: 0.7rem !important;
+				font-size: 0.9rem !important;
 				font-weight: 700 !important;
-				color: hsla(174, 16%, 77%, 0.799) !important;
+				color: hsla(193.85 41.94% 81.76% / 0.8) !important;
 				padding-bottom: 1.5px;
 				padding-top: 0px;
-				text-transform: uppercase !important;
+				letter-spacing: 0.2px;
+				/* text-transform: uppercase !important; */
 			}
 
 			.cl-formFieldInput::placeholder {
@@ -993,11 +1021,13 @@
 				/* width: 100vw; */
 				padding: 14px;
 				margin: 0;
+					
 			}
 
 			.episode-card-wrapper {
 				/* padding: 20px 40px 21px 40px; */
 				margin-top: 30px !important;
+					
 			}
 		}
 
@@ -1014,6 +1044,7 @@
 				padding-top: 15px;
 				padding-bottom: 10px;
 				display: flex;
+		
 				align-items: center !important;
 				/* min-height: 100px !important; */
 				border-radius: 13px !important;
@@ -1021,12 +1052,12 @@
 			}
 
 			.episode-card-wrapper-dark {
-				border-radius: 10px !important;
-				padding: 20px;
+				border-radius: 20px;
+				padding: 10px;
 			}
 
 			.episode-card-wrapper {
-				padding: 24px 20px 25px 20px;
+				padding: 24px 10px 25px 10px;
 				margin: 0 !important;
 				margin-top: 20px !important;
 			}

@@ -40,7 +40,6 @@ export default function WelcomePage() {
 
 	return (
 		<div className="bg-sidebar rounded-3xl px-4">
-			{/* Short Intro */}
 			<section className="text-left mt-8  w-full pt-0 md:pt-0 pb-4 mb-0">
 				<div className="w-full px-2 md:px-4">
 					<Typography className="text-2xl font-bold text-left">Welcome!</Typography>
@@ -49,7 +48,7 @@ export default function WelcomePage() {
 					</Body>
 					<div className="mt-6">
 						<Link href="/manage-membership">
-							<Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+							<Button variant="default" size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
 								Start Your Free Trial
 							</Button>
 						</Link>

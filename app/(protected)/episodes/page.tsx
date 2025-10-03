@@ -77,14 +77,13 @@ export default function EpisodesPage() {
 			) : episodes.length === 0 ? (
 				<div className="w-full  max-w-[1000px] mx-auto mt-0">
 					<Alert>
-
 						<AlertTitle>No Episodes Available</AlertTitle>
 						<AlertDescription className="mt-2">There are no episodes available at the moment. Create a personal feed or select a bundle to start getting episodes.</AlertDescription>
 					</Alert>
 				</div>
 			) : (
-				<div className="flex episode-card-wrapper mt-4 flex-col justify-center mx-auto w-screen md:w-screen max-w-full">
-					<H3 className="pl-3 mb-8">Episodes ( Weekly Audio Summaries )</H3>
+				<div className="flex episode-card-wrapper mt-4 flex-col justify-center mx-auto w-screen md:w-screen max-w-full gap-4">
+					<H3 className="font-medium">All Bundled Episodes</H3>
 					<EpisodeList episodes={episodes} onPlayEpisode={handlePlayEpisode} />
 				</div>
 			)}

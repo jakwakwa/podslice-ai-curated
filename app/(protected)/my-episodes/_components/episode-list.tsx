@@ -51,7 +51,7 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 			try {
 				const res = await fetch(`/api/user-episodes/${initialEpisodeId}`);
 				if (!res.ok) return;
-				const ep: (UserEpisode & { signedAudioUrl: string | null }) = await res.json();
+				const ep: UserEpisode & { signedAudioUrl: string | null } = await res.json();
 				if (aborted) return;
 				if (ep && ep.status === "COMPLETED" && ep.signedAudioUrl) {
 					const normalizedEpisode: UserEpisode = {
@@ -111,18 +111,6 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 		}
 	};
 
-	if (isLoading) {
-		return (
-			<Card>
-				<CardContent className="space-y-4 flex-col flex w-full">
-					<Skeleton className="bg-[#1b181f] h-50 w-full" />
-					<Skeleton className="bg-[#1b181f] h-50 w-full" />
-					<Skeleton className="bg-[#1b181f] h-50 w-full" />
-				</CardContent>
-			</Card>
-		);
-	}
-
 	if (error) {
 		return <p className="text-red-500">{error}</p>;
 	}
@@ -130,6 +118,16 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 	return (
 		<Card className="episode-card-wrapper-dark h-full min-h-[61vh]">
 			<div>
+				{isLoading && (
+
+					<Card>
+						<CardContent className="episode-card-wrapper-dark space-y-2 flex-col flex w-full">
+							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
+							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
+							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
+						</CardContent>
+					</Card>
+				)}
 				{episodes.length === 0 ? (
 					<p>You haven't created any episodes yet.</p>
 				) : (

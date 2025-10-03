@@ -299,7 +299,7 @@ export function EpisodeCreator() {
 	const handleGoBack = () => router.back();
 
 	return (
-		<div className="w-full h-auto mb-0 px-4 py-4 md:px-8 lg:px-10 lg:py-12  rounded-lg border border-[#4a4e4e1a] shadow-lg">
+		<div className="w-full h-auto mb-0 px-4 py-4 md:px-8 lg:px-10 lg:py-6  rounded-lg border border-[#4a4e4e1a] shadow-lg">
 			<div className="w-full flex flex-col gap-3 md:gap-8">
 				<PageHeader title="Create Episode" className="pt-0" description="Generate a summary and audio version of a	 podcast episode from any YouTube video" />
 
@@ -320,12 +320,12 @@ export function EpisodeCreator() {
 								console.log("[DEBUG] Form submission proceeding to handleCreate");
 								void handleCreate();
 							}}>
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mx-4">
 								<div className="space-y-2 md:col-span-2 lg:max-w-lg">
-									<Label htmlFor="youtubeUrl">YouTube URL (Max {maxDuration} minutes)</Label>
-									<p className="text-xs text-[#1debaeb8]	">
-										You have used <span className="font-semibold">{usage.count}</span> out of <span className="font-semibold">{usage.limit}</span> episodes this month.
-									</p>
+									<Label htmlFor="youtubeUrl">YouTube URL<span className="pl-2 text-[0.65rem] font-mono  font-medium text-[#1debaeb8]	">
+										MAX {maxDuration}min duration
+									</span></Label>
+
 									<Input id="youtubeUrl" placeholder="https://www.youtube.com/..." value={youtubeUrl} onChange={e => setYouTubeUrl(e.target.value)} disabled={isBusy} required />
 									{isFetchingMetadata && <ComponentSpinner />}
 									{youtubeUrlError && (
@@ -362,7 +362,7 @@ export function EpisodeCreator() {
 								</div>
 							</div>
 
-							<div className="space-y-6 border border-[#80919337] rounded-md md:rounded-xl shadow-md px-6 py-4 bg-[#000]/20">
+							<div className="space-y-6 border-2 border-[rgba(81,143,205,0.48)] rounded-xl md:rounded-4xl shadow-md px-10 pt-8 pb-6 bg-[#110d1737]">
 								<div className="space-y-2">
 									<Label>Voice Settings</Label>
 									<div className="flex flex-row gap-3 mt-4">
@@ -420,7 +420,7 @@ export function EpisodeCreator() {
 													</span>
 												</li>
 												<li className="flex items-start gap-2">
-													<span className="text-indigo-500 mt-1">💡</span>
+													<span className="text-indigo-100 mt-1">💡</span>
 													<span>
 														<strong className="text-indigo-400">Pro tip:</strong> If you're unsure, start with Single Speaker - it's our most reliable option for any content type
 													</span>
@@ -433,7 +433,7 @@ export function EpisodeCreator() {
 								{generationMode === "multi" && (
 									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 										<div>
-											<div className="py-0 text-[#b4edf1] text-sm">Voice A</div>
+											<div className="py-2 pl-2 uppercase font-bold text-[#79c4ca] text-xs">Voice A</div>
 											<Select value={voiceA} onValueChange={setVoiceA}>
 												<SelectTrigger className="w/full" disabled={isBusy}>
 													<SelectValue placeholder="Select Voice A" />
@@ -466,7 +466,7 @@ export function EpisodeCreator() {
 											</div>
 										</div>
 										<div>
-											<div className="py-0 text-[#d1b2f2] text-sm">Voice B</div>
+											<div className="py-2 pl-2 uppercase font-bold text-[#af80f7] text-xs">Voice B</div>
 											<Select value={voiceB} onValueChange={setVoiceB}>
 												<SelectTrigger className="w/full" disabled={isBusy}>
 													<SelectValue placeholder="Select Voice B" />

@@ -12,9 +12,10 @@ interface PageHeaderProps extends React.HTMLAttributes<HTMLElement>, HeaderProps
 	title: string;
 	description?: string;
 	level?: 1 | 2 | 3;
+	button?: React.ReactNode;
 }
 
-const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(({ className, spacing, title, description, level = 1, ...props }, ref) => {
+const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(({ className, spacing, title, description, level = 1, button, ...props }, ref) => {
 	const _HeadingComponent = level === 1 ? H1 : level === 2 ? H2 : H3;
 	const _router = useRouter();
 	const pathname = usePathname();
@@ -29,13 +30,18 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(({ classNam
 	const _isPathAllowed = allowedPaths.includes(pathname);
 
 	return (
-		<div className="backdrop-blur-sm bg-[#01021e44] shadow  border-1 rounded-2xl px-1 flex flex-col border-[#abf2ff24] justify-between py-0 mb-0">
+		<div className="backdrop-blur-lg bg-[#1f153053] relative border-l-10 rounded-md px-2 flex flex-col border-r-[#2edecfd1] justify-between py-0 mb-1 md:mb-6 shadow-slate-900/40 shadow-xl">
 			<div className={cn(headerVariants({ spacing, className }))} ref={ref} {...props}>
 				<h2 className="flex text-xl font-bold px-0 md:px-0 pt-0 pb-0 md:py-0 text-shadow-md text-shadow-[#3f365e6a] text-[#afb7db] leading-[1.5] max-w-screen lg:max-w-4xl">{title}</h2>
 				{description && (
-					<Typography as="p" variant="body" className="text-sm md:text-[1rem] px-0  md:px-0  md:py-1 text-[#d6f6f9df] leading-[1.5] max-w-screen  text-shadow-sm text-shadow-[#00000010] font-medium w-full md:max-w-[97%]">
+					<Typography as="p" variant="body" className="text-sm md:text-[0.9rem] px-0  md:px-0  md:py-1 text-[#999cbb] leading-[1.5] max-w-screen  text-shadow-sm text-shadow-[#00000010] font-medium w-full md:max-w-[97%]">
 						{description}
 					</Typography>
+				)}
+				{button && (
+					<div className="flex justify-end absolute right-4 top-8	">
+						{button}
+					</div>
 				)}
 			</div>
 		</div>
