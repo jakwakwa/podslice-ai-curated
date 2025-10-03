@@ -92,19 +92,20 @@ ${summary}`
 			);
 		});
 
-		// 4. TTS in chunks
-		const chunkWordLimit = getTtsChunkWordLimit();
-		const scriptParts = splitScriptIntoChunks(script, chunkWordLimit);
-		const audioChunkBase64: string[] = [];
-		for (let i = 0; i < scriptParts.length; i++) {
-			// Return metadata only to avoid Inngest opcode size limits
-			await step.run(`tts-chunk-${i + 1}`, async () => {
+		// 4. TTS in chunks - Process all in a single step to avoid opcode size issues
+		const audioChunkBase64 = await step.run("generate-all-tts-chunks", async () => {
+			const chunkWordLimit = getTtsChunkWordLimit();
+			const scriptParts = splitScriptIntoChunks(script, chunkWordLimit);
+			const chunks: string[] = [];
+			
+			for (let i = 0; i < scriptParts.length; i++) {
+				console.log(`[TTS] Generating admin chunk ${i + 1}/${scriptParts.length}`);
 				const buf = await generateSingleSpeakerTts(scriptParts[i]);
-				const base64 = buf.toString("base64");
-				audioChunkBase64.push(base64);
-				return { chunkIndex: i + 1, size: base64.length }; // Return metadata only
-			});
-		}
+				chunks.push(buf.toString("base64"));
+			}
+			
+			return chunks;
+		});
 
 		// 5. Combine + upload (podcasts path)
 		const { gcsAudioUrl, durationSeconds } = await step.run("combine-upload", async () => {

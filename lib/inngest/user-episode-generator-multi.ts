@@ -131,19 +131,20 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 			return coerceJsonArray(text);
 		});
 
-		// TTS per line as separate steps to avoid timeouts
-		const lineAudioBase64: string[] = [];
-		for (let i = 0; i < duetLines.length; i++) {
-			const line = duetLines[i];
-			// Return metadata only to avoid Inngest opcode size limits
-			await step.run(`tts-line-${i + 1}`, async () => {
+		// TTS for all dialogue lines - Process in a single step to avoid opcode size issues
+		const lineAudioBase64 = await step.run("generate-all-dialogue-audio", async () => {
+			const chunks: string[] = [];
+			
+			for (let i = 0; i < duetLines.length; i++) {
+				const line = duetLines[i];
+				console.log(`[TTS] Generating dialogue line ${i + 1}/${duetLines.length} (Speaker ${line.speaker})`);
 				const voice = line.speaker === "A" ? voiceA : voiceB;
 				const audio = await ttsWithVoice(line.text, voice);
-				const base64 = audio.toString("base64");
-				lineAudioBase64.push(base64);
-				return { lineIndex: i + 1, speaker: line.speaker, size: base64.length }; // Return metadata only
-			});
-		}
+				chunks.push(audio.toString("base64"));
+			}
+			
+			return chunks;
+		});
 
 		const { gcsAudioUrl, durationSeconds } = await step.run("combine-upload-multi-voice", async () => {
 			const fileName = `user-episodes/${userEpisodeId}-duet-${Date.now()}.wav`;

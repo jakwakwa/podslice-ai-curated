@@ -125,20 +125,21 @@ export const generateUserEpisode = inngest.createFunction(
 			);
 		});
 
-		// Step 4: Convert to Audio with per-chunk steps then Upload to GCS
-		const chunkWordLimit = getTtsChunkWordLimit();
-		const scriptParts = splitScriptIntoChunks(script, chunkWordLimit);
-		const audioChunkBase64: string[] = [];
-		for (let i = 0; i < scriptParts.length; i++) {
-			// Each chunk gets its own step to avoid long single-step runtime
-			// Return chunk size instead of the actual audio data to avoid Inngest opcode size limits
-			await step.run(`tts-chunk-${i + 1}`, async () => {
+		// Step 4: Convert to Audio - Process all TTS in a single step to avoid opcode size issues
+		// (Multiple small steps returning base64 can exceed Inngest's total step output limit)
+		const audioChunkBase64 = await step.run("generate-all-tts-chunks", async () => {
+			const chunkWordLimit = getTtsChunkWordLimit();
+			const scriptParts = splitScriptIntoChunks(script, chunkWordLimit);
+			const chunks: string[] = [];
+			
+			for (let i = 0; i < scriptParts.length; i++) {
+				console.log(`[TTS] Generating chunk ${i + 1}/${scriptParts.length}`);
 				const buf = await generateSingleSpeakerTts(scriptParts[i]);
-				const base64 = buf.toString("base64");
-				audioChunkBase64.push(base64);
-				return { chunkIndex: i + 1, size: base64.length }; // Return metadata only
-			});
-		}
+				chunks.push(buf.toString("base64"));
+			}
+			
+			return chunks;
+		});
 
 		const { gcsAudioUrl, durationSeconds } = await step.run("combine-upload-audio", async () => {
 			// combineAndUploadWavChunks now auto-detects if chunks are already WAV or raw PCM.
