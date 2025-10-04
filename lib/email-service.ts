@@ -1,6 +1,15 @@
 import { Resend } from "resend";
-import { getAppUrl } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
+import { EMAIL_TEMPLATES } from "@/src/emails";
+import type {
+	EpisodeFailedEmailProps,
+	EpisodeReadyEmailProps,
+	SubscriptionExpiringEmailProps,
+	TestEmailProps,
+	TrialEndingEmailProps,
+	WeeklyReminderEmailProps,
+} from "@/src/emails";
+import { renderEmailSync } from "@/src/emails/render";
 
 export interface EmailNotification {
 	to: string;
@@ -37,35 +46,6 @@ class EmailService {
 	private client: Resend | null = null;
 	private initialized = false;
 
-	// Email styling constants
-	private static readonly EMAIL_STYLES = {
-		LOGO: {
-			width: 120,
-			height: "auto",
-			alt: "PODSLICE",
-			paddingBottom: 12,
-		},
-		SEPARATOR: {
-			color: "#26574E",
-			thickness: 3,
-			marginTop: 16,
-			marginBottom: 24,
-		},
-		GREETING: {
-			fontSize: 20,
-			fontWeight: 700,
-			color: "#050506",
-			lineHeight: 1.5,
-			marginBottom: 12,
-		},
-		CONTAINER: {
-			maxWidth: 600,
-			backgroundColor: "white",
-			paddingVertical: 40,
-			paddingHorizontal: 20,
-		},
-	};
-
 	// Remove constructor - don't initialize on import
 	// constructor() {
 	// 	this.initializeTransporter()
@@ -91,32 +71,6 @@ class EmailService {
 			console.error("Failed to initialize Resend client:", error);
 			this.client = null;
 		}
-	}
-
-	// Helper methods for email components
-	private getAppBaseUrl(): string {
-		return getAppUrl() || "https://www.podslice.ai";
-	}
-
-	private getLogoHtml(): string {
-		const baseUrl = this.getAppBaseUrl();
-		const { width, alt, paddingBottom } = EmailService.EMAIL_STYLES.LOGO;
-		return `
-			<div style="text-align: center; margin-bottom: ${paddingBottom}px;">
-				<a href="${baseUrl}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
-					<img src="${baseUrl}/logo.png" alt="${alt}" width="${width}" style="display:block;margin:0 auto;border:0;outline:none;text-decoration:none;height:auto;" />
-				</a>
-			</div>`;
-	}
-
-	private getSeparatorHtml(): string {
-		const { color, thickness, marginTop, marginBottom } = EmailService.EMAIL_STYLES.SEPARATOR;
-		return `<hr style="border: none; border-top: 1px solid ${color}; margin: ${marginTop}px 0 ${marginBottom}px; height: ${thickness}px; background:${color};">`;
-	}
-
-	private getGreetingHtml(name: string): string {
-		const { fontSize, fontWeight, color, lineHeight, marginBottom } = EmailService.EMAIL_STYLES.GREETING;
-		return `<p style="color: ${color}; font-size: ${fontSize}px; line-height: ${lineHeight}; font-weight: ${fontWeight}; text-align: center; margin: 0 0 ${marginBottom}px 0;">Hi ${name}</p>`;
 	}
 
 	private async canSendEmail(userId: string): Promise<boolean> {
@@ -165,103 +119,62 @@ class EmailService {
 	}
 
 	// Episode ready notification
-	async sendEpisodeReadyEmail(userId: string, userEmail: string, data: EpisodeReadyEmailData): Promise<boolean> {
+	async sendEpisodeReadyEmail(
+		userId: string,
+		userEmail: string,
+		data: EpisodeReadyEmailData,
+	): Promise<boolean> {
 		if (!(await this.canSendEmail(userId))) {
 			console.log(`Email notifications disabled for user ${userId}`);
 			return false;
 		}
 
+		const emailProps: EpisodeReadyEmailProps = {
+			userFirstName: data.userFirstName,
+			episodeTitle: data.episodeTitle,
+			episodeUrl: data.episodeUrl,
+			profileName: data.profileName,
+		};
+
+		const { html, text } = renderEmailSync(
+			EMAIL_TEMPLATES.EPISODE_READY.component,
+			emailProps,
+		);
+
 		const notification: EmailNotification = {
 			to: userEmail,
-			subject: `🎧 Your episode "${data.episodeTitle}" is ready!`,
-			text: this.createEpisodeReadyTextTemplate(data),
-			html: this.createEpisodeReadyHtmlTemplate(data),
+			subject: EMAIL_TEMPLATES.EPISODE_READY.getSubject(emailProps),
+			text,
+			html,
 		};
 
 		return await this.sendEmail(notification);
 	}
 
 	// Episode failed notification
-	async sendEpisodeFailedEmail(userId: string, userEmail: string, data: EpisodeFailedEmailData): Promise<boolean> {
+	async sendEpisodeFailedEmail(
+		userId: string,
+		userEmail: string,
+		data: EpisodeFailedEmailData,
+	): Promise<boolean> {
 		if (!(await this.canSendEmail(userId))) {
 			console.log(`Email notifications disabled for user ${userId}`);
 			return false;
 		}
 
-		const supportEmail = "notifications@podslice.ai";
+		const emailProps: EpisodeFailedEmailProps = {
+			userFirstName: data.userFirstName,
+			episodeTitle: data.episodeTitle,
+		};
 
-		const text = `Hi ${data.userFirstName},
-
-We're sorry, but we encountered a technical difficulty while generating your episode "${data.episodeTitle}".
-
-Our team has been notified, and we are looking into it. Please try again later.
-
-If the problem persists, please contact our support team at ${supportEmail}.
-
-We apologize for any inconvenience.
-
-The PODSLICE Team`;
-
-		const html = `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Episode Generation Failed</title>
-</head>
-<body
-    style='background-color:rgb(255,255,255);font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"'>
-    <table
-      border="0"
-      width="100%"
-      cellpadding="0"
-      cellspacing="0"
-      role="presentation"
-      align="center">
-      <tbody>
-			<tr style="width:100%">
-				<td>
-					<table
-						align="center"
-						width="100%"
-						border="0"
-						cellpadding="0"
-						cellspacing="0"
-						role="presentation"
-						style="padding:2rem;text-align:center">
-						<tbody>
-							<tr>
-								<td>
-
-    <div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 40px 20px;">
-        ${this.getLogoHtml()}
-        ${this.getSeparatorHtml()}
-        ${this.getGreetingHtml(data.userFirstName)}
-        <div style="text-align: center; margin-bottom: 16px;">
-            <h1 style="color: #dc2626; font-size: 22px; margin: 0;">Episode Generation Failed</h1>
-        </div>
-        <p style="color: #374151; font-size: 15px; line-height: 1.6;">We're sorry, but we encountered a technical difficulty while generating your episode "${data.episodeTitle}".</p>
-        <p style="color: #374151; font-size: 15px; line-height: 1.6;">Our team has been notified and is looking into the issue. Please try generating the episode again later. If the problem persists, feel free to reach out to our support team at <a href="mailto:${supportEmail}">${supportEmail}</a>.</p>
-        <p style="color: #374151; font-size: 15px; line-height: 1.6;">We apologize for any inconvenience this may have caused.</p>
-
-        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;">
-        <p style="color: #9ca3af; font-size: 12px; margin: 0;">The PODSLICE Team</p>
-    </div>
-
-
-
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <!--/$-->
-</body>
-</html>`;
+		const { html, text } = renderEmailSync(
+			EMAIL_TEMPLATES.EPISODE_FAILED.component,
+			emailProps,
+		);
 
 		const notification: EmailNotification = {
 			to: userEmail,
-			subject: `Action Required: Issue with your episode "${data.episodeTitle}"`,
+			subject: EMAIL_TEMPLATES.EPISODE_FAILED.getSubject(emailProps),
 			text,
 			html,
 		};
@@ -270,406 +183,112 @@ The PODSLICE Team`;
 	}
 
 	// Trial ending notification
-	async sendTrialEndingEmail(userId: string, userEmail: string, data: TrialEndingEmailData): Promise<boolean> {
+	async sendTrialEndingEmail(
+		userId: string,
+		userEmail: string,
+		data: TrialEndingEmailData,
+	): Promise<boolean> {
 		if (!(await this.canSendEmail(userId))) {
 			console.log(`Email notifications disabled for user ${userId}`);
 			return false;
 		}
 
+		const emailProps: TrialEndingEmailProps = {
+			userFirstName: data.userFirstName,
+			daysRemaining: data.daysRemaining,
+			upgradeUrl: data.upgradeUrl,
+		};
+
+		const { html, text } = renderEmailSync(
+			EMAIL_TEMPLATES.TRIAL_ENDING.component,
+			emailProps,
+		);
+
 		const notification: EmailNotification = {
 			to: userEmail,
-			subject: `⏰ Your PODSLICE trial ends in ${data.daysRemaining} day${data.daysRemaining !== 1 ? "s" : ""}`,
-			text: this.createTrialEndingTextTemplate(data),
-			html: this.createTrialEndingHtmlTemplate(data),
+			subject: EMAIL_TEMPLATES.TRIAL_ENDING.getSubject(emailProps),
+			text,
+			html,
 		};
 
 		return await this.sendEmail(notification);
 	}
 
 	// Subscription expiring notification
-	async sendSubscriptionExpiringEmail(userId: string, userEmail: string, data: SubscriptionExpiringEmailData): Promise<boolean> {
+	async sendSubscriptionExpiringEmail(
+		userId: string,
+		userEmail: string,
+		data: SubscriptionExpiringEmailData,
+	): Promise<boolean> {
 		if (!(await this.canSendEmail(userId))) {
 			console.log(`Email notifications disabled for user ${userId}`);
 			return false;
 		}
 
+		const emailProps: SubscriptionExpiringEmailProps = {
+			userFirstName: data.userFirstName,
+			expirationDate: data.expirationDate,
+			renewUrl: data.renewUrl,
+		};
+
+		const { html, text } = renderEmailSync(
+			EMAIL_TEMPLATES.SUBSCRIPTION_EXPIRING.component,
+			emailProps,
+		);
+
 		const notification: EmailNotification = {
 			to: userEmail,
-			subject: `🔔 Your PODSLICE subscription expires soon`,
-			text: this.createSubscriptionExpiringTextTemplate(data),
-			html: this.createSubscriptionExpiringHtmlTemplate(data),
+			subject: EMAIL_TEMPLATES.SUBSCRIPTION_EXPIRING.getSubject(emailProps),
+			text,
+			html,
 		};
 
 		return await this.sendEmail(notification);
 	}
 
 	// Weekly reminder notification
-	async sendWeeklyReminderEmail(userId: string, userEmail: string, userName: string): Promise<boolean> {
+	async sendWeeklyReminderEmail(
+		userId: string,
+		userEmail: string,
+		userName: string,
+	): Promise<boolean> {
 		if (!(await this.canSendEmail(userId))) {
 			console.log(`Email notifications disabled for user ${userId}`);
 			return false;
 		}
 
+		const emailProps: WeeklyReminderEmailProps = {
+			userName,
+		};
+
+		const { html, text } = renderEmailSync(
+			EMAIL_TEMPLATES.WEEKLY_REMINDER.component,
+			emailProps,
+		);
+
 		const notification: EmailNotification = {
 			to: userEmail,
-			subject: `📅 Your weekly PODSLICE episode will be generated soon`,
-			text: this.createWeeklyReminderTextTemplate(userName),
-			html: this.createWeeklyReminderHtmlTemplate(userName),
+			subject: EMAIL_TEMPLATES.WEEKLY_REMINDER.getSubject(emailProps),
+			text,
+			html,
 		};
 
 		return await this.sendEmail(notification);
 	}
 
-	// Email Templates
-	private createEpisodeReadyTextTemplate(data: EpisodeReadyEmailData): string {
-		return `Hi ${data.userFirstName},
-
-Great news! Your weekly podcast episode is ready to listen.
-
-Episode: ${data.episodeTitle}
-Personalized Feed: ${data.profileName}
-
-Listen now: ${data.episodeUrl}
-
-Happy listening!
-The PODSLICE Team`;
-	}
-
-	private createEpisodeReadyHtmlTemplate(data: EpisodeReadyEmailData): string {
-		return `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Episode is Ready!</title>
-</head>
- <body
-    style='background-color:rgb(255,255,255);font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"'>
-    <table
-      border="0"
-      width="100%"
-      cellpadding="0"
-      cellspacing="0"
-      role="presentation"
-      align="center">
-      <tbody>
-        <tr>
-          <td
-            style='background-color:rgb(255,255,255);font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"'>
-            <table
-              align="center"
-              width="100%"
-              border="0"
-              cellpadding="0"
-              cellspacing="0"
-              role="presentation"
-              style="margin-left:auto;margin-right:auto;width:100%;max-width:600px;padding:0px">
-              <tbody>
-                <tr style="width:100%">
-                  <td>
-                    <table
-                      align="center"
-                      width="100%"
-                      border="0"
-                      cellpadding="0"
-                      cellspacing="0"
-                      role="presentation"
-                      style="padding:1rem;text-align:center">
-                      <tbody>
-                        <tr>
-                          <td>
-
-													<div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 40px 20px;">
-																${this.getLogoHtml()}
-																${this.getSeparatorHtml()}
-																<h1 style="color: #050506; font-size: 21px; line-height: 1.5; font-weight: bold; text-align: center; margin: 0 0 8px 0">
-																		Hi ${data.userFirstName} 
-																</h1>
-
-															
-														</div>
-
-														<h1
-                              style="margin:0px;font-weight:500;font-size:1.5rem;line-height:1.8rem;color:rgb(39 134 126)">	Woohoo! Great news!
-																
-                            </h1>
-                            <p
-                              style="margin-top:1rem;margin-bottom:1rem;font-weight:700;font-size:1.4rem;line-height:1.5;color:rgb(30 30 33)">
-                      			 		 Your custom episode has been generated and is ready for you to enjoy.
-                            </p>
-                            <p
-                              style="margin-bottom:1rem;font-weight:500;font-size:1.275rem;line-height:2rem;color:rgb(66 75 92);margin-top:16px">
-                             	 "🎧 ${data.episodeTitle}"
-                            </p>
-
-                            <hr style="margin-top:1.5rem;width:100%;border:none;border-top:1px solid #B27CD9;border-color:#8E00FB" />
-
-														
-
-														<table
-															align="center"
-															width="100%"
-															border="0"
-															cellpadding="0"
-															cellspacing="0"
-															role="presentation"
-															style="padding-bottom:1.5rem;text-align:center">
-															<tbody>
-																<tr>
-																	<td>
-																		<p
-																			style="color:rgb(17,24,39);font-size:1.25rem;line-height:2rem;margin-top:16px;margin-bottom:16px">
-																			If you found this summary useful 
-																			<br />and want to share with other's
-																		</p>
-																		<a
-																			href="${data.episodeUrl}"
-																			style="margin-top:1rem;display:inline-flex;align-items:center;border-radius:9999px;background-color:#025E5F;padding-left:3rem;padding-right:3rem;padding-top:1rem;padding-bottom:1rem;text-align:center;font-weight:700;font-size:0.875rem;line-height:1.25rem;color:rgb(225 242 240);text-decoration-line:none"
-																			target="_blank"
-																			>View or Share</a
-																		>
-																		<a
-																			href="https://www.podslice.ai/dashboard"
-																			style="margin-top:1rem;display:block;align-items:center;text-align:center;font-weight:700;color:rgb(17,24,39);font-size:0.875rem;line-height:1.25rem;text-decoration-line:none"
-																			target="_blank"
-																			>Go to your dashboard</a
-																		>
-																	</td>
-																</tr>
-															</tbody>
-														</table>
-														
-													</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <!--/$-->
-  </body>
-</html>`;
-	}
-
-	private createTrialEndingTextTemplate(data: TrialEndingEmailData): string {
-		return `Hi ${data.userFirstName},
-
-Your PODSLICE trial ends in ${data.daysRemaining} day${data.daysRemaining !== 1 ? "s" : ""}!
-
-Don't lose access to your personalized podcast feeds. Upgrade now to continue creating unlimited personalized feeds and enjoying weekly AI-generated episodes.
-
-Upgrade your account: ${data.upgradeUrl}
-
-The PODSLICE Team`;
-	}
-
-	private createTrialEndingHtmlTemplate(data: TrialEndingEmailData): string {
-		return `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trial Ending Soon</title>
-</head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc;">
-    <div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 40px 20px;">
-        ${this.getLogoHtml()}
-        ${this.getSeparatorHtml()}
-        ${this.getGreetingHtml(data.userFirstName).replace("margin: 0 0 12px 0", "margin: 0 0 16px 0")}
-        <div style="text-align: center; margin-bottom: 16px;">
-            <h1 style="color: #dc2626; font-size: 28px; margin: 0;">⏰ Trial Ending Soon</h1>
-        </div>
-
-        <div style="background-color: #fef2f2; border: 1px solid #fecaca; padding: 24px; border-radius: 8px; margin-bottom: 24px;">
-            <p style="color: #dc2626; margin: 0; font-weight: 500; text-align: center;">
-                Your trial ends in ${data.daysRemaining} day${data.daysRemaining !== 1 ? "s" : ""}
-            </p>
-        </div>
-
-        <p style="color: #374151; font-size: 16px; line-height: 1.5; margin-bottom: 24px;">
-            Don't lose access to your personalized podcast feeds! Your PODSLICE trial is ending soon.
-        </p>
-
-        <div style="text-align: center; margin-bottom: 32px;">
-            <a href="${data.upgradeUrl}" style="display: inline-block; background-color: #dc2626; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 16px;">Upgrade Now</a>
-        </div>
-
-        <div style="background-color: #f9fafb; padding: 20px; border-radius: 8px;">
-            <h3 style="color: #374151; font-size: 18px; margin: 0 0 12px 0;">Continue enjoying:</h3>
-            <ul style="color: #6b7280; margin: 0; padding-left: 20px;">
-                <li>Unlimited personalized feeds</li>
-                <li>Weekly AI-generated episodes</li>
-                <li>Advanced curation features</li>
-                <li>Priority support</li>
-            </ul>
-        </div>
-
-        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
-
-        <div style="text-align: center;">
-            <p style="color: #9ca3af; font-size: 12px; margin: 0;">
-                Questions? Reply to this email or contact our support team.<br>
-                The PODSLICE Team
-            </p>
-        </div>
-    </div>
-</body>
-</html>`;
-	}
-
-	private createSubscriptionExpiringTextTemplate(data: SubscriptionExpiringEmailData): string {
-		return `Hi ${data.userFirstName},
-
-Your PODSLICE subscription expires on ${data.expirationDate}.
-
-To continue enjoying your personalized podcast feeds and weekly episodes, please renew your subscription.
-
-Renew now: ${data.renewUrl}
-
-The PODSLICE Team`;
-	}
-
-	private createSubscriptionExpiringHtmlTemplate(data: SubscriptionExpiringEmailData): string {
-		return `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subscription Expiring</title>
-</head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc;">
-    <div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 40px 20px;">
-        ${this.getLogoHtml()}
-        ${this.getSeparatorHtml()}
-        ${this.getGreetingHtml(data.userFirstName).replace("margin: 0 0 12px 0", "margin: 0 0 16px 0")}
-        <div style="text-align: center; margin-bottom: 16px;">
-            <h1 style="color: #f59e0b; font-size: 28px; margin: 0;">🔔 Subscription Expiring</h1>
-        </div>
-
-        <div style="background-color: #fffbeb; border: 1px solid #fed7aa; padding: 24px; border-radius: 8px; margin-bottom: 24px;">
-            <p style="color: #f59e0b; margin: 0; font-weight: 500; text-align: center;">
-                Expires on ${data.expirationDate}
-            </p>
-        </div>
-
-        <p style="color: #374151; font-size: 16px; line-height: 1.5; margin-bottom: 24px;">
-            Your PODSLICE subscription is set to expire soon. Don't miss out on your personalized podcast content!
-        </p>
-
-        <div style="text-align: center; margin-bottom: 32px;">
-            <a href="${data.renewUrl}" style="display: inline-block; background-color: #f59e0b; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 16px;">Renew Subscription</a>
-        </div>
-
-        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
-
-        <div style="text-align: center;">
-            <p style="color: #9ca3af; font-size: 12px; margin: 0;">
-                Need help? Contact our support team.<br>
-                The PODSLICE Team
-            </p>
-        </div>
-    </div>
-</body>
-</html>`;
-	}
-
-	private createWeeklyReminderTextTemplate(userName: string): string {
-		return `Hi ${userName},
-
-Just a friendly reminder that your next weekly podcast episode will be generated this Friday at midnight.
-
-Make sure your personalized feed is set up with the content you want to hear about this week.
-
-Visit your dashboard: ${process.env.NEXT_PUBLIC_APP_URL}/dashboard
-
-The PODSLICE Team`;
-	}
-
-	private createWeeklyReminderHtmlTemplate(userName: string): string {
-		return `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weekly Reminder</title>
-</head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc;">
-    <div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 40px 20px;">
-        ${this.getLogoHtml()}
-        ${this.getSeparatorHtml()}
-        ${this.getGreetingHtml(userName).replace("margin: 0 0 12px 0", "margin: 0 0 16px 0")}
-        <div style="text-align: center; margin-bottom: 16px;">
-            <h1 style="color: #3b82f6; font-size: 28px; margin: 0;">📅 Weekly Reminder</h1>
-        </div>
-
-        <p style="color: #374151; font-size: 16px; line-height: 1.5; margin-bottom: 24px;">
-            Just a friendly reminder that your next weekly podcast episode will be generated this Friday at midnight.
-        </p>
-
-        <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px; margin-bottom: 24px;">
-            <p style="color: #1e40af; margin: 0; font-weight: 500;">
-                💡 Make sure your personalized feed is set up with the content you want to hear about this week.
-            </p>
-        </div>
-
-        <div style="text-align: center; margin-bottom: 32px;">
-            <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard" style="display: inline-block; background-color: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 500;">Visit Dashboard</a>
-        </div>
-
-        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
-
-        <div style="text-align: center;">
-            <p style="color: #9ca3af; font-size: 12px; margin: 0;">
-                Happy listening!<br>
-                The PODSLICE Team
-            </p>
-        </div>
-    </div>
-</body>
-</html>`;
-	}
-
 	// Test email functionality
 	async sendTestEmail(to: string): Promise<boolean> {
+		const emailProps: TestEmailProps = {
+			recipientEmail: to,
+		};
+
+		const { html, text } = renderEmailSync(EMAIL_TEMPLATES.TEST.component, emailProps);
+
 		const notification: EmailNotification = {
 			to,
-			subject: "🧪 PODSLICE Email Test",
-			text: "This is a test email from PODSLICE. If you received this, email notifications are working correctly!",
-			html: `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Test</title>
-</head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc;">
-    <div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 40px 20px;">
-        ${this.getLogoHtml()}
-        ${this.getSeparatorHtml()}
-        <div style="text-align: center;">
-            <h1 style="color: #10b981; font-size: 28px; margin: 0 0 20px 0;">🧪 Email Test Successful!</h1>
-            <p style="color: #374151; font-size: 16px; line-height: 1.5;">
-                This is a test email from PODSLICE. If you received this, email notifications are working correctly!
-            </p>
-            <div style="margin-top: 32px;">
-                <p style="color: #9ca3af; font-size: 12px; margin: 0;">
-                    The PODSLICE Team
-                </p>
-            </div>
-        </div>
-    </div>
-</body>
-</html>`,
+			subject: EMAIL_TEMPLATES.TEST.getSubject(emailProps),
+			text,
+			html,
 		};
 
 		return await this.sendEmail(notification);
