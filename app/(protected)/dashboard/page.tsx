@@ -140,17 +140,18 @@ export default function CurationProfileManagementPage() {
 					<CardDescription className="text-xs opacity-90 mb-4">See your latest roundup episodes here from {userCurationProfile?.selectedBundle?.name}</CardDescription>
 					<CardContent className="px-0">
 						<EpisodeCard
-							imageUrl={latestBundleEpisode.image_url}
-							title={latestBundleEpisode.title}
-							publishedAt={latestBundleEpisode.published_at || latestBundleEpisode.created_at}
-							durationSeconds={latestBundleEpisode.duration_seconds}
+							imageUrl={latestBundleEpisode?.image_url}
+							title={latestBundleEpisode?.title}
+							publishedAt={latestBundleEpisode?.published_at || latestBundleEpisode.created_at}
+							detailsHref={`/episodes/${latestBundleEpisode?.episode_id}`}
+							durationSeconds={latestBundleEpisode?.duration_seconds}
 							actions={
 								<PlayButton
 									onClick={() => {
 										console.log("Dashboard - Setting bundle episode:", latestBundleEpisode);
 										playEpisode(latestBundleEpisode);
 									}}
-									aria-label={`Play ${latestBundleEpisode.title}`}
+									aria-label={`Play ${latestBundleEpisode?.title}`}
 								/>
 							}
 						/>
