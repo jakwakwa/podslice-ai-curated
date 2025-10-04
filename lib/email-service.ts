@@ -1,6 +1,6 @@
 import { Resend } from "resend";
-import { prisma } from "@/lib/prisma";
 import { getAppUrl } from "@/lib/env";
+import { prisma } from "@/lib/prisma";
 
 export interface EmailNotification {
 	to: string;
@@ -41,12 +41,12 @@ class EmailService {
 	private static readonly EMAIL_STYLES = {
 		LOGO: {
 			width: 120,
-			height: 'auto',
-			alt: 'PODSLICE',
+			height: "auto",
+			alt: "PODSLICE",
 			paddingBottom: 12,
 		},
 		SEPARATOR: {
-			color: '#26574E',
+			color: "#26574E",
 			thickness: 3,
 			marginTop: 16,
 			marginBottom: 24,
@@ -54,13 +54,13 @@ class EmailService {
 		GREETING: {
 			fontSize: 20,
 			fontWeight: 700,
-			color: '#050506',
+			color: "#050506",
 			lineHeight: 1.5,
 			marginBottom: 12,
 		},
 		CONTAINER: {
 			maxWidth: 600,
-			backgroundColor: 'white',
+			backgroundColor: "white",
 			paddingVertical: 40,
 			paddingHorizontal: 20,
 		},
@@ -95,7 +95,7 @@ class EmailService {
 
 	// Helper methods for email components
 	private getAppBaseUrl(): string {
-		return getAppUrl() || 'https://www.podslice.ai';
+		return getAppUrl() || "https://www.podslice.ai";
 	}
 
 	private getLogoHtml(): string {
@@ -202,7 +202,7 @@ We apologize for any inconvenience.
 
 The PODSLICE Team`;
 
-	const html = `
+		const html = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -482,7 +482,7 @@ The PODSLICE Team`;
     <div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 40px 20px;">
         ${this.getLogoHtml()}
         ${this.getSeparatorHtml()}
-        ${this.getGreetingHtml(data.userFirstName).replace('margin: 0 0 12px 0', 'margin: 0 0 16px 0')}
+        ${this.getGreetingHtml(data.userFirstName).replace("margin: 0 0 12px 0", "margin: 0 0 16px 0")}
         <div style="text-align: center; margin-bottom: 16px;">
             <h1 style="color: #dc2626; font-size: 28px; margin: 0;">⏰ Trial Ending Soon</h1>
         </div>
@@ -549,7 +549,7 @@ The PODSLICE Team`;
     <div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 40px 20px;">
         ${this.getLogoHtml()}
         ${this.getSeparatorHtml()}
-        ${this.getGreetingHtml(data.userFirstName).replace('margin: 0 0 12px 0', 'margin: 0 0 16px 0')}
+        ${this.getGreetingHtml(data.userFirstName).replace("margin: 0 0 12px 0", "margin: 0 0 16px 0")}
         <div style="text-align: center; margin-bottom: 16px;">
             <h1 style="color: #f59e0b; font-size: 28px; margin: 0;">🔔 Subscription Expiring</h1>
         </div>
@@ -606,7 +606,7 @@ The PODSLICE Team`;
     <div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 40px 20px;">
         ${this.getLogoHtml()}
         ${this.getSeparatorHtml()}
-        ${this.getGreetingHtml(userName).replace('margin: 0 0 12px 0', 'margin: 0 0 16px 0')}
+        ${this.getGreetingHtml(userName).replace("margin: 0 0 12px 0", "margin: 0 0 16px 0")}
         <div style="text-align: center; margin-bottom: 16px;">
             <h1 style="color: #3b82f6; font-size: 28px; margin: 0;">📅 Weekly Reminder</h1>
         </div>
