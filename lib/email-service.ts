@@ -1,14 +1,7 @@
 import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
+import type { EpisodeFailedEmailProps, EpisodeReadyEmailProps, SubscriptionExpiringEmailProps, TestEmailProps, TrialEndingEmailProps, WeeklyReminderEmailProps } from "@/src/emails";
 import { EMAIL_TEMPLATES } from "@/src/emails";
-import type {
-	EpisodeFailedEmailProps,
-	EpisodeReadyEmailProps,
-	SubscriptionExpiringEmailProps,
-	TestEmailProps,
-	TrialEndingEmailProps,
-	WeeklyReminderEmailProps,
-} from "@/src/emails";
 import { renderEmailSync } from "@/src/emails/render";
 
 export interface EmailNotification {
@@ -119,11 +112,7 @@ class EmailService {
 	}
 
 	// Episode ready notification
-	async sendEpisodeReadyEmail(
-		userId: string,
-		userEmail: string,
-		data: EpisodeReadyEmailData,
-	): Promise<boolean> {
+	async sendEpisodeReadyEmail(userId: string, userEmail: string, data: EpisodeReadyEmailData): Promise<boolean> {
 		if (!(await this.canSendEmail(userId))) {
 			console.log(`Email notifications disabled for user ${userId}`);
 			return false;
@@ -136,10 +125,7 @@ class EmailService {
 			profileName: data.profileName,
 		};
 
-		const { html, text } = renderEmailSync(
-			EMAIL_TEMPLATES.EPISODE_READY.component,
-			emailProps,
-		);
+		const { html, text } = renderEmailSync(EMAIL_TEMPLATES.EPISODE_READY.component, emailProps);
 
 		const notification: EmailNotification = {
 			to: userEmail,
@@ -152,11 +138,7 @@ class EmailService {
 	}
 
 	// Episode failed notification
-	async sendEpisodeFailedEmail(
-		userId: string,
-		userEmail: string,
-		data: EpisodeFailedEmailData,
-	): Promise<boolean> {
+	async sendEpisodeFailedEmail(userId: string, userEmail: string, data: EpisodeFailedEmailData): Promise<boolean> {
 		if (!(await this.canSendEmail(userId))) {
 			console.log(`Email notifications disabled for user ${userId}`);
 			return false;
@@ -167,10 +149,7 @@ class EmailService {
 			episodeTitle: data.episodeTitle,
 		};
 
-		const { html, text } = renderEmailSync(
-			EMAIL_TEMPLATES.EPISODE_FAILED.component,
-			emailProps,
-		);
+		const { html, text } = renderEmailSync(EMAIL_TEMPLATES.EPISODE_FAILED.component, emailProps);
 
 		const notification: EmailNotification = {
 			to: userEmail,
@@ -183,11 +162,7 @@ class EmailService {
 	}
 
 	// Trial ending notification
-	async sendTrialEndingEmail(
-		userId: string,
-		userEmail: string,
-		data: TrialEndingEmailData,
-	): Promise<boolean> {
+	async sendTrialEndingEmail(userId: string, userEmail: string, data: TrialEndingEmailData): Promise<boolean> {
 		if (!(await this.canSendEmail(userId))) {
 			console.log(`Email notifications disabled for user ${userId}`);
 			return false;
@@ -199,10 +174,7 @@ class EmailService {
 			upgradeUrl: data.upgradeUrl,
 		};
 
-		const { html, text } = renderEmailSync(
-			EMAIL_TEMPLATES.TRIAL_ENDING.component,
-			emailProps,
-		);
+		const { html, text } = renderEmailSync(EMAIL_TEMPLATES.TRIAL_ENDING.component, emailProps);
 
 		const notification: EmailNotification = {
 			to: userEmail,
@@ -215,11 +187,7 @@ class EmailService {
 	}
 
 	// Subscription expiring notification
-	async sendSubscriptionExpiringEmail(
-		userId: string,
-		userEmail: string,
-		data: SubscriptionExpiringEmailData,
-	): Promise<boolean> {
+	async sendSubscriptionExpiringEmail(userId: string, userEmail: string, data: SubscriptionExpiringEmailData): Promise<boolean> {
 		if (!(await this.canSendEmail(userId))) {
 			console.log(`Email notifications disabled for user ${userId}`);
 			return false;
@@ -231,10 +199,7 @@ class EmailService {
 			renewUrl: data.renewUrl,
 		};
 
-		const { html, text } = renderEmailSync(
-			EMAIL_TEMPLATES.SUBSCRIPTION_EXPIRING.component,
-			emailProps,
-		);
+		const { html, text } = renderEmailSync(EMAIL_TEMPLATES.SUBSCRIPTION_EXPIRING.component, emailProps);
 
 		const notification: EmailNotification = {
 			to: userEmail,
@@ -247,11 +212,7 @@ class EmailService {
 	}
 
 	// Weekly reminder notification
-	async sendWeeklyReminderEmail(
-		userId: string,
-		userEmail: string,
-		userName: string,
-	): Promise<boolean> {
+	async sendWeeklyReminderEmail(userId: string, userEmail: string, userName: string): Promise<boolean> {
 		if (!(await this.canSendEmail(userId))) {
 			console.log(`Email notifications disabled for user ${userId}`);
 			return false;
@@ -261,10 +222,7 @@ class EmailService {
 			userName,
 		};
 
-		const { html, text } = renderEmailSync(
-			EMAIL_TEMPLATES.WEEKLY_REMINDER.component,
-			emailProps,
-		);
+		const { html, text } = renderEmailSync(EMAIL_TEMPLATES.WEEKLY_REMINDER.component, emailProps);
 
 		const notification: EmailNotification = {
 			to: userEmail,
