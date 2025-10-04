@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
+import { getAppUrl } from "@/lib/env";
 
 export interface EmailNotification {
 	to: string;
@@ -36,6 +37,35 @@ class EmailService {
 	private client: Resend | null = null;
 	private initialized = false;
 
+	// Email styling constants
+	private static readonly EMAIL_STYLES = {
+		LOGO: {
+			width: 120,
+			height: 'auto',
+			alt: 'PODSLICE',
+			paddingBottom: 12,
+		},
+		SEPARATOR: {
+			color: '#26574E',
+			thickness: 3,
+			marginTop: 16,
+			marginBottom: 24,
+		},
+		GREETING: {
+			fontSize: 20,
+			fontWeight: 700,
+			color: '#050506',
+			lineHeight: 1.5,
+			marginBottom: 12,
+		},
+		CONTAINER: {
+			maxWidth: 600,
+			backgroundColor: 'white',
+			paddingVertical: 40,
+			paddingHorizontal: 20,
+		},
+	};
+
 	// Remove constructor - don't initialize on import
 	// constructor() {
 	// 	this.initializeTransporter()
@@ -61,6 +91,32 @@ class EmailService {
 			console.error("Failed to initialize Resend client:", error);
 			this.client = null;
 		}
+	}
+
+	// Helper methods for email components
+	private getAppBaseUrl(): string {
+		return getAppUrl() || 'https://www.podslice.ai';
+	}
+
+	private getLogoHtml(): string {
+		const baseUrl = this.getAppBaseUrl();
+		const { width, alt, paddingBottom } = EmailService.EMAIL_STYLES.LOGO;
+		return `
+			<div style="text-align: center; margin-bottom: ${paddingBottom}px;">
+				<a href="${baseUrl}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+					<img src="${baseUrl}/logo.png" alt="${alt}" width="${width}" style="display:block;margin:0 auto;border:0;outline:none;text-decoration:none;height:auto;" />
+				</a>
+			</div>`;
+	}
+
+	private getSeparatorHtml(): string {
+		const { color, thickness, marginTop, marginBottom } = EmailService.EMAIL_STYLES.SEPARATOR;
+		return `<hr style="border: none; border-top: 1px solid ${color}; margin: ${marginTop}px 0 ${marginBottom}px; height: ${thickness}px; background:${color};">`;
+	}
+
+	private getGreetingHtml(name: string): string {
+		const { fontSize, fontWeight, color, lineHeight, marginBottom } = EmailService.EMAIL_STYLES.GREETING;
+		return `<p style="color: ${color}; font-size: ${fontSize}px; line-height: ${lineHeight}; font-weight: ${fontWeight}; text-align: center; margin: 0 0 ${marginBottom}px 0;">Hi ${name}</p>`;
 	}
 
 	private async canSendEmail(userId: string): Promise<boolean> {
@@ -146,7 +202,7 @@ We apologize for any inconvenience.
 
 The PODSLICE Team`;
 
-		const html = `
+	const html = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -179,18 +235,12 @@ The PODSLICE Team`;
 								<td>
 
     <div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 40px 20px;">
-        <div style="text-align: center; margin-bottom: 24px;">
+        ${this.getLogoHtml()}
+        ${this.getSeparatorHtml()}
+        ${this.getGreetingHtml(data.userFirstName)}
+        <div style="text-align: center; margin-bottom: 16px;">
             <h1 style="color: #dc2626; font-size: 22px; margin: 0;">Episode Generation Failed</h1>
         </div>
-				    <p style="margin-left:0px;margin-right:0px;margin-top:1rem;margin-bottom:2rem;padding:0px;text-align:center;font-weight:400;font-size:1.5rem;line-height:2rem">
-							<span
-								style="font-weight:700;letter-spacing:-0.05em"
-								>Podslice</span
-							>
-						</p>
-
-
-        <p style="color: #374151; font-size: 16px; line-height: 1.5;">Hi ${data.userFirstName},</p>
         <p style="color: #374151; font-size: 15px; line-height: 1.6;">We're sorry, but we encountered a technical difficulty while generating your episode "${data.episodeTitle}".</p>
         <p style="color: #374151; font-size: 15px; line-height: 1.6;">Our team has been notified and is looking into the issue. Please try generating the episode again later. If the problem persists, feel free to reach out to our support team at <a href="mailto:${supportEmail}">${supportEmail}</a>.</p>
         <p style="color: #374151; font-size: 15px; line-height: 1.6;">We apologize for any inconvenience this may have caused.</p>
@@ -331,14 +381,11 @@ The PODSLICE Team`;
                           <td>
 
 													<div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 40px 20px;">
-																<div style="text-align: center; margin-bottom: 32px;">
-																<h1 style="color: #050506; font-size: 21px; line-height: 1.5; font-weight: bold">
+																${this.getLogoHtml()}
+																${this.getSeparatorHtml()}
+																<h1 style="color: #050506; font-size: 21px; line-height: 1.5; font-weight: bold; text-align: center; margin: 0 0 8px 0">
 																		Hi ${data.userFirstName} 
-																</h1><br>
-																</div>
-
-													
-																<hr style="border: none; border-top: 1px solid #26574E; margin: 32px 0; height: 3px; background:26574E;">
+																</h1>
 
 															
 														</div>
@@ -433,7 +480,10 @@ The PODSLICE Team`;
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc;">
     <div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 40px 20px;">
-        <div style="text-align: center; margin-bottom: 32px;">
+        ${this.getLogoHtml()}
+        ${this.getSeparatorHtml()}
+        ${this.getGreetingHtml(data.userFirstName).replace('margin: 0 0 12px 0', 'margin: 0 0 16px 0')}
+        <div style="text-align: center; margin-bottom: 16px;">
             <h1 style="color: #dc2626; font-size: 28px; margin: 0;">⏰ Trial Ending Soon</h1>
         </div>
 
@@ -444,7 +494,6 @@ The PODSLICE Team`;
         </div>
 
         <p style="color: #374151; font-size: 16px; line-height: 1.5; margin-bottom: 24px;">
-            Hi ${data.userFirstName},<br><br>
             Don't lose access to your personalized podcast feeds! Your PODSLICE trial is ending soon.
         </p>
 
@@ -498,7 +547,10 @@ The PODSLICE Team`;
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc;">
     <div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 40px 20px;">
-        <div style="text-align: center; margin-bottom: 32px;">
+        ${this.getLogoHtml()}
+        ${this.getSeparatorHtml()}
+        ${this.getGreetingHtml(data.userFirstName).replace('margin: 0 0 12px 0', 'margin: 0 0 16px 0')}
+        <div style="text-align: center; margin-bottom: 16px;">
             <h1 style="color: #f59e0b; font-size: 28px; margin: 0;">🔔 Subscription Expiring</h1>
         </div>
 
@@ -509,7 +561,6 @@ The PODSLICE Team`;
         </div>
 
         <p style="color: #374151; font-size: 16px; line-height: 1.5; margin-bottom: 24px;">
-            Hi ${data.userFirstName},<br><br>
             Your PODSLICE subscription is set to expire soon. Don't miss out on your personalized podcast content!
         </p>
 
@@ -553,12 +604,14 @@ The PODSLICE Team`;
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc;">
     <div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 40px 20px;">
-        <div style="text-align: center; margin-bottom: 32px;">
+        ${this.getLogoHtml()}
+        ${this.getSeparatorHtml()}
+        ${this.getGreetingHtml(userName).replace('margin: 0 0 12px 0', 'margin: 0 0 16px 0')}
+        <div style="text-align: center; margin-bottom: 16px;">
             <h1 style="color: #3b82f6; font-size: 28px; margin: 0;">📅 Weekly Reminder</h1>
         </div>
 
         <p style="color: #374151; font-size: 16px; line-height: 1.5; margin-bottom: 24px;">
-            Hi ${userName},<br><br>
             Just a friendly reminder that your next weekly podcast episode will be generated this Friday at midnight.
         </p>
 
@@ -601,6 +654,8 @@ The PODSLICE Team`;
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc;">
     <div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 40px 20px;">
+        ${this.getLogoHtml()}
+        ${this.getSeparatorHtml()}
         <div style="text-align: center;">
             <h1 style="color: #10b981; font-size: 28px; margin: 0 0 20px 0;">🧪 Email Test Successful!</h1>
             <p style="color: #374151; font-size: 16px; line-height: 1.5;">
