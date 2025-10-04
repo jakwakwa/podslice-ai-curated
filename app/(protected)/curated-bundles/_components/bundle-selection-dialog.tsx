@@ -9,7 +9,13 @@ import { Label } from "@/components/ui/label";
 import { Typography } from "@/components/ui/typography";
 import type { Bundle, Podcast } from "@/lib/types";
 
-type DialogBundle = (Bundle & { podcasts: Podcast[]; canInteract?: boolean; lockReason?: string | null }) | null;
+type DialogBundle = (Bundle & { 
+	podcasts: Podcast[]; 
+	canInteract?: boolean; 
+	lockReason?: string | null;
+	bundleType?: "curated" | "shared";
+	shared_bundle_id?: string;
+}) | null;
 
 // Simple function to sanitize text for safe display
 function sanitizeText(text: string | null | undefined): string {
@@ -38,8 +44,11 @@ interface BundleSelectionDialogProps {
 	onClose: () => void;
 	onConfirm: (payload: { bundleId: string; profileName?: string }) => Promise<void>;
 	selectedBundle: DialogBundle;
-	currentBundleName?: string | null;
-	currentBundleId?: string | null;
+	// Separate tracking for curated and shared bundles
+	currentCuratedBundleName?: string | null;
+	currentCuratedBundleId?: string | null;
+	currentSharedBundleName?: string | null;
+	currentSharedBundleId?: string | null;
 	isLoading?: boolean;
 	requiresProfileCreation: boolean;
 	mode: "select" | "locked";
@@ -53,8 +62,10 @@ export function BundleSelectionDialog({
 	onClose,
 	onConfirm,
 	selectedBundle,
-	currentBundleName,
-	currentBundleId,
+	currentCuratedBundleName,
+	currentCuratedBundleId,
+	currentSharedBundleName,
+	currentSharedBundleId,
 	isLoading = false,
 	requiresProfileCreation,
 	mode,
@@ -69,6 +80,13 @@ export function BundleSelectionDialog({
 
 	const isLocked = mode === "locked";
 	const isFirstSelection = requiresProfileCreation && !isLocked;
+	
+	// Determine bundle type
+	const isSharedBundle = selectedBundle?.bundleType === "shared";
+	
+	// Get the appropriate current bundle name based on type being selected
+	const currentBundleName = isSharedBundle ? currentSharedBundleName : currentCuratedBundleName;
+	const currentBundleId = isSharedBundle ? currentSharedBundleId : currentCuratedBundleId;
 
 	const sanitizedCurrentBundleName = currentBundleName ? sanitizeText(currentBundleName) : "";
 	const sanitizedSelectedBundleName = selectedBundle ? sanitizeText(selectedBundle.name) : "";
@@ -178,31 +196,53 @@ export function BundleSelectionDialog({
 							? "Upgrade required"
 							: isAlreadySelected
 								? "Just a reminder!"
-								: isFirstSelection
-									? "Activate curated bundle"
-									: "Switching Bundle Selection..."}
+							: isFirstSelection
+								? (isSharedBundle ? "Select Shared Bundle" : "Activate Curated Bundle")
+								: (isSharedBundle ? "Switching Shared Bundle..." : "Switching Curated Bundle...")}
 					</DialogTitle>
 					<DialogDescription className="mt-4">
-						{isLocked
-							? lockReason ?? `'${sanitizedSelectedBundleName}' requires the ${requiredPlanText} plan.`
-							: isAlreadySelected
-								? `You already have "${sanitizeText(selectedBundle.name)}" selected`
-								: isFirstSelection
-									? `You're about to activate '${sanitizeText(selectedBundle.name)}' as your curated podcast bundle. Name it below to finish setting up your feed.`
-									: sanitizedCurrentBundleName
-										? `You're about to change from '${sanitizedCurrentBundleName} Bundle' to '${sanitizeText(selectedBundle.name)} Bundle'`
-										: `You're about to select '${sanitizeText(selectedBundle.name)}' as your curated podcast bundle. This will update your podcast feed.`}
+						{(() => {
+							if (isLocked) {
+								return lockReason ?? `'${sanitizedSelectedBundleName}' requires the ${requiredPlanText} plan.`;
+							}
+							
+							if (isAlreadySelected) {
+								return `You already have "${sanitizeText(selectedBundle.name)}" selected`;
+							}
+							
+							if (isFirstSelection) {
+								if (isSharedBundle) {
+									return `You're about to select the shared bundle '${sanitizeText(selectedBundle.name)}'. Name your profile below to continue.`;
+								}
+								return `You're about to activate '${sanitizeText(selectedBundle.name)}' as your curated podcast bundle. Name it below to finish setting up your feed.`;
+							}
+							
+							if (sanitizedCurrentBundleName) {
+								if (isSharedBundle) {
+									return `You're about to change your shared bundle from '${sanitizedCurrentBundleName}' to '${sanitizeText(selectedBundle.name)}'`;
+								}
+								return `You're about to change your curated bundle from '${sanitizedCurrentBundleName}' to '${sanitizeText(selectedBundle.name)}'`;
+							}
+							
+							if (isSharedBundle) {
+								return `You're about to select '${sanitizeText(selectedBundle.name)}' as your shared bundle. This will add episodes from this bundle to your feed.`;
+							}
+							return `You're about to select '${sanitizeText(selectedBundle.name)}' as your curated podcast bundle. This will update your podcast feed.`;
+						})()}
 					</DialogDescription>
 				</DialogHeader>
 
 				{shouldShowSwitchWarning && (
 					<div className="space-y-4">
-						{/* Warning Message */}
-						<div className="px-2 bg-amber-50 dark:bg-amber-600/10 outline outline-amber-700/50 dark:border-amber-800 rounded-lg inline-block">
-							<Typography variant="body" className="text-amber-400 dark:text-amber-400/70 text-xs">
-								{`You won't have access to ${sanitizedCurrentBundleName}'s episodes after changing`}
-							</Typography>
-						</div>
+					{/* Warning Message */}
+					<div className="px-2 bg-amber-50 dark:bg-amber-600/10 outline outline-amber-700/50 dark:border-amber-800 rounded-lg inline-block">
+						<Typography variant="body" className="text-amber-400 dark:text-amber-400/70 text-xs">
+							{isSharedBundle
+								? `You'll lose access to episodes from '${sanitizedCurrentBundleName}' after switching`
+								: `You won't have access to '${sanitizedCurrentBundleName}' episodes after changing`
+							}
+						</Typography>
+					</div>
 					</div>
 				)}
 

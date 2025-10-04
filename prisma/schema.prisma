@@ -29,6 +29,7 @@ model User {
   subscriptions          Subscription[]
   userCurationProfile    UserCurationProfile?
   userEpisodes           UserEpisode[]
+  sharedBundles          SharedBundle[]
 
   @@map("user")
 }
@@ -49,6 +50,7 @@ model UserEpisode {
   created_at        DateTime           @default(now()) @map("created_at")
   updated_at        DateTime           @updatedAt @map("updated_at")
   user              User               @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  sharedBundleEpisodes SharedBundleEpisode[]
 
   @@index([user_id])
   @@map("user_episode")
@@ -153,13 +155,15 @@ model UserCurationProfile {
   generated_at          DateTime?        @map("generated_at")
   last_generation_date  DateTime?        @map("last_generation_date")
   next_generation_date  DateTime?        @map("next_generation_date")
-  is_active             Boolean          @default(true) @map("is_active")
-  is_bundle_selection   Boolean          @default(false) @map("is_bundle_selection")
-  selected_bundle_id    String?          @map("selected_bundle_id")
-  episodes              Episode[]
-  profile_podcast       ProfilePodcast[]
-  selectedBundle        Bundle?          @relation(fields: [selected_bundle_id], references: [bundle_id])
-  user                  User             @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  is_active                 Boolean          @default(true) @map("is_active")
+  is_bundle_selection       Boolean          @default(false) @map("is_bundle_selection")
+  selected_bundle_id        String?          @map("selected_bundle_id")
+  selected_shared_bundle_id String?          @map("selected_shared_bundle_id")
+  episodes                  Episode[]
+  profile_podcast           ProfilePodcast[]
+  selectedBundle            Bundle?          @relation(fields: [selected_bundle_id], references: [bundle_id])
+  selectedSharedBundle      SharedBundle?    @relation(fields: [selected_shared_bundle_id], references: [shared_bundle_id])
+  user                      User             @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
   @@map("user_curation_profile")
 }
@@ -249,4 +253,40 @@ enum PlanGate {
 enum UserRole {
   USER
   ADMIN
+}
+
+/// ───────────────────────────────────
+/// SHARED BUNDLES (User-Generated)
+/// ───────────────────────────────────
+model SharedBundle {
+  shared_bundle_id  String                @id @default(uuid()) @map("shared_bundle_id")
+  owner_user_id     String                @map("owner_user_id")
+  name              String                @map("name")
+  description       String?               @map("description")
+  is_active         Boolean               @default(true) @map("is_active")
+  created_at        DateTime              @default(now()) @map("created_at")
+  updated_at        DateTime              @updatedAt @map("updated_at")
+  owner             User                  @relation(fields: [owner_user_id], references: [user_id], onDelete: Cascade)
+  episodes          SharedBundleEpisode[]
+  user_curation_profiles UserCurationProfile[]
+
+  @@index([owner_user_id])
+  @@index([is_active])
+  @@map("shared_bundle")
+}
+
+/// Junction table: SharedBundle ↔ UserEpisode
+model SharedBundleEpisode {
+  shared_bundle_id  String        @map("shared_bundle_id")
+  episode_id        String        @map("episode_id")
+  is_active         Boolean       @default(true) @map("is_active")
+  display_order     Int?          @map("display_order")
+  added_at          DateTime      @default(now()) @map("added_at")
+  sharedBundle      SharedBundle  @relation(fields: [shared_bundle_id], references: [shared_bundle_id], onDelete: Cascade)
+  userEpisode       UserEpisode   @relation(fields: [episode_id], references: [episode_id], onDelete: Cascade)
+
+  @@id([shared_bundle_id, episode_id])
+  @@index([shared_bundle_id])
+  @@index([episode_id])
+  @@map("shared_bundle_episode")
 }

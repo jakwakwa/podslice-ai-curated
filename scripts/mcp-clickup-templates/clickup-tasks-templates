@@ -1,0 +1,98 @@
+Perfect! I'll create a reusable prompt template for you to use with Warp AI agents. Here's a concise, copy-paste-ready prompt:
+
+---
+
+## 📋 Reusable Warp AI Prompt Template
+
+```
+Create a ClickUp task with the following specifications:
+
+TASK DETAILS:
+- Title: [Your task title here]
+- Description: [Brief overview and requirements]
+
+CLICKUP SETTINGS:
+- List: Agent Generated Tasks (List ID: 901213091193)
+- Assignee: Jaco_K (ID: 44519141)
+- Priority: High (2)
+- Tags: ai, [add other relevant tags]
+
+REQUIREMENTS:
+[Bullet point your requirements here]
+
+SUCCESS CRITERIA:
+[List your success criteria here]
+
+Please create this task using the ClickUp MCP server, assign it to Jaco_K, add the 'ai' tag, and move it to the Agent Generated Tasks list.
+```
+---
+
+## 🚀 Even Shorter Version (Quick Add)
+
+```
+Add ClickUp task to Agent Generated Tasks list:
+- Title: [task title]
+- Description: [brief description]
+- Assign to: Jaco_K
+- Priority: High
+- Tags: ai
+- Requirements: [list key requirements]
+
+Use ClickUp MCP server.
+```
+---
+
+## 💡 Example Usage
+
+```
+Add ClickUp task to Agent Generated Tasks list:
+- Title: Implement Dark Mode Toggle for User Settings
+- Description: Add a dark/light mode toggle switch to user settings that persists across sessions
+- Assign to: Jaco_K
+- Priority: High
+- Tags: ai, frontend, ui
+- Requirements:
+  - Add toggle component in /settings page
+  - Store preference in localStorage
+  - Apply theme across all pages
+  - Support system preference detection
+
+Use ClickUp MCP server.
+```
+---
+
+## 🎯 Pro Tips
+
+1. **Always mention:** "Use ClickUp MCP server" so the AI knows to use the integration
+2. **For tagging:** Just say "Tags: ai" and the AI will add it
+3. **For assignment:** Just say "Assign to: Jaco_K" 
+4. **For list:** Say "Agent Generated Tasks list" or provide the list ID
+5. **Be specific** about requirements but keep it concise
+
+---
+
+## 📝 Template Variations
+
+**For Bug Fixes:**
+```
+Add bug fix task to Agent Generated Tasks in ClickUp:
+- Title: Fix [issue]
+- Bug: [description]
+- Steps to reproduce: [steps]
+- Expected behavior: [what should happen]
+- Assign to: Jaco_K, Priority: High, Tags: ai, bug
+Use ClickUp MCP server.
+```
+**For Features:**
+```
+Add feature task to Agent Generated Tasks in ClickUp:
+- Title: [feature name]
+- User story: As a [user], I want [goal] so that [benefit]
+- Requirements: [bullet points]
+- Success criteria: [bullet points]
+- Assign to: Jaco_K, Priority: High, Tags: ai, feature
+Use ClickUp MCP server.
+```
+---
+
+Save this prompt template somewhere handy (like in a text file or note app), and just fill in the bracketed sections whenever you need to create a new task!

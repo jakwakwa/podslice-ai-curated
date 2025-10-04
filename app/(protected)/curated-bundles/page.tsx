@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server"
 import { PlanGate, type Prisma } from "@prisma/client"
 import { unstable_noStore as noStore } from "next/cache"
 import { PageHeader } from "@/components/ui/page-header"
@@ -6,23 +7,43 @@ import type { Bundle, Podcast } from "@/lib/types"
 import { CuratedBundlesClient } from "./_components/curated-bundles-client"
 import { CuratedBundlesFilters } from "./_components/filters.client"
 
-type BundleWithPodcasts = Bundle & { podcasts: Podcast[] }
+type BundleWithPodcasts = Bundle & { 
+	podcasts: Podcast[]
+	bundleType?: "curated" | "shared"
+	shared_bundle_id?: string
+	episodes?: Array<{
+		episode_id: string
+		episode_title: string
+		duration_seconds: number | null
+	}>
+	episode_count?: number
+	owner?: {
+		user_id: string
+		full_name: string
+	}
+}
 
 export const dynamic = "force-dynamic"
 
 export default async function CuratedBundlesPage({ searchParams }: { searchParams?: Promise<{ q?: string; min_plan?: string }> }) {
 	noStore()
 
-	let curatedBundles: BundleWithPodcasts[] = []
+	let allBundles: BundleWithPodcasts[] = []
 	let error: string | null = null
 
 	try {
+		const { userId } = await auth()
+		if (!userId) {
+			throw new Error("Unauthorized")
+		}
+
 		const resolvedSearchParams = searchParams ? await searchParams : {}
 		const q = resolvedSearchParams?.q?.toString().trim()
 		const minPlanParam = resolvedSearchParams?.min_plan?.toString().trim()
 		const minPlanFilter = minPlanParam && (Object.values(PlanGate) as string[]).includes(minPlanParam) ? (minPlanParam as keyof typeof PlanGate) : undefined
 
-		const where: Prisma.BundleWhereInput = {
+		// Fetch curated bundles
+		const curatedWhere: Prisma.BundleWhereInput = {
 			is_active: true,
 			...(q
 				? {
@@ -32,8 +53,8 @@ export default async function CuratedBundlesPage({ searchParams }: { searchParam
 			...(minPlanFilter ? { min_plan: PlanGate[minPlanFilter] } : {}),
 		}
 
-		const bundles = await prisma.bundle.findMany({
-			where,
+		const curatedBundles = await prisma.bundle.findMany({
+			where: curatedWhere,
 			include: {
 				bundle_podcast: { include: { podcast: true } },
 			},
@@ -45,10 +66,82 @@ export default async function CuratedBundlesPage({ searchParams }: { searchParam
 			}
 		})
 
-		curatedBundles = bundles.map(b => ({
+		// Fetch shared bundles
+		const sharedWhere: Prisma.SharedBundleWhereInput = {
+			is_active: true,
+			// Don't show bundles owned by the current user in the discovery view
+			owner_user_id: { not: userId },
+			...(q
+				? {
+					OR: [
+						{ name: { contains: q, mode: "insensitive" } },
+						{ episodes: { some: { userEpisode: { episode_title: { contains: q, mode: "insensitive" } } } } },
+					],
+				}
+				: {}),
+		}
+
+		const sharedBundles = await prisma.sharedBundle.findMany({
+			where: sharedWhere,
+			include: {
+				episodes: {
+					where: { is_active: true },
+					include: {
+						userEpisode: {
+							select: {
+								episode_id: true,
+								episode_title: true,
+								duration_seconds: true,
+							},
+						},
+					},
+					orderBy: { display_order: "asc" },
+				},
+			owner: {
+				select: {
+					user_id: true,
+					name: true,
+				},
+			},
+			},
+			orderBy: { created_at: "desc" },
+		})
+
+		// Transform curated bundles
+		const transformedCuratedBundles: BundleWithPodcasts[] = curatedBundles.map(b => ({
 			...(b as unknown as Bundle),
 			podcasts: b.bundle_podcast.map(bp => bp.podcast as unknown as Podcast),
+			bundleType: "curated" as const,
 		}))
+
+		// Transform shared bundles to match Bundle interface
+		const transformedSharedBundles: BundleWithPodcasts[] = sharedBundles.map(sb => ({
+			// Map shared bundle fields to Bundle interface
+			bundle_id: sb.shared_bundle_id, // Use shared_bundle_id as bundle_id for display
+			name: sb.name,
+			description: sb.description,
+			image_url: null, // Shared bundles don't have images
+			min_plan: PlanGate.FREE_SLICE, // Shared bundles require at least FREE_SLICE
+			is_active: sb.is_active,
+			created_at: sb.created_at,
+			updated_at: sb.updated_at,
+			podcasts: [], // Shared bundles don't have podcasts, they have episodes
+			bundleType: "shared" as const,
+			shared_bundle_id: sb.shared_bundle_id,
+			episodes: sb.episodes.map(e => ({
+				episode_id: e.userEpisode.episode_id,
+				episode_title: e.userEpisode.episode_title,
+				duration_seconds: e.userEpisode.duration_seconds,
+			})),
+			episode_count: sb.episodes.length,
+			owner: {
+				user_id: sb.owner.user_id,
+				full_name: sb.owner.name || "Anonymous User",
+			},
+		}))
+
+		// Combine both types of bundles
+		allBundles = [...transformedCuratedBundles, ...transformedSharedBundles]
 	} catch (e) {
 		error = e instanceof Error ? e.message : "Failed to load PODSLICE Bundles."
 	}
@@ -56,13 +149,13 @@ export default async function CuratedBundlesPage({ searchParams }: { searchParam
 	return (
 		<div className="w-full episode-card-wrapper">
 			<PageHeader
-				title="Explore our Bundles"
-				description="Choose from our pre-curated podcast bundles. Each bundle is a fixed selection of 2-5 carefully selected shows and cannot be modified once selected."
+				title="Explore Bundles"
+				description="Choose from our pre-curated podcast bundles or discover bundles shared by other users. Each bundle is a fixed selection you can select for your feed."
 			/>
 
 			<CuratedBundlesFilters />
 
-			<CuratedBundlesClient bundles={curatedBundles} error={error} />
+			<CuratedBundlesClient bundles={allBundles} error={error} />
 		</div>
 	)
 }

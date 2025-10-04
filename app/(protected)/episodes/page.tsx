@@ -7,22 +7,26 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AppSpinner } from "@/components/ui/app-spinner";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { H3 } from "@/components/ui/typography";
 import type { Episode } from "@/lib/types";
 import { useAudioPlayerStore } from "@/store/audioPlayerStore";
+
+type BundleType = "all" | "curated" | "shared";
 
 export default function EpisodesPage() {
 	const [episodes, setEpisodes] = useState<Episode[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [bundleType, setBundleType] = useState<BundleType>("all");
 	const { setEpisode } = useAudioPlayerStore();
 
-	const fetchEpisodes = useCallback(async () => {
+	const fetchEpisodes = useCallback(async (type: BundleType) => {
 		try {
 			setIsLoading(true);
 			setError(null);
 
-			const response = await fetch(`/api/episodes?ts=${Date.now()}`, { cache: "no-store" });
+			const response = await fetch(`/api/episodes?bundleType=${type}&ts=${Date.now()}`, { cache: "no-store" });
 
 			if (!response.ok) {
 				throw new Error(`Failed to load episodes. Server responded with status ${response.status}.`);
@@ -39,8 +43,12 @@ export default function EpisodesPage() {
 	}, []);
 
 	useEffect(() => {
-		fetchEpisodes();
-	}, [fetchEpisodes]);
+		fetchEpisodes(bundleType);
+	}, [bundleType, fetchEpisodes]);
+
+	const handleBundleTypeChange = (value: string) => {
+		setBundleType(value as BundleType);
+	};
 
 	const handlePlayEpisode = (episode: Episode) => {
 		console.log("Episodes - Setting episode:", episode);
@@ -62,17 +70,17 @@ export default function EpisodesPage() {
 				</div>
 			) : error ? (
 				<div className="max-w-2xl mx-auto mt-8">
-					<Alert variant="destructive">
-						<AlertCircle className="h-4 w-4" />
-						<AlertTitle>Unable to Load Episodes</AlertTitle>
-						<AlertDescription className="mt-2">{error}</AlertDescription>
-					</Alert>
-					<div className="mt-6 text-center">
-						<Button onClick={fetchEpisodes} variant="outline">
-							<RefreshCw className="h-4 w-4 mr-2" />
-							Try Again
-						</Button>
-					</div>
+				<Alert variant="destructive">
+					<AlertCircle className="h-4 w-4" />
+					<AlertTitle>Unable to Load Episodes</AlertTitle>
+					<AlertDescription className="mt-2">{error}</AlertDescription>
+				</Alert>
+				<div className="mt-6 text-center">
+					<Button onClick={() => fetchEpisodes(bundleType)} variant="outline">
+						<RefreshCw className="h-4 w-4 mr-2" />
+						Try Again
+					</Button>
+				</div>
 				</div>
 			) : episodes.length === 0 ? (
 				<div className="w-full  max-w-[1000px] mx-auto mt-0">
@@ -83,8 +91,21 @@ export default function EpisodesPage() {
 				</div>
 			) : (
 				<div className="flex episode-card-wrapper mt-4 flex-col justify-center mx-auto w-screen md:w-screen max-w-full gap-4">
-					<H3 className="font-medium">All Bundled Episodes</H3>
-					<EpisodeList episodes={episodes} onPlayEpisode={handlePlayEpisode} />
+					<Tabs value={bundleType} onValueChange={handleBundleTypeChange} className="w-full">
+						<TabsList className="mb-4">
+							<TabsTrigger value="all">All Bundles</TabsTrigger>
+							<TabsTrigger value="curated">Curated Bundles</TabsTrigger>
+							<TabsTrigger value="shared">Shared Bundles</TabsTrigger>
+						</TabsList>
+						<TabsContent value={bundleType}>
+							<H3 className="font-medium mb-4">
+								{bundleType === "all" && "All Bundled Episodes"}
+								{bundleType === "curated" && "Curated Bundle Episodes"}
+								{bundleType === "shared" && "Shared Bundle Episodes"}
+							</H3>
+							<EpisodeList episodes={episodes} onPlayEpisode={handlePlayEpisode} />
+						</TabsContent>
+					</Tabs>
 				</div>
 			)}
 		</div>

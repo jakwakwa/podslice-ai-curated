@@ -46,8 +46,8 @@ export async function GET(_request: NextRequest) {
 		}
 		const allowedGates = resolveAllowedGates(plan)
 
-		// Get all active bundles (return locked ones too)
-		const bundles: BundleWithPodcasts[] = await prisma.bundle.findMany({
+		// Get all active admin-curated bundles (return locked ones too)
+		const adminBundles: BundleWithPodcasts[] = await prisma.bundle.findMany({
 			where: { is_active: true },
 			include: {
 				bundle_podcast: {
@@ -59,8 +59,38 @@ export async function GET(_request: NextRequest) {
 			orderBy: { created_at: "desc" },
 		})
 
-		// Transform with gating info
-		const transformedBundles = bundles.map(bundle => {
+		// Get all active shared bundles
+		const sharedBundles = await prisma.sharedBundle.findMany({
+			where: { is_active: true },
+			include: {
+				owner: {
+					select: {
+						user_id: true,
+						full_name: true,
+					},
+				},
+				episodes: {
+					where: { is_active: true },
+					include: {
+						userEpisode: {
+							select: {
+								episode_id: true,
+								episode_title: true,
+								duration_seconds: true,
+								created_at: true,
+							},
+						},
+					},
+					orderBy: { display_order: "asc" },
+				},
+			},
+			orderBy: { created_at: "desc" },
+		})
+
+		const bundles = adminBundles
+
+		// Transform admin bundles with gating info
+		const transformedAdminBundles = bundles.map(bundle => {
 			const gate = bundle.min_plan
 			// Ensure we're comparing the same types - convert both to strings for comparison
 			const canInteract = allowedGates.some(allowedGate => allowedGate === gate)
@@ -71,10 +101,43 @@ export async function GET(_request: NextRequest) {
 				podcasts: bundle.bundle_podcast.map(bp => bp.podcast),
 				canInteract,
 				lockReason,
+				bundleType: "curated" as const,
 			}
 		})
 
-		return NextResponse.json(transformedBundles, { headers: { "Cache-Control": "no-store" } })
+		// Transform shared bundles - available to FREE_SLICE, CASUAL_LISTENER, and CURATE_CONTROL
+		const transformedSharedBundles = sharedBundles.map(bundle => {
+			// Shared bundles available to all plans except NONE
+			const canInteract = allowedGates.some(gate => gate !== PlanGateEnum.NONE)
+			const lockReason = canInteract ? null : "Shared bundles require a paid plan."
+
+			return {
+				bundle_id: bundle.shared_bundle_id,
+				shared_bundle_id: bundle.shared_bundle_id,
+				name: bundle.name,
+				description: bundle.description,
+				image_url: null, // Shared bundles don't have images yet
+				is_active: bundle.is_active,
+				created_at: bundle.created_at,
+				min_plan: PlanGateEnum.FREE_SLICE, // Shared bundles require at least FREE_SLICE
+				episodes: bundle.episodes.map(ep => ({
+					episode_id: ep.userEpisode.episode_id,
+					episode_title: ep.userEpisode.episode_title,
+					duration_seconds: ep.userEpisode.duration_seconds,
+				})),
+				episode_count: bundle.episodes.length,
+				owner: bundle.owner,
+				podcasts: [], // Shared bundles don't have podcasts, they have episodes
+				canInteract,
+				lockReason,
+				bundleType: "shared" as const,
+			}
+		})
+
+		// Combine both types of bundles
+		const allBundles = [...transformedAdminBundles, ...transformedSharedBundles]
+
+		return NextResponse.json(allBundles, { headers: { "Cache-Control": "no-store" } })
 	} catch (error) {
 		if (process.env.NODE_ENV === "production" || (error instanceof Error && error.message.includes("does not exist"))) {
 			return NextResponse.json([])
