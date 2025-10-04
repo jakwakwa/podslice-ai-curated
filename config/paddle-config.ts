@@ -37,7 +37,7 @@ const PRICING_TIER: PlanTier[] = [
 			"Stay Informed with Smart Notifications",
 		],
 		description: "Stay in control with the ability to create custom bundled feeds and fully personalised Ai powered generated audio summaries",
-		episodeLimit: 100,
+		episodeLimit: 30,
 		featured: true,
 	},
 ];
