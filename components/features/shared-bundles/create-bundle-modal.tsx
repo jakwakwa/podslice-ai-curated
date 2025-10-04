@@ -220,6 +220,7 @@ export function CreateBundleModal({
 				<DialogFooter>
 					{step === "details" ? (
 						<Button
+							variant="default"
 							onClick={handleNext}
 							disabled={!bundleName.trim()}
 							className="w-full sm:w-auto"
@@ -232,6 +233,7 @@ export function CreateBundleModal({
 								Back
 							</Button>
 							<Button
+								variant="default"
 								onClick={handleCreate}
 								disabled={selectedEpisodes.length === 0 || isSubmitting}
 							>

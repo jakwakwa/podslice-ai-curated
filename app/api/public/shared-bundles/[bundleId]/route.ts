@@ -26,7 +26,7 @@ export async function GET(
 				owner: {
 					select: {
 						user_id: true,
-						full_name: true,
+						name: true,
 						// Don't expose sensitive user information
 					},
 				},
@@ -40,7 +40,7 @@ export async function GET(
 								episode_id: true,
 								episode_title: true,
 								duration_seconds: true,
-								audio_file_path: true, // For generating signed URLs
+								gcs_audio_url: true, // For generating signed URLs
 								created_at: true,
 							},
 						},
@@ -64,14 +64,14 @@ export async function GET(
 			description: bundle.description,
 			created_at: bundle.created_at,
 			owner: {
-				full_name: bundle.owner.full_name,
+				name: bundle.owner.name,
 			},
 			episodes: bundle.episodes.map((ep) => ({
 				episode_id: ep.episode_id,
 				display_order: ep.display_order,
 				episode_title: ep.userEpisode.episode_title,
 				duration_seconds: ep.userEpisode.duration_seconds,
-				audio_file_path: ep.userEpisode.audio_file_path,
+				gcs_audio_url: ep.userEpisode.gcs_audio_url,
 				created_at: ep.userEpisode.created_at,
 			})),
 			total_episodes: bundle.episodes.length,

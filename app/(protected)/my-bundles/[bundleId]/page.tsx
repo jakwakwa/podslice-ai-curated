@@ -11,7 +11,7 @@ interface PageProps {
 }
 
 async function getBundleDetails(bundleId: string, userId: string) {
-	const bundle = await prisma.sharedBundle.findUnique({
+	const bundle = await prisma?.sharedBundle.findUnique({
 		where: {
 			shared_bundle_id: bundleId,
 			owner_user_id: userId, // Only owner can view
@@ -53,11 +53,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function BundleDetailPage({ params }: PageProps) {
 	const { bundleId } = await params;
 	const { userId } = await auth();
-	
+
 	if (!userId) notFound();
 
 	const bundle = await getBundleDetails(bundleId, userId);
-	
+
 	if (!bundle) notFound();
 
 	return <BundleDetailsClient bundle={bundle} />;

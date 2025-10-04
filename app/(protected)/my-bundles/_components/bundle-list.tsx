@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Share2, Eye, EyeOff, Trash2, Copy, Check } from "lucide-react";
+import { Check, Copy, Eye, EyeOff, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 
 interface SharedBundle {
 	shared_bundle_id: string;
@@ -126,7 +126,7 @@ export function BundleList() {
 	}
 
 	return (
-		<Card className="episode-card-wrapper-dark h-full min-h-[61vh]">
+		<Card className="episode-card-wrapper h-full min-h-[61vh]">
 			<div>
 				{isLoading && (
 					<Card>
@@ -140,29 +140,23 @@ export function BundleList() {
 				{!isLoading && (!bundles || bundles.length === 0) ? (
 					<div className="text-center py-12">
 						<p className="text-muted-foreground mb-4">You haven't created any shared bundles yet.</p>
-						<p className="text-sm text-muted-foreground">
-							Create a bundle to share collections of your episodes with others.
-						</p>
+						<p className="text-sm text-muted-foreground">Create a bundle to share collections of your episodes with others.</p>
 					</div>
 				) : !isLoading && Array.isArray(bundles) && bundles.length > 0 ? (
 					<div className="space-y-4">
-						{bundles.map((bundle) => {
-							const activeEpisodes = bundle.episodes.filter((ep) => ep.is_active).length;
+						{bundles.map(bundle => {
+							const activeEpisodes = bundle.episodes.filter(ep => ep.is_active).length;
 							const totalEpisodes = bundle.episodes.length;
 
 							return (
-								<Card key={bundle.shared_bundle_id} className="p-6">
-									<div className="flex items-start justify-between gap-4">
+								<Card key={bundle.shared_bundle_id} className="bg-card  p-12">
+									<div className="flex items-start p-5 justify-between gap-4">
 										<div className="flex-1 min-w-0">
 											<div className="flex items-center gap-2 mb-2">
-												<h3 className="text-lg font-semibold truncate">{bundle.name}</h3>
-												<Badge variant={bundle.is_active ? "default" : "secondary"}>
-													{bundle.is_active ? "Active" : "Inactive"}
-												</Badge>
+												<h3 className="text-lg text-teal-300/70 font-semibold truncate">{bundle.name}</h3>
+												<Badge variant={bundle.is_active ? "default" : "destructive"}>{bundle.is_active ? "Active" : "Inactive"}</Badge>
 											</div>
-											{bundle.description && (
-												<p className="text-sm text-muted-foreground mb-3">{bundle.description}</p>
-											)}
+											{bundle.description && <p className="text-sm text-muted-foreground mb-3">{bundle.description}</p>}
 											<div className="flex items-center gap-4 text-sm text-muted-foreground">
 												<span>
 													{activeEpisodes} / {totalEpisodes} episodes active
@@ -171,23 +165,11 @@ export function BundleList() {
 											</div>
 										</div>
 										<div className="flex items-center gap-2">
-											<Button
-												variant="outline"
-												size="sm"
-												onClick={() => copyShareLink(bundle.shared_bundle_id)}
-											>
-												{copiedId === bundle.shared_bundle_id ? (
-													<Check className="h-4 w-4 mr-1" />
-												) : (
-													<Copy className="h-4 w-4 mr-1" />
-												)}
+											<Button variant="outline" size="sm" onClick={() => copyShareLink(bundle.shared_bundle_id)}>
+												{copiedId === bundle.shared_bundle_id ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
 												{copiedId === bundle.shared_bundle_id ? "Copied" : "Copy Link"}
 											</Button>
-											<Button
-												variant="outline"
-												size="sm"
-												onClick={() => toggleBundleActive(bundle.shared_bundle_id, bundle.is_active)}
-											>
+											<Button variant="outline" size="sm" onClick={() => toggleBundleActive(bundle.shared_bundle_id, bundle.is_active)}>
 												{bundle.is_active ? (
 													<>
 														<EyeOff className="h-4 w-4 mr-1" />
@@ -205,11 +187,7 @@ export function BundleList() {
 													Manage
 												</Button>
 											</Link>
-											<Button
-												variant="destructive"
-												size="sm"
-												onClick={() => deleteBundle(bundle.shared_bundle_id)}
-											>
+											<Button variant="destructive" size="sm" onClick={() => deleteBundle(bundle.shared_bundle_id)}>
 												<Trash2 className="h-4 w-4" />
 											</Button>
 										</div>

@@ -66,7 +66,7 @@ export async function GET(_request: NextRequest) {
 				owner: {
 					select: {
 						user_id: true,
-						full_name: true,
+						name: true,
 					},
 				},
 				episodes: {

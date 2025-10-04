@@ -125,12 +125,11 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 					return NextResponse.json({ error: "Bundle requires a higher plan", requiredPlan: gate }, { status: 403 })
 				}
 				dataToUpdate.selected_bundle_id = selected_bundle_id
-				dataToUpdate.selected_shared_bundle_id = null // Clear shared bundle if selecting regular bundle
+				// Do NOT clear shared bundle - user can have both!
 				dataToUpdate.is_bundle_selection = true
 			} else {
-				// Clear selection
+				// Clear curated bundle selection only
 				dataToUpdate.selected_bundle_id = null
-				dataToUpdate.selected_shared_bundle_id = null
 			}
 		}
 
@@ -160,11 +159,10 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 					return NextResponse.json({ error: "Shared bundles require at least Free Slice plan" }, { status: 403 })
 				}
 				dataToUpdate.selected_shared_bundle_id = selected_shared_bundle_id
-				dataToUpdate.selected_bundle_id = null // Clear regular bundle if selecting shared bundle
+				// Do NOT clear curated bundle - user can have both!
 				dataToUpdate.is_bundle_selection = true
 			} else {
-				// Clear selection
-				dataToUpdate.selected_bundle_id = null
+				// Clear shared bundle selection only
 				dataToUpdate.selected_shared_bundle_id = null
 			}
 		}

@@ -52,7 +52,7 @@ export async function GET(
 				},
 				userEpisode: {
 					select: {
-						audio_file_path: true,
+						gcs_audio_url: true,
 					},
 				},
 			},
@@ -62,7 +62,7 @@ export async function GET(
 			return new NextResponse("Episode not found in active bundle", { status: 404 });
 		}
 
-		const audioFilePath = bundleEpisode.userEpisode.audio_file_path;
+		const audioFilePath = bundleEpisode.userEpisode.gcs_audio_url;
 
 		if (!audioFilePath) {
 			return new NextResponse("Audio file not available", { status: 404 });
