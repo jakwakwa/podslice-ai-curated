@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { useEffect, useMemo, useState, useTransition } from "react"
 import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -24,6 +24,12 @@ type EmailFormData = {
 	message: string
 }
 
+type TemplateMeta = {
+	slug: string
+	displayName: string
+	description: string
+}
+
 export default function EmailManagementClient({
 	bundles,
 	episodes,
@@ -41,6 +47,44 @@ export default function EmailManagementClient({
 		subject: "",
 		message: "",
 	})
+
+	// Preview dialog state
+	const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+	const [templates, setTemplates] = useState<TemplateMeta[]>([])
+	const [templatesLoading, setTemplatesLoading] = useState(false)
+	const [selectedTemplateSlug, setSelectedTemplateSlug] = useState<string>("")
+	const [previewNonce, setPreviewNonce] = useState<number>(Date.now())
+
+	useEffect(() => {
+		if (!isPreviewOpen) return
+		let ignore = false
+		async function loadTemplates() {
+			try {
+				setTemplatesLoading(true)
+				const res = await fetch("/api/admin/email-templates")
+				if (!res.ok) throw new Error("Failed to load templates")
+				const data = await res.json() as { templates: TemplateMeta[] }
+				if (!ignore) {
+					setTemplates(data.templates)
+					if (data.templates.length > 0 && !selectedTemplateSlug) {
+						setSelectedTemplateSlug(data.templates[0].slug)
+					}
+				}
+			} catch (e) {
+				console.error(e)
+				toast.error("Could not fetch email templates")
+			} finally {
+				if (!ignore) setTemplatesLoading(false)
+			}
+		}
+		loadTemplates()
+		return () => { ignore = true }
+	}, [isPreviewOpen])
+
+	const previewUrl = useMemo(() => {
+		if (!selectedTemplateSlug) return ""
+		return `/api/admin/email-preview?slug=${encodeURIComponent(selectedTemplateSlug)}&t=${previewNonce}`
+	}, [selectedTemplateSlug, previewNonce])
 
 	const selectedBundle = bundles.find(b => b.bundle_id === formData.bundleId)
 	const selectedEpisode = episodes.find(e => e.episode_id === formData.episodeId)
@@ -102,14 +146,15 @@ export default function EmailManagementClient({
 						))}
 					</div>
 
-					<Dialog open={isOpen} onOpenChange={setIsOpen}>
-						<DialogTrigger asChild>
-							<Button variant={"default"}>Send Email to Bundle Users</Button>
-						</DialogTrigger>
-						<DialogContent className="max-w-2xl">
-							<DialogHeader>
-								<DialogTitle>Send Email to Bundle Users</DialogTitle>
-							</DialogHeader>
+					<div className="flex gap-2 mb-4">
+						<Dialog open={isOpen} onOpenChange={setIsOpen}>
+							<DialogTrigger asChild>
+								<Button variant={"default"}>Send Email to Bundle Users</Button>
+							</DialogTrigger>
+							<DialogContent className="max-w-2xl">
+								<DialogHeader>
+									<DialogTitle>Send Email to Bundle Users</DialogTitle>
+								</DialogHeader>
 
 							<div className="space-y-4">
 								<div>
@@ -197,7 +242,76 @@ export default function EmailManagementClient({
 								</div>
 							</div>
 						</DialogContent>
-					</Dialog>
+						</Dialog>
+
+						{/* Email Template Preview (no sending) */}
+						<Dialog open={isPreviewOpen} onOpenChange={(open) => { setIsPreviewOpen(open); if (open) setPreviewNonce(Date.now()) }}>
+							<DialogTrigger asChild>
+								<Button variant="secondary">Preview Email Templates</Button>
+							</DialogTrigger>
+							<DialogContent className="max-w-5xl">
+								<DialogHeader>
+									<DialogTitle>Visual Preview: Email Templates</DialogTitle>
+								</DialogHeader>
+
+								<div className="space-y-4">
+									<div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+										<div className="md:col-span-2">
+											<Label htmlFor="template">Select template</Label>
+											<Select value={selectedTemplateSlug} onValueChange={setSelectedTemplateSlug}>
+												<SelectTrigger id="template">
+													<SelectValue placeholder={templatesLoading ? "Loading..." : "Choose a template"} />
+												</SelectTrigger>
+												<SelectContent>
+													{templates.map((t) => (
+														<SelectItem key={t.slug} value={t.slug}>
+															{t.displayName}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+										</div>
+										<div className="flex gap-2">
+											<Button
+													variant="outline"
+													onClick={() => setPreviewNonce(Date.now())}
+													disabled={!selectedTemplateSlug}
+											>
+												Reload Preview
+											</Button>
+											{selectedTemplateSlug && (
+												<a
+													href={`/api/admin/email-preview?slug=${encodeURIComponent(selectedTemplateSlug)}`}
+													target="_blank"
+													rel="noopener noreferrer"
+													className="inline-flex items-center justify-center rounded-md border border-input bg-background px-3 py-2 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground"
+												>
+													Open in new tab
+													</a>
+											)}
+										</div>
+									</div>
+
+									{selectedTemplateSlug ? (
+										<div className="border rounded-lg overflow-hidden">
+											<iframe
+													title="Email template preview"
+													key={previewUrl}
+													src={previewUrl}
+													className="w-full h-[700px] bg-white"
+												/>
+										</div>
+									) : (
+										<div className="p-4 text-sm text-muted-foreground border rounded-lg">
+											Select a template to preview its visual render. No emails will be sent.
+										</div>
+									)}
+								</div>
+
+							</DialogContent>
+						</Dialog>
+					</div>
+
 				</CardContent>
 			</Card>
 		</div>

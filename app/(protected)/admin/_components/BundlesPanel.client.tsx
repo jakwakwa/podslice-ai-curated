@@ -5,7 +5,7 @@ import { useEffect, useState, useTransition } from "react"
 import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { CardContent } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -182,7 +182,7 @@ export default function BundlesPanelClient({
 	const createButtonLabel = bundles.length === 0 ? "Add your first bundle" : "Add Another Bundle"
 
 	return (
-		<div className="episode-card-wrapper">
+		<Card className="episode-card-wrapper">
 			<PanelHeader
 				title="Bundle Management"
 				description="Create new bundles and manage existing ones"
@@ -195,7 +195,7 @@ export default function BundlesPanelClient({
 					onClick: () => router.refresh(),
 				}}
 			/>
-			<CardContent className="p-4 space-y-6">
+			<CardContent className="flex episode-card-wrapper-dark  rounded-2xl flex-col gap-4 p-4 space-y-6">
 				{/* CREATE FORM */}
 				{showCreateForm && (
 					<div className="space-y-3 p-4 border rounded-lg w-full max-w-[500px]">
@@ -204,13 +204,10 @@ export default function BundlesPanelClient({
 								<Label htmlFor="bundleName">Bundle Name</Label>
 								<Input id="bundleName" value={createForm.name} onChange={e => setCreateForm(s => ({ ...s, name: e.target.value }))} placeholder="e.g., Tech Weekly" />
 							</div>
-							<div>
-								<Label htmlFor="bundleDescription">Description</Label>
-								<Textarea id="bundleDescription" value={createForm.description} onChange={e => setCreateForm(s => ({ ...s, description: e.target.value }))} rows={2} />
-							</div>
+
 							<div>
 								<Label htmlFor="minPlan">Visibility</Label>
-								<select id="minPlan" className="w-full border rounded h-9 px-2 bg-background" value={createForm.min_plan} onChange={e => setCreateForm(s => ({ ...s, min_plan: e.target.value }))}>
+								<select id="minPlan" className="w-full text-sm border rounded h-9 px-2 bg-background" value={createForm.min_plan} onChange={e => setCreateForm(s => ({ ...s, min_plan: e.target.value }))}>
 									{(planGatesLoaded ? planGateOptions : [{ value: "NONE", label: "Free (All users)" }]).map(opt => (
 										<option key={opt.value} value={opt.value}>
 											{opt.label}
@@ -239,62 +236,62 @@ export default function BundlesPanelClient({
 				)}
 
 				{/* EXISTING BUNDLES LIST */}
-				<div className="space-y-4">
-					<h3 className="text-sm text-muted-foreground">Existing Bundles ({bundles.length})</h3>
+				<div className="space-y-4 flex flex-col gap-5">
+
 					{bundles.map(bundleOriginal => {
 						const bundle = optimisticBundle(bundleOriginal)
 						const isEditing = editingBundleId === bundle.bundle_id
 
 						return (
-							<div key={bundle.bundle_id} className={`episode-card p-4 border rounded-lg ${bundleOriginal.canInteract === false ? "opacity-60" : ""}`}>
+							<div key={bundle.bundle_id} className={`episode-card-wrapper p-4 border rounded-lg ${bundleOriginal.canInteract === false ? "opacity-60" : ""}`}>
 								{/* Header */}
-								<div className="flex items-start justify-between mb-2">
+								<div className="flex items-start gap-2 justify-between mb-0 w-full" >
 									<div className="flex-1">
 										<p className="text-primary/70 text-custom-sm font-semibold">{bundle.name}</p>
-										<p className="text-xxs mt-1 episode-card-description text-foreground/50 mb-2">{bundle.description}</p>
-										<div className="flex flex-wrap gap-1 mb-1">
+
+										<div className="flex flex-wrap flex-col items-star  text-left justify-start w-full t my-2 gap-2">
 											{bundle.podcasts.map(p => (
-												<Badge key={p.podcast_id} variant="outline" className="text-xs">
+												<Badge key={p.podcast_id} variant="outline" className="text-xxs text-foreground inline-flex items-center w-full text-left p-2 m-0">
 													{p.name}
 												</Badge>
 											))}
 										</div>
 									</div>
 									{/* Actions */}
-									<div className="flex items-center gap-2">
-										{isEditing ? (
-											<>
-												<Button variant="outline" size="md" onClick={cancelEdit}>
-													Cancel
-												</Button>
-												<Button variant="default" size="sm" onClick={saveEdit} disabled={isPending || !editForm.name.trim()}>
-													Save
-												</Button>
-											</>
-										) : (
-											<>
-												<Button variant="ghost" size="sm" onClick={() => startEdit(bundle)}>
-													Edit
-												</Button>
-												<Button variant="ghost" size="sm" onClick={() => deleteBundle(bundle as BundleWithPodcasts)} className="text-destructive">
-													Delete
-												</Button>
-											</>
-										)}
-									</div>
-								</div>
 
+								</div>
+								<div className="flex items-center gap-2">
+									{isEditing ? (
+										<>
+											<Button variant="outline" size="xs" onClick={cancelEdit}>
+												Cancel
+											</Button>
+											<Button variant="secondary" className="my-4" size="sm" onClick={saveEdit} disabled={isPending || !editForm.name.trim()}>
+												Save
+											</Button>
+										</>
+									) : (
+										<>
+											<Button variant="outline" size="sm" onClick={() => startEdit(bundle)}>
+												Edit
+											</Button>
+											<Button variant="outline" size="sm" onClick={() => deleteBundle(bundle as BundleWithPodcasts)} className="text-destructive">
+												Delete
+											</Button>
+										</>
+									)}
+								</div>
 								{/* EDIT FORM - inline when editing */}
 								{isEditing && (
-									<div className="mt-4 p-4 border rounded-lg bg-muted/50">
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+									<div className="flex flex-col mt-4 p-4 border rounded-lg bg-muted/50">
+										<div className="flex flex-col gap-4 mb-4">
 											<div>
 												<Label htmlFor="editName">Name</Label>
 												<Input id="editName" value={editForm.name} onChange={e => setEditForm(s => ({ ...s, name: e.target.value }))} />
 											</div>
 											<div>
 												<Label htmlFor="editDescription">Description</Label>
-												<Textarea id="editDescription" rows={2} value={editForm.description} onChange={e => setEditForm(s => ({ ...s, description: e.target.value }))} />
+												<Textarea id="editDescription" className="h-full max-h-[80px]" rows={2} value={editForm.description} onChange={e => setEditForm(s => ({ ...s, description: e.target.value }))} />
 											</div>
 											<div>
 												<Label htmlFor="editMinPlan">Visibility</Label>
@@ -317,9 +314,9 @@ export default function BundlesPanelClient({
 												{availablePodcasts.map(p => (
 													<div key={p.podcast_id} className="flex items-center space-x-2 py-1">
 														<Checkbox id={`edit-pod-${p.podcast_id}`} checked={editForm.selectedPodcastIds.includes(p.podcast_id)} onCheckedChange={() => toggleEditPodcastSelection(p.podcast_id)} />
-														<label htmlFor={`edit-pod-${p.podcast_id}`} className="text-sm font-medium cursor-pointer">
-															{p.name}
-														</label>
+														<Label htmlFor={`edit-pod-${p.podcast_id}`} className="font-normal cursor-pointer">
+															<p className="text-xs font-light ml-2 text-left" >{p.name}</p>
+														</Label>
 													</div>
 												))}
 											</div>
@@ -332,6 +329,6 @@ export default function BundlesPanelClient({
 					{bundles.length === 0 && <p className="text-center text-muted-foreground py-8">No bundles created yet.</p>}
 				</div>
 			</CardContent>
-		</div>
+		</Card>
 	)
 }

@@ -225,7 +225,7 @@
 			--destructive: oklch(0.55 0.12 20.39);
 			--border: oklch(1 0 0 / 10%);
 			--input: oklch(1 0 0 / 15%);
-			--ring: oklch(55.369% 0.26334 296.894 / 0.84);
+			--ring: oklch(0.86 0.15 179.76 / 0.64);
 			--chart-1: oklch(0.488 0.243 264.376);
 			--chart-2: oklch(0.696 0.17 162.48);
 			--chart-3: oklch(0.769 0.188 70.08);
@@ -527,18 +527,45 @@
 			.btn-default:hover {
 				background: linear-gradient(to top, #a979f5, hsl(208, 60%, 67%));
 				transform: translateY(1px);
-				color: #1c1824 !important;
+				color: #D8D3E2 !important;
 			}
 		}
+
+			.btn-secondary {
+				background: linear-gradient(180deg, hsla(153.01 91.97% 48.82% / 0.45), #00363E);
+				text-shadow: 0px 1px 1px 1px #23222788 !important;
+				font-size: 0.8rem !important;
+				font-weight: 600 !important;
+				color: #B3CEC7 !important;
+				border-radius: 0.75rem !important;
+				outline: 0px solid transparent;
+				min-width: 150px !important;
+				box-shadow:
+					inset 0px 1px 0px 0px #5595EE2C,
+					inset 0px -1px 1px #542DC02C,
+					0px 1px 0px 0px #1b1b1b1c,
+					0px 3px 7px 0px #0b0b0b52,
+					0px 1px 4px 0px #05050524,
+					inset 0px -2px 1px 0px #20202016;
+				transition: 300ms all ease-in;
+				border:none;
+			}
+
+			.btn-secondary:hover {
+				background: linear-gradient(180deg, #009E76, hsl(167.03 87.4% 24.9%)) !important;
+				transform: translateY(1px);
+				color: #78F7DE !important;
+			}
+		
 
 		/* ============================================= */
 		/* CARDS & CONTAINERS               */
 		/* ============================================= */
 		@layer utilities {
 			.bg-card {
-				background-color: oklch(0.19 0.01 300.97 / 0.87);
-				background-image: linear-gradient(90deg, oklch(0.32 0.1 289.42) -30%,
-						oklch(0.49 0.17 271.9 / 0.45) 70%, oklab(0.61 -0.03 -0.1 / 0.63) 150%);
+				background-color: oklch(0.19 0.01 300.97 / 0.07);
+				background-image: linear-gradient(90deg, oklch(0.39 0.16 298.87) -30%,
+						oklch(0.49 0.17 271.9 / 0.45) 70%, oklab(0.68 -0.1 -0.08 / 0.63) 150%);
 				box-shadow:
 					inset 0.5px 1px 0px 0px #7BB4CC4A,
 					inset -1px -3px 1px 2px #4D4AAC48,

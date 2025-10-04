@@ -105,6 +105,7 @@ const nextConfig = {
 					],
 					'worker-src': ["'self'", 'blob:'],
 						'frame-src': [
+							"'self'",
 							'https://challenges.cloudflare.com',
 								'https://sandbox-buy.paddle.com',
 								'https://checkout.paddle.com',
@@ -116,7 +117,7 @@ const nextConfig = {
 					'object-src': ["'none'"],
 					'base-uri': ["'self'"],
 					'form-action': ["'self'"],
-					'frame-ancestors': ["'none'"],
+					'frame-ancestors': ["'self'"],
 					'upgrade-insecure-requests': [],
 			};
 

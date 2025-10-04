@@ -89,12 +89,12 @@ export default function EpisodeGenerationPanelClient({ bundles }: { bundles: Bun
 	}
 
 	return (
-		<div className="space-y-6">
+		<div className="flex flex-col gap-6 mt-6 space-y-6">
 			{/* Step 1: Select bundle (always visible) */}
 			<Card>
 				<PanelHeader
 					title={
-						<div className="flex items-center gap-2">
+						<div className="flex items-center gap-2 my-4">
 							<Stepper step={1} /> Select Bundle
 						</div>
 					}
@@ -114,18 +114,18 @@ export default function EpisodeGenerationPanelClient({ bundles }: { bundles: Bun
 						</SelectContent>
 					</Select>
 					{selectedBundle && selectedBundle.canInteract === false && (
-						<div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+						<div className="mt-0 flex items-center gap-2 text-sm text-muted-foreground">
 							<Lock className="w-3 h-3" />
 							<span>{selectedBundle.lockReason || "This bundle requires a higher plan."}</span>
 						</div>
 					)}
 					{selectedBundle && (
-						<div className="mt-4 p-4 bg-muted rounded-lg">
-							<h4 className="font-semibold mb-2">{selectedBundle.name}</h4>
-							<p className="text-sm text-muted-foreground mb-3">{selectedBundle.description}</p>
-							<div className="flex flex-wrap gap-2">
+						<div className="flex bg-violet-900/30  border-3 border-ring/50 shadow-md flex-col gap-1 mt-0 p-4 rounded-lg">
+							<h4 className="font-semibold text-teal-400">{selectedBundle.name}</h4>
+
+							<div className="flex flex-wrap gap-2 max-w-80 my-2">
 								{selectedBundle.podcasts.map(p => (
-									<Badge key={p.podcast_id} variant="outline">
+									<Badge key={p.podcast_id} variant="secondary">
 										{p.name}
 									</Badge>
 								))}
@@ -160,10 +160,10 @@ export default function EpisodeGenerationPanelClient({ bundles }: { bundles: Bun
 							</SelectContent>
 						</Select>
 						{selectedPodcast && (
-							<div className="mt-2">
-								<Badge variant="secondary">
+							<div className="my-2">
+								<div className="text-indigo-400 text-sm boder-indigo-300 border-3 bg-indigo-900 px-3 py-1 rounded-sm my-0" >
 									Selected: {selectedPodcast.name}
-								</Badge>
+								</div>
 							</div>
 						)}
 					</CardContent>
