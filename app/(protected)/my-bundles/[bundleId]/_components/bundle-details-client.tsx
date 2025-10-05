@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 interface BundleEpisode {
 	episode_id: string;
-	display_order: number;
+	display_order: number | null;
 	is_active: boolean;
 	userEpisode: {
 		episode_id: string;

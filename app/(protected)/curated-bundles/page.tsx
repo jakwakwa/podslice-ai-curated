@@ -122,7 +122,9 @@ export default async function CuratedBundlesPage({ searchParams }: { searchParam
 			description: sb.description,
 			image_url: null, // Shared bundles don't have images
 			min_plan: PlanGate.FREE_SLICE, // Shared bundles require at least FREE_SLICE
+			is_static: false, // Shared bundles are dynamic, user-created content
 			is_active: sb.is_active,
+			owner_user_id: sb.owner_user_id,
 			created_at: sb.created_at,
 			updated_at: sb.updated_at,
 			podcasts: [], // Shared bundles don't have podcasts, they have episodes
