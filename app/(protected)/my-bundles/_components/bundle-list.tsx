@@ -2,7 +2,7 @@
 
 import { Check, Copy, Eye, EyeOff, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,7 +33,7 @@ export function BundleList() {
 	const [error, setError] = useState<string | null>(null);
 	const [copiedId, setCopiedId] = useState<string | null>(null);
 
-	const fetchBundles = async () => {
+	const fetchBundles = useCallback(async () => {
 		try {
 			const res = await fetch("/api/shared-bundles");
 			if (!res.ok) {
@@ -54,11 +54,11 @@ export function BundleList() {
 		} finally {
 			setIsLoading(false);
 		}
-	};
+	}, []);
 
 	useEffect(() => {
 		fetchBundles();
-	}, []);
+	}, [fetchBundles]);
 
 	const toggleBundleActive = async (bundleId: string, currentState: boolean) => {
 		try {
@@ -149,8 +149,8 @@ export function BundleList() {
 							const totalEpisodes = bundle.episodes.length;
 
 							return (
-								<Card key={bundle.shared_bundle_id} className="bg-card  p-12">
-									<div className="flex items-start p-5 justify-between gap-4">
+								<Card key={bundle.shared_bundle_id} className="episode-card-wrapper-dark  p-12">
+									<div className="flex flex-col items-start p-6 justify-between gap-4">
 										<div className="flex-1 min-w-0">
 											<div className="flex items-center gap-2 mb-2">
 												<h3 className="text-lg text-teal-300/70 font-semibold truncate">{bundle.name}</h3>
@@ -158,14 +158,14 @@ export function BundleList() {
 											</div>
 											{bundle.description && <p className="text-sm text-muted-foreground mb-3">{bundle.description}</p>}
 											<div className="flex items-center gap-4 text-sm text-muted-foreground">
-												<span>
+												<span className="text-xs">
 													{activeEpisodes} / {totalEpisodes} episodes active
 												</span>
-												<span>Created {new Date(bundle.created_at).toLocaleDateString()}</span>
+												<span className="text-xs">Created {new Date(bundle.created_at).toLocaleDateString()}</span>
 											</div>
 										</div>
-										<div className="flex items-center gap-2">
-											<Button variant="outline" size="sm" onClick={() => copyShareLink(bundle.shared_bundle_id)}>
+										<div className="mx-auto w-full flex flex-row flex-wrap lg:flex-row items-end gap-2">
+											<Button variant="outline" size="xs" onClick={() => copyShareLink(bundle.shared_bundle_id)}>
 												{copiedId === bundle.shared_bundle_id ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
 												{copiedId === bundle.shared_bundle_id ? "Copied" : "Copy Link"}
 											</Button>

@@ -166,7 +166,7 @@ export default function CurationProfileManagementPage() {
 					</div>
 				</div>
 			) : userCurationProfile ? (
-				<div className=" w-full  flex flex-col gap-0 justify-center items-baseline  mt-0 md:m-0 lg:flex-row md:gap-4 mb-12 pt-0 md:mb-0">
+				<div className=" w-full  flex flex-col gap-0 justify-center items-baseline  mt-0 md:m-0 xl:flex-row md:gap-4 mb-12 pt-0 md:mb-0">
 					<div className="w-full lg:max-w-[360px] pt-0 mt-0 px-5  pb-12 md:mx-3 flex flex-col  md:bg-episode-card-wrapper lg:flex-col shadow-xl shadow-slate-900/30 md:p-8 sm:pt-0  md:pt-9 md:mt-0  md:mb-8  border-dark  md:bg-[#00000000] md:bg-episode-card-wrapper md:rounded-3xl overflow-hidden ">
 						<div className="w-full flex flex-col justify-between p-0 rounded-2xl ">
 							<CardTitle className="pt-0  md:px-0 pb-6 text-base max-w-[100%]">Your Bundled Feed</CardTitle>

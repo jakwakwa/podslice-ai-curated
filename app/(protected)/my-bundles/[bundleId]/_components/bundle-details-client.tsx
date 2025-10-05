@@ -119,10 +119,10 @@ export function BundleDetailsClient({ bundle: initialBundle }: BundleDetailsClie
 	const activeEpisodesCount = Object.values(episodeStates).filter(Boolean).length;
 
 	return (
-		<div className="flex episode-card-wrapper mt-4 flex-row justify-center min-w-full gap-8">
+		<div className="flex episode-card-wrapper mt-0 flex-col md:flex-row justify-center min-w-full gap-4">
 			<div className=" min-w-[300px] flex flex-col">
-				<div className="flex w-full items-center flex-col gap-1 justify-between overflow-hidden rounded-2xl bg-[#047b6ba5] border-2 px-4 py-3 ">
-					<div className="flex w-full flex-col items-start justify-start gap-1 rounded-2xl px-4 py-4">		<Badge variant={bundle.is_active ? "default" : "secondary"}>{bundle.is_active ? "Active" : "Inactive"}</Badge>
+				<div className="flex w-full items-center flex-col gap-1 justify-start overflow-hidden rounded-3xl bg-[#4a2ea867] border-1 border-[#042f30e5] px-5 py-9 h-fit  shadow-[0_8px_14px_1px]  shadow-slate-950/30 ">
+					<div className="flex w-full flex-col items-start justify-start gap-1 rounded-2xl pb-8">		<Badge variant={bundle.is_active ? "default" : "secondary"}>{bundle.is_active ? "Active" : "Inactive"}</Badge>
 
 						<CardTitle className="py-4 flex">Bundle Details</CardTitle>
 						<div className="flex gap-4">
@@ -130,30 +130,30 @@ export function BundleDetailsClient({ bundle: initialBundle }: BundleDetailsClie
 							<Button variant="outline" size="sm" onClick={copyShareLink}>
 								{copiedLink ? (
 									<>
-										<Check className="h-4 w-4 mr-1" />
+										<Check className="h-4 w-4 " />
 										Copied
 									</>
 								) : (
 									<>
-										<Copy className="h-4 w-4 mr-1" />
+										<Copy className="h-4 w-4 " />
 										Copy Link
 									</>
 								)}
 							</Button>
 							{!isEditing ? (
 								<Button onClick={() => setIsEditing(true)} size="sm" variant={"default"}>
-									<Edit2 className="h-4 w-4 mr-1" />
+									<Edit2 className="h-4 w-4 " />
 									Edit Bundle
 								</Button>
 							) : (
 								<>
 									<Button variant="outline" onClick={handleCancel} size="sm" disabled={isSaving}>
-										<X className="h-4 w-4 mr-1" />
+										<X className="h-4 w-4 mr-0" />
 										Cancel
 									</Button>
 									<Button onClick={handleSave} size="sm" disabled={isSaving} variant={"link"}>
-										<Save className="h-4 w-4 mr-1" />
-										{isSaving ? "Saving..." : "Save Changes"}
+										<Save className="h-4 w-4 mr-0" />
+										{isSaving ? "..." : ""}
 									</Button>
 								</>
 							)}
@@ -180,12 +180,10 @@ export function BundleDetailsClient({ bundle: initialBundle }: BundleDetailsClie
 						</div>
 					</div>
 				</div>
-
-				<CardContent></CardContent>
 			</div>
 
 			<div className="rounded-3xl episode-card-wrapper-dark flex-col">
-				<CardContent className="p-8 flex flex-col">
+				<CardContent className="p-2 md:p-8 flex flex-col">
 					<CardTitle>Episodes</CardTitle>
 					{bundle.episodes.length === 0 ? (
 						<p className="text-sm text-muted-foreground text-center py-8">No episodes in this bundle yet.</p>
@@ -196,7 +194,7 @@ export function BundleDetailsClient({ bundle: initialBundle }: BundleDetailsClie
 									<div className="flex items-center gap-4 flex-1">
 										<div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold text-sm">{index + 1}</div>
 										<div className="flex flex-col items-start justify-center min-w-0 pr-6  gap-1">
-											<h4 className="font-medium max-w-100 text-sm truncate text-cyan-200/80">{episode.userEpisode.episode_title}</h4>
+											<h4 className="font-medium max-w-100 text-sm text-cyan-200/80 w-full">{episode.userEpisode.episode_title}</h4>
 											<p className="text-xs text-muted-foreground">
 												{new Date(episode.userEpisode.created_at).toLocaleDateString()} •{" "}
 												{episode.userEpisode.duration_seconds ? `${Math.floor(episode.userEpisode.duration_seconds / 60)}m` : "Duration unknown"}

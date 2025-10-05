@@ -69,7 +69,7 @@ export function EpisodeCard({ as = "div", imageUrl, title, publishedAt, duration
 				</CardHeader>
 
 				<div className="flex w-full flex-col justify-center items-start content-start py-0">
-					<div className="w-full text-[0.9rem] w-[98%] font-bold md:w-[90%] md:text-[0.85] md:font-bold sm:mb-4 md:mb-1 mt-0 leading-normal line-clamp-2 text-shadow-sm lg:text-[0.85rem] text-[#9fc1dd]">{title}</div>
+					<div className="text-[0.9rem] w-[98%] font-bold md:w-[90%] md:text-[0.85] md:font-bold sm:mb-4 md:mb-1 mt-0 leading-normal line-clamp-2 text-shadow-sm lg:text-[0.85rem] text-[#9fc1dd]">{title}</div>
 
 					<div className="w-full flex justify-between flex-row items-center gap-2">
 						<div className="flex flex-row-reverse justify-between w-full gap-2 items-end mt-2">

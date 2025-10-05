@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { PageHeader } from "@/components/ui/page-header";
 import { prisma } from "@/lib/prisma";
 import { BundleDetailsClient } from "./_components/bundle-details-client";
 
@@ -60,5 +61,10 @@ export default async function BundleDetailPage({ params }: PageProps) {
 
 	if (!bundle) notFound();
 
-	return <BundleDetailsClient bundle={bundle} />;
+	return (
+		<div className="flex flex-col">
+			<PageHeader title={"Manage your shared bundle"} />
+			<BundleDetailsClient bundle={bundle} />
+		</div>
+	);
 }
