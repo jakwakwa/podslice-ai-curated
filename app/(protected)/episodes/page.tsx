@@ -4,10 +4,11 @@ import { AlertCircle, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { EpisodeList } from "@/components/episode-list";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AppSpinner } from "@/components/ui/app-spinner";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { H3 } from "@/components/ui/typography";
 import type { Episode } from "@/lib/types";
 import { useAudioPlayerStore } from "@/store/audioPlayerStore";
@@ -64,9 +65,15 @@ export default function EpisodesPage() {
 
 			{isLoading ? (
 				<div className="px-0 md:p-6 mx-auto">
-					<div className="flex items-center justify-center min-h-[500px]">
-						<AppSpinner variant={"wave"} size="lg" label="Loading Podslice Episodes..." />
-					</div>
+					<Card className="episode-card-wrapper-dark">
+						<CardContent className="episode-card-wrapper-dark space-y-2 flex-col flex w-full">
+							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
+							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
+							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
+							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
+							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
+						</CardContent>
+					</Card>
 				</div>
 			) : error ? (
 				<div className="max-w-2xl mx-auto mt-8">
@@ -91,21 +98,27 @@ export default function EpisodesPage() {
 				</div>
 			) : (
 				<div className="flex episode-card-wrapper mt-4 flex-col justify-center mx-auto w-screen md:w-screen max-w-full gap-4">
-					<Tabs value={bundleType} onValueChange={handleBundleTypeChange} className="w-full">
-						<TabsList className="mb-4">
-							<TabsTrigger value="all">All Bundles</TabsTrigger>
-							<TabsTrigger value="curated">Curated Bundles</TabsTrigger>
-							<TabsTrigger value="shared">Shared Bundles</TabsTrigger>
-						</TabsList>
-						<TabsContent value={bundleType}>
-							<H3 className="font-medium mb-4">
-								{bundleType === "all" && "All Bundled Episodes"}
-								{bundleType === "curated" && "Curated Bundle Episodes"}
-								{bundleType === "shared" && "Shared Bundle Episodes"}
-							</H3>
-							<EpisodeList episodes={episodes} onPlayEpisode={handlePlayEpisode} />
-						</TabsContent>
-					</Tabs>
+					<div className="flex items-center gap-3 mb-6">
+						<label htmlFor="bundle-type-select" className="text-sm font-medium text-muted-foreground">
+							Filter by:
+						</label>
+						<Select value={bundleType} onValueChange={handleBundleTypeChange}>
+							<SelectTrigger id="bundle-type-select">
+								<SelectValue placeholder="Select bundle type" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="all">All Bundles</SelectItem>
+								<SelectItem value="curated">Curated Bundles</SelectItem>
+								<SelectItem value="shared">Shared Bundles</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
+					<H3 className="font-medium mb-4">
+						{bundleType === "all" && "All Bundled Episodes"}
+						{bundleType === "curated" && "Curated Bundle Episodes"}
+						{bundleType === "shared" && "Shared Bundle Episodes"}
+					</H3>
+					<EpisodeList episodes={episodes} onPlayEpisode={handlePlayEpisode} />
 				</div>
 			)}
 		</div>

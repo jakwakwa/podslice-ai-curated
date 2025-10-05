@@ -1,12 +1,12 @@
 "use client";
 
+import { Check, Play, Share2 } from "lucide-react";
 import { useState } from "react";
-import { Play, Share2, Check, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAudioPlayerStore } from "@/store/audioPlayerStore";
 import type { UserEpisode } from "@/lib/types";
+import { useAudioPlayerStore } from "@/store/audioPlayerStore";
 
 interface BundleEpisode {
 	episode_id: string;
@@ -44,9 +44,7 @@ export function SharedBundleView({ bundle, bundleId }: SharedBundleViewProps) {
 
 		try {
 			// Fetch signed URL from the play endpoint
-			const response = await fetch(
-				`/api/public/shared-bundles/${bundleId}/episodes/${episode.episode_id}/play`
-			);
+			const response = await fetch(`/api/public/shared-bundles/${bundleId}/episodes/${episode.episode_id}/play`);
 
 			if (!response.ok) {
 				throw new Error("Failed to get audio URL");
@@ -93,10 +91,7 @@ export function SharedBundleView({ bundle, bundleId }: SharedBundleViewProps) {
 		}
 	};
 
-	const totalDuration = bundle.episodes.reduce(
-		(acc, ep) => acc + (ep.duration_seconds || 0),
-		0
-	);
+	const totalDuration = bundle.episodes.reduce((acc, ep) => acc + (ep.duration_seconds || 0), 0);
 
 	return (
 		<div className="flex episode-card-wrapper mt-4 flex-col justify-center mx-auto w-screen md:w-screen max-w-full">
@@ -105,17 +100,13 @@ export function SharedBundleView({ bundle, bundleId }: SharedBundleViewProps) {
 					<div className="flex items-start justify-between">
 						<div className="flex-1">
 							<CardTitle className="text-2xl mb-2">{bundle.name}</CardTitle>
-							{bundle.description && (
-								<p className="text-muted-foreground mb-4">{bundle.description}</p>
-							)}
+							{bundle.description && <p className="text-muted-foreground mb-4">{bundle.description}</p>}
 							<div className="flex items-center gap-4 text-sm text-muted-foreground">
 								<span>Shared by {bundle.owner.full_name}</span>
 								<span>•</span>
 								<span>{bundle.total_episodes} episodes</span>
 								<span>•</span>
-								<span>
-									{Math.floor(totalDuration / 60)} min total
-								</span>
+								<span>{Math.floor(totalDuration / 60)} min total</span>
 							</div>
 						</div>
 						<Button variant="outline" size="sm" onClick={copyShareLink}>
@@ -141,36 +132,21 @@ export function SharedBundleView({ bundle, bundleId }: SharedBundleViewProps) {
 				</CardHeader>
 				<CardContent>
 					{bundle.episodes.length === 0 ? (
-						<p className="text-sm text-muted-foreground text-center py-8">
-							No episodes available in this bundle.
-						</p>
+						<p className="text-sm text-muted-foreground text-center py-8">No episodes available in this bundle.</p>
 					) : (
 						<div className="space-y-3">
 							{bundle.episodes.map((episode, index) => (
-								<div
-									key={episode.episode_id}
-									className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors"
-								>
+								<div key={episode.episode_id} className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors">
 									<div className="flex items-center gap-4 flex-1 min-w-0">
-										<div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold text-sm">
-											{index + 1}
-										</div>
+										<div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold text-sm">{index + 1}</div>
 										<div className="flex-1 min-w-0">
 											<h4 className="font-medium truncate">{episode.episode_title}</h4>
 											<p className="text-xs text-muted-foreground">
-												{new Date(episode.created_at).toLocaleDateString()} •{" "}
-												{episode.duration_seconds
-													? `${Math.floor(episode.duration_seconds / 60)}m`
-													: "Duration unknown"}
+												{new Date(episode.created_at).toLocaleDateString()} • {episode.duration_seconds ? `${Math.floor(episode.duration_seconds / 60)}m` : "Duration unknown"}
 											</p>
 										</div>
 									</div>
-									<Button
-										variant="default"
-										size="sm"
-										onClick={() => playEpisode(episode)}
-										disabled={loadingEpisode === episode.episode_id}
-									>
+									<Button variant="default" size="sm" onClick={() => playEpisode(episode)} disabled={loadingEpisode === episode.episode_id}>
 										<Play className="h-4 w-4 mr-1" />
 										{loadingEpisode === episode.episode_id ? "Loading..." : "Play"}
 									</Button>

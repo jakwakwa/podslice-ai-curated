@@ -50,45 +50,108 @@ function extractGcsFromHttp(url: string): { bucket: string; object: string } | n
 }
 
 async function getEpisodeWithAccess(id: string, currentUserId: string): Promise<EpisodeWithSigned | null> {
-  const episode = await prisma.episode.findUnique({
-    where: { episode_id: id },
-    include: { userProfile: { select: { user_id: true } }, podcast: true },
-  });
-  if (!episode) return null;
+	// First, try to find in the Episode table (curated episodes)
+	const episode = await prisma.episode.findUnique({
+		where: { episode_id: id },
+		include: { userProfile: { select: { user_id: true } }, podcast: true },
+	});
 
-  // Authorization: owned by user or included in user's active bundle
-  const profile = await prisma.userCurationProfile.findFirst({
-    where: { user_id: currentUserId, is_active: true },
-    include: { selectedBundle: { include: { bundle_podcast: true } } },
-  });
-  const podcastIdsInSelectedBundle = profile?.selectedBundle?.bundle_podcast.map(bp => bp.podcast_id) ?? [];
-  const selectedBundleId = profile?.selectedBundle?.bundle_id ?? null;
+	if (episode) {
+		// Authorization: owned by user or included in user's active bundle
+		const profile = await prisma.userCurationProfile.findFirst({
+			where: { user_id: currentUserId, is_active: true },
+			include: { selectedBundle: { include: { bundle_podcast: true } } },
+		});
+		const podcastIdsInSelectedBundle = profile?.selectedBundle?.bundle_podcast.map(bp => bp.podcast_id) ?? [];
+		const selectedBundleId = profile?.selectedBundle?.bundle_id ?? null;
 
-  const isOwnedByUser = episode.userProfile?.user_id === currentUserId;
-  const isInSelectedBundleByPodcast = podcastIdsInSelectedBundle.includes(episode.podcast_id);
-  const isDirectlyLinkedToSelectedBundle = !!selectedBundleId && episode.bundle_id === selectedBundleId;
-  const authorized = isOwnedByUser || isInSelectedBundleByPodcast || isDirectlyLinkedToSelectedBundle;
-  if (!authorized) return null;
+		const isOwnedByUser = episode.userProfile?.user_id === currentUserId;
+		const isInSelectedBundleByPodcast = podcastIdsInSelectedBundle.includes(episode.podcast_id);
+		const isDirectlyLinkedToSelectedBundle = !!selectedBundleId && episode.bundle_id === selectedBundleId;
+		const authorized = isOwnedByUser || isInSelectedBundleByPodcast || isDirectlyLinkedToSelectedBundle;
+		if (!authorized) return null;
 
-  let signedAudioUrl: string | null = null;
-  const parsedGs = parseGcsUri(episode.audio_url);
-  const parsedHttp = parsedGs ? null : extractGcsFromHttp(episode.audio_url);
-  if (parsedGs || parsedHttp) {
-    const { bucket, object } = parsedGs ?? parsedHttp!;
-    const reader = getStorageReader();
-    try {
-      const [url] = await reader
-        .bucket(bucket)
-        .file(object)
-        .getSignedUrl({ action: "read", expires: Date.now() + 15 * 60 * 1000 });
-      signedAudioUrl = url;
-    } catch {
-      // avoid logging sensitive info
-    }
-  }
+		let signedAudioUrl: string | null = null;
+		const parsedGs = parseGcsUri(episode.audio_url);
+		const parsedHttp = parsedGs ? null : extractGcsFromHttp(episode.audio_url);
+		if (parsedGs || parsedHttp) {
+			const { bucket, object } = parsedGs ?? parsedHttp!;
+			const reader = getStorageReader();
+			try {
+				const [url] = await reader
+					.bucket(bucket)
+					.file(object)
+					.getSignedUrl({ action: "read", expires: Date.now() + 15 * 60 * 1000 });
+				signedAudioUrl = url;
+			} catch {
+				// avoid logging sensitive info
+			}
+		}
 
-  const safe = EpisodeSchema.parse(episode) as Episode;
-  return { ...safe, signedAudioUrl };
+		const safe = EpisodeSchema.parse(episode) as Episode;
+		return { ...safe, signedAudioUrl };
+	}
+
+	// If not found in Episode table, try UserEpisode table (shared bundle episodes)
+	const userEpisode = await prisma.userEpisode.findUnique({
+		where: { episode_id: id },
+		include: { user: { select: { user_id: true, name: true } } },
+	});
+
+	if (!userEpisode || userEpisode.status !== "COMPLETED") return null;
+
+	// Check if this user episode is in the user's selected shared bundle
+	const profile = await prisma.userCurationProfile.findFirst({
+		where: { user_id: currentUserId, is_active: true },
+		include: { 
+			selectedSharedBundle: { 
+				include: { episodes: { where: { episode_id: id, is_active: true } } } 
+			} 
+		},
+	});
+
+	// Check if episode is owned by user OR is in their selected shared bundle
+	const isOwnedByUser = userEpisode.user_id === currentUserId;
+	const isInSelectedSharedBundle = (profile?.selectedSharedBundle?.episodes.length ?? 0) > 0;
+	const authorized = isOwnedByUser || isInSelectedSharedBundle;
+	if (!authorized) return null;
+
+	// Get signed URL for user episode
+	let signedAudioUrl: string | null = null;
+	if (userEpisode.gcs_audio_url) {
+		const parsedGs = parseGcsUri(userEpisode.gcs_audio_url);
+		if (parsedGs) {
+			const reader = getStorageReader();
+			try {
+				const [url] = await reader
+					.bucket(parsedGs.bucket)
+					.file(parsedGs.object)
+					.getSignedUrl({ action: "read", expires: Date.now() + 15 * 60 * 1000 });
+				signedAudioUrl = url;
+			} catch {
+				// avoid logging sensitive info
+			}
+		}
+	}
+
+	// Transform UserEpisode to Episode format for consistent rendering
+	const transformedEpisode = {
+		episode_id: userEpisode.episode_id,
+		podcast_id: "user-generated", // Placeholder for user episodes
+		bundle_id: null,
+		profile_id: null,
+		title: userEpisode.episode_title,
+		description: userEpisode.summary || null,
+		audio_url: userEpisode.gcs_audio_url || "",
+		image_url: null,
+		duration_seconds: userEpisode.duration_seconds,
+		published_at: userEpisode.created_at,
+		week_nr: null,
+		created_at: userEpisode.created_at,
+		signedAudioUrl,
+	} as Episode & { signedAudioUrl: string | null };
+
+	return transformedEpisode;
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {

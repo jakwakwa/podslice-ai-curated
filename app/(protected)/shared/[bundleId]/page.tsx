@@ -12,7 +12,7 @@ interface PageProps {
 async function getBundleData(bundleId: string) {
 	// Fetch from the public API route
 	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-	
+
 	try {
 		const response = await fetch(`${baseUrl}/api/public/shared-bundles/${bundleId}`, {
 			cache: "no-store",

@@ -154,7 +154,7 @@ export function BundleList() {
 										<div className="flex-1 min-w-0">
 											<div className="flex items-center gap-2 mb-2">
 												<h3 className="text-lg text-teal-300/70 font-semibold truncate">{bundle.name}</h3>
-												<Badge variant={bundle.is_active ? "default" : "destructive"}>{bundle.is_active ? "Active" : "Inactive"}</Badge>
+												<Badge variant={bundle.is_active ? "secondary" : "destructive"}>{bundle.is_active ? "Active" : "Inactive"}</Badge>
 											</div>
 											{bundle.description && <p className="text-sm text-muted-foreground mb-3">{bundle.description}</p>}
 											<div className="flex items-center gap-4 text-sm text-muted-foreground">
