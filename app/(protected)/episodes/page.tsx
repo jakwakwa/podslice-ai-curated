@@ -4,25 +4,30 @@ import { AlertCircle, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { EpisodeList } from "@/components/episode-list";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AppSpinner } from "@/components/ui/app-spinner";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { H3 } from "@/components/ui/typography";
 import type { Episode } from "@/lib/types";
 import { useAudioPlayerStore } from "@/store/audioPlayerStore";
+
+type BundleType = "all" | "curated" | "shared";
 
 export default function EpisodesPage() {
 	const [episodes, setEpisodes] = useState<Episode[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [bundleType, setBundleType] = useState<BundleType>("all");
 	const { setEpisode } = useAudioPlayerStore();
 
-	const fetchEpisodes = useCallback(async () => {
+	const fetchEpisodes = useCallback(async (type: BundleType) => {
 		try {
 			setIsLoading(true);
 			setError(null);
 
-			const response = await fetch(`/api/episodes?ts=${Date.now()}`, { cache: "no-store" });
+			const response = await fetch(`/api/episodes?bundleType=${type}&ts=${Date.now()}`, { cache: "no-store" });
 
 			if (!response.ok) {
 				throw new Error(`Failed to load episodes. Server responded with status ${response.status}.`);
@@ -39,8 +44,12 @@ export default function EpisodesPage() {
 	}, []);
 
 	useEffect(() => {
-		fetchEpisodes();
-	}, [fetchEpisodes]);
+		fetchEpisodes(bundleType);
+	}, [bundleType, fetchEpisodes]);
+
+	const handleBundleTypeChange = (value: string) => {
+		setBundleType(value as BundleType);
+	};
 
 	const handlePlayEpisode = (episode: Episode) => {
 		console.log("Episodes - Setting episode:", episode);
@@ -56,23 +65,29 @@ export default function EpisodesPage() {
 
 			{isLoading ? (
 				<div className="px-0 md:p-6 mx-auto">
-					<div className="flex items-center justify-center min-h-[500px]">
-						<AppSpinner variant={"wave"} size="lg" label="Loading Podslice Episodes..." />
-					</div>
+					<Card className="episode-card-wrapper-dark">
+						<CardContent className="episode-card-wrapper-dark space-y-2 flex-col flex w-full">
+							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
+							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
+							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
+							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
+							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
+						</CardContent>
+					</Card>
 				</div>
 			) : error ? (
 				<div className="max-w-2xl mx-auto mt-8">
-					<Alert variant="destructive">
-						<AlertCircle className="h-4 w-4" />
-						<AlertTitle>Unable to Load Episodes</AlertTitle>
-						<AlertDescription className="mt-2">{error}</AlertDescription>
-					</Alert>
-					<div className="mt-6 text-center">
-						<Button onClick={fetchEpisodes} variant="outline">
-							<RefreshCw className="h-4 w-4 mr-2" />
-							Try Again
-						</Button>
-					</div>
+				<Alert variant="destructive">
+					<AlertCircle className="h-4 w-4" />
+					<AlertTitle>Unable to Load Episodes</AlertTitle>
+					<AlertDescription className="mt-2">{error}</AlertDescription>
+				</Alert>
+				<div className="mt-6 text-center">
+					<Button onClick={() => fetchEpisodes(bundleType)} variant="outline">
+						<RefreshCw className="h-4 w-4 mr-2" />
+						Try Again
+					</Button>
+				</div>
 				</div>
 			) : episodes.length === 0 ? (
 				<div className="w-full  max-w-[1000px] mx-auto mt-0">
@@ -83,7 +98,26 @@ export default function EpisodesPage() {
 				</div>
 			) : (
 				<div className="flex episode-card-wrapper mt-4 flex-col justify-center mx-auto w-screen md:w-screen max-w-full gap-4">
-					<H3 className="font-medium">All Bundled Episodes</H3>
+					<div className="flex items-center gap-3 mb-6">
+						<label htmlFor="bundle-type-select" className="text-sm font-medium text-muted-foreground">
+							Filter by:
+						</label>
+						<Select value={bundleType} onValueChange={handleBundleTypeChange}>
+							<SelectTrigger id="bundle-type-select">
+								<SelectValue placeholder="Select bundle type" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="all">All Bundles</SelectItem>
+								<SelectItem value="curated">Curated Bundles</SelectItem>
+								<SelectItem value="shared">Shared Bundles</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
+					<H3 className="font-medium mb-4">
+						{bundleType === "all" && "All Bundled Episodes"}
+						{bundleType === "curated" && "Curated Bundle Episodes"}
+						{bundleType === "shared" && "Shared Bundle Episodes"}
+					</H3>
 					<EpisodeList episodes={episodes} onPlayEpisode={handlePlayEpisode} />
 				</div>
 			)}

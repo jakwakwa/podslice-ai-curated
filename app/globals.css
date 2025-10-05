@@ -475,9 +475,8 @@
 				position: relative;
 				/* padding: 5px 10px; */
 				/* display: flex; */
-				margin: 0 !important;
-				/* border-radius: 15px !important; */
-				margin: 0 !important;
+				margin: 0;
+				/* border-radius: 15px !important; */;
 				border: 1px solid #60cdbb30;
 				background-image: linear-gradient(to bottom, #090A10A3 -50%, #1B19286A 150%);
 				box-shadow: -110px 6px 10px oklch(23.592% 0.01072 242.259 / 0.07) !important;

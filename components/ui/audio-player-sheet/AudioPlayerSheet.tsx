@@ -126,22 +126,28 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 				setResolvedSrc((episode as { gcs_audio_url: string }).gcs_audio_url);
 				return;
 			}
-			// Catalog episode: fetch signed URL via API
-			const id = (episode as unknown as { episode_id?: string }).episode_id;
-			if (!id) {
-				setResolvedSrc(audioSrc);
-				return;
-			}
-			try {
-				const res = await fetch(`/api/episodes/${id}/play`, { cache: "no-store" });
-				if (!res.ok) {
-					setResolvedSrc(audioSrc);
-					return;
+			
+			// Check if audio_url is a play endpoint that needs resolution
+			const isPlayEndpoint = audioSrc.startsWith('/api/episodes/') || audioSrc.startsWith('/api/user-episodes/');
+			
+			if (isPlayEndpoint) {
+				// Fetch signed URL from play endpoint
+				try {
+					const res = await fetch(audioSrc, { cache: "no-store" });
+					if (!res.ok) {
+						console.error('Failed to fetch signed URL from play endpoint:', audioSrc);
+						setResolvedSrc("");
+						return;
+					}
+					const data = (await res.json()) as { signedUrl?: string };
+					if (!aborted) setResolvedSrc(data.signedUrl || "");
+				} catch (err) {
+					console.error('Error fetching signed URL:', err);
+					if (!aborted) setResolvedSrc("");
 				}
-				const data = (await res.json()) as { signedUrl?: string };
-				if (!aborted) setResolvedSrc(data.signedUrl || audioSrc);
-			} catch {
-				if (!aborted) setResolvedSrc(audioSrc);
+			} else {
+				// Direct URL (already signed or public)
+				setResolvedSrc(audioSrc);
 			}
 		}
 		void resolve();

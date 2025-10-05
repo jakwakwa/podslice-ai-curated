@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { Home, Info, Play, Radio } from "lucide-react";
+import { Home, Info, Play, Radio, Share2 } from "lucide-react";
 import type * as React from "react";
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -35,16 +35,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			url: "/episodes",
 			icon: Play,
 		},
-		{
-			title: "My Episodes",
-			url: "/my-episodes",
-			icon: Play,
-		},
-		{
-			title: "Explore Curated Bundles",
-			url: "/curated-bundles",
-			icon: Radio,
-		},
+	{
+		title: "My Episodes",
+		url: "/my-episodes",
+		icon: Play,
+	},
+	{
+		title: "My Shared Bundles",
+		url: "/my-bundles",
+		icon: Share2,
+	},
+	{
+		title: "Explore Curated Bundles",
+		url: "/curated-bundles",
+		icon: Radio,
+	},
 		// {
 		// 	title: "Notifications",
 		// 	url: "/notifications",
