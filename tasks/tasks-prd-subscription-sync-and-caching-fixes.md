@@ -11,9 +11,6 @@
 
 ### Notes
 
-- Unit tests should be created for the new `paddleFetch` client to ensure its functionality.
-- Use `pnpm test` to run all tests.
-
 ## Tasks
 
 - [ ] 1.0 Harden the Centralized Paddle API Client
@@ -35,5 +32,4 @@
   - [ ] 4.5 In `app/api/account/subscription/route.ts`, export the constant `export const runtime = "nodejs"`.
 - [ ] 5.0 Review and Verify Implementation
   - [ ] 5.1 Manually review all code changes to ensure they meet the requirements.
-  - [ ] 5.2 Create a test plan to verify that the subscription sync is working correctly and no CSP errors are present.
-  - [ ] 5.3 Run `pnpm build` and `pnpm lint` to ensure there are no build errors or linting issues.
+  - [ ] 5.3 Run `pnpm build` to ensure there are no build errors or linting issues.

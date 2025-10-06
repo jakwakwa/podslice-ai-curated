@@ -126,3 +126,21 @@ export function getEpisodeTargetMinutes(): number {
 	}
 	return 4;
 }
+
+// Ensures Paddle API key is present on the server. Never logs the key value.
+export function ensurePaddleApiKey(): void {
+	// Skip in browser
+	if (typeof window !== "undefined") return;
+	const key = process.env.PADDLE_API_KEY;
+	if (!key || key.trim() === "") {
+		throw new Error("[ENV] Missing required PADDLE_API_KEY");
+	}
+}
+// Perform a lightweight startup check on server runtime (skip tests)
+(() => {
+	if (typeof window !== "undefined") return;
+	if (process.env.NODE_ENV === "test") return;
+	if (!process.env.PADDLE_API_KEY || process.env.PADDLE_API_KEY.trim() === "") {
+		throw new Error("[ENV] Missing required PADDLE_API_KEY");
+	}
+})();

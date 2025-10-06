@@ -97,6 +97,7 @@ const nextConfig = {
 								...extraHosts,
 								'https://api.paddle.com',
 								'https://sandbox-api.paddle.com', // Allow Paddle sandbox API connections
+							'https://clerk-telemetry.com',
 							'https://vitals.vercel-insights.com',
 							'https://storage.googleapis.com',
 							'https://storage.cloud.google.com',

@@ -1,101 +1,112 @@
-const isSandboxEnv = (process.env.NEXT_PUBLIC_PADDLE_ENV || process.env.PADDLE_ENV || "").toLowerCase() === "sandbox" || (process.env.PADDLE_API_KEY || "").includes("sdbx")
-const PADDLE_API_URL = isSandboxEnv ? "https://sandbox-api.paddle.com" : "https://api.paddle.com"
+const isSandboxEnv = (process.env.NEXT_PUBLIC_PADDLE_ENV || process.env.PADDLE_ENV || "").toLowerCase() === "sandbox" || (process.env.PADDLE_API_KEY || "").includes("sdbx");
+const PADDLE_API_URL = isSandboxEnv ? "https://sandbox-api.paddle.com" : "https://api.paddle.com";
+const PADDLE_API_VERSION = (process.env.PADDLE_VERSION || process.env.PADDLE_API_VERSION || "").trim();
 
-interface PaddleApiOptions {
-	method: string
-	path: string
-	body?: object
+import { ensurePaddleApiKey } from "@/lib/env";
+
+interface PaddleFetchOptions {
+	method: string;
+	path: string;
+	body?: unknown;
 }
 
-export async function paddleApiRequest({ method, path, body }: PaddleApiOptions) {
-	const headers = {
+export async function paddleFetch({ method, path, body }: PaddleFetchOptions) {
+	ensurePaddleApiKey();
+	const headers: Record<string, string> = {
 		Authorization: `Bearer ${process.env.PADDLE_API_KEY}`,
 		"Content-Type": "application/json",
+	};
+	if (PADDLE_API_VERSION) {
+		headers["Paddle-Version"] = PADDLE_API_VERSION;
 	}
 
 	const response = await fetch(`${PADDLE_API_URL}${path}`, {
 		method,
 		headers,
 		body: body ? JSON.stringify(body) : undefined,
-	})
+		cache: "no-store",
+	});
+
+	const requestId = response.headers.get("x-request-id") || response.headers.get("X-Request-Id") || undefined;
 
 	if (!response.ok) {
-		let details = ""
+		let details = "";
 		try {
-			const text = await response.text()
-			details = text
+			const text = await response.text();
+			details = text;
 		} catch {}
-		throw new Error(`Paddle API error: ${response.status} ${response.statusText}${details ? ` - ${details}` : ""}`)
+		console.error("[PADDLE_FETCH_ERROR]", { path, method, status: response.status, requestId });
+		throw new Error(`Paddle API error: ${response.status} ${response.statusText}${details ? ` - ${details}` : ""}${requestId ? ` [x-request-id=${requestId}]` : ""}`);
 	}
 
-	return response.json()
+	return response.json();
 }
 
 export async function getSubscription(subscriptionId: string) {
-	return paddleApiRequest({
+	return paddleFetch({
 		method: "GET",
 		path: `/subscriptions/${subscriptionId}`,
-	})
+	});
 }
 
 export async function getPortalSession(subscriptionId: string) {
-	return getSubscription(subscriptionId)
+	return getSubscription(subscriptionId);
 }
 
 export async function cancelSubscription(subscriptionId: string) {
-	return paddleApiRequest({
+	return paddleFetch({
 		method: "PATCH",
 		path: `/subscriptions/${subscriptionId}`,
 		body: {
 			status: "canceled",
 		},
-	})
+	});
 }
 
 // Schedule cancellation at end of current billing period
 export async function scheduleCancelSubscription(subscriptionId: string) {
-	return paddleApiRequest({
+	return paddleFetch({
 		method: "POST",
 		path: `/subscriptions/${subscriptionId}/cancel`,
 		body: {},
-	})
+	});
 }
 
 export async function updateSubscription(subscriptionId: string, updateData: { items: Array<{ price_id: string; quantity: number }>; proration_billing_mode?: "immediate" | "next_billing_period" }) {
-	return paddleApiRequest({
+	return paddleFetch({
 		method: "PATCH",
 		path: `/subscriptions/${subscriptionId}`,
 		body: updateData,
-	})
+	});
 }
 
 export async function getTransaction(transactionId: string) {
 	// Only allow alphanumeric, dash, and underscore in transactionId
 	if (!/^[a-zA-Z0-9_-]+$/.test(transactionId)) {
-		throw new Error("Invalid transactionId format")
+		throw new Error("Invalid transactionId format");
 	}
-	return paddleApiRequest({
+	return paddleFetch({
 		method: "GET",
 		path: `/transactions/${transactionId}`,
-	})
+	});
 }
 
 export async function getSubscriptionsByCustomer(customerId: string) {
 	// Paddle Billing API lists subscriptions via query param, not nested path
-	return paddleApiRequest({
+	return paddleFetch({
 		method: "GET",
 		path: `/subscriptions?customer_id=${encodeURIComponent(customerId)}`,
-	})
+	});
 }
 
 export async function createCustomerPortalSession(customerId: string, subscriptionIds?: string[]) {
-	const body: Record<string, unknown> = {}
+	const body: Record<string, unknown> = {};
 	if (subscriptionIds && subscriptionIds.length > 0) {
-		body.subscription_ids = subscriptionIds
+		body.subscription_ids = subscriptionIds;
 	}
-	return paddleApiRequest({
+	return paddleFetch({
 		method: "POST",
 		path: `/customers/${customerId}/portal-sessions`,
 		body,
-	})
+	});
 }
