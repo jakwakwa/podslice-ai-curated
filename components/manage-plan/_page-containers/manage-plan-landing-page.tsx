@@ -1,7 +1,10 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PRICING_TIER } from "@/config/paddle-config";
 import { useSubscriptionStore } from "@/lib/stores/subscription-store-paddlejs";
 import type { PaddleCheckoutCompletedData } from "@/lib/types";
@@ -41,6 +44,12 @@ const ManagPlanLandingPage: React.FC = () => {
 		void run();
 	}, [fetchSubscription]);
 
+	// Show expired dialog if redirected with expired=1 (authoritative from URL)
+	const searchParams = useSearchParams();
+	const showExpiredDialog = (searchParams?.get("expired") ?? "") === "1";
+	const [expiredOpen, setExpiredOpen] = useState<boolean>(showExpiredDialog);
+	useEffect(() => setExpiredOpen(showExpiredDialog), [showExpiredDialog]);
+
 	const syncSubscription = async (data: PaddleCheckoutCompletedData) => {
 		if (isSyncing) return;
 		setIsSyncing(true);
@@ -68,9 +77,33 @@ const ManagPlanLandingPage: React.FC = () => {
 
 	return (
 		<>
-			{hasActiveSubscription && <div className=" mt-4 ">
-				<Subscriptions />
-			</div>}
+			<Dialog open={expiredOpen} onOpenChange={setExpiredOpen}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Membership expired</DialogTitle>
+						<DialogDescription>Your subscription is not active. To continue creating episodes, please upgrade your membership.</DialogDescription>
+					</DialogHeader>
+					<div className="flex gap-2 justify-end mt-4">
+						<Button type="button" variant="secondary" onClick={() => setExpiredOpen(false)}>
+							Close
+						</Button>
+						<Button
+							type="button"
+							variant="default"
+							onClick={() => {
+								// Keep user on this page; pricing plans are below
+								setExpiredOpen(false);
+							}}>
+							Upgrade now
+						</Button>
+					</div>
+				</DialogContent>
+			</Dialog>
+			{hasActiveSubscription && (
+				<div className=" mt-4 ">
+					<Subscriptions />
+				</div>
+			)}
 
 			{!hasActiveSubscription && (
 				<div className="flex w-full flex-col gap-12 mt-4 ">

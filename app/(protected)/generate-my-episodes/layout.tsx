@@ -10,19 +10,23 @@ export default async function GenerateMyEpisodesLayout({ children }: { children:
 		redirect("/sign-in");
 	}
 
-	// Get the most recent subscription for plan_type evaluation
+	// Get latest subscription by last update
 	const subscription = await prisma.subscription.findFirst({
 		where: { user_id: userId },
 		orderBy: { updated_at: "desc" },
-		select: { plan_type: true },
+		select: { plan_type: true, status: true, cancel_at_period_end: true, current_period_end: true },
 	});
 
 	const plan = subscription?.plan_type?.toLowerCase() ?? null;
-	const allowed = plan === "free_slice" || plan === "curate_control";
+	const status = subscription?.status?.toLowerCase() ?? null;
+	const isActiveLike = status === "active" || status === "trialing" || status === "paused";
+
+	const isFreeSlice = plan === "free_slice";
+	const isCurateControl = plan === "curate_control";
+	const allowed = isFreeSlice || (isCurateControl && isActiveLike);
 
 	if (!allowed) {
-		// Redirect non-eligible plans away from this feature page
-		redirect("/dashboard");
+		redirect("/manage-membership?expired=1");
 	}
 
 	return <>{children}</>;

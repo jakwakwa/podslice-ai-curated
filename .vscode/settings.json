@@ -82,4 +82,7 @@
 	"terminal.integrated.fontLigatures.enabled": true,
 	"editor.fontVariations": true,
 	"editor.wordWrap": "wordWrapColumn",
+	"[css]": {
+		"editor.defaultFormatter": "vscode.css-language-features"
+	},
 }

@@ -2,12 +2,19 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
 import { prisma } from "@/lib/prisma";
+import { userIsActive } from "@/lib/usage";
 
 export async function GET(_request: Request) {
 	try {
 		const { userId } = await auth();
 		if (!userId) {
 			return new NextResponse("Unauthorized", { status: 401 });
+		}
+
+		// Only active users may list episodes
+		const isActive = await userIsActive(prisma, userId);
+		if (!isActive) {
+			return NextResponse.json([], { status: 200 });
 		}
 
 		// Exclude transcript and summary to avoid Prisma 4MB response limit

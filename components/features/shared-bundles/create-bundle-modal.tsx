@@ -1,22 +1,14 @@
 "use client";
 
+import { Share2 } from "lucide-react";
 import { useState } from "react";
-import { Share2, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import type { UserEpisode } from "@/lib/types";
 
 type UserEpisodeListItem = UserEpisode & { signedAudioUrl?: string | null };
@@ -25,20 +17,15 @@ interface CreateBundleModalProps {
 	currentEpisode?: UserEpisodeListItem;
 	allUserEpisodes?: UserEpisodeListItem[];
 	onSuccess?: (bundleId: string) => void;
+	isActive?: boolean;
 }
 
-export function CreateBundleModal({
-	currentEpisode,
-	allUserEpisodes = [],
-	onSuccess,
-}: CreateBundleModalProps) {
+export function CreateBundleModal({ currentEpisode, allUserEpisodes = [], onSuccess, isActive }: CreateBundleModalProps) {
 	const [open, setOpen] = useState(false);
 	const [step, setStep] = useState<"details" | "episodes">("details");
 	const [bundleName, setBundleName] = useState("");
 	const [bundleDescription, setBundleDescription] = useState("");
-	const [selectedEpisodes, setSelectedEpisodes] = useState<string[]>(
-		currentEpisode ? [currentEpisode.episode_id] : []
-	);
+	const [selectedEpisodes, setSelectedEpisodes] = useState<string[]>(currentEpisode ? [currentEpisode.episode_id] : []);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const handleReset = () => {
@@ -70,11 +57,7 @@ export function CreateBundleModal({
 	};
 
 	const toggleEpisode = (episodeId: string) => {
-		setSelectedEpisodes((prev) =>
-			prev.includes(episodeId)
-				? prev.filter((id) => id !== episodeId)
-				: [...prev, episodeId]
-		);
+		setSelectedEpisodes(prev => (prev.includes(episodeId) ? prev.filter(id => id !== episodeId) : [...prev, episodeId]));
 	};
 
 	const handleCreate = async () => {
@@ -119,27 +102,23 @@ export function CreateBundleModal({
 		}
 	};
 
-	const completedEpisodes = allUserEpisodes.filter(
-		(ep) => ep.status === "COMPLETED"
-	);
+	const completedEpisodes = allUserEpisodes.filter(ep => ep.status === "COMPLETED");
 
 	return (
 		<Dialog open={open} onOpenChange={handleOpenChange}>
-			<DialogTrigger asChild>
-				<Button variant="default" size="sm">
-					<Share2 className="mr-2 h-4 w-4" />
-					Create Bundle
+			<DialogTrigger asChild className="disabled:ring-0 disabled:ring-offset-0">
+
+				<Button variant="outline" size="sm" disabled={!isActive}>
+					<Share2 className="h-4 w-4" />
+					{isActive ? "Create Bundle" : "Create Bundle"}
 				</Button>
+
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[600px]">
 				<DialogHeader>
-					<DialogTitle>
-						{step === "details" ? "Create Shared Bundle" : "Select Episodes"}
-					</DialogTitle>
+					<DialogTitle>{step === "details" ? "Create Shared Bundle" : "Select Episodes"}</DialogTitle>
 					<DialogDescription>
-						{step === "details"
-							? "Share a collection of your episodes with others. Start by naming your bundle."
-							: `Select episodes to include in "${bundleName}". You can add up to 10 episodes.`}
+						{step === "details" ? "Share a collection of your episodes with others. Start by naming your bundle." : `Select episodes to include in "${bundleName}". You can add up to 10 episodes.`}
 					</DialogDescription>
 				</DialogHeader>
 
@@ -147,13 +126,7 @@ export function CreateBundleModal({
 					<div className="grid gap-4 py-4">
 						<div className="grid gap-2">
 							<Label htmlFor="bundle-name">Bundle Name *</Label>
-							<Input
-								id="bundle-name"
-								placeholder="e.g., Best Marketing Episodes"
-								value={bundleName}
-								onChange={(e) => setBundleName(e.target.value)}
-								maxLength={100}
-							/>
+							<Input id="bundle-name" placeholder="e.g., Best Marketing Episodes" value={bundleName} onChange={e => setBundleName(e.target.value)} maxLength={100} />
 						</div>
 						<div className="grid gap-2">
 							<Label htmlFor="bundle-description">Description (Optional)</Label>
@@ -161,7 +134,7 @@ export function CreateBundleModal({
 								id="bundle-description"
 								placeholder="Describe what this bundle is about..."
 								value={bundleDescription}
-								onChange={(e) => setBundleDescription(e.target.value)}
+								onChange={e => setBundleDescription(e.target.value)}
 								rows={3}
 								maxLength={500}
 							/>
@@ -172,59 +145,36 @@ export function CreateBundleModal({
 				{step === "episodes" && (
 					<div className="py-4 max-h-[400px] overflow-y-auto">
 						{completedEpisodes.length === 0 ? (
-							<p className="text-sm text-muted-foreground">
-								You don't have any completed episodes yet.
-							</p>
+							<p className="text-sm text-muted-foreground">You don't have any completed episodes yet.</p>
 						) : (
 							<div className="space-y-2">
-								{completedEpisodes.map((episode) => (
-									<div
-										key={episode.episode_id}
-										className="flex items-start space-x-3 p-3 rounded-lg border hover:bg-accent/50 transition-colors"
-									>
+								{completedEpisodes.map(episode => (
+									<div key={episode.episode_id} className="flex items-start space-x-3 p-3 rounded-lg border hover:bg-accent/50 transition-colors">
 										<Checkbox
 											id={`episode-${episode.episode_id}`}
 											checked={selectedEpisodes.includes(episode.episode_id)}
 											onCheckedChange={() => toggleEpisode(episode.episode_id)}
-											disabled={
-												!selectedEpisodes.includes(episode.episode_id) &&
-												selectedEpisodes.length >= 10
-											}
+											disabled={!selectedEpisodes.includes(episode.episode_id) && selectedEpisodes.length >= 10}
 										/>
 										<div className="flex-1 space-y-1">
-											<Label
-												htmlFor={`episode-${episode.episode_id}`}
-												className="text-sm font-medium leading-none cursor-pointer"
-											>
+											<Label htmlFor={`episode-${episode.episode_id}`} className="text-sm font-medium leading-none cursor-pointer">
 												{episode.episode_title}
 											</Label>
 											<p className="text-xs text-muted-foreground">
-												{new Date(episode.created_at).toLocaleDateString()} •{" "}
-												{episode.duration_seconds
-													? `${Math.floor(episode.duration_seconds / 60)}m`
-													: "Duration unknown"}
+												{new Date(episode.created_at).toLocaleDateString()} • {episode.duration_seconds ? `${Math.floor(episode.duration_seconds / 60)}m` : "Duration unknown"}
 											</p>
 										</div>
 									</div>
 								))}
 							</div>
 						)}
-						{selectedEpisodes.length >= 10 && (
-							<p className="text-sm text-yellow-600 mt-4">
-								Maximum of 10 episodes reached
-							</p>
-						)}
+						{selectedEpisodes.length >= 10 && <p className="text-sm text-yellow-600 mt-4">Maximum of 10 episodes reached</p>}
 					</div>
 				)}
 
 				<DialogFooter>
 					{step === "details" ? (
-						<Button
-							variant="default"
-							onClick={handleNext}
-							disabled={!bundleName.trim()}
-							className="w-full sm:w-auto"
-						>
+						<Button variant="default" onClick={handleNext} disabled={!bundleName.trim()} className="w-full sm:w-auto">
 							Next: Select Episodes
 						</Button>
 					) : (
@@ -232,11 +182,7 @@ export function CreateBundleModal({
 							<Button variant="outline" onClick={handleBack} disabled={isSubmitting}>
 								Back
 							</Button>
-							<Button
-								variant="default"
-								onClick={handleCreate}
-								disabled={selectedEpisodes.length === 0 || isSubmitting}
-							>
+							<Button variant="default" onClick={handleCreate} disabled={selectedEpisodes.length === 0 || isSubmitting}>
 								{isSubmitting ? "Creating..." : `Create Bundle (${selectedEpisodes.length})`}
 							</Button>
 						</div>

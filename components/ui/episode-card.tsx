@@ -75,7 +75,7 @@ export function EpisodeCard({ as = "div", imageUrl, title, publishedAt, duration
 						<div className="flex flex-row-reverse justify-between w-full gap-2 items-end mt-2">
 							{detailsHref ? (
 								<Button variant="outline" className="bg-slate-800/65 rounded-lg px-4 py-1" size="xs">
-									<Link className="text-[0.75rem] font-medium"
+									<Link className="text-[0.75rem] font-medium py-1.5 rounded-lg text-[#35FCE5]"
 										href={detailsHref}>
 
 										Summary Details

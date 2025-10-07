@@ -15,8 +15,7 @@ export function useSubscriptionInit() {
 
 			try {
 				const response = await fetch("/api/account/subscription", {
-					// Use cached data if available, but allow stale-while-revalidate
-					cache: "default",
+					cache: "no-store",
 				});
 
 				if (!response.ok) {

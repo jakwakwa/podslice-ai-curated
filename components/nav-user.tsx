@@ -121,6 +121,12 @@ export function NavUser({
 									Subscription
 								</Link>
 							</DropdownMenuItem>
+							<DropdownMenuItem asChild>
+								<Link href="/account-portal" className="text-[#beb5b5] text-xs">
+									<CreditCard className="h-4 w-4" />
+									Account Management
+								</Link>
+							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						{isAdmin && (
 							<>

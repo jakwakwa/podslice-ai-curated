@@ -148,7 +148,7 @@ export async function GET() {
 			console.log("[SUBSCRIPTION_GET] Executing Prisma query for userId:", userId);
 			return prisma.subscription.findFirst({
 				where: { user_id: userId },
-				orderBy: { created_at: "desc" },
+				orderBy: { updated_at: "desc" },
 			});
 		};
 
@@ -172,10 +172,10 @@ export async function GET() {
 		}
 
 		console.log("[SUBSCRIPTION_GET] Returning subscription data");
-		// Add caching headers - cache for 5 minutes since subscription data doesn't change frequently
-		const response = NextResponse.json(subscription);
-		response.headers.set("Cache-Control", "public, s-maxage=300, stale-while-revalidate=600");
-		return response;
+		// Force dynamic fresh data for client consumers
+		const res = NextResponse.json(subscription);
+		res.headers.set("Cache-Control", "no-store");
+		return res;
 	} catch (error) {
 		console.error("[SUBSCRIPTION_GET] Unexpected error:", error);
 		console.error("[SUBSCRIPTION_GET] Error stack:", error instanceof Error ? error.stack : "No stack");

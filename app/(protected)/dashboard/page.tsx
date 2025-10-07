@@ -206,7 +206,16 @@ export default function CurationProfileManagementPage() {
 
 									<div className="flex flex-row justify-between gap-2 items-center h-5 w-full py-3 px-2">
 										<span className="text-foreground/60 text-xs font-sans">Plan Tier:</span>
-										<span className="uppercase left text-teal-500/60 text-xs font-sans">{subscription?.plan_type?.replace(/_/g, " ") || "n/a"}</span>
+										<span className="uppercase left text-teal-500/60 text-xs font-sans">
+											{(() => {
+												const plan = (subscription?.plan_type || "").toLowerCase();
+												const status = (subscription?.status || "").toLowerCase();
+												if (!plan) return "n/a";
+												const label = plan.replace(/_/g, " ");
+												const inactive = !(status === "active" || status === "trialing" || status === "paused");
+												return inactive ? `${label} (expired)` : label;
+											})()}
+										</span>
 									</div>
 								</div>
 							</div>

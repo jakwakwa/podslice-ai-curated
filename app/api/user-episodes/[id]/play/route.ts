@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
 import { prisma } from "@/lib/prisma";
+import { userIsActive } from "@/lib/usage";
 
 function extractGcsFromHttp(url: string): { bucket: string; object: string } | null {
 	try {
@@ -47,14 +48,14 @@ export async function GET(_request: Request, { params }: RouteParams) {
 		// Check if user owns this episode OR if it's in a shared bundle they selected
 		const profile = await prisma.userCurationProfile.findFirst({
 			where: { user_id: userId, is_active: true },
-			include: { 
-				selectedSharedBundle: { 
-					include: { 
-						episodes: { 
-							where: { episode_id: id, is_active: true } 
-						} 
-					} 
-				} 
+			include: {
+				selectedSharedBundle: {
+					include: {
+						episodes: {
+							where: { episode_id: id, is_active: true },
+						},
+					},
+				},
 			},
 		});
 
@@ -64,6 +65,12 @@ export async function GET(_request: Request, { params }: RouteParams) {
 
 		if (!authorized) {
 			return new NextResponse("Forbidden - Episode not accessible", { status: 403 });
+		}
+
+		// Inactive users cannot access playback
+		const isActive = await userIsActive(prisma, userId);
+		if (!isActive) {
+			return new NextResponse("Episode not found", { status: 404 });
 		}
 
 		const sourceUrl = userEpisode.gcs_audio_url;

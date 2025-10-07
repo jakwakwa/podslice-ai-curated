@@ -7,7 +7,7 @@ import type { UserEpisode } from "@/lib/types";
 
 type UserEpisodeWithSignedUrl = UserEpisode & { signedAudioUrl?: string | null };
 
-export function CreateBundleModalWrapper() {
+export function CreateBundleModalWrapper({ isActive }: { isActive?: boolean }) {
 	const [episodes, setEpisodes] = useState<UserEpisodeWithSignedUrl[]>([]);
 	const router = useRouter();
 
@@ -31,5 +31,5 @@ export function CreateBundleModalWrapper() {
 		router.push(`/my-bundles`);
 	};
 
-	return <CreateBundleModal allUserEpisodes={episodes} onSuccess={handleSuccess} />;
+	return <CreateBundleModal allUserEpisodes={episodes} onSuccess={handleSuccess} isActive={isActive} />;
 }

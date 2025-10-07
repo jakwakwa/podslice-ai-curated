@@ -1,12 +1,10 @@
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { userIsActive } from "@/lib/usage";
 
 // GET /api/public/shared-bundles/[bundleId]
-export async function GET(
-	_request: Request,
-	{ params }: { params: Promise<{ bundleId: string }> }
-) {
+export async function GET(_request: Request, { params }: { params: Promise<{ bundleId: string }> }) {
 	try {
 		// Require authentication
 		const { userId } = await auth();
@@ -15,6 +13,12 @@ export async function GET(
 		}
 
 		const { bundleId } = await params;
+
+		// Only active users may access shared bundles (temporary policy)
+		const isActive = await userIsActive(prisma, userId);
+		if (!isActive) {
+			return NextResponse.json({ error: "Bundle not found" }, { status: 404 });
+		}
 
 		// Fetch bundle with active episodes only
 		const bundle = await prisma.sharedBundle.findUnique({
@@ -51,10 +55,7 @@ export async function GET(
 		});
 
 		if (!bundle) {
-			return NextResponse.json(
-				{ error: "Bundle not found or not active" },
-				{ status: 404 }
-			);
+			return NextResponse.json({ error: "Bundle not found or not active" }, { status: 404 });
 		}
 
 		// Return bundle with metadata
@@ -66,7 +67,7 @@ export async function GET(
 			owner: {
 				name: bundle.owner.name,
 			},
-			episodes: bundle.episodes.map((ep) => ({
+			episodes: bundle.episodes.map(ep => ({
 				episode_id: ep.episode_id,
 				display_order: ep.display_order,
 				episode_title: ep.userEpisode.episode_title,
@@ -78,9 +79,6 @@ export async function GET(
 		});
 	} catch (error) {
 		console.error("[PUBLIC_SHARED_BUNDLE_GET]", error);
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 }
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
