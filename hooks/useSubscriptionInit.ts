@@ -34,16 +34,14 @@ export function useSubscriptionInit() {
 					return;
 				}
 
-				// Check if response has content before trying to parse JSON
-				const contentLength = response.headers.get("content-length");
-				const contentType = response.headers.get("content-type");
-
-				if (contentLength === "0" || contentLength === null || !contentType?.includes("application/json")) {
-					setSubscription(null);
-					return;
+				// Parse JSON safely without relying on content-length; treat empty body as no subscription
+				let subscription: unknown = null;
+				try {
+					subscription = await response.json();
+				} catch (_e) {
+					// If body is empty or not JSON, treat as no subscription
+					subscription = null;
 				}
-
-				const subscription = await response.json();
 				setSubscription(subscription);
 			} catch (error) {
 				// Only log actual errors, not the absence of subscription

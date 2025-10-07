@@ -494,7 +494,7 @@
 				border-right: 1px solid hsla(258.86 77.78% 8.82% / 0.92) !important;
 				outline-offset: 1px !important;
 				/* backdrop-filter: blur(10px) !important; */
-				outline: 0px solid transparent !important;
+				3f outline: 0px solid transparent !important;
 				/* box-shadow: none !important; */
 				box-shadow: -1px 0px 20px 3px #09090980 !important;
 			}
@@ -856,13 +856,47 @@
 				padding: 1.1rem 0.7rem !important;
 				font-size: 0.9rem;
 				font-weight: 400 !important;
-				background: #121212 !important;
+				background: #1F1C2DB6 !important;
 				outline: 1px solid #929a9a2f !important;
-				border: #121212 !important;
-				box-shadow: 1px 2px 3px #121212 !important;
+				border: #3E3EA24A !important;
+				box-shadow: 1px 2px 3px #3E3EA24A !important;
 				height: 30px !important;
 				margin-bottom: 10px !important;
 				margin-top: 0px !important;
+			}
+
+			.cl-navbar {
+				/* max-width: 100% !important;
+					width: 100% !important;
+					border: 0px solid #7ad7d200 !important;
+					border-radius: 0px;
+					box-shadow: 0px 6px 5px 1px #06060677, 0px 2px 4px 0px #1A162457, 0px 1px 150px 0px #69A3F00D inset, 0px 1px 1px 0px #D5FCF711 inset;
+					mix-blend-mode: normal;
+					backdrop-filter: blur(0px);
+					background: oklch(0.39 0.13 283.59 / 0.26) !important; */
+			}
+
+			.cl-userProfile-root,
+			.cl-cardBox {
+				/* background-color: #3E3EA24A !important; */
+				max-width: 90% !important;
+				width: 100% !important;
+				border: 0px solid #7ad7d200 !important;
+				border-radius: 0px;
+				box-shadow: 0px 6px 5px 1px #06060677, 0px 2px 4px 0px #1A162457, 0px 1px 150px 0px #69A3F00D inset, 0px 1px 1px 0px #D5FCF711 inset;
+				mix-blend-mode: normal;
+				backdrop-filter: blur(0px);
+				background: oklch(0.39 0.13 283.59 / 0.26);
+			}
+
+			.cl-pageScrollBox {
+				/* max-width: 90% !important; */
+				/* width: 100% !important;
+				position: absolute !important; */
+			}
+
+			.cl-formFieldRow {
+				flex-direction: column !important;
 			}
 
 			label {
@@ -960,24 +994,21 @@
 		@media screen and (min-width: 700px) {
 			@keyframes heroGradientShift {
 				0% {
-					background-position:
-						50% 100%,
+					background-position: 50% 100%,
 						100% 50%,
 						100% 100%,
 						50% 50%;
 				}
 
 				50% {
-					background-position:
-						30% 80%,
+					background-position: 30% 80%,
 						90% 85%,
 						85% 90%,
 						50% 50%;
 				}
 
 				100% {
-					background-position:
-						55% 115%,
+					background-position: 55% 115%,
 						85% 90%,
 						80% 85%,
 						50% 50%;
@@ -985,9 +1016,7 @@
 			}
 
 			.cl-card,
-			.cl-rootBox,
-			.cl-cardBox {
-				background-color: #d1d3db03 !important;
+			.cl-rootBox {
 
 
 

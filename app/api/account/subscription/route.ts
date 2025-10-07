@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { priceIdToPlanType } from "@/utils/paddle/plan-utils";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const checkoutCompletedSchema = z.object({
 	transaction_id: z.string(),
