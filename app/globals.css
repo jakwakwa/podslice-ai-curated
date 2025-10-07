@@ -494,7 +494,7 @@
 				border-right: 1px solid hsla(258.86 77.78% 8.82% / 0.92) !important;
 				outline-offset: 1px !important;
 				/* backdrop-filter: blur(10px) !important; */
-				3f outline: 0px solid transparent !important;
+				outline: 0px solid transparent !important;
 				/* box-shadow: none !important; */
 				box-shadow: -1px 0px 20px 3px #09090980 !important;
 			}
