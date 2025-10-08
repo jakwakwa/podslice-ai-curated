@@ -127,11 +127,21 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 			}
 
 			// Handle cases where we need to construct play endpoint URLs
-			const hasGcsUrl = "gcs_audio_url" in (episode as Record<string, unknown>) && (episode as { gcs_audio_url?: string | null }).gcs_audio_url;
-			const isUserEpisode = "_isUserEpisode" in episode && episode._isUserEpisode;
+			const isUserEpisode = "_isUserEpisode" in episode && (episode as { _isUserEpisode?: boolean })._isUserEpisode === true;
 
-			// If audioSrc is empty (was gs:// URI) or we have a GCS URL, construct play endpoint
-			if (!audioSrc || hasGcsUrl) {
+			console.log(`[AudioPlayerSheet resolve] Episode ID: ${(episode as { episode_id?: string }).episode_id}, isUserEpisode: ${isUserEpisode}`);
+
+			// If audioSrc is empty (because raw was gs://) construct play endpoint.
+			// For user episodes coming from My Episodes list, we often already have a signed HTTPS URL in gcs_audio_url; in that case use it directly.
+			if (!audioSrc) {
+				if (isUserEpisode && typeof (episode as { gcs_audio_url?: string | null }).gcs_audio_url === "string") {
+					const maybeHttps = (episode as { gcs_audio_url?: string | null }).gcs_audio_url as string;
+					if (maybeHttps.startsWith("http")) {
+						console.log(`[AudioPlayerSheet resolve] Using direct HTTPS for user episode: ${maybeHttps.substring(0, 50)}...`);
+						setResolvedSrc(maybeHttps);
+						return;
+					}
+				}
 				const episodeId = (episode as { episode_id?: string }).episode_id;
 				if (episodeId) {
 					// Determine the correct play endpoint based on episode type
@@ -139,17 +149,21 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 						? `/api/user-episodes/${episodeId}/play`
 						: `/api/episodes/${episodeId}/play`;
 
+					console.log(`[AudioPlayerSheet resolve] Fetching play endpoint: ${playEndpoint}`);
+
 					try {
 						const res = await fetch(playEndpoint, { cache: "no-store" });
+						console.log(`[AudioPlayerSheet resolve] Play endpoint response status: ${res.status}`);
 						if (!res.ok) {
-							console.error('Failed to fetch signed URL from play endpoint:', playEndpoint);
+							console.error(`[AudioPlayerSheet resolve] Play fetch failed - status: ${res.status}, url: ${playEndpoint}`);
 							setResolvedSrc("");
 							return;
 						}
 						const data = (await res.json()) as { signedUrl?: string };
+						console.log(`[AudioPlayerSheet resolve] Signed URL received: ${data.signedUrl ? 'yes (length: ' + data.signedUrl.length + ')' : 'no'}`);
 						if (!aborted) setResolvedSrc(data.signedUrl || "");
 					} catch (err) {
-						console.error('Error fetching signed URL:', err);
+						console.error(`[AudioPlayerSheet resolve] Play fetch error:`, err, `for endpoint: ${playEndpoint}`);
 						if (!aborted) setResolvedSrc("");
 					}
 					return;
@@ -159,23 +173,28 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 			// Check if audio_url is already a play endpoint that needs resolution
 			const isPlayEndpoint = audioSrc.startsWith('/api/episodes/') || audioSrc.startsWith('/api/user-episodes/');
 
+			console.log(`[AudioPlayerSheet resolve] audioSrc: ${audioSrc.substring(0, 50)}..., isPlayEndpoint: ${isPlayEndpoint}`);
+
 			if (isPlayEndpoint) {
 				// Fetch signed URL from play endpoint
 				try {
 					const res = await fetch(audioSrc, { cache: "no-store" });
+					console.log(`[AudioPlayerSheet resolve] Play endpoint response status: ${res.status} for ${audioSrc}`);
 					if (!res.ok) {
-						console.error('Failed to fetch signed URL from play endpoint:', audioSrc);
+						console.error(`[AudioPlayerSheet resolve] Play fetch failed - status: ${res.status}, url: ${audioSrc}`);
 						setResolvedSrc("");
 						return;
 					}
 					const data = (await res.json()) as { signedUrl?: string };
+					console.log(`[AudioPlayerSheet resolve] Signed URL received: ${data.signedUrl ? 'yes' : 'no'}`);
 					if (!aborted) setResolvedSrc(data.signedUrl || "");
 				} catch (err) {
-					console.error('Error fetching signed URL:', err);
+					console.error(`[AudioPlayerSheet resolve] Play fetch error:`, err, `for ${audioSrc}`);
 					if (!aborted) setResolvedSrc("");
 				}
 			} else {
 				// Direct URL (already signed or public)
+				console.log(`[AudioPlayerSheet resolve] Using direct audioSrc: ${audioSrc.startsWith('http') ? 'HTTPS' : 'other'}`);
 				setResolvedSrc(audioSrc);
 			}
 		}
