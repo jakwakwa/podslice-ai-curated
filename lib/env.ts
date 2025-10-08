@@ -136,11 +136,4 @@ export function ensurePaddleApiKey(): void {
 		throw new Error("[ENV] Missing required PADDLE_API_KEY");
 	}
 }
-// Perform a lightweight startup check on server runtime (skip tests)
-(() => {
-	if (typeof window !== "undefined") return;
-	if (process.env.NODE_ENV === "test") return;
-	if (!process.env.PADDLE_API_KEY || process.env.PADDLE_API_KEY.trim() === "") {
-		throw new Error("[ENV] Missing required PADDLE_API_KEY");
-	}
-})();
+// Note: Avoid top-level throws during Next build. Use ensurePaddleApiKey() at call sites instead.

@@ -8,19 +8,42 @@ import { priceIdToPlanType } from "@/utils/paddle/plan-utils";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const checkoutCompletedSchema = z.object({
-	transaction_id: z.string(),
-	status: z.string(),
-	customer: z.object({
-		id: z.string(),
-	}),
-	items: z.array(
-		z.object({
-			price_id: z.string(),
-		})
-	),
-	// Add other fields as necessary
-});
+// Accept multiple Paddle checkout.completed payload variants
+// Variants seen in the wild:
+// - transaction_id | transactionId | id
+// - customer: { id } | customer_id
+// - items: [{ price_id }] | items: [{ price: { id } }] | items: [{ priceId }]
+const CheckoutItemSchema = z.union([z.object({ price_id: z.string() }), z.object({ price: z.object({ id: z.string() }) }), z.object({ priceId: z.string() })]).transform(item => ({
+	price_id: (item as { price_id?: string }).price_id ?? (item as { price?: { id?: string } }).price?.id ?? (item as { priceId?: string }).priceId ?? "",
+}));
+
+const checkoutCompletedSchema = z
+	.object({
+		transaction_id: z.string().optional(),
+		transactionId: z.string().optional(),
+		id: z.string().optional(),
+		status: z.string().optional(),
+		customer: z.object({ id: z.string().optional() }).optional(),
+		customer_id: z.string().optional(),
+		items: z.array(CheckoutItemSchema).optional(),
+	})
+	.transform(raw => {
+		const transaction_id = raw.transaction_id || raw.transactionId || raw.id || "";
+		const status = raw.status || "completed";
+		const customerId = raw.customer?.id || raw.customer_id || "";
+		const price_id = raw.items?.[0]?.price_id || "";
+		return {
+			transaction_id,
+			status,
+			customer: { id: customerId },
+			items: [{ price_id }],
+		} as {
+			transaction_id: string;
+			status: string;
+			customer: { id: string };
+			items: { price_id: string }[];
+		};
+	});
 
 export async function POST(request: Request) {
 	try {
@@ -44,19 +67,21 @@ export async function POST(request: Request) {
 		// Ensure a local user record exists and attach Paddle customer id (minimal requirements to save subscription)
 		try {
 			const clerk = await currentUser();
-			await prisma.user.upsert({
-				where: { user_id: userId },
-				update: { paddle_customer_id: customer.id },
-				create: {
-					user_id: userId,
-					name: clerk?.fullName || clerk?.firstName || "Unknown",
-					email: clerk?.emailAddresses?.[0]?.emailAddress || `unknown+${userId}@example.com`,
-					password: "clerk_managed",
-					image: clerk?.imageUrl || null,
-					email_verified: clerk?.emailAddresses?.[0]?.verification?.status === "verified" ? new Date() : null,
-					paddle_customer_id: customer.id,
-				},
-			});
+			if (customer.id) {
+				await prisma.user.upsert({
+					where: { user_id: userId },
+					update: { paddle_customer_id: customer.id },
+					create: {
+						user_id: userId,
+						name: clerk?.fullName || clerk?.firstName || "Unknown",
+						email: clerk?.emailAddresses?.[0]?.emailAddress || `unknown+${userId}@example.com`,
+						password: "clerk_managed",
+						image: clerk?.imageUrl || null,
+						email_verified: clerk?.emailAddresses?.[0]?.verification?.status === "verified" ? new Date() : null,
+						paddle_customer_id: customer.id,
+					},
+				});
+			}
 		} catch (ensureUserErr) {
 			// If user upsert fails for any reason, do not block subscription creation unnecessarily
 			console.error("[SUBSCRIPTION_POST] Failed to ensure user exists:", ensureUserErr);
@@ -145,22 +170,32 @@ export async function GET() {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		const findLatest = async () => {
-			console.log("[SUBSCRIPTION_GET] Executing Prisma query for userId:", userId);
+		// Prefer an "active-like" subscription if multiple rows exist
+		const findPreferred = async () => {
+			console.log("[SUBSCRIPTION_GET] Looking for active-like subscription for userId:", userId);
+			const activeLike = await prisma.subscription.findFirst({
+				where: {
+					user_id: userId,
+					OR: [{ status: "active" }, { status: "trialing" }, { status: "paused" }],
+				},
+				orderBy: { updated_at: "desc" },
+			});
+			if (activeLike) return activeLike;
+			console.log("[SUBSCRIPTION_GET] No active-like subscription, falling back to latest by updated_at");
 			return prisma.subscription.findFirst({
 				where: { user_id: userId },
 				orderBy: { updated_at: "desc" },
 			});
 		};
 
-		let subscription = await findLatest();
-		console.log("[SUBSCRIPTION_GET] First query result:", subscription ? "found" : "null");
+		let subscription = await findPreferred();
+		console.log("[SUBSCRIPTION_GET] Preferred query result:", subscription ? "found" : "null");
 
 		// Retry once on transient connection closure
 		if (!subscription) {
 			try {
-				console.log("[SUBSCRIPTION_GET] Retrying query");
-				subscription = await findLatest();
+				console.log("[SUBSCRIPTION_GET] Retrying preferred query");
+				subscription = await findPreferred();
 				console.log("[SUBSCRIPTION_GET] Retry query result:", subscription ? "found" : "null");
 			} catch (retryError) {
 				console.error("[SUBSCRIPTION_GET] Retry failed:", retryError);
