@@ -1,4 +1,4 @@
-import { transcribeWithGeminiFromUrl, transcribeWithGeminiFromUrlChunked } from "../gemini-video";
+import { transcribeWithGeminiFromUrlChunked } from "../gemini-video";
 import type { TranscriptProvider, TranscriptRequest, TranscriptResponse } from "../types";
 
 /**

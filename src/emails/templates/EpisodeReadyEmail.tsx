@@ -4,7 +4,6 @@
  */
 
 import { Button, Heading, Hr, Link, Section, Text } from "@react-email/components";
-import * as React from "react";
 import { EmailLayout } from "../components/EmailLayout";
 import { EMAIL_CONSTANTS, getEmailBaseUrl } from "../utils";
 

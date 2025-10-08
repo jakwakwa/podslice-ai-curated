@@ -6,6 +6,6 @@ export const metadata: Metadata = {
 	description: "Manage your profile and security settings.",
 };
 
-export default function UserProfilePage(): JSX.Element {
+export default function UserProfilePage() {
 	return <UserProfile />;
 }

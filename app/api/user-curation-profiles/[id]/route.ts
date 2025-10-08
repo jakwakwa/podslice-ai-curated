@@ -143,7 +143,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 					}),
 					prisma.subscription.findFirst({ where: { user_id: userId }, orderBy: { updated_at: "desc" } }),
 				])
-				if (!sharedBundle || !sharedBundle.is_active) {
+				if (!(sharedBundle && sharedBundle.is_active)) {
 					return NextResponse.json({ error: "Shared bundle not found or not active" }, { status: 404 })
 				}
 				if (sharedBundle.episodes.length === 0) {

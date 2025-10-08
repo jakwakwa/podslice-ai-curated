@@ -4,7 +4,6 @@
  */
 
 import { Hr, Img, Link, Section } from "@react-email/components";
-import * as React from "react";
 import { EMAIL_CONSTANTS, getEmailBaseUrl, getLogoUrl } from "../utils";
 
 export function EmailHeader() {

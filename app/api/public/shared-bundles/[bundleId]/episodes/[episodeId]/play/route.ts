@@ -58,7 +58,7 @@ export async function GET(
 			},
 		});
 
-		if (!bundleEpisode || !bundleEpisode.sharedBundle.is_active) {
+		if (!(bundleEpisode && bundleEpisode.sharedBundle.is_active)) {
 			return new NextResponse("Episode not found in active bundle", { status: 404 });
 		}
 

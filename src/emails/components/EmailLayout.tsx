@@ -5,7 +5,7 @@
  */
 
 import { Body, Container, Head, Html, Preview } from "@react-email/components";
-import * as React from "react";
+import type * as React from "react";
 import { EMAIL_CONSTANTS } from "../utils";
 import { EmailHeader } from "./EmailHeader";
 
