@@ -132,7 +132,7 @@ export default function LandingPageContent() {
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}>
-						<Link href="/sign-up">
+						<Link href="/sign-in">
 							<div>
 								<div className={styles.heroBtn}>Start Free Trial</div>
 							</div>
@@ -228,7 +228,7 @@ export default function LandingPageContent() {
 											</li>
 										))}
 									</ul>
-									<Link href="/sign-up">
+									<Link href="/sign-in">
 										<Button
 											className={`w-full flex items-center justify-center gap-2 mt-auto ${tier.popular ? " text-accent-foreground hover:bg-radial-gradient-secondary/80 transition-all duration-200 ease-in-out h-10" : "h-10"}`}
 											variant={tier.popular ? "default" : "default"}
