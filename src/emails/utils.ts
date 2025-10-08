@@ -15,7 +15,7 @@ export function getEmailBaseUrl(): string {
  * Get the absolute URL for the logo asset
  */
 export function getLogoUrl(): string {
-	return `${getEmailBaseUrl()}/logo.png`;
+	return `${getEmailBaseUrl()}/logo.svg`;
 }
 
 /**
@@ -65,7 +65,6 @@ export const EMAIL_CONSTANTS = {
 		},
 	},
 	TYPOGRAPHY: {
-		fontFamily:
-			"-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+		fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
 	},
 } as const;

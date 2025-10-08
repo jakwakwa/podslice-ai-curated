@@ -59,7 +59,7 @@ export const VercelInviteUserEmail = ({
 					<Container className="mx-auto my-[40px] max-w-[465px] rounded border border-[#eaeaea] border-solid p-[20px]">
 						<Section className="mt-[32px]">
 							<Img
-								src={`${baseUrl}/static/vercel-logo.png`}
+								src={`${baseUrl}/static/vercel-logo.svg`}
 								width="40"
 								height="37"
 								alt="Vercel Logo"

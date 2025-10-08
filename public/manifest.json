@@ -1,0 +1,29 @@
+{
+	"name": "Podslice AI",
+	"short_name": "Podslice",
+	"description": "AI Curated Podcast App - summaries, highlights, and clips",
+	"icons": [
+		{
+			"src": "/icon-192.png",
+			"type": "image/png",
+			"sizes": "192x192"
+		},
+		{
+			"src": "/icon-mask.png",
+			"type": "image/png",
+			"sizes": "512x512",
+			"purpose": "maskable"
+		},
+		{
+			"src": "/icon-512.png",
+			"type": "image/png",
+			"sizes": "512x512"
+		}
+	],
+	"start_url": "/",
+	"scope": "/",
+	"display": "standalone",
+	"orientation": "portrait",
+	"theme_color": "#0AB38E",
+	"background_color": "#0f172a"
+}

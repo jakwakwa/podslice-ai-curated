@@ -45,10 +45,15 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<head>
+				<link rel="icon" href="/favicon.ico" sizes="32x32" />
+				<link rel="icon" href="/icon.svg" type="image/svg+xml" />
+				<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+				<link rel="manifest" href="/manifest.json" />
 				<link rel="preconnect" href="https://fonts.googleapis.com" />
 				<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Vend+Sans:wght@500&display=swap" rel="stylesheet" />
-				<link rel="icon" href="/icon?<generated>" type="image/png" sizes="32x32" />
+
 			</head>
 			<body className={`${InterSans.className}`}>
 				<GlobalProgressBar />

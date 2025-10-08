@@ -10,7 +10,7 @@ export interface EmailLayoutProps {
 
 export function EmailLayout({ title, previewText, baseUrl, children }: EmailLayoutProps) {
 	const appUrl = baseUrl || "https://www.podslice.ai";
-	const logoSrc = `${appUrl}/logo.png`;
+	const logoSrc = `${appUrl}/logo.svg`;
 	return (
 		<Html>
 			<Head>

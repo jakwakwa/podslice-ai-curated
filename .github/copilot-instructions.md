@@ -36,6 +36,14 @@ PODSLICE is an AI-powered podcast curation platform built on Next.js 15 App Rout
 - **Buckets**: Single bucket via `GOOGLE_CLOUD_STORAGE_BUCKET_NAME` environment variable
 - **Never log credentials or absolute paths**
 
+## Performance Tips
+
+1. **Always check cache first** before API calls
+2. **Use optimistic updates** for better UX
+3. **Provide manual refresh** for user control
+4. **Show cache indicators** in development
+5. **Monitor cache hit rates** for optimization
+
 ### AI Services Integration
 - **Gemini API**: Used for summarization and TTS in content pipeline via `@google/genai`
 - **Transcription**: Direct from YouTube via Gemini video models (no legacy scraping)

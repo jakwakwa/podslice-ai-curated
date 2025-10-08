@@ -9,7 +9,7 @@ export function LandingPageHeader() {
 		<header className="w-full fixed h-16">
 			<div className={styles.landingHeaderContainer}>
 				<Link href="/">
-					<Image src="/logo.png" width={100} height={60} alt="PODSLICE Logo" className={styles.landingLogo} />
+					<Image src="/logo.svg" width={100} height={60} alt="PODSLICE Logo" className={styles.landingLogo} />
 				</Link>
 				<nav className={styles.landingNav}>
 					<Link href={getClerkSignInUrl()}>

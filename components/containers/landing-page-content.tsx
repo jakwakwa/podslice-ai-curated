@@ -247,7 +247,7 @@ export default function LandingPageContent() {
 			<footer className="py-8 md:py-12 px-2 md:px-4 bg-radial-gradient mt-24">
 				<motion.div className="max-w-screen md:max-w-7xl mx-auto text-center" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
 					<div className="flex justify-center items-center mb-4">
-						<Image src="/logo.png" width={90} height={40} alt="PODSLICE Logo" />
+						<Image src="/logo.svg" width={90} height={40} alt="PODSLICE Logo" />
 					</div>
 					<div className="flex justify-center items-center space-x-6 text-sm text-foreground/70">
 						<Link href="/sign-up" className="hover:text-foreground transition-colors">
