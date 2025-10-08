@@ -13,6 +13,7 @@
 		"dev": "next dev",
 		"dev:turbo": "npx prisma generate --no-engine && next dev --turbopack",
 		"dev:legacy": "npx prisma generate --no-engine && npx @tailwindcss/cli -i ./app/globals.css -o ./dist/styles.css --watch & next dev --turbo",
+		"dev:debug": "NODE_OPTIONS='--inspect' npx prisma generate --no-engine && next dev --turbopack",
 		"prebuild": "pnpm prisma:generate",
 		"build": "npx prisma generate --no-engine && next build",
 		"build:fast": "NODE_OPTIONS='--max-old-space-size=8192' SKIP_ENV_VALIDATION=true next build",

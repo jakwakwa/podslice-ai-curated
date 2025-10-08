@@ -22,15 +22,21 @@ function extractGcsFromHttp(url: string): { bucket: string; object: string } | n
 	return null;
 }
 
-export async function GET(_request: Request, { params }: { params: { id: string } }) {
+interface RouteParams {
+	params: Promise<{ id: string }>;
+}
+
+export async function GET(_request: Request, { params }: RouteParams) {
 	try {
 		const { userId } = await auth();
 		if (!userId) {
 			return new NextResponse("Unauthorized", { status: 401 });
 		}
 
+		const { id } = await params;
+
 		const episode = await prisma.episode.findUnique({
-			where: { episode_id: params.id },
+			where: { episode_id: id },
 			include: { userProfile: { select: { user_id: true } }, podcast: true },
 		});
 

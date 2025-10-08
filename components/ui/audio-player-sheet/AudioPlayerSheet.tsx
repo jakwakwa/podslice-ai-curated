@@ -24,8 +24,8 @@ type AudioPlayerSheetProps = {
 export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange, episode }) => {
 	const audioRef = useRef<HTMLAudioElement | null>(null);
 	const lastEpisodeKeyRef = useRef<string | null>(null);
-	const [_currentTime, setCurrentTime] = useState(0);
-	const [_duration, setDuration] = useState(0);
+	const [currentTime, setCurrentTime] = useState(0);
+	const [duration, setDuration] = useState(0);
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [volume, setVolume] = useState(1);
@@ -109,6 +109,10 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 	const audioSrc = useMemo(() => {
 		if (!(open && episode)) return "";
 		const raw = "audio_url" in episode && episode.audio_url ? episode.audio_url : "gcs_audio_url" in episode && episode.gcs_audio_url ? episode.gcs_audio_url : "";
+		// Never return gs:// URIs directly - they must be converted to signed URLs
+		if (raw.startsWith('gs://')) {
+			return ""; // Let the resolution logic handle this
+		}
 		return raw;
 	}, [open, episode]);
 
@@ -121,15 +125,40 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 				setResolvedSrc("");
 				return;
 			}
-			// User episodes carry a signed URL in gcs_audio_url already
-			if ("gcs_audio_url" in (episode as Record<string, unknown>) && (episode as { gcs_audio_url?: string | null }).gcs_audio_url) {
-				setResolvedSrc((episode as { gcs_audio_url: string }).gcs_audio_url);
-				return;
+
+			// Handle cases where we need to construct play endpoint URLs
+			const hasGcsUrl = "gcs_audio_url" in (episode as Record<string, unknown>) && (episode as { gcs_audio_url?: string | null }).gcs_audio_url;
+			const isUserEpisode = "_isUserEpisode" in episode && episode._isUserEpisode;
+
+			// If audioSrc is empty (was gs:// URI) or we have a GCS URL, construct play endpoint
+			if (!audioSrc || hasGcsUrl) {
+				const episodeId = (episode as { episode_id?: string }).episode_id;
+				if (episodeId) {
+					// Determine the correct play endpoint based on episode type
+					const playEndpoint = isUserEpisode
+						? `/api/user-episodes/${episodeId}/play`
+						: `/api/episodes/${episodeId}/play`;
+
+					try {
+						const res = await fetch(playEndpoint, { cache: "no-store" });
+						if (!res.ok) {
+							console.error('Failed to fetch signed URL from play endpoint:', playEndpoint);
+							setResolvedSrc("");
+							return;
+						}
+						const data = (await res.json()) as { signedUrl?: string };
+						if (!aborted) setResolvedSrc(data.signedUrl || "");
+					} catch (err) {
+						console.error('Error fetching signed URL:', err);
+						if (!aborted) setResolvedSrc("");
+					}
+					return;
+				}
 			}
-			
-			// Check if audio_url is a play endpoint that needs resolution
+
+			// Check if audio_url is already a play endpoint that needs resolution
 			const isPlayEndpoint = audioSrc.startsWith('/api/episodes/') || audioSrc.startsWith('/api/user-episodes/');
-			
+
 			if (isPlayEndpoint) {
 				// Fetch signed URL from play endpoint
 				try {
@@ -475,43 +504,43 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 	};
 
 	const progressPercent = useMemo(() => {
-		return _duration > 0 ? Math.max(0, Math.min(100, (_currentTime / _duration) * 100)) : 0;
-	}, [_currentTime, _duration]);
+		return duration > 0 ? Math.max(0, Math.min(100, (currentTime / duration) * 100)) : 0;
+	}, [currentTime, duration]);
 
-	const formattedCurrent = useMemo(() => formatTime(_currentTime), [_currentTime]);
-	const formattedDuration = useMemo(() => formatTime(_duration), [_duration]);
+	const formattedCurrent = useMemo(() => formatTime(currentTime), [currentTime]);
+	const formattedDuration = useMemo(() => formatTime(duration), [duration]);
 
 	const seekToClientX = (clientX: number, target: HTMLDivElement) => {
 		const rect = target.getBoundingClientRect();
 		const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-		const newTime = ratio * (_duration || 0);
-		if (audioRef.current && _duration) {
+		const newTime = ratio * (duration || 0);
+		if (audioRef.current && duration) {
 			audioRef.current.currentTime = newTime;
 			setCurrentTime(newTime);
 		}
 	};
 
 	const handleProgressClick: React.MouseEventHandler<HTMLDivElement> = e => {
-		if (!_duration) return;
+		if (!duration) return;
 		seekToClientX(e.clientX, e.currentTarget);
 	};
 
 	const handleProgressKeyDown: React.KeyboardEventHandler<HTMLDivElement> = e => {
-		if (!(_duration && audioRef.current)) return;
+		if (!(duration && audioRef.current)) return;
 		const step = 5; // seconds
-		let newTime = _currentTime;
+		let newTime = currentTime;
 		switch (e.key) {
 			case "ArrowRight":
-				newTime = Math.min(_duration, _currentTime + step);
+				newTime = Math.min(duration, currentTime + step);
 				break;
 			case "ArrowLeft":
-				newTime = Math.max(0, _currentTime - step);
+				newTime = Math.max(0, currentTime - step);
 				break;
 			case "Home":
 				newTime = 0;
 				break;
 			case "End":
-				newTime = _duration;
+				newTime = duration;
 				break;
 			default:
 				return; // ignore other keys
@@ -689,8 +718,8 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 							role="slider"
 							aria-label="Seek"
 							aria-valuemin={0}
-							aria-valuemax={Math.floor(_duration || 0)}
-							aria-valuenow={Math.floor(_currentTime || 0)}
+							aria-valuemax={Math.floor(duration || 0)}
+							aria-valuenow={Math.floor(currentTime || 0)}
 							tabIndex={0}
 							onClick={handleProgressClick}
 							onKeyDown={handleProgressKeyDown}

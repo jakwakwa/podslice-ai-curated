@@ -21,7 +21,11 @@ function resolveAllowedGates(plan: string | null | undefined): PlanGate[] {
 	return [PlanGate.NONE];
 }
 
-export async function GET(_request: Request, { params }: { params: { id: string } }) {
+interface RouteParams {
+	params: Promise<{ id: string }>;
+}
+
+export async function GET(_request: Request, { params }: RouteParams) {
 	try {
 		const { userId } = await auth();
 
@@ -29,7 +33,8 @@ export async function GET(_request: Request, { params }: { params: { id: string 
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		const episodeId = params.id;
+		const { id } = await params;
+		const episodeId = id;
 
 		// Get user's subscription to check plan tier
 		const subscription = await prisma.subscription.findFirst({

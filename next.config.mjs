@@ -89,7 +89,9 @@ const nextConfig = {
 							'blob:',
 							'https://storage.googleapis.com',
 							'https://storage.cloud.google.com',
-							'*.googleusercontent.com', // Added wildcard for GCS redirects
+							'*.googleusercontent.com',
+							'https://*.googleapis.com',
+							'https://*.google.com',
 					],
 						'connect-src': [
 							"'self'",
@@ -101,7 +103,9 @@ const nextConfig = {
 							'https://vitals.vercel-insights.com',
 							'https://storage.googleapis.com',
 							'https://storage.cloud.google.com',
-							'*.googleusercontent.com', // Added wildcard for GCS redirects
+							'*.googleusercontent.com',
+							'https://*.googleapis.com',
+							'https://*.google.com',
 							'https://cdn.paddle.com', // Allow Paddle CDN connections for source maps
 					],
 					'worker-src': ["'self'", 'blob:'],

@@ -4,18 +4,24 @@ import { ensureBucketName, getStorageReader } from "@/lib/inngest/utils/gcs";
 import { prisma } from "@/lib/prisma";
 import { userIsActive } from "@/lib/usage";
 
-export async function GET(_request: Request, { params }: { params: { id: string } }) {
+interface RouteParams {
+	params: Promise<{ id: string }>;
+}
+
+export async function GET(_request: Request, { params }: RouteParams) {
 	try {
 		const { userId } = await auth();
 		if (!userId) {
 			return new NextResponse("Unauthorized", { status: 401 });
 		}
 
+		const { id } = await params;
+
 		// Note: This fetches ALL fields including transcript & summary.
 		// Single episode should be under 4MB, but if it exceeds limits,
 		// add explicit select to exclude transcript/summary.
 		const episode = await prisma.userEpisode.findUnique({
-			where: { episode_id: params.id },
+			where: { episode_id: id },
 		});
 
 		if (!episode) {

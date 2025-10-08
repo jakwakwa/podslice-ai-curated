@@ -3,7 +3,7 @@ import { requireAdminMiddleware } from "@/lib/admin-middleware";
 import { ensureBucketName, getStorageReader } from "@/lib/inngest/utils/gcs";
 
 interface RouteParams {
-	params: { id: string };
+	params: Promise<{ id: string }>;
 }
 
 export async function GET(_request: Request, { params }: RouteParams) {
@@ -11,9 +11,10 @@ export async function GET(_request: Request, { params }: RouteParams) {
 	if (adminCheck) return adminCheck;
 
 	try {
+		const { id } = await params;
 		const reader = getStorageReader();
 		const bucket = ensureBucketName();
-		const prefix = `debug/user-episodes/${params.id}/logs/`;
+		const prefix = `debug/user-episodes/${id}/logs/`;
 		const [files] = await reader.bucket(bucket).getFiles({ prefix });
 		files.sort((a, b) => (a.name > b.name ? 1 : -1));
 		const events: unknown[] = [];
