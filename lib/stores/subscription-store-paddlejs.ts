@@ -5,7 +5,7 @@ export interface PaddleSubscription {
 	user_id: string;
 	paddle_subscription_id: string | null;
 	paddle_price_id: string | null;
-	plan_type: 'casual_listener' | 'curate_control';
+	plan_type: 'free_slice' | 'casual_listener' | 'curate_control';
 	status: 'trialing' | 'active' | 'canceled' | 'paused';
 	current_period_start: Date | null;
 	current_period_end: Date | null;
