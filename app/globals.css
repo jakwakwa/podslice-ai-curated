@@ -353,7 +353,7 @@
 
 
 			.cl-rootBox {
-				background-color: #d1d3db03 !important;
+				background-color: #11193803 !important;
 				width: 60%;
 				/* max-width: 100px; */
 				/* min-width: 200px; */
@@ -421,7 +421,8 @@
 				background-color: #3d4c6383;
 				border-radius: 10px;
 				width: 100%;
-				margin: 0 auto;
+				margin-top: 30px !important;
+				/* margin: 0 auto;	 */
 			}
 
 			.page-header-bg {
@@ -642,7 +643,6 @@
 				text-decoration: underline;
 			}
 
-			input,
 			textarea {
 				display: flex;
 				align-items: center;
@@ -671,7 +671,6 @@
 			}
 
 
-			input::placeholder,
 			textarea::placeholder {
 				color: color(a98-rgb 0.96 0.96 0.96 / 0.67) !important;
 				font-weight: 500 !important;
@@ -681,23 +680,6 @@
 
 			}
 
-			input:focus-visible,
-			input:focus,
-			input:focus-within,
-			textarea:focus-visible {
-				font-weight: 600;
-				background-color: #343149b3 !important;
-				color: oklch(85.236% 0.08243 223.069 / 0.825);
-
-				outline: 1px solid var(--ring) !important;
-				outline-offset: 2px !important;
-				border: var(--ring) !important;
-			}
-
-			input {
-				height: 55px;
-				max-height: 55px;
-			}
 
 			textarea {
 				height: auto;
@@ -837,7 +819,7 @@
 			}
 
 			.cl-lastAuthenticationStrategyBadge {
-				background-color: #3732def4 !important;
+				background-color: #107099F4 !important;
 				border-radius: 10px !important;
 				/* padding: 0.7rem 0.8rem !important; */
 				/* width: 300px !important; */
@@ -852,58 +834,80 @@
 				transition: all 0.2s ease-in-out;
 			}
 
-			/* Clerk-specific form overrides */
-			.cl-formFieldInput {
-				padding: 1.1rem 0.7rem !important;
-				font-size: 0.9rem;
-				font-weight: 400 !important;
+			.cl-formButtonPrimary {
+				border-radius: 10px !important;
+				color: #A2B0B3 !important;
+				height: 35px !important;
 				background: #1F1C2DB6 !important;
-				outline: 1px solid #929a9a2f !important;
-				border: #3E3EA24A !important;
-				box-shadow: 1px 2px 3px #3E3EA24A !important;
-				height: 30px !important;
-				margin-bottom: 10px !important;
-				margin-top: 0px !important;
+				border: 1px solid transparent !important;
+				outline: 1px solid transparent !important;
+
+				/* padding: 30px !important; */
+
 			}
 
-			.cl-navbar {
-				/* max-width: 100% !important;
-					width: 100% !important;
-					border: 0px solid #7ad7d200 !important;
-					border-radius: 0px;
-					box-shadow: 0px 6px 5px 1px #06060677, 0px 2px 4px 0px #1A162457, 0px 1px 150px 0px #69A3F00D inset, 0px 1px 1px 0px #D5FCF711 inset;
-					mix-blend-mode: normal;
-					backdrop-filter: blur(0px);
-					background: oklch(0.39 0.13 283.59 / 0.26) !important; */
+			.cl-footer {
+				background: #2E0F66 !important;
+			}
+
+			.cl-button {
+				background: #411FA6DD !important;
+				border: 1.2px solid #394093E8 !important;
+				outline: 1px solid #0521459C !important;
+				height: 35px !important;
+				padding: 2px !important;
+				height: 45px !important;
+				padding: 10px !important;
+				font-size: 0.9rem !important;
+				;
+			}
+
+			/* Clerk-specific form overrides */
+			.cl-formFieldInput {
+				/* padding: 1.1rem 0.7rem !important; */
+				height: 20px !important;
+				background: #1F1C2DB6 !important;
+			}
+
+			input {
+				padding: 1.5rem 1rem !important;
+				height: 60px !important;
+				border-radius: 10px !important;
+				color: #fff !important;
 			}
 
 			.cl-userProfile-root {
-				background-color: #3E3EA24A !important;
+				background-color: #002A29 !important;
 				max-width: 90% !important;
-				max-width: 70% !important;
+				min-width: 70% !important;
 				border: 0px solid #7ad7d200 !important;
 				border-radius: 0px;
 				box-shadow: 0px 6px 5px 1px #06060677, 0px 2px 4px 0px #1A162457, 0px 1px 150px 0px #69A3F00D inset, 0px 1px 1px 0px #D5FCF711 inset;
 				mix-blend-mode: normal;
 				backdrop-filter: blur(0px);
 				overflow: hidden;
-				border-radius: 30px !important;
+				border-radius: 20px !important;
 				/* background: oklch(0.39 0.13 283.59 / 0.26);. */
 			}
 
 			.cl-cardBox {
 
-				background-color: #15151DDC !important;
+				background-color: #10101C31 !important;
 				max-width: 100% !important;
 				overflow: hidden;
 				width: 100% !important;
-				border: 0px solid #7ad7d200 !important;
+				border: 0px solid #84EF32BB !important;
 				border-radius: 0px !important;
 				box-shadow: 0px 6px 5px 1px #06060677, 0px 2px 4px 0px #1A162457, 0px 1px 150px 0px #69A3F00D inset, 0px 1px 1px 0px #D5FCF711 inset;
-				mix-blend-mode: normal;
+				border-radius: 30px !important;
+				mix-blend-mode: multiply;
 				backdrop-filter: blur(0px);
-				background: oklch(0.39 0.13 283.59 / 0.26);
+				background: oklch(0.35 0.19 276.14 / 0.96);
 
+			}
+
+			.cl-navbar {
+				background: #353C3E8F !important;
 			}
 
 			.cl-formFieldRow {
@@ -920,10 +924,6 @@
 				/* text-transform: uppercase !important; */
 			}
 
-			.cl-formFieldInput::placeholder {
-				font-size: 0.8rem;
-				font-weight: 400 !important;
-			}
 
 			.episode-info {
 				display: none !important;
@@ -934,7 +934,7 @@
 
 			.cl-card,
 			.cl-rootBox {
-				background-color: #022A3EF5;
+				background-color: #0DBEEA1F;
 
 				/* min-width: 100vw; */
 				border-radius: 0;
@@ -943,7 +943,10 @@
 				width: 100%;
 				margin: 0 auto;
 				/* min-width: none; */
+				gap: 0px;
+				padding-top: 0px !important;
 				/* margin: 0 auto; */
+				backdrop-filter: blur(1px);
 				min-height: 80vh;
 
 			}
@@ -951,15 +954,13 @@
 			.cl-cardBox {
 				min-height: 90vh;
 				gap: 10px;
+				padding-bottom: 20px !important;
 
 				/* width: 100%;
 				max-width: 100vw; */
 				margin: 0 auto;
 			}
 
-			.episode-card-wrapper {
-				/* padding: 44px 30px 45px 30px; */
-			}
 
 
 		}
@@ -1074,7 +1075,7 @@
 				border-radius: 10px;
 				width: 60%;
 				margin: 0 auto;
-				margin-top: 20px;
+				margin-top: 30px !important;
 			}
 		}
 
