@@ -130,165 +130,113 @@ export default function CurationProfileManagementPage() {
 				title="Your dashboard"
 				description="Choose from our pre-curated podcast bundles. Each bundle is a fixed selection of 2-5 carefully selected shows and cannot be modified once selected."
 			/>
-
-			{/* Latest Bundle Episode Section */}
-			{latestBundleEpisode && (
-				<div className="w-full border-b-0 rounded-0 px-4 py-8  my-8 mx-0 bg-episode-card-wrapper border-[#2c2a2a17] shadow-xl shadow-slate-900/20  mt-0 pt-6 sm:pt-0  md:pt-9 md:mt-0  md:mb-8  md:px-6 border-dark md:rounded-3xl overflow-hidden  ">
-					<CardTitle className="mb-4 flex items-center text-base" >
-						<span className="bg-[#089e69] rounded-sm shadow shadow-[#1a0b2f3f]  animate-pulse ease-in-out duration-200 px-1.5 py-0.5 text-sm md:text-sm mr-2">New</span>Latest episode from your Bundle
-					</CardTitle>
-					<CardDescription className="text-xs opacity-90 mb-4">See your latest roundup episodes here from {userCurationProfile?.selectedBundle?.name}</CardDescription>
-					<CardContent className="px-0">
-						<EpisodeCard
-							imageUrl={latestBundleEpisode?.image_url}
-							title={latestBundleEpisode?.title}
-							publishedAt={latestBundleEpisode?.published_at || latestBundleEpisode.created_at}
-							detailsHref={`/episodes/${latestBundleEpisode?.episode_id}`}
-							durationSeconds={latestBundleEpisode?.duration_seconds}
-							actions={
-								<PlayButton
-									onClick={() => {
-										console.log("Dashboard - Setting bundle episode:", latestBundleEpisode);
-										playEpisode(latestBundleEpisode);
-									}}
-									aria-label={`Play ${latestBundleEpisode?.title}`}
-								/>
-							}
-						/>
-					</CardContent>
-				</div>
-			)}
-
 			{isLoading ? (
 				<div className="p-0 w-full mx-auto">
 					<div className="flex items-center justify-center min-h-[400px]">
 						<AppSpinner variant="wave" size="lg" label="Loading Personalized Feed..." />
 					</div>
 				</div>
-			) : userCurationProfile ? (
-				<div className=" w-full  flex flex-col gap-0 justify-center items-baseline  mt-0 md:m-0 xl:flex-row md:gap-4 mb-12 pt-0 md:mb-0">
-					<div className="w-full lg:max-w-[360px] pt-0 mt-0 px-5  pb-12 md:mx-3 flex flex-col  md:bg-episode-card-wrapper lg:flex-col shadow-xl shadow-slate-900/30 md:p-8 sm:pt-0  md:pt-9 md:mt-0  md:mb-8  border-dark  md:bg-[#00000000] md:bg-episode-card-wrapper md:rounded-3xl overflow-hidden ">
-						<div className="w-full flex flex-col justify-between p-0 rounded-2xl ">
-							<CardTitle className="pt-0  md:px-0 pb-6 text-base max-w-[100%]">Your Bundled Feed</CardTitle>
+			) : null}
 
-							{userCurationProfile?.is_bundle_selection && userCurationProfile?.selectedBundle && (
-								<div className="bg-[#1a0b2967] border-b-0  border-1 border-[#0e0d0da9] mx-auto px-5 w-full  rounded-t-lg overflow-hidden p-4">
-									<Button className="inline-flex justify-end w-full px-2" variant="ghost" size="xs" onClick={() => setIsModalOpen(true)}>
-										<Edit />
-									</Button>
-									<div className="mb-4 flex flex-col">
-										<Typography as="h2" className="text-[13px]  w-full uppercase font-sans font-bold text-[#A7D1E4]/70 p-0 mb-4">
-											FEED @id:<div className="text-foreground">{userCurationProfile?.name}</div>
-										</Typography>
-										{/* <Typography className="text-xs text-foreground/50 mb-6"> Custom Description: {userCurationProfile.selectedBundle.description}</Typography> */}
 
-										<div className="px-2 md:px-8 py-1 border-[#d4b1e125] rounded border-1 w-fit md:w-auto">
-											<Typography className="text-[12px] font-bold uppercase">
-												<span className="text-[11px] text-[#94a2e7] flex gap-2 items-center font-sans font-bold">
-													<BoxesIcon color={"#b6a5e5"} size={16} />
-													{userCurationProfile.selectedBundle.name}
-												</span>
+
+			{/* BUNDLE FEED */}
+			{userCurationProfile && latestBundleEpisode ? (
+				<div className=" w-full flex flex-row gap-0 justify-center items-baseline md:bg-episode-card-wrapper  shadow-xl shadow-slate-900/30  mt-0 md:m-0 xl:flex-row md:gap-4 mb-12 pt-0 md:mb-0 border-dark  md:bg-[#17142acb] md:rounded-3xl overflow-hidden ">
+
+					<div className="w-full pt-0 mt-0 flex flex-col lg:flex-row    ">
+
+
+						{/* FEED BOX */}
+
+						<div className="w-full pt-0 mt-0   md:mx-3 flex flex-col  md:bg-lg:flex-col md:p-8 sm:pt-0  md:pt-9 md:mt-0  max-w-[380px]   md:bg-[#00000000] overflow-hidden ">
+
+
+
+
+							<div className="w-full flex flex-col justify-between p-0 rounded-2xl ">
+								<CardTitle className="pt-0  md:px-0 pb-6 text-base max-w-[100%]">Your Bundled Feed</CardTitle>
+
+								{userCurationProfile?.is_bundle_selection && userCurationProfile?.selectedBundle && (
+									<div className="bg-[#8539d167] border-b-0  border-1 border-[#0e0d0da9] mx-auto px-5 w-full  rounded-t-lg overflow-hidden p-4">
+										<Button className="inline-flex justify-end w-full px-2" variant="ghost" size="xs" onClick={() => setIsModalOpen(true)}>
+											<Edit />
+										</Button>
+										<div className="mb-4 flex flex-col">
+											<Typography as="h2" className="text-[13px]  w-full uppercase font-sans font-bold text-[#A7D1E4]/70 p-0 mb-4">
+												FEED @id:<div className="text-foreground">{userCurationProfile?.name}</div>
 											</Typography>
+											{/* <Typography className="text-xs text-foreground/50 mb-6"> Custom Description: {userCurationProfile.selectedBundle.description}</Typography> */}
+
+											<div className="px-2 md:px-8 py-1 border-[#d4b1e125] rounded border-1 w-fit md:w-auto">
+												<Typography className="text-[12px] font-bold uppercase">
+													<span className="text-[11px] text-[#94a2e7] flex gap-2 items-center font-sans font-bold">
+														<BoxesIcon color={"#b6a5e5"} size={16} />
+														{userCurationProfile.selectedBundle.name}
+													</span>
+												</Typography>
+											</div>
 										</div>
 									</div>
-								</div>
-							)}
-						</div>
+								)}
+							</div>
 
-						<div className="mt-0 w-full overflow-hidden shadow-md   ">
-							<div className="bg-[#120D1D]/30 border-t-0 overflow-hidden rounded-b-2xl border-1 border-[#0e0d0da9] px-4 p-4">
-								<Body className="pt-0  pb-2 text-foreground/90 uppercase font-bold font-sans text-[10px]">Weekly Bundled Feed Summary</Body>
-								<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full border rounded-md overflow-hidden pb-2 pt-0">
-									<div className="flex flex-row justify-between gap-1 items-center h-9 w-full text-primary-forefround bg-muted-foreground/10 py-3 px-2">
-										<span className="font-sans text-foreground/60 text-xs">Bundle Episode/s:</span>
-										<span className="uppercase left text-teal-300/60 text-xs font-sans font-bold ">{userCurationProfile?.selectedBundle?.episodes?.length || 0}</span>
-									</div>
+							<div className="mt-0 w-full overflow-hidden shadow-md   ">
+								<div className="bg-[#5831AD]/30 border-t-0 overflow-hidden rounded-b-2xl border-1 border-[#0e0d0da9] px-4 p-4">
+									<Body className="pt-0  pb-2 text-foreground/90 uppercase font-bold font-sans text-[10px]">Weekly Bundled Feed Summary</Body>
+									<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full border rounded-md overflow-hidden pb-2 pt-0">
+										<div className="flex flex-row justify-between gap-1 items-center h-9 w-full text-primary-forefround bg-muted-foreground/10 py-3 px-2">
+											<span className="font-sans text-foreground/60 text-xs">Bundle Episode/s:</span>
+											<span className="uppercase left text-teal-300/60 text-xs font-sans font-bold ">{userCurationProfile?.selectedBundle?.episodes?.length || 0}</span>
+										</div>
 
-									<div className="flex flex-row justify-between gap-2 items-center h-5 w-full py-3 px-2">
-										<span className="text-foreground/60 text-xs font-sans">Plan Tier:</span>
-										<span className="uppercase left text-teal-500/60 text-xs font-sans">
-											{(() => {
-												const plan = (subscription?.plan_type || "").toLowerCase();
-												const status = (subscription?.status || "").toLowerCase();
-												if (!plan) return "n/a";
-												const label = plan.replace(/_/g, " ");
-												const inactive = !(status === "active" || status === "trialing" || status === "paused");
-												return inactive ? `${label} (expired)` : label;
-											})()}
-										</span>
+										<div className="flex flex-row justify-between gap-2 items-center h-5 w-full py-3 px-2">
+											<span className="text-foreground/60 text-xs font-sans">Plan Tier:</span>
+											<span className="uppercase left text-teal-500/60 text-xs font-sans">
+												{(() => {
+													const plan = (subscription?.plan_type || "").toLowerCase();
+													const status = (subscription?.status || "").toLowerCase();
+													if (!plan) return "n/a";
+													const label = plan.replace(/_/g, " ");
+													const inactive = !(status === "active" || status === "trialing" || status === "paused");
+													return inactive ? `${label} (expired)` : label;
+												})()}
+											</span>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-					<div className="w-full pb-4 border-b-dark  mx-auto px-6 mb-0 bg-[#1410325b] rounded-none lg:flex-col shadow-xl shadow-slate-900/20  mt-0 pt-6 sm:pt-0  md:pt-9 md:mt-0  md:mb-8  md:px-12 border-dark  md:bg-[#00000000] md:generate-episode-card-wrapper md:rounded-3xl overflow-hidden  md:mix-blend-normal  ">
-						<CardTitle className="w-full  px-0  md:px-0 text-base mb-4">Your recently created episodes</CardTitle>
-						<CardDescription className="px-0 md:px-0 text-sm opacity-90">View and manage your recently generated episodes.</CardDescription>
-						{(subscription?.plan_type || "").toLowerCase() === "curate_control" && (
-							<Link href="/my-episodes" passHref className="px-0 mr-4">
-								<Button variant="default" size="sm" className="mt-4">
-									My Episodes
-								</Button>
-							</Link>
-						)}
-						<Link href="/generate-my-episodes" passHref>
-							<Button variant="default" size="sm" className="mt-4 mb-6">
-								Episode Creator
-							</Button>
-						</Link>
+						{/* Latest Bundle Episode Section */}
+						<div className="w-full border-b-0  rounded-0 px-4 py-8  my-8 mx-0 border-[#2c2a2a17] shadow-xl shadow-slate-900/20  mt-0 pt-6 sm:pt-0  md:pt-9 md:mt-0  md:mb-8  md:px-6 border-dark md:rounded-3xl overflow-hidden  ">
 
-						<CardContent className="px-1">
-							{userEpisodes.length === 0 ? (
-								<p className="text-muted-foreground text-xs">No generated episodes yet.</p>
-							) : (
-								<ul className="bg-[#12122129]  md:bg-[#1d1d3760]  px-3 md:px-2 pt-2 pb-2 rounded-xl flex flex-col w-full overflow-hidden gap-2 lg:px-2">
-									{userEpisodes
-										.filter(e => e.status === "COMPLETED" && !!e.signedAudioUrl)
-										.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
-										.slice(0, 3)
-										.map(episode => (
-											<li key={episode.episode_id} className="list-none">
-												<EpisodeCard
-													imageUrl={null}
-													title={`${episode.episode_title}`}
-													publishedAt={episode.updated_at}
-													detailsHref={`/my-episodes/${episode.episode_id}`}
-													youtubeUrl={episode.youtube_url}
-													actions={
-														episode.status === "COMPLETED" &&
-														episode.signedAudioUrl && (
-															<PlayButton
-																onClick={() => {
-																	// Create a normalized episode for the audio player
-																	const normalizedEpisode: UserEpisode = {
-																		episode_id: episode.episode_id,
-																		episode_title: episode.episode_title,
-																		gcs_audio_url: episode.signedAudioUrl,
-																		summary: episode.summary,
-																		created_at: episode.created_at,
-																		updated_at: episode.updated_at,
-																		user_id: episode.user_id,
-																		youtube_url: episode.youtube_url,
-																		transcript: episode.transcript,
-																		status: episode.status,
-																		duration_seconds: episode.duration_seconds,
-																	};
-																	console.log("Dashboard - Setting normalized UserEpisode:", normalizedEpisode);
-																	console.log("Dashboard - Original episode signedAudioUrl:", episode.signedAudioUrl);
-																	playEpisode(normalizedEpisode);
-																}}
-																aria-label={`Play ${episode.episode_title}`}
-																className="m-0"
-															/>
-														)
-													}
-												/>
-											</li>
-										))}
-								</ul>
-							)}
-						</CardContent>
+							<CardTitle className="mb-4 flex items-center text-base" >
+								<span className="bg-[#089e69] rounded-sm shadow shadow-[#1a0b2f3f]  animate-pulse ease-in-out duration-200 px-1.5 py-0.5 text-sm md:text-sm mr-2">New</span>Latest episode from your Bundle
+							</CardTitle>
+							<CardDescription className="text-xs opacity-90 mb-4">See your latest roundup episodes here from {userCurationProfile?.selectedBundle?.name}</CardDescription>
+							<CardContent className="px-0">
+								<EpisodeCard
+									imageUrl={latestBundleEpisode?.image_url}
+									title={latestBundleEpisode?.title}
+									publishedAt={latestBundleEpisode?.published_at || latestBundleEpisode.created_at}
+									detailsHref={`/episodes/${latestBundleEpisode?.episode_id}`}
+									durationSeconds={latestBundleEpisode?.duration_seconds}
+									actions={
+										<PlayButton
+											onClick={() => {
+												console.log("Dashboard - Setting bundle episode:", latestBundleEpisode);
+												playEpisode(latestBundleEpisode);
+											}}
+											aria-label={`Play ${latestBundleEpisode?.title}`}
+										/>
+									}
+								/>
+							</CardContent>
+
+						</div>
+
 					</div>
+
 				</div>
 			) : (
 				<div className="max-w-2xl mt-8">
@@ -304,6 +252,82 @@ export default function CurationProfileManagementPage() {
 					</Alert>
 				</div>
 			)}
+			<div className=" w-full flex flex-row gap-0 justify-start items-start md:bg-episode-card-wrapper  shadow-xl shadow-slate-900/30  mt-0 md:m-0 xl:flex-row md:gap-4 pt-8 md:mt-4 md:mb-0 border-dark  md:bg-[#395776ca] md:rounded-3xl overflow-hidden px-4 md:px-12 md:justify-center align-start ">
+				<div className="flex flex-col justify-items-start">
+
+
+					<CardTitle className="w-full  px-0  md:px-0 text-base mb-4">Your recently created episodes</CardTitle>
+					<CardDescription className="px-0 md:px-0 text-sm opacity-90">View and manage your recently generated episodes.</CardDescription>
+					{(subscription?.plan_type || "").toLowerCase() === "curate_control" && (
+						<Link href="/my-episodes" passHref className="px-0 mr-4">
+							<Button variant="default" size="sm" className="mt-4">
+								My Episodes
+							</Button>
+						</Link>
+					)}
+					<Link href="/generate-my-episodes" passHref>
+						<Button variant="default" size="sm" className="mt-4 ">
+							Episode Creator
+						</Button>
+					</Link>
+				</div>
+				<CardContent className="px-1 w-full md:p-8">
+
+					{userEpisodes.length === 0 ? (
+						<p className="text-muted-foreground text-xs">No generated episodes yet.</p>
+					) : (
+
+						<ul className="bg-[#12122129]  md:bg-[#06060c83]  p-3 md:px-2  rounded-xl flex flex-col w-full min-w-full overflow-hidden gap-2 lg:px-2">
+							{userEpisodes
+								.filter(e => e.status === "COMPLETED" && !!e.signedAudioUrl)
+								.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+								.slice(0, 3)
+								.map(episode => (
+									<li key={episode.episode_id} className="list-none w-full">
+										<EpisodeCard
+											imageUrl={null}
+											title={`${episode.episode_title}`}
+											publishedAt={episode.updated_at}
+											detailsHref={`/my-episodes/${episode.episode_id}`}
+											youtubeUrl={episode.youtube_url}
+											actions={
+												episode.status === "COMPLETED" &&
+												episode.signedAudioUrl && (
+													<PlayButton
+														onClick={() => {
+															// Create a normalized episode for the audio player
+															const normalizedEpisode: UserEpisode = {
+																episode_id: episode.episode_id,
+																episode_title: episode.episode_title,
+																gcs_audio_url: episode.signedAudioUrl,
+																summary: episode.summary,
+																created_at: episode.created_at,
+																updated_at: episode.updated_at,
+																user_id: episode.user_id,
+																youtube_url: episode.youtube_url,
+																transcript: episode.transcript,
+																status: episode.status,
+																duration_seconds: episode.duration_seconds,
+															};
+															console.log("Dashboard - Setting normalized UserEpisode:", normalizedEpisode);
+															console.log("Dashboard - Original episode signedAudioUrl:", episode.signedAudioUrl);
+															playEpisode(normalizedEpisode);
+														}}
+														aria-label={`Play ${episode.episode_title}`}
+														className="m-0"
+													/>
+												)
+											}
+										/>
+									</li>
+								))}
+						</ul>
+					)}
+				</CardContent>
+
+			</div>
+
+
 			{userCurationProfile && <EditUserFeedModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} collection={userCurationProfile} onSave={handleSaveUserCurationProfile} />}
 
 			{/* Create Personalized Feed / Bundle selection wizard */}
