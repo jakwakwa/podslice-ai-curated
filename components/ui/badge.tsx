@@ -4,17 +4,17 @@ import type * as React from "react"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-	"inline-flex items-center  content-center justify-center rounded border border-[#5664718E] px-3.5 py-0 font-normal transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 h-5 text-[0.6rem] text-center",
+	"inline-flex items-center text-indigp-400 content-center justify-center rounded border px-3.5 py-0 font-normal transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 h-5 text-[0.6rem] text-center",
 	{
 		variants: {
 			variant: {
 				default:
-					"border-teal-400 bg-teal-800 font-normal font-mono text-primary-foreground shadow hover:bg-primary/80",
+					"border-teal-300 bg-teal-800 font-normal font-mono text-primary-foreground shadow hover:bg-primary",
 				secondary:
-					"border-indigo-950 bg-slate-800/40 text-xs font-mono font-medium font-mono  text-secondary-foreground ",
+					"flex items-center  border-slate-600 bg-slate-800/90 text-xs font-mono font-medium font-mono  text-secondary-foreground border-1   h-5",
 				destructive:
-					"border-amber-400 border-amber-600 font-mono text-amber-300 shadow hover:bg-amber/80 font-normal",
-				outline: "bg-slate-800/20 border-slate-900/80 border-1 min-w-[110px] py-2 flex text-[#fff] font-mono text-left",
+					"border-amber-400 border-red-600  text-[#6156BB] text-amber-300 shadow hover:bg-amber/80 font-normal",
+				outline: "flex items-center bg-indigo-950/50 border-slate-600 border-1 min-w-[90px] px-0   h-5  text-left overflow-hidden",
 			},
 		},
 		defaultVariants: {

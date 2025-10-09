@@ -61,7 +61,7 @@ const CardAction = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<div
 		ref={ref}
-		className={cn("absolute top-4 sm:top-2 md:top-2 cursor-pointer flex justify-center rounded-full col-start-2 row-span-2 row-start-1 self-start justify-self-end p-2 w-10 lg:w-12 z-10 transition-all duration-200",
+		className={cn("absolute bottom-18 sm:top-2 md:top-2 cursor-pointer flex justify-center rounded-full col-start-2 row-span-2 row-start-1 self-start justify-self-end p-2 w-10 lg:w-12 z-10 transition-all duration-200",
 			className)}
 		{...props}
 	/>
