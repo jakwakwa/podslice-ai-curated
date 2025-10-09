@@ -47,6 +47,8 @@ model UserEpisode {
   gcs_audio_url     String?            @map("gcs_audio_url")
   duration_seconds  Int?               @map("duration_seconds")
   status            UserEpisodeStatus  @default(PENDING) @map("status")
+  news_sources      String?            @map("news_sources")
+  news_topic        String?            @map("news_topic")
   created_at        DateTime           @default(now()) @map("created_at")
   updated_at        DateTime           @updatedAt @map("updated_at")
   user              User               @relation(fields: [user_id], references: [user_id], onDelete: Cascade)

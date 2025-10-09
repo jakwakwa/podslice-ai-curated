@@ -43,6 +43,9 @@ export function EpisodeCreator() {
 	const router = useRouter();
 	const { resumeAfterSubmission } = useNotificationStore();
 
+	// Mode toggle
+	const [creatorMode, setCreatorMode] = useState<"youtube" | "news">("youtube");
+
 	const [youtubeUrl, setYouTubeUrl] = useState("");
 	const [debouncedYoutubeUrl] = useDebounce(youtubeUrl, 500);
 
@@ -52,6 +55,19 @@ export function EpisodeCreator() {
 	const [isFetchingMetadata, setIsFetchingMetadata] = useState(false);
 
 	const [podcastName, setPodcastName] = useState("");
+
+	// News input state
+	const NEWS_SOURCES = [
+		{ id: "guardian", label: "The Guardian" },
+		{ id: "aljazeera", label: "Al Jazeera" },
+		{ id: "worldbank", label: "World Bank" },
+		{ id: "stocks", label: "Top Fin News Sources" },
+		{ id: "un", label: "UN News" },
+	] as const;
+	const TOPICS = ["finance", "tesla", "technology", "business", "politics", "world"] as const;
+
+	const [selectedSources, setSelectedSources] = useState<string[]>([]);
+	const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
 
 	// Generation options
 	const [generationMode, setGenerationMode] = useState<"single" | "multi">("single");
@@ -76,13 +92,19 @@ export function EpisodeCreator() {
 	const isAudioBusy = isPlaying !== null || isLoadingSample !== null;
 
 	const isDurationValid = videoDuration !== null && (maxDuration ? videoDuration <= maxDuration * 60 : videoDuration <= YT_MAX_DURATION_SECONDS);
-	const canSubmit =
+
+	const canSubmitYouTube =
 		Boolean(videoTitle) &&
 		isYouTubeUrl(youtubeUrl) &&
 		!isBusy &&
 		isDurationValid &&
 		videoDuration !== null &&
 		(maxDuration ? videoDuration <= maxDuration * 60 : videoDuration <= YT_MAX_DURATION_SECONDS);
+
+	const canSubmitNews =
+		!isBusy && selectedSources.length > 0 && Boolean(selectedTopic) && (generationMode === "single" || (voiceA && voiceB));
+
+	const canSubmit = creatorMode === "youtube" ? canSubmitYouTube : canSubmitNews;
 
 	const fetchUsage = useCallback(async () => {
 		try {
@@ -163,6 +185,7 @@ export function EpisodeCreator() {
 	}, []);
 
 	useEffect(() => {
+		if (creatorMode !== "youtube") return;
 		async function fetchMetadata() {
 			console.log("[DEBUG] fetchMetadata called with URL:", debouncedYoutubeUrl);
 			setYouTubeUrlError(null);
@@ -201,18 +224,13 @@ export function EpisodeCreator() {
 			}
 		}
 		fetchMetadata();
-	}, [debouncedYoutubeUrl, maxDuration]);
+	}, [creatorMode, debouncedYoutubeUrl, maxDuration]);
 
 	async function handleCreate() {
 		console.log("[DEBUG] handleCreate called with canSubmit:", canSubmit);
 		console.log("[DEBUG] handleCreate validation state:", {
 			canSubmit,
-			videoTitle: !!videoTitle,
-			youtubeUrl,
-			isYouTubeUrl: isYouTubeUrl(youtubeUrl),
-			videoDuration,
-			YT_MAX_DURATION_SECONDS,
-			durationCheck: videoDuration !== null && videoDuration <= YT_MAX_DURATION_SECONDS,
+			creatorMode,
 		});
 
 		if (!canSubmit) {
@@ -220,34 +238,56 @@ export function EpisodeCreator() {
 			return;
 		}
 
-		// Additional explicit validation to prevent any bypass
-		if (!videoTitle) {
-			console.log("[DEBUG] handleCreate blocked: no video title");
-			setError("Video title is required. Please wait for the video details to load.");
-			return;
-		}
-		if (!isYouTubeUrl(youtubeUrl)) {
-			console.log("[DEBUG] handleCreate blocked: invalid YouTube URL");
-			setError("Please enter a valid YouTube URL.");
-			return;
-		}
-		if (!videoDuration) {
-			console.log("[DEBUG] handleCreate blocked: no video duration");
-			setError("Video duration could not be determined. Please try a different URL.");
-			return;
-		}
-		if (videoDuration > (maxDuration ? maxDuration * 60 : YT_MAX_DURATION_SECONDS)) {
-			console.log("[DEBUG] handleCreate blocked: duration too long");
-			const maxSeconds = maxDuration ? maxDuration * 60 : YT_MAX_DURATION_SECONDS;
-			const maxMinutes = Math.floor(maxSeconds / 60);
-			setError(`Video is too long. Please select a video that is ${maxMinutes} minutes or less. This video is ${Math.round(videoDuration / 60)} minutes long.`);
-			return;
-		}
-
-		console.log("[DEBUG] handleCreate proceeding with episode creation");
 		setIsCreating(true);
 		setError(null);
+
 		try {
+			if (creatorMode === "news") {
+				const payload = {
+					title: `News summary: ${selectedTopic}`,
+					sources: selectedSources,
+					topic: selectedTopic,
+					generationMode,
+					voiceA,
+					voiceB,
+				};
+				const res = await fetch("/api/user-episodes/create-news", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(payload),
+				});
+				if (!res.ok) throw new Error(await res.text());
+				toast.message("We're processing your episode and will email you when it's ready.", { duration: Infinity, action: { label: "Dismiss", onClick: () => { } } });
+				resumeAfterSubmission();
+				router.push("/dashboard");
+				return;
+			}
+
+			// YouTube mode validation
+			if (!videoTitle) {
+				console.log("[DEBUG] handleCreate blocked: no video title");
+				setError("Video title is required. Please wait for the video details to load.");
+				return;
+			}
+			if (!isYouTubeUrl(youtubeUrl)) {
+				console.log("[DEBUG] handleCreate blocked: invalid YouTube URL");
+				setError("Please enter a valid YouTube URL.");
+				return;
+			}
+			if (!videoDuration) {
+				console.log("[DEBUG] handleCreate blocked: no video duration");
+				setError("Video duration could not be determined. Please try a different URL.");
+				return;
+			}
+			if (videoDuration > (maxDuration ? maxDuration * 60 : YT_MAX_DURATION_SECONDS)) {
+				console.log("[DEBUG] handleCreate blocked: duration too long");
+				const maxSeconds = maxDuration ? maxDuration * 60 : YT_MAX_DURATION_SECONDS;
+				const maxMinutes = Math.floor(maxSeconds / 60);
+				setError(`Video is too long. Please select a video that is ${maxMinutes} minutes or less. This video is ${Math.round(videoDuration / 60)} minutes long.`);
+				return;
+			}
+
+			console.log("[DEBUG] handleCreate proceeding with YouTube episode creation");
 			const payload = {
 				title: videoTitle,
 				youtubeUrl: youtubeUrl,
@@ -277,7 +317,7 @@ export function EpisodeCreator() {
 		try {
 			const cached = audioUrlCache[voiceName];
 			let url = cached;
-			
+
 			// If not cached, set loading state and fetch
 			if (!url) {
 				setIsLoadingSample(voiceName);
@@ -290,7 +330,7 @@ export function EpisodeCreator() {
 				setAudioUrlCache(prev => ({ ...prev, [voiceName]: url }));
 				setIsLoadingSample(null);
 			}
-			
+
 			// Set playing state and play audio
 			setIsPlaying(voiceName);
 			const audio = new Audio(url);
@@ -321,236 +361,294 @@ export function EpisodeCreator() {
 					{isLoadingUsage ? (
 						<ComponentSpinner isLabel={false} />
 					) : (
-						<form
-							className="space-y-6 w-full"
-							onSubmit={e => {
-								console.log("[DEBUG] Form onSubmit triggered, canSubmit:", canSubmit);
-								e.preventDefault();
-								// Prevent submission if validation fails
-								if (!canSubmit) {
-									console.log("[DEBUG] Form submission blocked by canSubmit check");
-									return;
-								}
-								console.log("[DEBUG] Form submission proceeding to handleCreate");
-								void handleCreate();
-							}}>
-							<div className="grid grid-cols-1 md:grid-cols-2 my-8 gap-4 mx-2 md:mx-4">
-								<div className="space-y-2 md:col-span-2 lg:max-w-lg">
-									<Label htmlFor="youtubeUrl">YouTube URL<span className="pl-2 text-[0.65rem] font-mono  font-medium text-[#1debaeb8]	">
-										MAX {maxDuration}min duration
-									</span></Label>
+						<div className="flex flex-col">
+							<div className="flex   gap-2 mb-6">
+								<Button type="button" variant={creatorMode === "youtube" ? "default" : "outline"} onClick={() => setCreatorMode("youtube")} disabled={isBusy}>
+									Generate podcast summary
+								</Button>
+								<Button type="button" variant={creatorMode === "news" ? "default" : "outline"} onClick={() => setCreatorMode("news")} disabled={isBusy}>
+									Generate news summary
+								</Button>
+							</div>
 
-									<Input id="youtubeUrl" placeholder="https://www.youtube.com/..." value={youtubeUrl} onChange={e => setYouTubeUrl(e.target.value)} disabled={isBusy} required />
-									{isFetchingMetadata && <ComponentSpinner />}
-									{youtubeUrlError && (
-										<p className="bg-[#21020621] px-2.5 py-1.5 text-[#ff99a7f9] text-xs mt-2 rounded-md outline-2 outline-[#e86e7f80]">
-											{" "}
-											<span className="flex gap-3">
-												{" "}
-												<MessageSquareWarning width={32} /> {youtubeUrlError}
-											</span>
-										</p>
-									)}
-								</div>
+							<form
+								className="space-y-6 w-full"
+								onSubmit={e => {
+									console.log("[DEBUG] Form onSubmit triggered, canSubmit:", canSubmit);
+									e.preventDefault();
+									// Prevent submission if validation fails
+									if (!canSubmit) {
+										console.log("[DEBUG] Form submission blocked by canSubmit check");
+										return;
+									}
+									console.log("[DEBUG] Form submission proceeding to handleCreate");
+									void handleCreate();
+								}}>
 
-								{videoTitle && (
-									<div className="bg-black/30 space-y-1 md:col-span-2 py-3 px-2 rounded-xl outline-2 outline-teal-500 shadow-lg max-w-sm  ">
-										<p className=" font-bold text-[#e9dddfc7] flex text-xs items-center gap-2">
-											<YoutubeIcon width={18} height={18} color="#fecdd7b5" />
-											Youtube Video
-										</p>
-										<p className="text-[#eedde3d3] font-semibold text-xs">{videoTitle}</p>
-										{videoDuration !== null && (
-											<p className="text-xs text-[#c1f2ee78]">
-												Duration: {Math.floor(videoDuration / 60)}m {videoDuration % 60}s
-											</p>
+								{creatorMode === "youtube" && (
+									<div className="grid grid-cols-1 md:grid-cols-2 my-8 gap-4 mx-2 md:mx-4">
+										<div className="space-y-2 md:col-span-2 lg:max-w-lg">
+											<Label htmlFor="youtubeUrl">YouTube URL<span className="pl-2 text-[0.65rem] font-mono  font-medium text-[#1debaeb8]	">
+												MAX {maxDuration}min duration
+											</span></Label>
+
+											<Input id="youtubeUrl" placeholder="https://www.youtube.com/..." value={youtubeUrl} onChange={e => setYouTubeUrl(e.target.value)} disabled={isBusy} required />
+											{isFetchingMetadata && <ComponentSpinner />}
+											{youtubeUrlError && (
+												<p className="bg-[#21020621] px-2.5 py-1.5 text-[#ff99a7f9] text-xs mt-2 rounded-md outline-2 outline-[#e86e7f80]">
+													{" "}
+													<span className="flex gap-3">
+														{" "}
+														<MessageSquareWarning width={32} /> {youtubeUrlError}
+													</span>
+												</p>
+											)}
+										</div>
+
+										{videoTitle && (
+											<div className="bg-black/30 space-y-1 md:col-span-2 py-3 px-2 rounded-xl outline-2 outline-teal-500 shadow-lg max-w-sm  ">
+												<p className=" font-bold text-[#e9dddfc7] flex text-xs items-center gap-2">
+													<YoutubeIcon width={18} height={18} color="#fecdd7b5" />
+													Youtube Video
+												</p>
+												<p className="text-[#eedde3d3] font-semibold text-xs">{videoTitle}</p>
+												{videoDuration !== null && (
+													<p className="text-xs text-[#c1f2ee78]">
+														Duration: {Math.floor(videoDuration / 60)}m {videoDuration % 60}s
+													</p>
+												)}
+											</div>
 										)}
 									</div>
 								)}
-							</div>
 
-							<div className="hidden not-only:grid-cols-1 gap-4">
-								<div className="space-y-2">
-									<Label htmlFor="podcastName">Podcast Name (optional)</Label>
-									<Input id="podcastName" placeholder="Podcast show name" value={podcastName} onChange={e => setPodcastName(e.target.value)} disabled={isBusy} />
-								</div>
-							</div>
-
-							<div className="space-y-6 border-2 border-[rgba(81,143,205,0.48)] rounded-xl md:rounded-4xl shadow-md px-4 md:px-10 pt-8 pb-6 bg-[#110d1737]">
-								<div className="space-y-2">
-									<Label>Voice Settings</Label>
-									<div className="flex flex-row gap-3 mt-4">
-										<Button type="button" variant={generationMode === "single" ? "default" : "outline"} onClick={() => setGenerationMode("single")} disabled={isBusy} className="px-4">
-											Single speaker
-										</Button>
-										<Button type="button" variant={generationMode === "multi" ? "default" : "outline"} onClick={() => setGenerationMode("multi")} disabled={isBusy} className="px-4">
-											Multi speaker
-										</Button>
-									</div>
-									<button
-										type="button"
-										onClick={() => setShowTips(!showTips)}
-										className="flex mt-4 items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-3">
-										{showTips ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}💡 Helpful Tips
-									</button>
-
-									{showTips && (
-										<div className="space-y-3 p-4 bg-[#00000074]/40	 rounded-xl border-1 border-[#151723af] ">
-											<p className="text-xs font-semibold foreground/80">
-												Both options can handle 90% of any youtube URL you provide! The quality of your generated episode depends on the content you choose to upload. These tips can help you decide if
-												you're unsure:
-											</p>
-											<ul className="space-y-2 leading-relaxed text-foreground/80 text-xs mt-1">
-												<li className="flex items-start gap-2">
-													<span className="text-indigo-100">💡</span>
-													<span>
-														<strong className="text-indigo-300">Pro tip:</strong> If you're unsure, start with Single Speaker - it's our most reliable option for any content type
-													</span>
-												</li>
-												<li className="flex my-1 content-center gap-2">
-													<span className="text-orange-500">⏱️</span>
-													<span>
-														<strong className="text-teal-500 ">For videos over 2 hours:</strong> We recommend Single Speaker for faster processing and guaranteed success
-													</span>
-
-												</li>
-												<li className="flex items-start gap-2">
-													<span className="text-blue-500">⚡</span>
-													<span>
-														<strong className="text-teal-500">Single Speaker</strong> processes faster and is ideal for solo presentations, tutorials, or monologues
-													</span>
-												</li>
-												<li className="flex items-start gap-2">
-													<span className="text-green-200">🎙️</span>
-													<span>
-														<strong className="text-teal-500">Multi Speaker</strong> results will be generated into two speaker conversational podcast syled episode. For more engaging information
-														consumption. May not be suite for all types of content.
-													</span>
-												</li>
-
-												<li className="flex items-start gap-2">
-													<span className="text-purple-500">🎯</span>
-													<span>
-														<strong className="text-teal-500">Best results come from:</strong> Clear audio, minimal background noise, and well-structured content
-													</span>
-												</li>
-												<li className="flex items-start gap-2">
-													<span className="text-red-500">⚠️</span>
-													<span>
-														<strong className="text-amber-400">Avoid:</strong> Music-heavy content, very fast speech, or videos with poor audio quality
-													</span>
-												</li>
-											</ul>
+								{creatorMode === "news" && (
+									<div className="grid grid-cols-1 md:grid-cols-2 my-8 gap-4 mx-2 md:mx-4">
+										<div className="space-y-2 md:col-span-2 lg:max-w-lg">
+											<Label>Sources</Label>
+											<div className="flex flex-wrap gap-2">
+												{NEWS_SOURCES.map(s => {
+													const active = selectedSources.includes(s.id);
+													return (
+														<Button
+															key={s.id}
+															type="button"
+															variant={active ? "default" : "outline"}
+															onClick={() =>
+																setSelectedSources(prev =>
+																	active ? prev.filter(p => p !== s.id) : [...prev, s.id]
+																)
+															}
+															disabled={isBusy}
+															className="px-3 py-1">
+															{s.label}
+														</Button>
+													);
+												})}
+											</div>
 										</div>
-								)}
-							</div>
 
-							{generationMode === "single" && (
-								<div className="space-y-4">
-									<div>
-										<div className="py-2 pl-2 uppercase font-bold text-[#79c4ca] text-xs">Voice</div>
-										<Select value={voiceA} onValueChange={setVoiceA}>
-											<SelectTrigger className="w-full" disabled={isBusy}>
-												<SelectValue placeholder="Select Voice" />
-											</SelectTrigger>
-											<SelectContent>
-												{VOICE_OPTIONS.map(v => (
-													<SelectItem key={v.name} value={v.name}>
-														<div className="flex items-center justify-between w-full gap-3">
-															<span>{v.label}</span>
-														</div>
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-										<div className="mt-2">
-											<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceA)} disabled={isBusy || isAudioBusy}>
-												<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceA ? "Loading sample" : isPlaying === voiceA ? "Playing" : "Play sample"}
+										<div className="space-y-2 md:col-span-2 lg:max-w-lg">
+											<Label>Topic</Label>
+											<Select value={selectedTopic ?? ""} onValueChange={v => setSelectedTopic(v)}>
+												<SelectTrigger className="w-full" disabled={isBusy}>
+													<SelectValue placeholder="Select topic" />
+												</SelectTrigger>
+												<SelectContent>
+													{TOPICS.map(t => (
+														<SelectItem key={t} value={t}>
+															{t[0].toUpperCase() + t.slice(1)}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+										</div>
+									</div>
+								)}
+
+								<div className="hidden not-only:grid-cols-1 gap-4">
+									<div className="space-y-2">
+										<Label htmlFor="podcastName">Podcast Name (optional)</Label>
+										<Input id="podcastName" placeholder="Podcast show name" value={podcastName} onChange={e => setPodcastName(e.target.value)} disabled={isBusy} />
+									</div>
+								</div>
+
+								<div className="space-y-6 border-2 border-[rgba(81,143,205,0.48)] rounded-xl md:rounded-4xl shadow-md px-4 md:px-10 pt-8 pb-6 bg-[#110d1737]">
+									<div className="space-y-2">
+										<Label>Voice Settings</Label>
+										<div className="flex flex-row gap-3 mt-4">
+											<Button type="button" variant={generationMode === "single" ? "default" : "outline"} onClick={() => setGenerationMode("single")} disabled={isBusy} className="px-4">
+												Single speaker
+											</Button>
+											<Button type="button" variant={generationMode === "multi" ? "default" : "outline"} onClick={() => setGenerationMode("multi")} disabled={isBusy} className="px-4">
+												Multi speaker
 											</Button>
 										</div>
+										<button
+											type="button"
+											onClick={() => setShowTips(!showTips)}
+											className="flex mt-4 items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-3">
+											{showTips ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}💡 Helpful Tips
+										</button>
+
+										{showTips && (
+											<div className="space-y-3 p-4 bg-[#00000074]/40	 rounded-xl border-1 border-[#151723af] ">
+												<p className="text-xs font-semibold foreground/80">
+													Both options can handle 90% of any youtube URL you provide! The quality of your generated episode depends on the content you choose to upload. These tips can help you decide if
+													you're unsure:
+												</p>
+												<ul className="space-y-2 leading-relaxed text-foreground/80 text-xs mt-1">
+													<li className="flex items-start gap-2">
+														<span className="text-indigo-100">💡</span>
+														<span>
+															<strong className="text-indigo-300">Pro tip:</strong> If you're unsure, start with Single Speaker - it's our most reliable option for any content type
+														</span>
+													</li>
+													<li className="flex my-1 content-center gap-2">
+														<span className="text-orange-500">⏱️</span>
+														<span>
+															<strong className="text-teal-500 ">For videos over 2 hours:</strong> We recommend Single Speaker for faster processing and guaranteed success
+														</span>
+
+													</li>
+													<li className="flex items-start gap-2">
+														<span className="text-blue-500">⚡</span>
+														<span>
+															<strong className="text-teal-500">Single Speaker</strong> processes faster and is ideal for solo presentations, tutorials, or monologues
+														</span>
+													</li>
+													<li className="flex items-start gap-2">
+														<span className="text-green-200">🎙️</span>
+														<span>
+															<strong className="text-teal-500">Multi Speaker</strong> results will be generated into two speaker conversational podcast syled episode. For more engaging information
+															consumption. May not be suite for all types of content.
+														</span>
+													</li>
+
+													<li className="flex items-start gap-2">
+														<span className="text-purple-500">🎯</span>
+														<span>
+															<strong className="text-teal-500">Best results come from:</strong> Clear audio, minimal background noise, and well-structured content
+														</span>
+													</li>
+													<li className="flex items-start gap-2">
+														<span className="text-red-500">⚠️</span>
+														<span>
+															<strong className="text-amber-400">Avoid:</strong> Music-heavy content, very fast speech, or videos with poor audio quality
+														</span>
+													</li>
+												</ul>
+											</div>
+										)}
 									</div>
+
+									{generationMode === "single" && (
+										<div className="space-y-4">
+											<div>
+												<div className="py-2 pl-2 uppercase font-bold text-[#79c4ca] text-xs">Voice</div>
+												<Select value={voiceA} onValueChange={setVoiceA}>
+													<SelectTrigger className="w-full" disabled={isBusy}>
+														<SelectValue placeholder="Select Voice" />
+													</SelectTrigger>
+													<SelectContent>
+														{VOICE_OPTIONS.map(v => (
+															<SelectItem key={v.name} value={v.name}>
+																<div className="flex items-center justify-between w-full gap-3">
+																	<span>{v.label}</span>
+																</div>
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+												<div className="mt-2">
+													<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceA)} disabled={isBusy || isAudioBusy}>
+														<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceA ? "Loading sample" : isPlaying === voiceA ? "Playing" : "Play sample"}
+													</Button>
+												</div>
+											</div>
+										</div>
+									)}
+
+									{generationMode === "multi" && (
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+											<div>
+												<div className="py-2 pl-2 uppercase font-bold text-[#79c4ca] text-xs">Voice A</div>
+												<Select value={voiceA} onValueChange={setVoiceA}>
+													<SelectTrigger className="w/full" disabled={isBusy}>
+														<SelectValue placeholder="Select Voice A" />
+													</SelectTrigger>
+													<SelectContent>
+														{VOICE_OPTIONS.map(v => (
+															<SelectItem key={v.name} value={v.name}>
+																<div className="flex items-center justify-between w/full gap-3 ">
+																	<div className="flex flex-col">
+																		<span>{v.label}</span>
+																	</div>
+																	<button
+																		type="button"
+																		onMouseDown={e => e.preventDefault()}
+																		onClick={e => {
+																			e.stopPropagation();
+																			void playSample(v.name);
+																		}}
+																		aria-label={`Play ${v.name} sample`}
+																		className="inline-flex items-center gap-1 text-xs opacity-80 hover:opacity-100"></button>
+																</div>
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+												<div className="mt-2">
+													<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceA)} disabled={isBusy || isAudioBusy}>
+														<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceA ? "Loading sample" : isPlaying === voiceA ? "Playing" : "Play sample"}
+													</Button>
+												</div>
+											</div>
+											<div>
+												<div className="py-2 pl-2 uppercase font-bold text-[#af80f7] text-xs">Voice B</div>
+												<Select value={voiceB} onValueChange={setVoiceB}>
+													<SelectTrigger className="w/full" disabled={isBusy}>
+														<SelectValue placeholder="Select Voice B" />
+													</SelectTrigger>
+													<SelectContent>
+														{VOICE_OPTIONS.map(v => (
+															<SelectItem key={v.name} value={v.name}>
+																<div className="flex items-center justify-between w/full gap-3">
+																	<div className="flex flex-col">
+																		<span>{v.label}</span>
+																		{/* <span className="text-xs opacity-75">{v.sample}</span> */}
+																	</div>
+																	<button
+																		type="button"
+																		onMouseDown={e => e.preventDefault()}
+																		onClick={e => {
+																			e.stopPropagation();
+																			void playSample(v.name);
+																		}}
+																		aria-label={`Play ${v.name} sample`}
+																		className="inline-flex items-center gap-1 text-xs opacity-80 hover:opacity-100"></button>
+																</div>
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+												<div className="mt-2">
+													<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceB)} disabled={isBusy || isAudioBusy}>
+														<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceB ? "Loading sample" : isPlaying === voiceB ? "Playing" : "Play sample"}
+													</Button>
+												</div>
+											</div>
+										</div>
+									)}
 								</div>
-							)}
 
-							{generationMode === "multi" && (
-									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-										<div>
-											<div className="py-2 pl-2 uppercase font-bold text-[#79c4ca] text-xs">Voice A</div>
-											<Select value={voiceA} onValueChange={setVoiceA}>
-												<SelectTrigger className="w/full" disabled={isBusy}>
-													<SelectValue placeholder="Select Voice A" />
-												</SelectTrigger>
-												<SelectContent>
-													{VOICE_OPTIONS.map(v => (
-														<SelectItem key={v.name} value={v.name}>
-															<div className="flex items-center justify-between w/full gap-3 ">
-																<div className="flex flex-col">
-																	<span>{v.label}</span>
-																</div>
-																<button
-																	type="button"
-																	onMouseDown={e => e.preventDefault()}
-																	onClick={e => {
-																		e.stopPropagation();
-																		void playSample(v.name);
-																	}}
-																	aria-label={`Play ${v.name} sample`}
-																	className="inline-flex items-center gap-1 text-xs opacity-80 hover:opacity-100"></button>
-															</div>
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-											<div className="mt-2">
-												<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceA)} disabled={isBusy || isAudioBusy}>
-													<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceA ? "Loading sample" : isPlaying === voiceA ? "Playing" : "Play sample"}
-												</Button>
-											</div>
-										</div>
-										<div>
-											<div className="py-2 pl-2 uppercase font-bold text-[#af80f7] text-xs">Voice B</div>
-											<Select value={voiceB} onValueChange={setVoiceB}>
-												<SelectTrigger className="w/full" disabled={isBusy}>
-													<SelectValue placeholder="Select Voice B" />
-												</SelectTrigger>
-												<SelectContent>
-													{VOICE_OPTIONS.map(v => (
-														<SelectItem key={v.name} value={v.name}>
-															<div className="flex items-center justify-between w/full gap-3">
-																<div className="flex flex-col">
-																	<span>{v.label}</span>
-																	{/* <span className="text-xs opacity-75">{v.sample}</span> */}
-																</div>
-																<button
-																	type="button"
-																	onMouseDown={e => e.preventDefault()}
-																	onClick={e => {
-																		e.stopPropagation();
-																		void playSample(v.name);
-																	}}
-																	aria-label={`Play ${v.name} sample`}
-																	className="inline-flex items-center gap-1 text-xs opacity-80 hover:opacity-100"></button>
-															</div>
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-											<div className="mt-2">
-												<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceB)} disabled={isBusy || isAudioBusy}>
-													<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceB ? "Loading sample" : isPlaying === voiceB ? "Playing" : "Play sample"}
-												</Button>
-											</div>
-										</div>
-									</div>
-								)}
-							</div>
-
-							<Button type="submit" variant="secondary" disabled={!canSubmit} className="w-full p-4">
-								{isCreating ? "Creating..." : "Create & Generate"}
-							</Button>
-						</form>
+								<Button type="submit" variant="secondary" disabled={!canSubmit} className="w-full p-4">
+									{isCreating ? "Creating..." : "Create & Generate"}
+								</Button>
+							</form>
+							{error && <p className="text-red-500 mt-4">{error}</p>}
+						</div>
 					)}
-					{error && <p className="text-red-500 mt-4">{error}</p>}
 				</CardContent>
 			</div>
 

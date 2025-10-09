@@ -65,6 +65,8 @@ export function SharedBundleView({ bundle, bundleId }: SharedBundleViewProps) {
 				transcript: null,
 				status: "COMPLETED",
 				duration_seconds: episode.duration_seconds,
+				news_sources: null,
+				news_topic: null,
 			};
 
 			setEpisode(normalizedEpisode as unknown as UserEpisode);

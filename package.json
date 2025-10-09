@@ -38,6 +38,7 @@
 		"durations:update:user": "tsx scripts/update-existing-durations.ts user-episodes"
 	},
 	"dependencies": {
+		"@ai-sdk/google-vertex": "^3.0.36",
 		"@clerk/nextjs": "^6.31.4",
 		"@clerk/themes": "^2.4.13",
 		"@clerk/types": "^4.81.0",
@@ -69,6 +70,7 @@
 		"@tabler/icons-react": "^3.34.1",
 		"@tailwindcss/postcss": "^4.1.12",
 		"@vercel/analytics": "^1.5.0",
+		"ai": "^5.0.62",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"date-fns": "4.1.0",

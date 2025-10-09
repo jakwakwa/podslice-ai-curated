@@ -66,6 +66,8 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 						transcript: ep.transcript,
 						status: ep.status,
 						duration_seconds: ep.duration_seconds,
+						news_sources: ep.news_sources ?? null,
+						news_topic: ep.news_topic ?? null,
 					};
 					playEpisode(normalizedEpisode);
 				}
@@ -95,6 +97,8 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 			transcript: match.transcript,
 			status: match.status,
 			duration_seconds: match.duration_seconds,
+			news_sources: match.news_sources ?? null,
+			news_topic: match.news_topic ?? null,
 		};
 		// Ensure we always set fresh episode on deep link
 		playEpisode(normalizedEpisode);
@@ -158,6 +162,8 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 														transcript: episode.transcript,
 														status: episode.status,
 														duration_seconds: episode.duration_seconds,
+														news_sources: episode.news_sources ?? null,
+														news_topic: episode.news_topic ?? null,
 													};
 													playEpisode(normalizedEpisode);
 												}}

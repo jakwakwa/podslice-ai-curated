@@ -16,12 +16,12 @@
 				@apply backdrop-blur-sm text-foreground;
 				width: 100%;
 				max-width: 100%;
-				background: linear-gradient(135deg, #10181CEF 0%, #020102E7 100%) !important;
+				background: linear-gradient(135deg, #484747EF 0%, #464545E7 100%) !important;
 				margin: 0;
 				padding: 0;
 				text-align: left;
 				height: auto;
-				background: #090909;
+				background: #020202;
 			}
 
 			/* For WebKit-based browsers (Chrome, Safari, Edge) */
@@ -207,7 +207,7 @@
 		}
 
 		.dark {
-			--background: #151618;
+			--background: #0A0B0B;
 
 			--foreground: oklch(96.762% 0.01608 286.002 / 0.82);
 			--card: #121212;
@@ -228,7 +228,7 @@
 			--chart-3: oklch(0.769 0.188 70.08);
 			--chart-4: oklch(0.627 0.265 303.9);
 			--chart-5: oklch(0.645 0.246 16.439);
-			--sidebar: oklch(0.2 0.02 293.66 / 0.8);
+			--sidebar: oklch(0.16 0.03 294.74 / 0.8);
 			--sidebar-foreground: oklch(0.81 0.02 282.87);
 			--sidebar-primary: oklch(0.488 0.243 264.376);
 			--sidebar-primary-foreground: oklch(0.63 0.03 321.99);
@@ -267,7 +267,7 @@
 		/* ============================================= */
 		@layer utilities {
 			.bg-primary-card {
-				background-image: linear-gradient(to bottom, oklch(60.735% 0.06652 219.966 / 0.081), oklch(0.13 0.02 222.67 / 0.61)) !important;
+				background-image: linear-gradient(to bottom, oklch(0.15 0 17.35 / 0.91), oklch(0.13 0.02 222.67 / 0.61)) !important;
 				border-radius: 30px;
 				outline: 1px solid oklch(0.93 0 17.22 / 0.93) !important;
 				outline-offset: 1px;
@@ -278,9 +278,9 @@
 			}
 
 			.sheet-hero-bg {
-				background: linear-gradient(100deg, oklch(0.52 0.09 194.79 / 0.31) -60%, oklch(0.11 0.05 313.84 / 0.38) 120%), url('/assets/background/grain-bg.svg'), url('/assets/background/grid-bg.svg'), url('/assets/background/small-blur.svg') no-repeat;
+				background: linear-gradient(100deg, oklch(0.52 0.09 194.79 / 0.31) -60%, oklch(0.11 0.05 315.67 / 0.92) 120%), url('/assets/background/grain-bg.svg'), url('/assets/background/grid-bg.svg'), url('/assets/background/small-blur.svg') no-repeat;
 
-				background-color: oklch(0.3 0.04 224.58 / 0.15);
+				background-color: oklch(0.15 0 229.14 / 0.86);
 				background-position: 30% 30%, 30% 30%;
 				background-size: 110%, 100%;
 				background-position: 0% 10%, 0% 0%, 110% 20%, 11% 110%;
@@ -325,7 +325,7 @@
 				inset: 0;
 				z-index: -20 !important;
 				pointer-events: none;
-				background-color: #341AA798;
+				background-color: #011E24EE;
 
 				/* background-blend-mode: multiply, multiply, multiply, multiply; */
 				/* mix-blend-mode: multiply, multiply, multiply, multiply; */
@@ -340,10 +340,10 @@
 				inset: 0;
 				/* z-index: -10 !important; */
 				/* pointer-events: none; */
-				background-image: linear-gradient(220deg, oklab(0.76 -0.1 -0.09 / 0.5) -70%, oklch(0.89 0.04 255.61 / 0.15) 50%, oklch(0.12 0 285.88) 190%);
+				background-image: linear-gradient(220deg, oklch(0.25 0.07 286.81 / 0.98) -70%, oklch(0.14 0.01 246.44 / 0.95) 40%, oklch(0.2 0.05 294.01 / 0.92) 210%);
 				/* background-color: #070913EE; */
-				background-blend-mode: screen, screen, screen;
-				mix-blend-mode: screen, multiply, multiply;
+				background-blend-mode: multiply, multiply, multiply;
+				mix-blend-mode: multiply, multiply, multiply;
 				background-size: 110% 110%;
 				/* backdrop-filter: blur(10px); */
 				opacity: 1;
@@ -353,7 +353,7 @@
 
 
 			.cl-rootBox {
-				background-color: #11193803 !important;
+				background-color: #090B11BD !important;
 				width: 60%;
 				/* max-width: 100px; */
 				/* min-width: 200px; */
@@ -416,9 +416,9 @@
 			}
 
 			.cl-socialButtons button {
-				color: #f4f4f475 !important;
+				color: #A9C9E9B3 !important;
 				padding: 0.7rem 0.8rem;
-				background-color: #3d4c6383;
+				background-color: #040619C9;
 				border-radius: 10px;
 				width: 100%;
 				margin-top: 30px !important;
@@ -440,10 +440,10 @@
 			.episode-card-wrapper {
 				border: 0px solid #7ad7d200;
 				border-radius: 30px;
-				box-shadow: 0px 6px 5px 1px #160F262D, 0px 2px 4px 0px #1A162457, 0px 1px 150px 0px #26509774 inset, 0px 1px 1px 0px #D5FCF711 inset;
-				background-color: oklch(0.46 0.12 271.67 / 0.11);
-				background-image: linear-gradient(oklch(0.68 0.1 245.12 / 0.12) -10%, oklch(0.32 0.08 290.05 / 0.6) 100%);
-				backdrop-filter: blur(7px);
+				box-shadow: 0px 6px 5px 1px #0A0A0BC1, 0px 2px 4px 0px #060607C4, 0px 1px 90px 0px #1C1A285E inset, 0px 1px 1px 0px #3E5276C8 inset;
+				background-color: oklch(0.27 0.04 264.98 / 0.79);
+				background-image: linear-gradient(to bottom, #2B2C43E4 -50%, #15121FF4 150%);
+				/* backdrop-filter: blur(7px); */
 				outline-offset: -1px;
 				z-index: 5;
 				background-repeat: no-repeat;
@@ -451,10 +451,10 @@
 			}
 
 			.bg-generate-episode-card-wrapper {
-				background-image: linear-gradient(120deg, oklch(0.33 0.14 295.92 / 0.68) -50%, oklch(0.75 0.14 179.5 / 0.19) 190%);
-				background-color: oklch(0.6 0.12 230.55 / 0.08) !important;
+				background-image: linear-gradient(120deg, oklch(0.22 0.06 299.36 / 0.68) -50%, oklch(0.59 0.12 298.59 / 0.19) 190%);
+				background-color: oklch(0.19 0.02 264.03 / 0.08) !important;
 				mix-blend-mode: screen, multiply !important;
-				backdrop-filter: blur(10px);
+				/* backdrop-filter: blur(10px); */
 			}
 
 			.episode-card-wrapper {
@@ -478,10 +478,10 @@
 				margin: 0;
 				/* border-radius: 15px !important; */
 				;
-				border: 1px solid #60cdbb30;
-				background-image: linear-gradient(to bottom, #090A10A3 -50%, #1B19286A 150%);
-				box-shadow: -110px 6px 10px oklch(23.592% 0.01072 242.259 / 0.07) !important;
-				backdrop-filter: blur(28px) !important;
+				border: 2px solid #14768C1D;
+				background-image: linear-gradient(to top, #09090B -50%, #1113152D 150%);
+				box-shadow: inset 0px 20px 10px oklch(0.14 0 0 / 0.18) !important;
+				/* backdrop-filter: blur(28px) !important; */
 				transition: all 0.2s ease-in-out;
 			}
 		}
@@ -491,9 +491,9 @@
 		/* ============================================= */
 		@layer utilities {
 			.bg-sidebar {
-				background: #1C1C30F7;
+				background: #0D0C13F2;
 				border: none;
-				border-right: 1px solid hsla(258.86 77.78% 8.82% / 0.92) !important;
+				border-right: 1px solid hsla(264 6.67% 14.71% / 0.92) !important;
 				outline-offset: 1px !important;
 				/* backdrop-filter: blur(10px) !important; */
 				outline: 0px solid transparent !important;
@@ -564,24 +564,24 @@
 		@layer utilities {
 			.bg-card {
 				background-color: oklch(0.19 0.01 300.97 / 0.07);
-				background-image: linear-gradient(90deg, oklch(0.39 0.16 298.87) -30%,
-						oklch(0.49 0.17 271.9 / 0.45) 70%, oklab(0.68 -0.1 -0.08 / 0.63) 150%);
+				background-image: linear-gradient(90deg, oklch(0.25 0.04 285.63) -30%,
+						oklch(0.17 0.02 273.63 / 0.45) 70%, oklab(0.18 0 -0.01 / 0.63) 150%);
 				box-shadow:
-					inset 0.5px 1px 0px 0px #7BB4CC4A,
-					inset -1px -3px 1px 2px #4D4AAC48,
-					inset 0px -5px 28px 1px #0C0E1775,
-					inset 1px -30px 89px 5px oklab(0.36 0.02 -0.02 / 0.13),
-					0px 7px 5px 0px oklch(0.11 0 17.62 / 0.20),
-					0px 2px 3px 2px oklch(0.23 0.03 283.65 / 0.15);
+					inset 0.5px 1px 0px 0px #707CEE4A,
+					inset -1px -3px 1px 2px #18102968,
+					inset 0px -5px 28px 1px rgba(1 1 1 / 0.46),
+					inset 1px -30px 89px 5px oklab(0.12 0 0 / 0.76),
+					0px 7px 5px 0px oklch(0.11 0 17.62 / 0.90),
+					0px 2px 3px 2px oklch(0.23 0.03 283.65 / 0.85);
 
 				margin: 0px auto;
 				margin-bottom: 5px;
 				width: 99%;
 				mix-blend-mode: normal, multiply;
 				padding: 12px 20px;
-				/* border: 2px solid rgba(39 45 53 / 0.0); */
+				/* border: 2px solid rgba(2 81 63 / 0.28); */
 				outline-offset: -1px;
-				outline: 1px solid #1C1F2D71 !important;
+				outline: 1px solid #1D1B2771 !important;
 			}
 
 			.bg-card:hover {
@@ -778,7 +778,6 @@
 
 			.grain-background {
 				position: fixed;
-				background: url('/assets/background/grain-bg.svg'), url('/assets/background/grain-bg.svg'), url('/assets/background/grain-bg.svg') repeat;
 				z-index: -2 !important;
 				background-size: 330% 330%;
 				background-position: center;
@@ -819,7 +818,7 @@
 			}
 
 			.cl-lastAuthenticationStrategyBadge {
-				background-color: #107099F4 !important;
+				background-color: #172E38F4 !important;
 				border-radius: 10px !important;
 				/* padding: 0.7rem 0.8rem !important; */
 				/* width: 300px !important; */
@@ -877,7 +876,7 @@
 			}
 
 			.cl-userProfile-root {
-				background-color: #002A29 !important;
+				background-color: #131516 !important;
 				max-width: 90% !important;
 				min-width: 70% !important;
 				border: 0px solid #7ad7d200 !important;
@@ -892,22 +891,21 @@
 
 			.cl-cardBox {
 
-				background-color: #10101C31 !important;
+				/* background-color: #040405ED !important; */
 				max-width: 100% !important;
 				overflow: hidden;
 				width: 100% !important;
-				border: 0px solid #84EF32BB !important;
+				/* border: 0px solid #84EF32BB !important; */
 				border-radius: 0px !important;
-				box-shadow: 0px 6px 5px 1px #06060677, 0px 2px 4px 0px #1A162457, 0px 1px 150px 0px #69A3F00D inset, 0px 1px 1px 0px #D5FCF711 inset;
 				border-radius: 30px !important;
-				mix-blend-mode: multiply;
-				backdrop-filter: blur(0px);
-				background: oklch(0.35 0.19 276.14 / 0.96);
+				/* mix-blend-mode: multiply; */
+				/* backdrop-filter: blur(0px); */
+				/* background: oklch(0.08 0.04 311.99 / 0.96); */
 
 			}
 
 			.cl-navbar {
-				background: #353C3E8F !important;
+				background: #080909EC !important;
 			}
 
 			.cl-formFieldRow {
@@ -934,7 +932,7 @@
 
 			.cl-card,
 			.cl-rootBox {
-				background-color: #0DBEEA1F;
+				background-color: #0B11121F;
 
 				/* min-width: 100vw; */
 				border-radius: 0;
@@ -1023,7 +1021,7 @@
 			.cl-card,
 			.cl-rootBox {
 
-				min-height: 70vh;
+				min-height: 100vh;
 
 				margin: 0 auto;
 				max-width: 38vw;
@@ -1071,7 +1069,7 @@
 			.cl-socialButtons button {
 				color: #f4f4f475 !important;
 				padding: 0.7rem 0.8rem;
-				background-color: #3d4c6383;
+				background-color: #08090ADE;
 				border-radius: 10px;
 				width: 60%;
 				margin: 0 auto;

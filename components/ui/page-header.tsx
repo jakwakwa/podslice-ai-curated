@@ -29,7 +29,7 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(({ title, d
 	const _isPathAllowed = allowedPaths.includes(pathname);
 
 	return (
-		<div className="my-0 pt-3 md:pt-4 backdrop-blur-lg bg-[#1f153053] relative md:border-l-10 rounded-md p-6 flex flex-col border-l-0 border-0-[#867FE8DD] justify-between gap-8 w-full mb-0 md:mb-3 md:px-4 md:flex-row  shadow-slate-900/40 shadow-xl md:justify-between ">
+		<div className="my-0 pt-3 md:pt-4 backdrop-blur-lg bg-[#15151bd4] relative md:border-l-10 rounded-md p-6 flex flex-col border-l-0 border-0-[#867FE8DD] justify-between gap-8 w-full mb-0 md:mb-3 md:px-4 md:flex-row  shadow-black/70 shadow-lg md:justify-between ">
 			<div className="flex flex-col gap-4 justify-center  right-4 top-8 w-full">
 
 

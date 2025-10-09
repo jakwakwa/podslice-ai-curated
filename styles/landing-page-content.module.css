@@ -24,13 +24,13 @@
 	padding: 0;
 	/* text-align: left; */
 	overflow-y: hidden;
-	background: oklab(32.174% 0.05287 -0.03448 / 0.944) 120% !important;
+	background: oklab(0.17 0.01 0 / 0.94) 120% !important;
 	background-position: 100% 190%, 100% 190%, 100% 190%, 100% 180%, 100% 150% !important;
 	background-attachment: fixed;
 	background-repeat: repeat;
 	/* background-size: 400% 400%, 400% 400%, 400% 400%, 400% 400%, 400% 400% !important; */
 	/* mix-blend-mode: normal !important; */
-	background-image: linear-gradient(45deg, oklch(17.9% 0.00613 285.724 / 0.959) -40%, oklch(25.537% 0.05908 284.233 / 0.972)) !important;
+	background-image: linear-gradient(45deg, oklch(0.2 0.04 281.74 / 0.96) -40%, oklch(0.12 0 325.79 / 0.97)) !important;
 	/* background-blend-mode: screen !important; */
 	/* background-size: 110% 110%, 100% 100%, 150% 150% !important; */
 	/* z-index: -2 !important; */
@@ -84,21 +84,21 @@
 	padding: 5rem 1.5rem;
 
 	background-image: url('/assets/background/grain-bg.svg'), radial-gradient(120% 120% at 0% 0%,
-			oklch(82.46% 0.10691 222.949 / 0.52) -40%,
-			oklch(18.044% 0.03664 295.268 / 0.66) 40%,
-			oklab(18.021% 0.01995 -0.09993 / 0.749) 120%),
+			oklch(0.83 0.11 222.04 / 0.24) -40%,
+			oklch(0.17 0.04 293.01 / 0.76) 40%,
+			oklab(0.11 0.01 -0.01 / 0.75) 120%),
 		radial-gradient(120% 120% at 100% 100%,
-			oklch(67.436% 0.10963 319.423) 0%,
-			oklch(31.896% 0.10342 300.629 / 0.879) 40%,
-			oklab(24.265% -0.0297 -0.02585 / 0.46) 120%),
+			oklch(0.56 0.2 318.78) 0%,
+			oklch(0.21 0.11 293.78 / 0.88) 40%,
+			oklab(0.14 0 0 / 0.82) 120%),
 		radial-gradient(120% 120% at 100% 0%,
-			oklch(77.037% 0.14245 223.096 / 0.26) 0%,
-			oklch(24.255% 0.03781 219.024 / 0.663) 40%,
-			oklab(40.563% -0.02633 -0.11251 / 0.749) 120%),
+			oklch(0.42 0.12 251.18 / 0.57) 0%,
+			oklch(0.24 0.04 223.36 / 0.66) 40%,
+			oklab(0.14 -0.02 -0.03 / 0.75) 120%),
 		radial-gradient(120% 120% at 0% 100%,
 			oklch(66.8% 0.1126 199.37 / 0.932) -20%,
-			oklch(50.755% 0.08469 204.607 / 0.938) 40%,
-			oklab(59.263999999999996% -0.04909 -0.16604 / 0.56) 120%) !important;
+			oklch(0.25 0.03 203.54 / 0.94) 40%,
+			oklab(0.28 -0.01 -0.01 / 0.56) 120%) !important;
 	text-align: center;
 	/* overflow: hidden; */
 	/* position: absolute; */
@@ -110,7 +110,7 @@
 	position: absolute;
 	/* overflow-y: hidden; */
 	height: auto;
-	background: oklch(44.971% 0.0836 277.387 / 0.757) no-repeat;
+	background: oklch(0.18 0.01 277.64 / 0.76) no-repeat;
 	background-position: center;
 	background-attachment: fixed;
 	background-repeat: no-repeat;

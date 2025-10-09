@@ -645,7 +645,20 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 
 					<SheetHeader>
 						<SheetTitle className="line-clamp-2 text-[16.64px] font-bold leading-[1.5] tracking-[0.009375em] text-slate-300 text-center px-6 mt-4  text-shadow-lg text-shadow-black/10">
-							{episode ? ("title" in episode ? episode.title : episode.episode_title) : "Episode title"}
+							{episode ? ("title" in episode ? episode.title : (() => {
+								const title = episode.episode_title;
+								// For news episodes, append the formatted date
+								if (episode.youtube_url === "news" && episode.created_at) {
+									const date = new Date(episode.created_at);
+									const formattedDate = date.toLocaleDateString('en-US', {
+										day: 'numeric',
+										month: 'short',
+										year: 'numeric'
+									});
+									return `${title} - ${formattedDate}`;
+								}
+								return title;
+							})()) : "Episode title"}
 						</SheetTitle>
 						<SheetDescription className=" text-[16.69px] font-black leading-[1.72857] mt-1 tracking-[0.05142em] uppercase text-[#a484da] text-center text-shadow-md text-shadow-black/20">
 							{episode
@@ -655,11 +668,16 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 										return e.podcast?.name || "Podcast episode";
 									})()
 									: (() => {
-										// For user episodes, show YouTube channel name or fallback
+										// Check if this is a news episode
+										const userEp = episode as { youtube_url?: string; news_sources?: string | null; news_topic?: string | null };
+										if (userEp.youtube_url === "news" && userEp.news_sources) {
+											return `Source/s: ${userEp.news_sources.split(", ").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(", ")}`;
+										}
+										// For YouTube episodes, show channel name or fallback
 										if (isChannelLoading) {
 											return "Loading...";
 										}
-										return youtubeChannelName || "User Generated Episode";
+										return youtubeChannelName || "YouTube Video";
 									})()
 								: "Podcast source"}
 						</SheetDescription>
