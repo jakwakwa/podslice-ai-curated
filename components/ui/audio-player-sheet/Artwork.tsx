@@ -28,6 +28,17 @@ export const Artwork: FC<ArtworkProps> = ({ episode }) => {
     );
   }
 
+  // For news episodes, use the generic news placeholder
+  if ("youtube_url" in episode && (episode.news_sources || episode.news_topic)) {
+    return (
+      <div className="shadow-mdshadow-black aspect-square shadow-black/40 shadow-xl h-auto w-full shrink-0 rounded-4xl mx-auto max-w-[100px] border-4 border-[#9ecaf5f] overflow-hidden flex">
+        <div className="overflow-hidden h-auto w-full shrink-0 mx-auto max-w-[100px] aspect-square">
+          <Image src="/generic-news-placeholder.png" alt="News Episode" width={200} height={200} className="w-full h-full object-cover" />
+        </div>
+      </div>
+    );
+  }
+
   // For user episodes, use YouTube channel image if available
   if ("youtube_url" in episode) {
     if (youtubeChannelImage) {

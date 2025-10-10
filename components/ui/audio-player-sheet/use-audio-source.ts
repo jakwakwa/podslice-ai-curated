@@ -26,19 +26,35 @@ export function useAudioSource({ open, episode }: Args): Result {
 
 			const raw = "audio_url" in episode && episode.audio_url ? episode.audio_url : "gcs_audio_url" in episode && episode.gcs_audio_url ? episode.gcs_audio_url : "";
 
-			// No direct gs://
-			if (raw && !raw.startsWith("gs://") && !raw.startsWith("/api/episodes/") && !raw.startsWith("/api/user-episodes/")) {
-				setResolvedSrc(raw);
-				setIsResolving(false);
-				return;
-			}
-
 			// Construct play endpoint when needed
 			const id = episode.episode_id;
 			const isUserEpisode = isUserEpisodeType(episode);
 
 			try {
-				const playEndpoint = raw.startsWith("/api/") ? raw : id ? (isUserEpisode ? `/api/user-episodes/${id}/play` : `/api/episodes/${id}/play`) : "";
+				// For user episodes, always go through the play endpoint so we can sign GCS HTTP/gs:// URLs
+				if (isUserEpisode) {
+					const playEndpoint = raw.startsWith("/api/") ? raw : id ? `/api/user-episodes/${id}/play` : "";
+					if (!playEndpoint) {
+						setResolvedSrc("");
+						setIsResolving(false);
+						return;
+					}
+					const res = await fetch(playEndpoint, { cache: "no-store" });
+					if (!res.ok) throw new Error("Failed to resolve signed URL");
+					const data: { signedUrl?: string } = await res.json();
+					if (!abortedRef.current) setResolvedSrc(data.signedUrl || "");
+					return;
+				}
+
+				// For catalog episodes, if raw is a direct external URL (not gs:// or api route), use it as-is
+				if (raw && !raw.startsWith("gs://") && !raw.startsWith("/api/episodes/")) {
+					setResolvedSrc(raw);
+					setIsResolving(false);
+					return;
+				}
+
+				// Otherwise resolve via catalog play endpoint
+				const playEndpoint = raw.startsWith("/api/") ? raw : id ? `/api/episodes/${id}/play` : "";
 				if (!playEndpoint) {
 					setResolvedSrc("");
 					setIsResolving(false);

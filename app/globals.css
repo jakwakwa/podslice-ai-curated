@@ -440,9 +440,9 @@
 			.episode-card-wrapper {
 				border: 0px solid #7ad7d200;
 				border-radius: 30px;
-				box-shadow: 0px 16px 15px 1px #0C0C0FC1, 0px 2px 4px 0px #1C1C2FC4;
+				box-shadow: 0px 16px 15px 1px #0C0C0FC1, 0px 2px 4px 0px #15151EC4;
 				/* background-color: oklch(0.32 0.06 289.64 / 0.89); */
-				background-image: linear-gradient(to bottom, oklab(0.42 -0.01 -0.06 / 0.65) -50%, rgba(29 22 43 / 0.84) 150%);
+				background-image: linear-gradient(to bottom, oklab(0.3 0 -0.04 / 0.85) -50%, rgba(29 22 43 / 0.84) 150%);
 				backdrop-filter: blur(7px);
 				outline-offset: -1px;
 				z-index: 5;

@@ -26,7 +26,7 @@ interface SubscriptionInfo {
 export default function CurationProfileManagementPage() {
 	const [userCurationProfile, setUserCurationProfile] = useState<UserCurationProfileWithRelations | null>(null);
 	const [_episodes, setEpisodes] = useState<Episode[]>([]);
-	const [_bundleEpisodes, setBundleEpisodes] = useState<Episode[]>([]);
+	const [bundleEpisodes, setBundleEpisodes] = useState<Episode[]>([]);
 	const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -120,7 +120,7 @@ export default function CurationProfileManagementPage() {
 
 	// Get the latest bundle episode
 	const latestBundleEpisode =
-		_bundleEpisodes.length > 0 ? _bundleEpisodes.sort((a, b) => new Date(b.published_at || b.created_at).getTime() - new Date(a.published_at || a.created_at).getTime())[0] : null;
+		bundleEpisodes.length > 0 ? bundleEpisodes.sort((a, b) => new Date(b.published_at || b.created_at).getTime() - new Date(a.published_at || a.created_at).getTime())[0] : null;
 
 	return (
 		<div className=" h-full min-h-[84vh] overflow-hidden rounded-none bg-episode-card-wrapper px-0  mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:border-2 md:border-[#c8d3da32] md:rounded-4xl shadow-lg md:mt-4 md:p-8 md:w-full">
@@ -260,6 +260,7 @@ export default function CurationProfileManagementPage() {
 											publishedAt={episode.updated_at}
 											detailsHref={`/my-episodes/${episode.episode_id}`}
 											youtubeUrl={episode.youtube_url}
+											isNewsEpisode={!!(episode.news_sources || episode.news_topic)}
 											actions={
 												episode.status === "COMPLETED" &&
 												episode.signedAudioUrl && (

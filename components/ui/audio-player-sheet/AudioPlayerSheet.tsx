@@ -1,7 +1,7 @@
 "use client";
 
 import type { FC } from "react";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useYouTubeChannel } from "@/hooks/useYouTubeChannel";
 import type { Episode, UserEpisode } from "@/lib/types";
@@ -38,6 +38,38 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 
 	const { resolvedSrc, isResolving } = useAudioSource({ open, episode });
 	const controller = useAudioController({ audioRef });
+	const lastAutoPlaySrcRef = useRef<string | null>(null);
+
+	// Auto-play when source resolves and audio can play (once per source)
+	useEffect(() => {
+		if (!open) return;
+		const audio = audioRef.current;
+		if (!audio) return;
+		if (!resolvedSrc || isResolving) return;
+
+		if (lastAutoPlaySrcRef.current === resolvedSrc) return;
+		lastAutoPlaySrcRef.current = resolvedSrc;
+
+		const tryPlay = () => {
+			void audio.play().catch(() => {
+				// Ignore autoplay rejections; user can tap play
+			});
+		};
+
+		// If already ready, try to play immediately; otherwise wait for canplay
+		if (audio.readyState >= 2) {
+			tryPlay();
+			return;
+		}
+
+		const handleCanPlay = () => {
+			tryPlay();
+		};
+		audio.addEventListener("canplay", handleCanPlay, { once: true });
+		return () => {
+			audio.removeEventListener("canplay", handleCanPlay);
+		};
+	}, [open, resolvedSrc, isResolving]);
 
 	const handleOpenChange = (nextOpen: boolean) => {
 		onOpenChange(nextOpen);
@@ -81,6 +113,7 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 					ref={audioRef}
 					key={episodeKey ?? undefined}
 					src={resolvedSrc || undefined}
+					playsInline
 					preload="metadata"
 					onPlay={controller.onPlay}
 					onPlaying={controller.onPlaying}
