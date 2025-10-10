@@ -12,7 +12,7 @@ import { formatTime } from "@/components/ui/audio-player.disabled";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useYouTubeChannel } from "@/hooks/useYouTubeChannel";
 import { normalizeSummaryMarkdown } from "@/lib/markdown/episode-text";
-import type { Episode, UserEpisode } from "@/lib/types";
+import type { Episode, Podcast, UserEpisode } from "@/lib/types";
 
 type AudioPlayerSheetProps = {
 	open: boolean;
@@ -30,6 +30,7 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 	const [isLoading, setIsLoading] = useState(false);
 	const [volume, setVolume] = useState(1);
 	const [isMuted, setIsMuted] = useState(false);
+	const [podcasts, setPodcasts] = useState<Podcast[]>([]);
 	const [isTranscriptExpanded, setIsTranscriptExpanded] = useState(false);
 	const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const pendingPlayRef = useRef(false);
@@ -37,7 +38,14 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 	const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
 	// Get YouTube channel name and image for user episodes
-	const youtubeUrl = episode && "youtube_url" in episode ? episode.youtube_url : null;
+	const youtubeUrl =
+		episode && "youtube_url" in episode ? episode.youtube_url : null;
+
+	function findPodcastUrl(_podCastId: string, podcastArr: Podcast[]) {
+		const foundUrlbyId = podcastArr.find(podcast => podcast.podcast_id === _podCastId);
+		return foundUrlbyId?.name;
+	}
+
 	const { channelName: youtubeChannelName, channelImage: youtubeChannelImage, isLoading: isChannelLoading } = useYouTubeChannel(youtubeUrl);
 
 	const rawSummaryOrDescription = useMemo(() => {
@@ -110,7 +118,7 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 		if (!(open && episode)) return "";
 		const raw = "audio_url" in episode && episode.audio_url ? episode.audio_url : "gcs_audio_url" in episode && episode.gcs_audio_url ? episode.gcs_audio_url : "";
 		// Never return gs:// URIs directly - they must be converted to signed URLs
-		if (raw.startsWith('gs://')) {
+		if (raw.startsWith("gs://")) {
 			return ""; // Let the resolution logic handle this
 		}
 		return raw;
@@ -118,6 +126,25 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 
 	// Resolve signed URL for catalog episodes when needed
 	const [resolvedSrc, setResolvedSrc] = useState<string>("");
+
+	// Fetch current user profile on mount
+	useEffect(() => {
+		const fetchCuratedPodcasts = async () => {
+			try {
+				const response = await fetch("/api/curated-podcasts");
+				if (response.ok) {
+					const podcastsResponse = await response.json();
+					setPodcasts(podcastsResponse);
+					console.log(">>>> PODCAST URL:", response);
+				}
+			} catch (error) {
+				console.error("Failed to fetch user profile:", error);
+			}
+		};
+
+		fetchCuratedPodcasts();
+	}, []);
+
 	useEffect(() => {
 		let aborted = false;
 		async function resolve() {
@@ -127,7 +154,7 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 			}
 
 			// Handle cases where we need to construct play endpoint URLs
-			const isUserEpisode = "_isUserEpisode" in episode && (episode as { _isUserEpisode?: boolean })._isUserEpisode === true;
+			const isUserEpisode = "isUserEpisode" in episode && (episode as { isUserEpisode?: boolean }).isUserEpisode === true;
 
 			// If audioSrc is empty (because raw was gs://) construct play endpoint.
 			// For user episodes coming from My Episodes list, we often already have a signed HTTPS URL in gcs_audio_url; in that case use it directly.
@@ -142,21 +169,19 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 				const episodeId = (episode as { episode_id?: string }).episode_id;
 				if (episodeId) {
 					// Determine the correct play endpoint based on episode type
-					const playEndpoint = isUserEpisode
-						? `/api/user-episodes/${episodeId}/play`
-						: `/api/episodes/${episodeId}/play`;
+					const playEndpoint = isUserEpisode ? `/api/user-episodes/${episodeId}/play` : `/api/episodes/${episodeId}/play`;
 
 					try {
 						const res = await fetch(playEndpoint, { cache: "no-store" });
 						if (!res.ok) {
-							console.error('Failed to fetch signed URL from play endpoint:', playEndpoint);
+							console.error("Failed to fetch signed URL from play endpoint:", playEndpoint);
 							setResolvedSrc("");
 							return;
 						}
 						const data = (await res.json()) as { signedUrl?: string };
 						if (!aborted) setResolvedSrc(data.signedUrl || "");
 					} catch (err) {
-						console.error('Error fetching signed URL:', err);
+						console.error("Error fetching signed URL:", err);
 						if (!aborted) setResolvedSrc("");
 					}
 					return;
@@ -164,21 +189,21 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 			}
 
 			// Check if audio_url is already a play endpoint that needs resolution
-			const isPlayEndpoint = audioSrc.startsWith('/api/episodes/') || audioSrc.startsWith('/api/user-episodes/');
+			const isPlayEndpoint = audioSrc.startsWith("/api/episodes/") || audioSrc.startsWith("/api/user-episodes/");
 
 			if (isPlayEndpoint) {
 				// Fetch signed URL from play endpoint
 				try {
 					const res = await fetch(audioSrc, { cache: "no-store" });
 					if (!res.ok) {
-						console.error('Failed to fetch signed URL from play endpoint:', audioSrc);
+						console.error("Failed to fetch signed URL from play endpoint:", audioSrc);
 						setResolvedSrc("");
 						return;
 					}
 					const data = (await res.json()) as { signedUrl?: string };
 					if (!aborted) setResolvedSrc(data.signedUrl || "");
 				} catch (err) {
-					console.error('Error fetching signed URL:', err);
+					console.error("Error fetching signed URL:", err);
 					if (!aborted) setResolvedSrc("");
 				}
 			} else {
@@ -645,33 +670,43 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 
 					<SheetHeader>
 						<SheetTitle className="line-clamp-2 text-[18.64px] font-bold leading-[1.5] tracking-[0.009375em] text-slate-300 text-center px-6 mt-4  text-shadow-lg text-shadow-black/10 capitalize">
-							{episode ? ("title" in episode ? episode.title : (() => {
-								const title = episode.episode_title;
-								// For news episodes, append the formatted date
-								if (episode.youtube_url === "news" && episode.created_at) {
-									const date = new Date(episode.created_at);
-									const formattedDate = date.toLocaleDateString('en-US', {
-										day: 'numeric',
-										month: 'short',
-										year: 'numeric'
-									});
-									return `${title} - ${formattedDate}`;
-								}
-								return title;
-							})()) : "Episode title"}
+							{episode
+								? "title" in episode
+									? episode.title
+									: (() => {
+										const title = episode.episode_title;
+										// For news episodes, append the formatted date
+										if (episode.youtube_url === "news" && episode.created_at) {
+											const date = new Date(episode.created_at);
+											const formattedDate = date.toLocaleDateString("en-US", {
+												day: "numeric",
+												month: "short",
+												year: "numeric",
+											});
+											return `${title} - ${formattedDate}`;
+										}
+										return title;
+									})()
+								: "Episode title"}
 						</SheetTitle>
 						<SheetDescription className=" text-[13.69px] font-black leading-[1.72857] mt-1 tracking-[0.05142em] uppercase text-[#a484da] text-center text-shadow-md text-shadow-black/20 ">
 							{episode
 								? "title" in episode
 									? (() => {
 										const e = episode as unknown as { podcast?: { name?: string } };
-										return e.podcast?.name || "Podcast episode";
+										return e.podcast?.name || findPodcastUrl(episode?.podcast_id, podcasts) || "Podcast episode";
 									})()
 									: (() => {
 										// Check if this is a news episode
 										const userEp = episode as { youtube_url?: string; news_sources?: string | null; news_topic?: string | null };
 										if (userEp.youtube_url === "news" && userEp.news_sources) {
-											return `Sources: ${userEp.news_sources === "stocks" ? " Polymarket, Yahoo Finance, Traderview" : userEp.news_sources.split(", ").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(", ")}`;
+											return `Sources: ${userEp.news_sources === "stocks"
+												? " Polymarket, Yahoo Finance, Traderview"
+												: userEp.news_sources
+													.split(", ")
+													.map(s => s.charAt(0).toUpperCase() + s.slice(1))
+													.join(", ")
+												}`;
 										}
 										// For YouTube episodes, show channel name or fallback
 										if (isChannelLoading) {
@@ -730,7 +765,13 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 							onClick={togglePlayPause}
 							disabled={!resolvedSrc || isLoading}
 							className={`inline-flex h-[48px] w-[48px] items-center justify-center rounded-[14px] border border-[var(--audio-sheet-border)] text-sm font-semibold shadow-sm  shadow-black/30 transition-all hover:brightness-110 active:translate-y-[2px]  disabled:opacity-90 disabled:cursor-not-allowed border-none ${isPlaying ? "bg-[radial-gradient(circle_at_30%_18%,#4c75d6f8_0%,#320576f1_100%)]" : "bg-[radial-gradient(circle_at_30%_18%,#19f8cfc0_0%,#283152ef_100%)] "}`}>
-							{isLoading ? <Loader2 className="h-[18px] w-[18px] animate-spin" color="#1ef5bf80" /> : isPlaying ? <Pause className="h-[18px] w-[18px]" /> : <Play color={"#0EF8F4DF"} className="h-[18px] w-[18px]" />}
+							{isLoading ? (
+								<Loader2 className="h-[18px] w-[18px] animate-spin" color="#1ef5bf80" />
+							) : isPlaying ? (
+								<Pause className="h-[18px] w-[18px]" />
+							) : (
+								<Play color={"#0EF8F4DF"} className="h-[18px] w-[18px]" />
+							)}
 						</button>
 					</div>
 
@@ -777,7 +818,10 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 							onClick={handleVolumeClick}
 							onKeyDown={handleVolumeKeyDown}
 							className="group relative h-[5px] w-[160px] rounded-[11px] bg-[var(--audio-sheet-border)]/40 transition-colors hover:bg-[var(--audio-sheet-border)]/30">
-							<div className="absolute inset-y-[-1px] left-0 rounded-[11px] linear-gradient(90deg, rgb(142 70 235) 0%, rgba(10 107 187 / 0.81) 70%, #08C5B2 100%) transition-all" style={{ background: "linear-gradient(90deg, rgba(56 45 210 / 0.81) 30%, #8F67E5 120%)", width: `${volumePercent}%` }} />
+							<div
+								className="absolute inset-y-[-1px] left-0 rounded-[11px] linear-gradient(90deg, rgb(142 70 235) 0%, rgba(10 107 187 / 0.81) 70%, #08C5B2 100%) transition-all"
+								style={{ background: "linear-gradient(90deg, rgba(56 45 210 / 0.81) 30%, #8F67E5 120%)", width: `${volumePercent}%` }}
+							/>
 						</div>
 					</div>
 				</div>
