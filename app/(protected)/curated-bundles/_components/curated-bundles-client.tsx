@@ -118,6 +118,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 	const [isDialogOpen, setIsDialogOpen] = useState(false)
 	const [dialogMode, setDialogMode] = useState<"select" | "locked">("select")
 	const [isLoading, setIsLoading] = useState(false)
+	const [isFetchingBundles, setIsFetchingBundles] = useState(true)
 	const [userProfile, setUserProfile] = useState<UserCurationProfile | null>(null)
 
 	// Fetch current user profile on mount
@@ -146,6 +147,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 
 		const fetchBundlesWithAccess = async () => {
 			try {
+				setIsFetchingBundles(true)
 				const response = await fetch("/api/curated-bundles")
 				if (!response.ok) {
 					return
@@ -161,6 +163,10 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 				}
 			} catch (err) {
 				console.error("Failed to refresh curated bundles:", err)
+			} finally {
+				if (isMounted) {
+					setIsFetchingBundles(false)
+				}
 			}
 		}
 
@@ -297,6 +303,20 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 					<Button asChild variant="outline">
 						<Link href="/curated-bundles">Try Again</Link>
 					</Button>
+				</div>
+			</div>
+		)
+	}
+
+	if (isFetchingBundles) {
+		return (
+			<div className="mb-8">
+				<div className="h-8 w-64 bg-[#2f4383]/30 animate-pulse rounded mb-4 px-2 md:px-12 xl:px-[40px]" />
+				<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-2 xl:px-[40px] xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark lg:px-[40px] rounded-3xl border-1 border-[#a497cdfc] shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]">
+					<div className="bg-[#2f4383]/30 h-[500px] w-full animate-pulse rounded-lg" />
+					<div className="bg-[#2f4383]/30 h-[500px] w-full animate-pulse rounded-lg" />
+					<div className="bg-[#2f4383]/30 h-[500px] w-full animate-pulse rounded-lg" />
+					<div className="bg-[#2f4383]/30 h-[500px] w-full animate-pulse rounded-lg" />
 				</div>
 			</div>
 		)
