@@ -601,11 +601,11 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 
 	return (
 		<Sheet open={open} onOpenChange={onOpenChange}>
-			<SheetContent side="right" className="p-0 text-[var(--audio-sheet-foreground)] w-full sm:w-[430px] md:min-w-[500px] gap-0 border-l-1 border-l-[#9ecaf53d]">
+			<SheetContent side="right" className="p-0 text-[var(--audio-sheet-foreground)] w-full sm:w-[430px] md:min-w-[500px] gap-0 border-l-1 border-l-[#6e45cf66]">
 				{/* Sections */}
 
 				{/* Hero Section starts */}
-				<div className="items-center flex-col align-middle h-full max-h-[600px] justify-center content-center backdrop-blur-2xl bg-[#2780f513] p-6 pt-8 gap-4">
+				<div className="items-center flex-col align-middle h-full max-h-[600px] justify-center content-center backdrop-blur-sm bg-[#1f1a285c] p-6 pt-8 gap-4">
 					{/* Artwork + Meta */}
 
 					{episode &&
@@ -613,7 +613,7 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 							// For bundle episodes, use the episode's image_url
 							if ("image_url" in episode && episode.image_url) {
 								return (
-									<div className="aspect-[16/9] shadow-black/40 shadow-xl h-auto w-full shrink-0 rounded-4xl mx-auto max-w-[200px] border-4 border-[#9ecaf5f] overflow-hidden flex justify-center items-center">
+									<div className="aspect-[16/9] shadow-black/40 shadow-xl h-auto w-full shrink-0 rounded-xl mx-auto max-w-[200px] border-4 border-[#000] overflow-hidden flex justify-center items-center">
 										<div className="overflow-hidden h-auto w-full shrink-0 mx-auto aspect-[16/12]">
 											<Image src={episode.image_url} alt={episode.title} width={200} height={100} className="outline-2 outline-[#9ecaf53d]  shadow-black shadow-xl object-cover" />
 										</div>
@@ -644,7 +644,7 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 						})()}
 
 					<SheetHeader>
-						<SheetTitle className="line-clamp-2 text-[16.64px] font-bold leading-[1.5] tracking-[0.009375em] text-slate-300 text-center px-6 mt-4  text-shadow-lg text-shadow-black/10">
+						<SheetTitle className="line-clamp-2 text-[18.64px] font-bold leading-[1.5] tracking-[0.009375em] text-slate-300 text-center px-6 mt-4  text-shadow-lg text-shadow-black/10 capitalize">
 							{episode ? ("title" in episode ? episode.title : (() => {
 								const title = episode.episode_title;
 								// For news episodes, append the formatted date
@@ -660,7 +660,7 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 								return title;
 							})()) : "Episode title"}
 						</SheetTitle>
-						<SheetDescription className=" text-[16.69px] font-black leading-[1.72857] mt-1 tracking-[0.05142em] uppercase text-[#a484da] text-center text-shadow-md text-shadow-black/20">
+						<SheetDescription className=" text-[13.69px] font-black leading-[1.72857] mt-1 tracking-[0.05142em] uppercase text-[#a484da] text-center text-shadow-md text-shadow-black/20 ">
 							{episode
 								? "title" in episode
 									? (() => {
@@ -671,7 +671,7 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 										// Check if this is a news episode
 										const userEp = episode as { youtube_url?: string; news_sources?: string | null; news_topic?: string | null };
 										if (userEp.youtube_url === "news" && userEp.news_sources) {
-											return `Source/s: ${userEp.news_sources.split(", ").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(", ")}`;
+											return `Sources: ${userEp.news_sources === "stocks" ? " Polymarket, Yahoo Finance, Traderview" : userEp.news_sources.split(", ").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(", ")}`;
 										}
 										// For YouTube episodes, show channel name or fallback
 										if (isChannelLoading) {
@@ -679,7 +679,7 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 										}
 										return youtubeChannelName || "YouTube Video";
 									})()
-								: "Podcast source"}
+								: "Podcast Show"}
 						</SheetDescription>
 						<div className="flex items-center justify-center pt-3">
 							<button
@@ -694,7 +694,7 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 				</div>
 				{/* Hero Section ends */}
 
-				<div className="bg-[#413e3e15] backdrop-blur-md rounded-none">
+				<div className="bg-[#16172262] backdrop-blur-md rounded-none">
 					{/* Transcript */}
 					<AnimatePresence initial={false}>
 						{episode && isTranscriptExpanded && (normalizedSummary || ("transcript" in episode && episode.transcript)) ? (
@@ -706,9 +706,9 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 								transition={{ type: "spring", stiffness: 260, damping: 30 }}
 								className="flex flex-col gap-[10px]">
 								<div
-									className={`overflow-y-auto pl-8 pr-4 py-5 lg:p-[12px] text-[12px] lg:text-[14px] bg-[#101515d9] backdrop-blur-3xl text-[var(--audio-sheet-foreground)]/80 transition-all lg:px-10 lg:py-7 ${isTranscriptExpanded ? " max-h-[280px]" : "max-h-[120px]"}`}>
+									className={`overflow-y-auto pl-8 pr-4 py-5 lg:p-[12px] text-[12px] lg:text-[14px] bg-[#1f1f328b] backdrop-blur-3xl text-[var(--audio-sheet-foreground)]/80 transition-all lg:px-10 lg:py-7 ${isTranscriptExpanded ? " max-h-[280px]" : "max-h-[120px]"}`}>
 									{normalizedSummary ? (
-										<div className="prose prose-invert leading-6 gap-1 text-slate-400 text-sm">
+										<div className="prose prose-invert leading-6 gap-1 text-stone-400 text-sm">
 											<ReactMarkdown remarkPlugins={[remarkGfm]}>{normalizedSummary}</ReactMarkdown>
 										</div>
 									) : "transcript" in episode && episode.summary ? (
@@ -720,7 +720,7 @@ export const AudioPlayerSheet: FC<AudioPlayerSheetProps> = ({ open, onOpenChange
 					</AnimatePresence>
 				</div>
 
-				<div className=" backdrop-blur-xl  bg-[#070e0d8d] w-full h-full flex p-8 flex-col my-0 gap-4 border-t-2 border-t-[#171d1e51]">
+				<div className=" backdrop-blur-xl  bg-[radial-gradient(circle_at_30%_18%,#4a2594ad_10%,#1d1927ad_100%)] w-full h-full flex p-8 flex-col my-0 gap-4 border-t-2 border-t-[#1d1927ad]">
 					{/* Controls */}
 					<div className="flex items-center justify-center">
 						<button

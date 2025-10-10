@@ -448,7 +448,7 @@ export function EpisodeCreator() {
 											</div>
 										</div>
 
-										<div className="space-y-2 md:col-span-2 lg:max-w-lg">
+										<div className="mt-4 md:col-span-2 lg:max-w-lg">
 											<Label>Topic</Label>
 											<Select value={selectedTopic ?? ""} onValueChange={v => setSelectedTopic(v)}>
 												<SelectTrigger className="w-full" disabled={isBusy}>
@@ -473,7 +473,7 @@ export function EpisodeCreator() {
 									</div>
 								</div>
 
-								<div className="space-y-6 border-2 border-[rgba(81,143,205,0.48)] rounded-xl md:rounded-4xl shadow-md px-4 md:px-10 pt-8 pb-6 bg-[#110d1737]">
+								<div className="space-y-6 border-2 border-[rgba(86,114,114,0.48)] rounded-xl md:rounded-4xl shadow-md px-4 md:px-10 pt-8 pb-6 bg-[#110d1737]">
 									<div className="space-y-2">
 										<Label>Voice Settings</Label>
 										<div className="flex flex-row gap-3 mt-4">

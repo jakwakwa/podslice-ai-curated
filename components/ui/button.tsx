@@ -8,7 +8,7 @@ const buttonVariants = cva(
 	{
 		variants: {
 			variant: {
-				default: "bg-linear-to-br from-indigo-400 to-indigo-700 text-slate-300 hover:text-cyan-200 shadow text-shadow-black/20 text-shadow-sm  md:min-w-[100px] h-auto text-lg px-3 leading-0  shadow-[0_2px_4px_1px]  shadow-slate-950/70 ",
+				default: "bg-linear-to-br from-[#4737A1] to-[#292154] text-slate-300 hover:text-cyan-200 shadow text-shadow-black/20 text-shadow-sm  md:min-w-[100px] h-auto text-lg px-3 leading-0  shadow-[0_2px_4px_1px]  shadow-slate-950/70 text-slate-200 ",
 				destructive: "bg-[#2909129B] border-2 border-[#763751] text-[#C67E98] shadow-[0_2px_4px_1px] shadow-slate-900/40 rounded-full px-0 w-10",
 				outline: "border border-[#898AC847] bg-[#2F32322C] disabled:bg-[#6B6791C8]  p-0 text-[#C9C1C1D4] hover:text-[#B3ABABD4] shadow-sm text-[0.8rem] font-bold disabled:text-[#C9C1C1D4]  shadow-[0_2px_4px_1px]  shadow-slate-950/30 rounded-xl",
 				secondary: "btn-secondary disabled:bg-[#5E5C6FC8]  rounded-lg border-1 border-[#31c5be] text-foreground shadow-[0px_4px_rgba(26, 40, 46, 0.9)] w-full md:max-w-fit px-4  text-[1rem] shadow-lg shadow-black",

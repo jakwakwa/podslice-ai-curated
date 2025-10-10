@@ -75,9 +75,16 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
 	// Determine if this is a news episode and format the source display
 	const isNewsEpisode = episode.youtube_url === "news";
-	const sourceDisplay = isNewsEpisode && episode.news_sources
-		? `Source/s: ${episode.news_sources.split(", ").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(", ")}`
-		: null;
+	const sourceDisplay =
+		isNewsEpisode && episode.news_sources
+			? `Source/s: ${episode.news_sources === "stocks"
+				? "PolyMarket, Traderview, Yahoo! Finance"
+				: episode.news_sources
+					?.split(", ")
+					.map(s => s.charAt(0).toUpperCase() + s.slice(1))
+					.join(", ")
+			}`
+			: null;
 
 	// For YouTube videos, extract key takeaways; for news, use summary as-is
 	const takeaways = !isNewsEpisode ? extractKeyTakeaways(episode.summary) : [];
@@ -98,15 +105,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 					}
 					rightLink={isNewsEpisode ? undefined : { href: episode.youtube_url, label: "Youtube Url", external: true }}
 				/>
-				{sourceDisplay && (
-					<div className="mt-2 text-sm text-muted-foreground">
-						{sourceDisplay}
-					</div>
-				)}
+				{sourceDisplay && <div className="mt-2 text-lg font-bold text-[#ac91fc]">{sourceDisplay}</div>}
 				<div className="mt-4 my-8">
 					<div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-start">
 						<PlayAndShare kind="user" episode={episode} signedAudioUrl={episode.signedAudioUrl} />
 					</div>
+
 					<Separator className="my-8" />
 					{isNewsEpisode ? (
 						episode.summary && (
@@ -117,17 +121,17 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 										let cleanSummary = episode.summary.trim();
 
 										// Try multiple approaches to extract clean JSON
-										if (cleanSummary.startsWith('```json')) {
-											cleanSummary = cleanSummary.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-										} else if (cleanSummary.startsWith('```')) {
-											cleanSummary = cleanSummary.replace(/^```\s*/, '').replace(/\s*```$/, '');
-										} else if (cleanSummary.includes('```json')) {
+										if (cleanSummary.startsWith("```json")) {
+											cleanSummary = cleanSummary.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+										} else if (cleanSummary.startsWith("```")) {
+											cleanSummary = cleanSummary.replace(/^```\s*/, "").replace(/\s*```$/, "");
+										} else if (cleanSummary.includes("```json")) {
 											// Extract JSON from within markdown blocks
 											const jsonMatch = cleanSummary.match(/```json\s*(\{[\s\S]*?\})\s*```/);
 											if (jsonMatch) {
 												cleanSummary = jsonMatch[1];
 											}
-										} else if (cleanSummary.includes('```')) {
+										} else if (cleanSummary.includes("```")) {
 											// Fallback: try to extract JSON from any markdown block
 											const jsonMatch = cleanSummary.match(/```\s*(\{[\s\S]*?\})\s*```/);
 											if (jsonMatch) {
@@ -138,101 +142,94 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 										// Trim any remaining whitespace
 										cleanSummary = cleanSummary.trim();
 
-										console.log('Raw summary:', episode.summary);
-										console.log('Clean summary:', cleanSummary);
+										console.log("Raw summary:", episode.summary);
+										console.log("Clean summary:", cleanSummary);
 
 										const summaryData = JSON.parse(cleanSummary);
 										return (
-											<div className="space-y-6">
-												<div>
-													<h3 className="text-lg font-semibold mb-2">{summaryData.summary_title}</h3>
-													{summaryData.sources && summaryData.sources.length > 0 && (
-														<p className="text-sm text-muted-foreground mb-4">
-															Sources: {summaryData.sources.map((s: string) => s.charAt(0).toUpperCase() + s.slice(1)).join(", ")}
-														</p>
+											<div className="space-y-6 " >
+												{summaryData.top_headlines && (
+													<div className="text-[#87f4f2fe]">
+														<h4 className=" mb-2 text-large font-bold text-[#ac91fc]">Top Headlines</h4>
+														<p className=" text-[#ddd8ee] font-bold	 text-2xl">{summaryData.top_headlines}</p>
+													</div>
+												)}
+												<hr />
+												<div className="flex">
+
+
+
+													<div className="flex flex-col gap-4 min-w-[20%]">
+														{summaryData.topic && summaryData.topic.length > 0 && (
+															<div className="text-[#87f4f2fe] text-sm uppercase">
+																<h4 className="font-medium mb-2">Topic</h4>
+																<div className="flex flex-wrap gap-2">
+																	{summaryData.topic.map((t: string, i: number) => (
+																		<span key={i} className="px-2 py-1 bg-pink-800 text-pink-300 rounded-md text-lg capitalize">
+																			{t}
+																		</span>
+																	))}
+																</div>
+															</div>
+														)}
+
+
+
+														{summaryData.sentiment && (
+															<div className="text-[#87f4f2fe]">
+																<h4 className="font-medium mb-2 uppercase text-sm ">Sentiment Analysis</h4>
+																<div className="flex flex-wrap gap-2 ">
+																	{Array.isArray(summaryData.sentiment) ? (
+																		summaryData.sentiment.map((s: string, i: number) => (
+																			<span key={i} className="px-2 py-1 rounded-md text-sm">
+																				{s}
+																			</span>
+																		))
+																	) : (
+																		<span className="px-2 py-1 rounded-md text-lg  bg-violet-800 text-slate-200">{summaryData.sentiment}</span>
+																	)}
+																</div>
+															</div>
+														)}
+													</div>
+													{summaryData.tags && summaryData.tags.length > 0 && (
+														<div className="text-[#87f4f2fe] ">
+															<h4 className="font-medium mb-2 text-sm uppercase text-[#87f4f2fe]">Tags</h4>
+															<div className="flex flex-wrap gap-2">
+																{summaryData.tags.map((tag: string, i: number) => (
+																	<span key={i} className="px-2 py-1 bg-slate-950 text-purple-400/80 rounded-md text-sm">
+																		#{tag}
+																	</span>
+																))}
+															</div>
+														</div>
+													)}
+
+													{summaryData.target_audience && (
+														<div className="text-[#87f4f2fe]">
+															<h4 className="font-medium text-sm mb-3 uppercase">Target Audience</h4>
+															<p className=" text-[#D7C4F6D7] text-base">{summaryData.target_audience}</p>
+														</div>
 													)}
 												</div>
-
-												{summaryData.top_headlines && (
-													<div>
-														<h4 className="font-medium mb-2">Top Headlines</h4>
-														<p className="text-muted-foreground">{summaryData.top_headlines}</p>
-													</div>
-												)}
-
-												{summaryData.topic && summaryData.topic.length > 0 && (
-													<div>
-														<h4 className="font-medium mb-2">Topic</h4>
-														<div className="flex flex-wrap gap-2">
-															{summaryData.topic.map((t: string, i: number) => (
-																<span key={i} className="px-2 py-1 bg-secondary text-secondary-foreground rounded-md text-sm">
-																	{t}
-																</span>
-															))}
-														</div>
-													</div>
-												)}
-
-												{summaryData.sentiment && (
-													<div>
-														<h4 className="font-medium mb-2">Sentiment Analysis</h4>
-														<div className="flex flex-wrap gap-2">
-															{Array.isArray(summaryData.sentiment)
-																? summaryData.sentiment.map((s: string, i: number) => (
-																	<span key={i} className="px-2 py-1 bg-secondary text-secondary-foreground rounded-md text-sm">
-																		{s}
-																	</span>
-																))
-																: (
-																	<span className="px-2 py-1 bg-secondary text-secondary-foreground rounded-md text-sm">
-																		{summaryData.sentiment}
-																	</span>
-																)
-															}
-														</div>
-													</div>
-												)}
-
-												{summaryData.tags && summaryData.tags.length > 0 && (
-													<div>
-														<h4 className="font-medium mb-2">Tags</h4>
-														<div className="flex flex-wrap gap-2">
-															{summaryData.tags.map((tag: string, i: number) => (
-																<span key={i} className="px-2 py-1 bg-secondary text-secondary-foreground rounded-md text-sm">
-																	#{tag}
-																</span>
-															))}
-														</div>
-													</div>
-												)}
-
-												{summaryData.target_audience && (
-													<div>
-														<h4 className="font-medium mb-2">Target Audience</h4>
-														<p className="text-muted-foreground">{summaryData.target_audience}</p>
-													</div>
-												)}
+												<hr />
 
 												{summaryData.ai_summary && (
-													<div>
-														<h4 className="font-medium mb-2">Summary</h4>
-														<div className="whitespace-pre-wrap text-muted-foreground leading-relaxed">
-															{summaryData.ai_summary}
-														</div>
+													<div className="text-[#ac91fc]">
+														<h4 className="font-bold text-xl mt-8 mb-4">Ai Summary</h4>
+														<div className="whitespace-pre-wrap text-[#D7C4F6D7]/90 leading-[1.8] text-[17px]" >{summaryData.ai_summary}</div>
 													</div>
 												)}
 											</div>
 										);
 									} catch (error) {
 										// Fallback to raw text display if JSON parsing fails
-										console.error('Failed to parse news summary JSON:', error);
-										console.log('Raw summary that failed to parse:', episode.summary);
+										console.error("Failed to parse news summary JSON:", error);
+										console.log("Raw summary that failed to parse:", episode.summary);
 										return (
 											<div>
-												<h3 className="text-lg font-semibold mb-4">Summary</h3>
-												<div className="whitespace-pre-wrap text-muted-foreground">
-													{episode.summary}
-												</div>
+												<h3 className="text-lg font-semibold mb-4 text-[#ac91fc]">Summary</h3>
+												<div className="whitespace-pre-wrap text-[#F0BCFAD7]/90">{episode.summary}</div>
 											</div>
 										);
 									}

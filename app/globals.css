@@ -325,7 +325,7 @@
 				inset: 0;
 				z-index: -20 !important;
 				pointer-events: none;
-				background-color: #011E24EE;
+				background-color: #000;
 
 				/* background-blend-mode: multiply, multiply, multiply, multiply; */
 				/* mix-blend-mode: multiply, multiply, multiply, multiply; */
@@ -340,8 +340,8 @@
 				inset: 0;
 				/* z-index: -10 !important; */
 				/* pointer-events: none; */
-				background-image: linear-gradient(220deg, oklch(0.25 0.07 286.81 / 0.98) -70%, oklch(0.14 0.01 246.44 / 0.95) 40%, oklch(0.2 0.05 294.01 / 0.92) 210%);
-				/* background-color: #070913EE; */
+				background: linear-gradient(oklch(0.39 0.16 288.99 / 0.87) 0%, oklch(0.42 0.07 221.66 / 0.89) 120%);
+				/* background-color: #384161EE; */
 				background-blend-mode: multiply, multiply, multiply;
 				mix-blend-mode: multiply, multiply, multiply;
 				background-size: 110% 110%;
@@ -440,10 +440,10 @@
 			.episode-card-wrapper {
 				border: 0px solid #7ad7d200;
 				border-radius: 30px;
-				box-shadow: 0px 6px 5px 1px #0A0A0BC1, 0px 2px 4px 0px #060607C4, 0px 1px 90px 0px #1C1A285E inset, 0px 1px 1px 0px #3E5276C8 inset;
-				background-color: oklch(0.27 0.04 264.98 / 0.79);
-				background-image: linear-gradient(to bottom, #2B2C43E4 -50%, #15121FF4 150%);
-				/* backdrop-filter: blur(7px); */
+				box-shadow: 0px 16px 15px 1px #0C0C0FC1, 0px 2px 4px 0px #1C1C2FC4;
+				/* background-color: oklch(0.32 0.06 289.64 / 0.89); */
+				background-image: linear-gradient(to bottom, oklab(0.42 -0.01 -0.06 / 0.65) -50%, rgba(29 22 43 / 0.84) 150%);
+				backdrop-filter: blur(7px);
 				outline-offset: -1px;
 				z-index: 5;
 				background-repeat: no-repeat;
@@ -451,7 +451,7 @@
 			}
 
 			.bg-generate-episode-card-wrapper {
-				background-image: linear-gradient(120deg, oklch(0.22 0.06 299.36 / 0.68) -50%, oklch(0.59 0.12 298.59 / 0.19) 190%);
+				background-image: linear-gradient(120deg, oklch(0.3 0.03 273.63 / 0.68) -50%, oklch(0.59 0.12 298.59 / 0.19) 190%);
 				background-color: oklch(0.19 0.02 264.03 / 0.08) !important;
 				mix-blend-mode: screen, multiply !important;
 				/* backdrop-filter: blur(10px); */
@@ -491,9 +491,9 @@
 		/* ============================================= */
 		@layer utilities {
 			.bg-sidebar {
-				background: #0D0C13F2;
+				background: #16171F;
 				border: none;
-				border-right: 1px solid hsla(264 6.67% 14.71% / 0.92) !important;
+				border-right: 1px solid hsla(260 6.67% 8.82% / 0.92) !important;
 				outline-offset: 1px !important;
 				/* backdrop-filter: blur(10px) !important; */
 				outline: 0px solid transparent !important;
@@ -563,16 +563,14 @@
 		/* ============================================= */
 		@layer utilities {
 			.bg-card {
-				background-color: oklch(0.19 0.01 300.97 / 0.07);
-				background-image: linear-gradient(90deg, oklch(0.25 0.04 285.63) -30%,
-						oklch(0.17 0.02 273.63 / 0.45) 70%, oklab(0.18 0 -0.01 / 0.63) 150%);
+				/* background-color: oklch(0.19 0.02 290.52 / 0.07); */
+				background-image: linear-gradient(90deg, oklch(0.29 0.04 271.1 / 0.81) 70%,
+						oklch(0.39 0.08 228.72 / 0.64) 150%);
 				box-shadow:
-					inset 0.5px 1px 0px 0px #707CEE4A,
-					inset -1px -3px 1px 2px #18102968,
-					inset 0px -5px 28px 1px rgba(1 1 1 / 0.46),
-					inset 1px -30px 89px 5px oklab(0.12 0 0 / 0.76),
-					0px 7px 5px 0px oklch(0.11 0 17.62 / 0.90),
-					0px 2px 3px 2px oklch(0.23 0.03 283.65 / 0.85);
+					inset 0.5px 1px 0px 0px #484E6D4A,
+					inset -1px -2px 1px 2px #141425DE,
+					0px 7px 5px 0px oklch(0.11 0 17.62 / 0.50),
+					0px 2px 3px 2px oklch(0.23 0.03 283.65 / 0.45);
 
 				margin: 0px auto;
 				margin-bottom: 5px;
@@ -580,7 +578,7 @@
 				mix-blend-mode: normal, multiply;
 				padding: 12px 20px;
 				/* border: 2px solid rgba(2 81 63 / 0.28); */
-				outline-offset: -1px;
+				/* outline-offset: -1px; */
 				outline: 1px solid #1D1B2771 !important;
 			}
 
@@ -725,6 +723,10 @@
 
 			button.btn-playicon {
 				border: none !important;
+				position: absolute;
+				top: 20px !important;
+				right: 20px !important;
+				/* bottom: 0px; */
 				outline: 1px solid transparent !important;
 				box-shadow: none !important;
 				background: none !important;

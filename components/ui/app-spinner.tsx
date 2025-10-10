@@ -37,10 +37,10 @@ export function AppSpinner({ label, size = "sm", color = "primary", variant = "d
 				return (
 					<div className={cn("relative", baseClasses)}>
 						<div
-							className=" h-full border-2 border-transparent rounded-full animate-spin bg-gradient-conic from-transparent via-current to-transparent"
-							style={{ background: "conic-gradient(from 0deg, transparent, currentColor, transparent)" }}
+							className=" border-2 border-transparent rounded-full animate-spin"
+
 						/>
-						<div className="absolute inset-0.5 bg-background rounded-full h-24 w-24" />
+						<div className="absolute inset-0.5 bg-background rounded-full h-12 w-12" />
 					</div>
 				)
 
@@ -67,10 +67,10 @@ export function AppSpinner({ label, size = "sm", color = "primary", variant = "d
 						{[...Array(3)].map((_, i) => (
 							<div
 								key={i}
-								className="w-1 h-1   bg-current rounded-full animate-bounce"
+								className="w-1 h-2 rounded-full animate-bounce"
 								style={{
 									animationDelay: `${i * 0.16}s`,
-									animationDuration: "1.4s",
+									animationDuration: "0.5s",
 								}}
 							/>
 						))}
