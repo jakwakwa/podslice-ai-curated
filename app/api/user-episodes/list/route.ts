@@ -28,6 +28,8 @@ export async function GET(_request: Request) {
 				gcs_audio_url: true,
 				duration_seconds: true,
 				status: true,
+				news_sources: true,
+				news_topic: true,
 				created_at: true,
 				updated_at: true,
 				// Explicitly exclude: transcript, summary (too large)

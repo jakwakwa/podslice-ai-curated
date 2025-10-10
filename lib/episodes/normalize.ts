@@ -27,8 +27,55 @@ export interface NormalizedEpisode {
 	permalink: string | null;
 	/** YouTube URL for user episodes */
 	youtubeUrl?: string | null;
+	/** Optional display subtitle: podcast name, channel name, or sources label */
+	subtitle?: string | null;
 	/** Original episode data for advanced use cases */
 	original: Episode | UserEpisode;
+}
+
+/** Formats the news sources string into a human-friendly label */
+export function formatNewsSources(rawSources: string): string {
+	const cleaned = (rawSources || "").trim();
+	if (!cleaned) return "News episode";
+	if (cleaned === "stocks") return "PolyMarket, Traderview, Yahoo! Finance";
+	return cleaned
+		.split(", ")
+		.map(s => s.charAt(0).toUpperCase() + s.slice(1))
+		.join(", ");
+}
+
+export type EpisodeSubtitleContext = {
+	/** For bundle episodes when podcast relation name is not present */
+	podcastName?: string;
+	/** For user YouTube episodes, already-fetched channel name */
+	youtubeChannelName?: string | null;
+	/** Whether channel name is in-flight */
+	isChannelLoading?: boolean;
+};
+
+/**
+ * Returns a consistent subtitle string for an episode
+ */
+export function getEpisodeSubtitle(episode: Episode | UserEpisode, ctx: EpisodeSubtitleContext = {}): string {
+	// Bundle episode: prefer relation name, then provided podcastName, otherwise generic label
+	if (isBundleEpisode(episode)) {
+		const e = episode as unknown as { podcast?: { name?: string } };
+		return e.podcast?.name || ctx.podcastName || "Podcast episode";
+	}
+
+	// User episode
+	const userEp = episode as UserEpisode;
+	const isNews = (userEp.youtube_url || "").toLowerCase() === "news";
+	if (isNews) {
+		if (userEp.news_sources) {
+			return `Sources: ${formatNewsSources(userEp.news_sources)}`;
+		}
+		return "News episode";
+	}
+
+	// YouTube episode
+	if (ctx.isChannelLoading) return "Loading...";
+	return ctx.youtubeChannelName || "YouTube Video";
 }
 
 /**
@@ -52,6 +99,7 @@ export function normalizeEpisode(episode: Episode | UserEpisode): NormalizedEpis
 	if (isUserEpisode(episode)) {
 		// News episodes have youtube_url set to 'news' and should not trigger YouTube lookups
 		const isNews = (episode.youtube_url || "").toLowerCase() === "news";
+		const sources = isNews && episode.news_sources ? `Sources: ${formatNewsSources(episode.news_sources)}` : null;
 		return {
 			id: episode.episode_id,
 			title: episode.episode_title,
@@ -62,6 +110,7 @@ export function normalizeEpisode(episode: Episode | UserEpisode): NormalizedEpis
 			publishedAt: episode.created_at,
 			permalink: `/my-episodes/${episode.episode_id}`,
 			youtubeUrl: isNews ? null : (episode.youtube_url ?? null),
+			subtitle: sources,
 			original: episode,
 		};
 	}

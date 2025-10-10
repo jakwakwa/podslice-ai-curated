@@ -278,8 +278,8 @@ export default function CurationProfileManagementPage() {
 																transcript: episode.transcript,
 																status: episode.status,
 																duration_seconds: episode.duration_seconds,
-																news_sources: null,
-																news_topic: null,
+																news_sources: episode.news_sources ?? null,
+																news_topic: episode.news_topic ?? null,
 															};
 
 															playEpisode(normalizedEpisode);
