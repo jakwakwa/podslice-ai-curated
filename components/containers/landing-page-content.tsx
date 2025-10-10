@@ -206,7 +206,7 @@ export default function LandingPageContent() {
 													{tier.price}
 												</span>
 											</p>
-											{tier.price !== 0 && <span className="text-sm text-foreground font-semibold text-indigo-300">/ month</span>}
+											{tier.price !== 0 && <span className="text-sm font-semibold text-indigo-300">/ month</span>}
 										</div>
 										<p className="text-md text-foreground my-2 font-semibold leading-normal">{tier.description}</p>
 									</div>

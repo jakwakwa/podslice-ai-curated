@@ -236,7 +236,7 @@ function UserFeedSelectorWizard() {
 							) : (
 								<>
 									<div className="mb-4">
-										<Label htmlFor="bundle-select" className="block hidden text-sm font-medium mb-2">
+										<Label htmlFor="bundle-select" className="block text-sm font-medium mb-2">
 											Choose from a list of available bundles
 										</Label>
 										<Select
