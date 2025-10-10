@@ -6,7 +6,7 @@ import { VOICE_NAMES } from "@/lib/constants/voices";
 import { inngest } from "@/lib/inngest/client";
 import { prisma } from "@/lib/prisma";
 
-const ALLOWED_SOURCES = ["guardian", "reuters", "worldbank", "un", "stocks"] as const;
+const ALLOWED_SOURCES = ["guardian", "aljazeera", "worldbank", "un", "stocks"] as const;
 const ALLOWED_TOPICS = ["technology", "business", "politics", "world", "tesla", "finance"] as const;
 
 const CreateNewsSchema = z.object({
