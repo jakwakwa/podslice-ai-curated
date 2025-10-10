@@ -1,10 +1,10 @@
 "use client";
+import { ThemeProvider as NextThemesProvider, type ThemeProviderProps } from "next-themes";
 // @ts-ignore
 import type React from "react";
 import { useEffect } from "react";
-import { ThemeProvider } from "@/components/theme-provider";
 
-export function ClientProviders({ children }: { children: React.ReactNode }) {
+export function ClientProviders({ children, ...props }: { children: React.ReactNode }) {
 	useEffect(() => {
 		if (process.env.NODE_ENV !== "production") return; // only register SW in production builds
 
@@ -22,10 +22,10 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
 		}
 
 		// Capture the beforeinstallprompt event to trigger install from our UI
-		const beforeInstallHandler = (e: any) => {
+		const beforeInstallHandler = (e: Event & { prompt?: () => Promise<void> }) => {
 			e.preventDefault();
 			// Save the event for later use
-			(window as any).deferredPwaPrompt = e;
+			(window as Window & { deferredPwaPrompt?: typeof e }).deferredPwaPrompt = e;
 			// Optionally, dispatch a custom event so components can react
 			window.dispatchEvent(new CustomEvent("pwa-beforeinstallprompt"));
 		};
@@ -37,5 +37,9 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
 		};
 	}, []);
 
-	return <ThemeProvider attribute="class">{children}</ThemeProvider>;
+	return <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange {...props}>{children}</ThemeProvider>;
+}
+
+function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+	return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
 }

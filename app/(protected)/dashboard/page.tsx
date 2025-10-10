@@ -123,7 +123,7 @@ export default function CurationProfileManagementPage() {
 		bundleEpisodes.length > 0 ? bundleEpisodes.sort((a, b) => new Date(b.published_at || b.created_at).getTime() - new Date(a.published_at || a.created_at).getTime())[0] : null;
 
 	return (
-		<div className=" h-full min-h-[84vh] overflow-hidden rounded-none bg-episode-card-wrapper px-0  mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:border-2 md:border-[#c8d3da32] md:rounded-4xl shadow-lg md:mt-4 md:p-8 md:w-full">
+		<div className=" h-full min-h-[84vh] overflow-hidden rounded-none bg-episode-card-wrapper 	px-0  mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:border-2 md:border-[#c8d3da32] md:rounded-4xl shadow-lg md:mt-4 md:p-8 md:w-full">
 			<PageHeader
 				title="Your dashboard"
 				description="Choose from our pre-curated podcast bundles. Each bundle is a fixed selection of 2-5 carefully selected shows and cannot be modified once selected."
@@ -173,21 +173,21 @@ export default function CurationProfileManagementPage() {
 					</div>
 				</div>
 			) : userCurationProfile && latestBundleEpisode ? (
-				<div className=" w-full flex flex-col gap-0 justify-center items-baseline shadow-md shadow-stone-950  mt-0 md:mt-4 md:m-0 xl:flex-row md:gap-4 pt-0 md:mb-0 border-[#12121760]  border-1 bg-[#141d2682] md:rounded-3xl overflow-hidden ">
+				<div className="bg-bigcard w-full flex flex-col gap-0 justify-center items-baseline shadow-md shadow-stone-950  mt-0 md:mt-4 md:m-0 xl:flex-row md:gap-4 pt-0 md:mb-0 border-[#12121760]  border-1 md:rounded-3xl overflow-hidden ">
 					<div className="w-full pt-0 mt-0 flex flex-col lg:flex-row">
 						{/* FEED BOX */}
-						<div className="w-full pt-0 pr-4 mt-0 md:mr-3 flex flex-col  md:bg-lg:flex-col md:p-8 sm:pt-0 md:pt-9 md:mt-0  md:max-w-[280px]   md:bg-[#131621] overflow-hidden ">
+						<div className="w-full pt-0 pr-4 mt-0 md:mr-3 flex flex-col  md:bg-lg:flex-col md:p-8 sm:pt-0 md:pt-9 md:mt-0  md:max-w-[280px]   md:bg-primary episode-card-wrapper-inner overflow-hidden ">
 							<div className="w-full flex flex-col justify-between p-0 rounded-2xl ">
-								<CardTitle className="pt-8 md:pt-0 md:px-0 pb-3 text-sm max-w-[100%]">Your Active Bundle Feed</CardTitle>
+								<CardTitle className="pt-8 text-primary-foreground md:pt-0 md:px-0 pb-3 text-sm max-w-[100%]">Your Active Bundle Feed</CardTitle>
 
 								{userCurationProfile?.is_bundle_selection && userCurationProfile?.selectedBundle && (
-									<div className="bg-[#262b3f67] border-b-0  border-0 border-[#0e0d0da9] mx-auto px-5 w-full h-fit  rounded-t-lg overflow-hidden">
+									<div className="bg-secondary border border-border mx-auto px-5 w-full h-fit  rounded-t-lg overflow-hidden">
 										<Button className="inline-flex text-xs justify-end w-full px-0" variant="ghost" size="xs" onClick={() => setIsModalOpen(true)}>
 											<Edit />
 											Edit Bundle
 										</Button>
 										<div className="mb-4 flex flex-col">
-											<Typography as="h2" className="text-[10px] w-full uppercase font-sans font-bold text-[#46FAFD]/70 p-0 mb-2">
+											<Typography as="h2" className="text-[10px] w-full uppercase font-sans font-bold text-primary p-0 mb-2">
 												Active bundle:
 											</Typography>
 
@@ -267,7 +267,7 @@ export default function CurationProfileManagementPage() {
 				</div>
 			) : null}
 
-			<div className="bg-[#0a0d10a0] w-full flex flex-col gap-0 justify-start items-start   shadow-xl shadow-black/30  mt-0 md:m-0 xl:flex-row md:gap-4 py-8 p-0 md:mt-4 md:mb-0 border-1 border-[#1a1d1dc0]  md:rounded-3xl overflow-hidden  md:p-0 md:justify-center align-start ">
+			<div className="episode-card-wrapper-inner w-full flex flex-col gap-0 justify-start items-start   shadow-xl shadow-black/30  mt-0 md:m-0 xl:flex-row md:gap-4 py-8 p-0 md:mt-4 md:mb-0 border-1 border-[#1a1d1dc0]  md:rounded-3xl overflow-hidden  md:p-0 md:justify-center align-start ">
 				<div className="pt-2 pl-8 md:mt-8 w-full max-w-[300px] flex flex-col items-start justify-items-start">
 					<p className="w-full px-0  text-indigo-100/80 md:px-0 text-base   font-bold mb-4">Recently created episodes</p>
 					<CardDescription className="w-full px-0 md:px-0 text-sm text-indigo-100/60  opacity-90">View and manage your recently generated episodes.</CardDescription>
