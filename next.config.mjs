@@ -19,7 +19,6 @@ const nextConfig = {
 				{ protocol: 'https', hostname: 'img.clerk.com' },
 				{ protocol: 'https', hostname: 'i.ytimg.com' },
 			],
-			domains: ['yt3.ggpht.com', 'picsum.photos'],
 	},
 	webpack: (config) => {
 			config.resolve.alias = {

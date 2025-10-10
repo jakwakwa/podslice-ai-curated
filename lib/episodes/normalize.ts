@@ -50,6 +50,8 @@ export function isBundleEpisode(episode: Episode | UserEpisode): episode is Epis
  */
 export function normalizeEpisode(episode: Episode | UserEpisode): NormalizedEpisode {
 	if (isUserEpisode(episode)) {
+		// News episodes have youtube_url set to 'news' and should not trigger YouTube lookups
+		const isNews = (episode.youtube_url || "").toLowerCase() === "news";
 		return {
 			id: episode.episode_id,
 			title: episode.episode_title,
@@ -59,7 +61,7 @@ export function normalizeEpisode(episode: Episode | UserEpisode): NormalizedEpis
 			durationSeconds: episode.duration_seconds ?? null,
 			publishedAt: episode.created_at,
 			permalink: `/my-episodes/${episode.episode_id}`,
-			youtubeUrl: episode.youtube_url ?? null,
+			youtubeUrl: isNews ? null : (episode.youtube_url ?? null),
 			original: episode,
 		};
 	}
@@ -82,10 +84,7 @@ export function normalizeEpisode(episode: Episode | UserEpisode): NormalizedEpis
 /**
  * Gets the artwork URL for an episode, with fallback logic
  */
-export function getArtworkUrlForEpisode(
-	episode: Episode | UserEpisode,
-	youtubeChannelImage?: string | null
-): string | null {
+export function getArtworkUrlForEpisode(episode: Episode | UserEpisode, youtubeChannelImage?: string | null): string | null {
 	if (isBundleEpisode(episode)) {
 		return episode.image_url || null;
 	}

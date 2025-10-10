@@ -30,6 +30,26 @@ export function useYouTubeChannel(youtubeUrl: string | null): UseYouTubeChannelR
 			return;
 		}
 
+		// Skip fetching for non-YouTube sources (e.g., news) or invalid inputs
+		let isYouTubeLike = false;
+		if (/^[\w-]{11}$/.test(youtubeUrl)) {
+			isYouTubeLike = true;
+		} else {
+			try {
+				const u = new URL(youtubeUrl);
+				isYouTubeLike = u.hostname.includes("youtube.com") || u.hostname.includes("youtu.be");
+			} catch {
+				isYouTubeLike = false;
+			}
+		}
+		if (youtubeUrl === "news" || !isYouTubeLike) {
+			setChannelName(null);
+			setChannelImage(null);
+			setError(null);
+			setIsLoading(false);
+			return;
+		}
+
 		const fetchChannelName = async () => {
 			setIsLoading(true);
 			setError(null);

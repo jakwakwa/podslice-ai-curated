@@ -7,6 +7,10 @@ const CACHE_TTL = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
 
 // Function to clean YouTube URL for fallback display
 function cleanYouTubeUrl(url: string): string {
+	// Accept plain 11-char IDs directly
+	if (/^[\w-]{11}$/.test(url)) {
+		return `yu.tube/${url}`;
+	}
 	try {
 		const parsedUrl = new URL(url);
 		if (parsedUrl.hostname.includes("youtube.com")) {
@@ -14,11 +18,11 @@ function cleanYouTubeUrl(url: string): string {
 			return videoId ? `yu.tube/${videoId}` : "yu.tube/video";
 		}
 		if (parsedUrl.hostname.includes("youtu.be")) {
-			const videoId = parsedUrl.pathname.substring(1);
+			const videoId = parsedUrl.pathname.replace(/^\//, "");
 			return videoId ? `yu.tube/${videoId}` : "yu.tube/video";
 		}
-	} catch (e) {
-		console.error("Error cleaning URL:", e);
+	} catch {
+		// Quietly fall back for invalid URLs (e.g., 'news')
 	}
 	return "yu.tube/video";
 }
@@ -32,6 +36,22 @@ export async function GET(request: Request) {
 	}
 
 	try {
+		// Short-circuit for known non-YouTube sources (e.g., 'news')
+		const lower = youtubeUrl.toLowerCase();
+		const isId = /^[\w-]{11}$/.test(youtubeUrl);
+		let isYouTubeLike = isId;
+		if (!isYouTubeLike) {
+			try {
+				const u = new URL(youtubeUrl);
+				isYouTubeLike = u.hostname.includes("youtube.com") || u.hostname.includes("youtu.be");
+			} catch {
+				isYouTubeLike = false;
+			}
+		}
+		if (lower === "news" || !isYouTubeLike) {
+			return NextResponse.json({ error: "Not a YouTube URL", fallback: cleanYouTubeUrl(youtubeUrl) }, { status: 400 });
+		}
+
 		const apiKey = process.env.YOUTUBE_API_KEY;
 		if (!apiKey) {
 			console.error("YouTube API key is missing");
