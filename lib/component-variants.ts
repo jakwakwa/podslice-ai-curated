@@ -4,11 +4,11 @@ import { cva, type VariantProps } from "class-variance-authority";
 export const typographyVariants = cva("", {
 	variants: {
 		variant: {
-			h1: "text-[var(--text-h1)]  font-bold font-heading text-foreground-muted",
-			h2: "text-custom-h2 font-bold leading-[1.5] text-foreground",
-			h3: "text-custom-h3 text-shadow text-shadow-[#000000] font-bold text-secondary-foreground my-0 leading-[1]",
-			h4: "text-custom-h4 font-bold",
-			h5: "text-[var(--text-h5)] font-sans uppercase font-semibold leading-[4px]",
+			h1: "font-bold font-heading",
+			h2: " font-bold leading-[1.5]",
+			h3: "font-bold my-0 leading-[1]",
+			h4: " font-bold",
+			h5: "uppercase font-semibold leading-[4px]",
 			body: "font-sans leading-[1.5]",
 			muted: "text-[var(--text-body-sm)] text-muted-foreground",
 			link: "text-[var(--text-body-sm)] text-link",

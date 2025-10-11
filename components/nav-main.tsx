@@ -37,7 +37,7 @@ export function NavMain({
 							<SidebarMenuButton asChild isActive={pathname === item.url}>
 								<Link href={item.url} className={cn("flex items-center gap-4")} onClick={handleLinkClick}>
 									{item.icon && <item.icon className="size-4 opacity-[0.5]" />}
-									<span className="text-[0.8rem] text-foreground/60 opacity-[0.9]">{item.title}</span>
+									<span className="text-[0.8rem] text-foreground opacity-[0.9]">{item.title}</span>
 								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>

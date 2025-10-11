@@ -353,7 +353,7 @@ export function EpisodeCreator() {
 	const handleGoBack = () => router.back();
 
 	return (
-		<div className="w-full h-auto mb-0 px-4 py-4 md:px-8 lg:px-10 lg:py-6  rounded-lg border border-[#4a4e4e1a] shadow-lg">
+		<div className="w-full  bg-bigcard h-auto mb-0 px-0 py-0 md:px-8 md:py-8 lg:px-10 lg:py-6  rounded-lg border border-[#4a4e4e1a] shadow-lg">
 			<div className="w-full flex flex-col gap-3 md:gap-8">
 				<PageHeader title="Create Episode" className="pt-0" description="Generate a summary and audio version of a	 podcast episode from any YouTube video" />
 
@@ -361,7 +361,7 @@ export function EpisodeCreator() {
 					{isLoadingUsage ? (
 						<ComponentSpinner isLabel={false} />
 					) : (
-						<div className="flex flex-col">
+						<div className="flex flex-col px-4 md:px-0">
 							<div className="flex   gap-2 mb-6">
 								<Button type="button" variant={creatorMode === "youtube" ? "default" : "outline"} onClick={() => setCreatorMode("youtube")} disabled={isBusy}>
 									Generate podcast summary
@@ -388,16 +388,16 @@ export function EpisodeCreator() {
 								{creatorMode === "youtube" && (
 									<div className="grid grid-cols-1 md:grid-cols-2 my-8 gap-4 mx-2 md:mx-4">
 										<div className="space-y-2 md:col-span-2 lg:max-w-lg">
-											<Label htmlFor="youtubeUrl">YouTube URL<span className="pl-2 text-[0.65rem] font-mono  font-medium text-[#1debaeb8]	">
+											<Label htmlFor="youtubeUrl">YouTube URL<span className="pl-2 text-[0.65rem] font-mono  font-medium text-success">
 												MAX {maxDuration}min duration
 											</span></Label>
 
 											<Input id="youtubeUrl" placeholder="https://www.youtube.com/..." value={youtubeUrl} onChange={e => setYouTubeUrl(e.target.value)} disabled={isBusy} required />
 											{isFetchingMetadata && <ComponentSpinner />}
 											{youtubeUrlError && (
-												<p className="bg-[#21020621] px-2.5 py-1.5 text-[#ff99a7f9] text-xs mt-2 rounded-md outline-2 outline-[#e86e7f80]">
+												<p className="fl bg-destructive px-2.5 py-1.5 text-destructive-foreground text-xs mt-2 rounded-md outline-1 outline-destructive">
 													{" "}
-													<span className="flex gap-3">
+													<span className="flex items-center gap-3">
 														{" "}
 														<MessageSquareWarning width={32} /> {youtubeUrlError}
 													</span>
@@ -407,13 +407,13 @@ export function EpisodeCreator() {
 
 										{videoTitle && (
 											<div className="bg-black/30 space-y-1 md:col-span-2 py-3 px-2 rounded-xl outline-2 outline-teal-500 shadow-lg max-w-sm  ">
-												<p className=" font-bold text-[#e9dddfc7] flex text-xs items-center gap-2">
+												<p className=" font-bold text-secondary-foreground flex text-xs items-center gap-2">
 													<YoutubeIcon width={18} height={18} color="#fecdd7b5" />
 													Youtube Video
 												</p>
-												<p className="text-[#eedde3d3] font-semibold text-xs">{videoTitle}</p>
+												<p className="text-secondary-foreground font-semibold text-xs">{videoTitle}</p>
 												{videoDuration !== null && (
-													<p className="text-xs text-[#c1f2ee78]">
+													<p className="text-xs text-[#39c0b5e2]">
 														Duration: {Math.floor(videoDuration / 60)}m {videoDuration % 60}s
 													</p>
 												)}
@@ -545,7 +545,7 @@ export function EpisodeCreator() {
 									{generationMode === "single" && (
 										<div className="space-y-4">
 											<div>
-												<div className="py-2 pl-2 uppercase font-bold text-[#79c4ca] text-xs">Voice</div>
+												<div className="py-2 pl-2 uppercase font-bold text-primary-foreground text-xs">Voice</div>
 												<Select value={voiceA} onValueChange={setVoiceA}>
 													<SelectTrigger className="w-full" disabled={isBusy}>
 														<SelectValue placeholder="Select Voice" />
@@ -572,7 +572,7 @@ export function EpisodeCreator() {
 									{generationMode === "multi" && (
 										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 											<div>
-												<div className="py-2 pl-2 uppercase font-bold text-[#79c4ca] text-xs">Voice A</div>
+												<div className="py-2 pl-2 uppercase font-bold text-primary-foreground text-xs">Voice A</div>
 												<Select value={voiceA} onValueChange={setVoiceA}>
 													<SelectTrigger className="w/full" disabled={isBusy}>
 														<SelectValue placeholder="Select Voice A" />
@@ -605,7 +605,7 @@ export function EpisodeCreator() {
 												</div>
 											</div>
 											<div>
-												<div className="py-2 pl-2 uppercase font-bold text-[#af80f7] text-xs">Voice B</div>
+												<div className="py-2 pl-2 uppercase font-bold text-primary-foreground text-xs">Voice B</div>
 												<Select value={voiceB} onValueChange={setVoiceB}>
 													<SelectTrigger className="w/full" disabled={isBusy}>
 														<SelectValue placeholder="Select Voice B" />

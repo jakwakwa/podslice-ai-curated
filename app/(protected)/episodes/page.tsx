@@ -57,7 +57,7 @@ export default function EpisodesPage() {
 	};
 
 	return (
-		<div className="w-full episode-card-wrapper">
+		<div className="w-screen md:w-full md:episode-card-wrapper">
 			<PageHeader
 				title="Weekly Roundup Bundle Episodes"
 				description="Choose from our pre-curated podcast bundles. Each bundle is a fixed selection of 2-5 carefully selected shows and cannot be modified once selected."
@@ -65,8 +65,8 @@ export default function EpisodesPage() {
 
 			{isLoading ? (
 				<div className="px-0 md:p-6 mx-auto">
-					<Card className="episode-card-wrapper-dark">
-						<CardContent className="episode-card-wrapper-dark space-y-2 flex-col flex w-full">
+					<Card className="md:episode-card-wrapper-dark">
+						<CardContent className="md:episode-card-wrapper-dark space-y-2 flex-col flex w-full">
 							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
 							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
 							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
@@ -77,17 +77,17 @@ export default function EpisodesPage() {
 				</div>
 			) : error ? (
 				<div className="max-w-2xl mx-auto mt-8">
-				<Alert variant="destructive">
-					<AlertCircle className="h-4 w-4" />
-					<AlertTitle>Unable to Load Episodes</AlertTitle>
-					<AlertDescription className="mt-2">{error}</AlertDescription>
-				</Alert>
-				<div className="mt-6 text-center">
-					<Button onClick={() => fetchEpisodes(bundleType)} variant="outline">
-						<RefreshCw className="h-4 w-4 mr-2" />
-						Try Again
-					</Button>
-				</div>
+					<Alert variant="destructive">
+						<AlertCircle className="h-4 w-4" />
+						<AlertTitle>Unable to Load Episodes</AlertTitle>
+						<AlertDescription className="mt-2">{error}</AlertDescription>
+					</Alert>
+					<div className="mt-6 text-center">
+						<Button onClick={() => fetchEpisodes(bundleType)} variant="outline">
+							<RefreshCw className="h-4 w-4 mr-2" />
+							Try Again
+						</Button>
+					</div>
 				</div>
 			) : episodes.length === 0 ? (
 				<div className="w-full  max-w-[1000px] mx-auto mt-0">
@@ -97,9 +97,9 @@ export default function EpisodesPage() {
 					</Alert>
 				</div>
 			) : (
-				<div className="flex episode-card-wrapper mt-4 flex-col justify-center mx-auto w-screen md:w-screen max-w-full gap-4">
+				<div className="flex bg-bigcard md:rounded-3xl md:bg-bigcard p-4 md:mt-4 flex-col justify-center mx-auto w-screen md:w-screen max-w-full gap-4">
 					<div className="flex items-center gap-3 mb-6">
-						<label htmlFor="bundle-type-select" className="text-sm font-medium text-muted-foreground">
+						<label htmlFor="bundle-type-select" className="text-sm font-medium text-primary-foreground">
 							Filter by:
 						</label>
 						<Select value={bundleType} onValueChange={handleBundleTypeChange}>
@@ -113,7 +113,7 @@ export default function EpisodesPage() {
 							</SelectContent>
 						</Select>
 					</div>
-					<H3 className="font-medium mb-4">
+					<H3 className="font-medium mb-4 text-primary-foreground">
 						{bundleType === "all" && "All Bundled Episodes"}
 						{bundleType === "curated" && "Curated Bundle Episodes"}
 						{bundleType === "shared" && "Shared Bundle Episodes"}
