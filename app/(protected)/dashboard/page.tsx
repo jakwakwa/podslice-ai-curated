@@ -15,6 +15,7 @@ import EpisodeCard from "@/components/ui/episode-card";
 import { PageHeader } from "@/components/ui/page-header";
 import { Body, Typography } from "@/components/ui/typography";
 import { useEpisodePlayer } from "@/hooks/use-episode-player";
+import { useUserCurationProfileStore } from "@/lib/stores";
 import type { Episode, UserCurationProfile, UserCurationProfileWithRelations, UserEpisode } from "@/lib/types";
 
 interface SubscriptionInfo {
@@ -178,20 +179,15 @@ export default function CurationProfileManagementPage() {
 						<div className="rounded-tr-none rounded-tl-none w-screen md:w-full pt-0 md:pr-4 mt-0 md:mr-3 flex flex-col  lg:flex-col md:p-8 sm:pt-0 md:pt-9 md:mt-0  md:max-w-[280px]   md:bg-secondary/40 rounded-0  md:overflow-hidden shadow-md shadow-black/30">
 							<div className="w-full flex flex-col justify-between p-0 md:rounded-none ">
 								<h2 className="hidden md:block pt-8 md:text-secondary-foreground md:pt-0 md:px-0 text-shadow-md pb-3 text-sm max-w-[100%] ">Your Active Bundle Feed</h2>
-								<div className="shadow-md shadow-black/30 overflow-hidden rounded-2xl" >
+								<div className="shadow-md shadow-black/30 overflow-hidden rounded-2xl">
 									{userCurationProfile?.is_bundle_selection && userCurationProfile?.selectedBundle && (
-
 										<div className="bg-slate-900 border-none md:border-1  md:bg-primary border border-border mx-auto  py-6  md:pt-4 md:pb-0 px-5 w-full h-fit  md:rounded-t-lg overflow-hidden text-secondary-foreground md:text-primary-foreground ">
 											<Button className="inline-flex text-sm md:text-xs justify-end w-full px-0" variant="ghost" size="xs" onClick={() => setIsModalOpen(true)}>
 												<Edit />
 												Edit Bundle
 											</Button>
 											<div className="mb-4 flex flex-col">
-												<p
-
-													className="text-sm md:text-[10px] w-full md:uppercase font-sans font-bold  md:text-indigo-600 not-uppercase italic md:not-italic p-0 mb-2">
-													Active bundle:
-												</p>
+												<p className="text-sm md:text-[10px] w-full md:uppercase font-sans font-bold  md:text-indigo-600 not-uppercase italic md:not-italic p-0 mb-2">Active bundle:</p>
 
 												<div className="bg-slate-800 md:bg-transparent flex w-full px-3 py-3 md:px-2 md:py-1 rounded-md border-1 gap-3">
 													<Typography className="flex w-full text-[10px] font-bold items-center gap-2">
@@ -203,9 +199,7 @@ export default function CurationProfileManagementPage() {
 												</div>
 											</div>
 										</div>
-
 									)}
-
 
 									<div className="hidden md:inline mt-0 w-full ">
 										<div className="bg-[#393247]/30 border-t-0 overflow-hidden rounded-b-2xl border-1 border-[#51516500] px-4 p-4">
@@ -232,7 +226,6 @@ export default function CurationProfileManagementPage() {
 											</div>
 										</div>
 									</div>
-
 								</div>
 							</div>
 						</div>

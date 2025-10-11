@@ -20,7 +20,7 @@ type SearchParams = Record<string, string | string[] | undefined>;
 export default async function MyEpisodesPage({ searchParams }: { searchParams?: Promise<SearchParams> }) {
 	// Accept several possible keys from email deep links
 	const sp = (await (searchParams ?? Promise.resolve({} as SearchParams))) as SearchParams;
-	const idParam = (sp["episodeId"] ?? sp["id"] ?? sp["episode_id"]) as string | string[] | undefined;
+	const idParam = (sp.episodeId ?? sp.id ?? sp.episode_id) as string | string[] | undefined;
 	const initialEpisodeId = Array.isArray(idParam) ? idParam[0] : idParam;
 
 	// Gate by active status

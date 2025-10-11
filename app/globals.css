@@ -709,14 +709,6 @@
 				text-decoration: none !important;
 			}
 
-			a:hover,
-			a:focus,
-			button:hover,
-			button:focus {
-				/* color: #DDD9F6 !important; */
-			}
-
-
 
 			a:hover {
 				opacity: 0.3;
