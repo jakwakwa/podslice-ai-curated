@@ -4,6 +4,7 @@ import { z } from "zod";
 import { extractUserEpisodeDuration } from "@/app/(protected)/admin/audio-duration/duration-extractor";
 import emailService from "@/lib/email-service";
 import { getEpisodeTargetMinutes } from "@/lib/env";
+import { ensureGoogleCredentialsForADC } from "@/lib/google-credentials";
 import { combineAndUploadWavChunks, generateSingleSpeakerTts, getTtsChunkWordLimit, splitScriptIntoChunks, uploadBufferToPrimaryBucket } from "@/lib/inngest/episode-shared";
 import { generateTtsAudio } from "@/lib/inngest/utils/genai";
 import { prisma } from "@/lib/prisma";
@@ -112,6 +113,9 @@ export const generateUserNewsEpisode = inngest.createFunction(
 		if (!projectId) {
 			throw new Error("GOOGLE_CLOUD_PROJECT_ID environment variable is required for Vertex AI");
 		}
+
+		// Ensure GOOGLE_APPLICATION_CREDENTIALS supports JSON-in-env on Vercel (preview/production)
+		ensureGoogleCredentialsForADC();
 
 		// Initialize Vertex AI provider with project and location
 		const vertex = createVertex({
