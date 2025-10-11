@@ -184,12 +184,12 @@ export default function EpisodeGenerationPanelClient({ bundles }: { bundles: Bun
 						}
 						description="Paste the YouTube video to generate a curated episode. Title, image & description auto-populate."
 					/>
-					<CardContent className="p-4 space-y-4">
+					<CardContent className="p-4 space-y-4 flex flex-col gap-4">
 						<div>
 							<Label htmlFor="youtubeUrl">YouTube URL *</Label>
 							<Input id="youtubeUrl" value={youtubeUrl} onChange={e => setYoutubeUrl(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
 						</div>
-						<div className="flex gap-2">
+						<div className=" hidden">
 							<Button type="button" variant="outline" size="sm" disabled className="cursor-not-allowed opacity-50">
 								Upload MP3 (disabled)
 							</Button>

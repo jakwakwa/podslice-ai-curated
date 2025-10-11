@@ -474,7 +474,7 @@ export function EpisodeCreator() {
 								</div>
 							</div>
 
-							<div className="space-y-6 border-1 border-[rgba(86,114,114,0.48)] rounded-xl md:rounded-4xl shadow-md px-4 md:px-10 pt-8 pb-6 bg-[#110d1716]">
+							<div className="space-y-6 border-1 border-[rgba(86,114,114,0.48)] rounded-xl md:rounded-4xl shadow-md px-4 md:px-10 pt-8 pb-6 bg-[#110d1730]">
 								<div className="space-y-2">
 									<Label>Voice Settings</Label>
 									<div className="flex flex-row gap-3 mt-4">
@@ -488,12 +488,12 @@ export function EpisodeCreator() {
 									<button
 										type="button"
 										onClick={() => setShowTips(!showTips)}
-										className="flex mt-4 items-center gap-2 text-sm font-medium text-muted hover:text-foreground transition-colors mb-3">
+										className="flex mt-4 items-center gap-2 text-sm font-medium text-secondary-foreground/60 hover:text-foreground transition-colors mb-3">
 										{showTips ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}💡 Helpful Tips
 									</button>
 
 									{showTips && (
-										<div className="space-y-3 p-4 bg-[#00000074]/40	 rounded-xl border-1 border-[#151723af] ">
+										<div className="space-y-3 p-4 bg-[#00000074]/70	 rounded-xl border-1 border-[#151723af] ">
 											<p className="text-xs font-semibold foreground/80">
 												Both options can handle 90% of any youtube URL you provide! The quality of your generated episode depends on the content you choose to upload. These tips can help you decide if
 												you're unsure:

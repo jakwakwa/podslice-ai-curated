@@ -36,7 +36,7 @@ export interface AudioGenerateOptions {
 export async function generateTtsAudio(text: string, opts?: AudioGenerateOptions): Promise<Buffer> {
 	const client = getClient();
 	const model = opts?.model || process.env.GEMINI_TTS_MODEL || "gemini-2.5-flash-preview-tts";
-	const voiceName = opts?.voiceName || process.env.GEMINI_TTS_VOICE || "Enceladus";
+	const voiceName = opts?.voiceName || process.env.GEMINI_TTS_VOICE || "Sadachbia";
 	const response = await client.models.generateContentStream({
 		model,
 		config: { responseModalities: ["audio"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName } } } },

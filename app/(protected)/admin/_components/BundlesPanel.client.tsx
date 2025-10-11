@@ -87,7 +87,7 @@ export default function BundlesPanelClient({
 		try {
 			setIsCreating(true)
 			await createBundleAction(form)
-			setCreateForm({ name: "", description: "", min_plan: "NONE", selectedPodcastIds: [] })
+			setCreateForm({ name: "", description: "No description", min_plan: "NONE", selectedPodcastIds: [] })
 			setShowCreateForm(false)
 			router.refresh()
 		} catch (e) {
@@ -205,6 +205,10 @@ export default function BundlesPanelClient({
 								<Input id="bundleName" value={createForm.name} onChange={e => setCreateForm(s => ({ ...s, name: e.target.value }))} placeholder="e.g., Tech Weekly" />
 							</div>
 
+							<div className="md:col-span-2 max-h-[180px] overflow-y-auto">
+								<Label htmlFor="bundleDescription">Bundle Description</Label>
+								<Textarea id="bundleDescription" className="h-full min-h-[100px] max-h-[100px] overflow-y-auto" value={createForm.name} onChange={e => setCreateForm(s => ({ ...s, description: e.target.value }))} placeholder="e.g., Weekly roundup of the latest tech news" />
+							</div>
 							<div>
 								<Label htmlFor="minPlan">Visibility</Label>
 								<select id="minPlan" className="w-full text-sm border rounded h-9 px-2 bg-background" value={createForm.min_plan} onChange={e => setCreateForm(s => ({ ...s, min_plan: e.target.value }))}>
@@ -291,7 +295,7 @@ export default function BundlesPanelClient({
 											</div>
 											<div>
 												<Label htmlFor="editDescription">Description</Label>
-												<Textarea id="editDescription" className="h-full max-h-[80px]" rows={2} value={editForm.description} onChange={e => setEditForm(s => ({ ...s, description: e.target.value }))} />
+												<Textarea id="editDescription" className="h-full max-h-[180px]" rows={2} value={editForm.description} onChange={e => setEditForm(s => ({ ...s, description: e.target.value }))} />
 											</div>
 											<div>
 												<Label htmlFor="editMinPlan">Visibility</Label>
