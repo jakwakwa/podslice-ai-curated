@@ -63,7 +63,7 @@ export function AppSpinner({ label, size = "sm", color = "primary", variant = "d
 
 			case "dots":
 				return (
-					<div className={cn("flex gap-2 m-4 h-8 w-3 items-center", baseClasses)}>
+					<div className={cn("flex gap-2 m-4 h-0 w-3 items-center", baseClasses)}>
 						{[...Array(3)].map((_, i) => (
 							<div
 								key={i}

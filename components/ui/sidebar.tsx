@@ -7,7 +7,6 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -16,7 +15,7 @@ import { cn } from "@/lib/utils";
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "16rem";
-const SIDEBAR_WIDTH_MOBILE = "18rem";
+const _SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
@@ -146,7 +145,7 @@ function Sidebar({
 	variant?: "sidebar" | "floating" | "inset";
 	collapsible?: "offcanvas" | "icon" | "none";
 }) {
-	const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+	const { isMobile, state } = useSidebar();
 
 	if (collapsible === "none") {
 		return (
@@ -157,27 +156,7 @@ function Sidebar({
 	}
 
 	if (isMobile) {
-		return (
-			<Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
-				<SheetContent
-					data-sidebar="sidebar"
-					data-slot="sidebar"
-					data-mobile="true"
-					className="bg-black text-sidebar-foreground w-(--sidebar-width) border-none p-0 [&>button]:hidden"
-					style={
-						{
-							"--sidebar-width": SIDEBAR_WIDTH_MOBILE,
-						} as React.CSSProperties
-					}
-					side={side}>
-					<SheetHeader className="sr-only">
-						<SheetTitle>Sidebar</SheetTitle>
-						<SheetDescription>Displays the mobile sidebar.</SheetDescription>
-					</SheetHeader>
-					<div className="flex h-fit w-full flex-col">{children}</div>
-				</SheetContent>
-			</Sheet>
-		);
+		return null;
 	}
 
 	return (
@@ -223,7 +202,12 @@ function Sidebar({
 
 function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<typeof Button>) {
 	const { toggleSidebar, open } = useSidebar();
+	const isMobile = useIsMobile();
 
+	// hide trigger when mobile
+	if (isMobile) {
+		return null;
+	}
 	return (
 		<Button
 			data-sidebar="trigger"

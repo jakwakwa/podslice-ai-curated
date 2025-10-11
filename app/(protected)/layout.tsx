@@ -1,25 +1,29 @@
 "use client";
 
 import { useAuth } from "@clerk/nextjs";
-import { MoonIcon, SunIcon } from "lucide-react";
+import { Menu, MoonIcon, SunIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar, navItems } from "@/components/app-sidebar";
 import InstallButton from "@/components/pwa/InstallButton";
 import { Button } from "@/components/ui/button";
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { DynamicBreadcrumb } from "@/components/ui/dynamic-breadcrumb";
 import { NotificationBell } from "@/components/ui/notification-bell";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useSubscriptionInit } from "@/hooks/useSubscriptionInit";
 
 function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 	const { state } = useSidebar();
+	const [openMobileDrawer, setOpenMobileDrawer] = useState(false);
+	const isMobile = useIsMobile();
 
-	// Initialize subscription data
 	useSubscriptionInit();
 
 	function ModeToggle() {
@@ -58,8 +62,25 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 						<DynamicBreadcrumb />
 					</div>
-					<div className="flex items-center gap-2">
+					<div className="flex flex-row-reverse items-center gap-2">
 						<InstallButton />
+						{isMobile && typeof window !== "undefined" && (
+							<Drawer open={openMobileDrawer} onOpenChange={setOpenMobileDrawer}>
+								<DrawerTrigger asChild>
+									<Button variant="outline" className="bg-purple-600/50 rounded-full">
+										<Menu />
+										<span className="hidden">Edit Profile</span>
+									</Button>
+								</DrawerTrigger>
+								<DrawerContent className="sm:max-w-screen bg-cyan-400/35 border-none rounded-t-xl backdrop-blur-sm mix-blend-hard-light ">
+									<DrawerHeader>
+										<DrawerTitle className="text-cyan-100/90">Menu</DrawerTitle>
+										<DrawerDescription className="text-cyan-100/50">Navigate within the app</DrawerDescription>
+										<ProfileForm setOpenMobileDrawer={setOpenMobileDrawer} />
+									</DrawerHeader>
+								</DrawerContent>
+							</Drawer>
+						)}
 						<ModeToggle />
 						<NotificationBell />
 					</div>
@@ -72,7 +93,10 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 					<div className={"grain-background background-base"} />
 
 					<div className={"layout-inset"} />
-					<div className=" w-screen md:w-full p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-20 mx-0 pl-0 md:pr-3 md:px-2 min-w-full md:my-2 lg:ml-6 lg:pl-0 lg:pr-12 ">{children}</div>
+					<div className="w-full md:w-full p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-20 mx-0 pl-0 md:pr-3 md:px-2 min-w-full md:my-2 lg:ml-6 lg:pl-0 lg:pr-12">
+						{children}
+
+					</div>
 				</div>
 			</SidebarInset>
 		</>
@@ -153,5 +177,23 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 		<SidebarProvider>
 			<ProtectedLayoutInner>{children}</ProtectedLayoutInner>
 		</SidebarProvider>
+	);
+}
+function ProfileForm({ setOpenMobileDrawer }: { setOpenMobileDrawer: (open: boolean) => void }) {
+	const mobileNav = navItems;
+
+
+	return (
+		<div className="grid gap-3 bottom-10 "  >
+			<ul className="grid gap-4 py-2">
+				{mobileNav.map(item => (
+					<li key={item.title} className=" text-left text-sm " >
+						{/* hide drawer when link is clicked */}
+						<Link href={item.url} onClick={() => setOpenMobileDrawer(false)} className="py-3 bg-cyan-900/10 rounded-full flex w-full text-left flex-row items-center cursor-pointer  max-w-[260px] my-0 mx-auto justify-center gap-2 font-medium border border-cyan-200/10 shadow-lg shadow-cyan-200/10 text-shadow-cyan-200/10  text-cyan-100/70 ">{item.icon && <item.icon className="size-4 opacity-[0.5]" />}{item.title} </Link>
+
+					</li>
+				))}
+			</ul>
+		</div>
 	);
 }

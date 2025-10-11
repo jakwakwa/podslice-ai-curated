@@ -155,11 +155,11 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 													</div>
 												)}
 												<hr />
-												<div className="flex">
+												<div className="flex flex-col flex-wrap gap-6 md:gap-8">
 
 
 
-													<div className="flex flex-col gap-4 min-w-[20%]">
+													<div className="flex flex-row gap-4 min-w-[20%]">
 														{summaryData.topic && summaryData.topic.length > 0 && (
 															<div className="text-[#87f4f2fe] text-sm uppercase">
 																<h4 className="font-medium mb-2">Topic</h4>
@@ -181,7 +181,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 																<div className="flex flex-wrap gap-2 ">
 																	{Array.isArray(summaryData.sentiment) ? (
 																		summaryData.sentiment.map((s: string, i: number) => (
-																			<span key={i} className="px-2 py-1 rounded-md text-sm">
+																			<span key={i} className="px-2 py-1 bg-violet-800 text-pink-300 rounded-md text-lg capitalize">
 																				{s}
 																			</span>
 																		))

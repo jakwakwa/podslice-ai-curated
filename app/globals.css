@@ -14,49 +14,63 @@
 
 			body {
 				@apply backdrop-blur-sm text-foreground;
-				width: 100%;
+				width: 100vw !important;
 				max-width: 100%;
 				background: linear-gradient(135deg, #484747EF 0%, #464545E7 100%) !important;
-				margin: 0;
+				margin: 0 !important;
+				overflow: hidden !important;
 				color: var(--foreground);
-				padding: 0;
+				padding: 0 !important;
 				text-align: left;
 				height: auto;
-				background: #020202;
+				background: var(--background) !important;
 			}
 
 			/* For WebKit-based browsers (Chrome, Safari, Edge) */
 			::-webkit-scrollbar {
-				width: 8px;
-				/* Width of the scrollbar */
+
+				/* outline: 0px solid var(--secondary) !important; */
+				/* border: 0px solid transparent !important; */
+				/* right: 0px !important; */
+				/* box-shadow: 0px 0px 0px 0px transparent !important; */
+				/* position: absolute !important; */
+				/* outline: 4px solid #AD25F6E7 !important; */
+				/* outline-offset: 0px !important; */
+				/* width: 8px !important; */
+
+				opacity: 0.2 !important;
+				/* overflow: hidden; */
+				/* z-index: -999999 !important; */
+				width: 3px !important;
+				border: 1px solid var(--secondary) !important;
+				/* background: var(--secondary) */
 			}
+
 
 			/* Track */
 			::-webkit-scrollbar-track {
-				background: #080D101C;
-				/* Color of the scroll track */
-				border-radius: 5px;
+				border: 1px solid var(--secondary) !important;
+				/* outline: 1px solid var(--secondary) !important; */
+				background: var(--secondary);
 			}
 
 			/* Handle */
 			::-webkit-scrollbar-thumb {
-				background: hsla(264.21 82.61% 13.53% / 0.22);
+				outline: 1px solid var(--secondary) !important;
+
+				background: hsla(267.08 66.67% 57.65% / 0.88);
 				/* Color of the scroll thumb */
 				border-radius: 4px;
+				/* height: 100px !important; */
 			}
 
 			/* Handle on hover */
 			::-webkit-scrollbar-thumb:hover {
-				background: #642FC0;
+
+				background: #601ED214;
 			}
 
-			/* For Firefox */
-			.custom-scrollbar {
-				scrollbar-width: thin;
-				/* "auto" or "thin" */
-				scrollbar-color: #05C3D0 #251B4816;
-				/* scroll thumb and track color */
-			}
+
 
 			::selection {
 				color: rgba(197, 146, 241, 0.891) !important;
@@ -228,18 +242,18 @@
 		.light {
 			--radius: 0.65rem;
 			--background: oklch(0.67 0.12 276.31);
-			--foreground: oklch(0.84 0.07 265.81);
-			--card: oklch(0.82 0.09 304.73);
+			--foreground: oklch(0.82 0.08 264.93);
+			--card: oklch(0.86 0.07 304.35);
 			--card-foreground: oklch(0.76 0.09 258.32);
 			--popover: oklch(0.57 0.14 301.09 / 0.82);
 			--popover-foreground: oklch(0.47 0.23 293.8);
 			--primary: oklch(0.7 0.08 264.97);
-			--primary-foreground: oklch(0.37 0.06 260.99);
-			--primary-foreground-muted: oklch(0.8 0.04 214.66 / 0.99);
+			--primary-foreground: oklch(0.35 0.05 278.65);
+			--primary-foreground-muted: oklch(0.84 0.07 214.77 / 0.99);
 			--secondary: oklch(0.52 0.16 279.15);
 			--secondary-foreground: oklch(0.86 0.05 243.65);
 			--secondary-foreground-muted: oklch(0.8 0.09 290.81);
-			--muted: oklch(0.68 0.08 275.6);
+			--muted: oklch(0.79 0.1 276.35 / 0.69);
 			--muted-foreground: oklch(0.64 0.21 299.72 / 0.88);
 			--accent: oklch(0.64 0.11 242.06 / 0.78);
 			--accent-foreground: oklch(0.7 0.19 316.28);
@@ -251,7 +265,7 @@
 			--success-foreground-muted: hsl(162.67 18.67% 52.75%);
 
 			--border: oklch(0.78 0.07 270.7 / 0.35);
-			--input: oklch(0.41 0.08 278.65);
+			--input: oklch(0.6 0.09 279.61);
 			--ring: oklch(0.62 0.1 217.55 / 0.93);
 			--chart-1: oklch(0.646 0.222 41.116);
 			--chart-2: oklch(0.6 0.118 184.704);
@@ -266,7 +280,7 @@
 			--sidebar-ring: oklch(0.86 0.12 195.13);
 			--container-gradient: linear-gradient(to bottom, oklch(0.33 0.03 274.73) -50%, rgba(50 148 240 / 0.47) 100%);
 			--inset-gradient: linear-gradient(oklch(0.71 0.11 241.63 / 0.96) 0%, oklch(0.45 0.15 295.85 / 0.89) 120%);
-			--bigepisode-gradient: linear-gradient(270deg, color(a98-rgb 0.24 0.39 0.52 / 0.74) 20%, oklch(0.58 0.1 288.7 / 0.75) 150%);
+			--bigepisode-gradient: linear-gradient(200deg, color(a98-rgb 0.29 0.32 0.5 / 0.74) -200%, oklch(0.58 0.12 278.7 / 0.89) 100%);
 
 			--episode-gradient: linear-gradient(270deg, color(a98-rgb 0.36 0.4 0.74 / 0.88) 20%, oklch(0.44 0.19 281.53 / 0.75) 150%);
 			--episode-gradient: linear-gradient(90deg, oklch(0.72 0.07 234.36 / 0.93) -10%, color(a98-rgb 0.33 0.24 0.75 / 0.9) 140%);
@@ -317,7 +331,7 @@
 			--success-foreground-muted: hsl(141.1 71.43% 41.18%);
 			--success: hsl(141.1 71.43% 41.18%);
 			--border: hsla(212.31 18.31% 13.92% / 0.92);
-			--input: hsla(251.25 33.33% 9.41% / 0.97);
+			--input: hsla(251.05 26.03% 28.63% / 0.97);
 			--ring: hsl(275 90% 39.22%) --chart-1: hsl(220 70% 50%);
 			--chart-2: hsl(160 60% 45%);
 			--chart-3: hsl(30 80% 55%);
@@ -602,7 +616,7 @@
 		}
 
 		.btn-secondary {
-			background: linear-gradient(180deg, hsla(153.01 91.97% 48.82% / 0.45), #00363E);
+			background: linear-gradient(180deg, hsla(193.1 91.97% 48.82% / 0.45), #094853);
 			text-shadow: 0px 1px 1px 1px #23222788 !important;
 			font-size: 0.8rem !important;
 			font-weight: 600 !important;
