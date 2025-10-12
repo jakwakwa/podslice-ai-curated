@@ -18,7 +18,8 @@
 				max-width: 100%;
 				background: linear-gradient(135deg, #484747EF 0%, #464545E7 100%) !important;
 				margin: 0 !important;
-				overflow: hidden !important;
+				overflow-x: hidden !important;
+				overflow-y: scroll !important;
 				color: var(--foreground);
 				padding: 0 !important;
 				text-align: left;
