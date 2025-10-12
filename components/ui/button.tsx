@@ -4,16 +4,16 @@ import type * as React from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-95 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer disabled:z-20",
+	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-95 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer disabled:z-20",
 	{
 		variants: {
 			variant: {
-				default: "bg-linear-to-br from-[#4737A1] to-[#0E4047] text-slate-300/80 hover:text-cyan-200 shadow text-shadow-black/10 text-shadow-sm  md:min-w-[100px] h-auto text-lg px-3 leading-0   ",
+				default: "bg-linear-to-br from-[#B1A4FC] to-sidebar text-slate-100/80 hover:text-cyan-200 shadow text-shadow-black/10 text-shadow-sm  md:min-w-[100px] h-auto text-lg px-3 leading-0   shadow-[0_2px_4px_1px]  shadow-slate-950/70  shadow-md shadow-slate-900/30 ",
 				destructive: "bg-[#2909129B] border-2 border-[#763751] text-[#C67E98] shadow-[0_2px_4px_1px] shadow-slate-900/40 rounded-full px-0 w-10 shadow-lg shadow-slate-950/20 text-slate-300/80",
-				outline: "border border-[#898AC847] bg-[#2F32322C] disabled:bg-[#6B6791C8] text-slate-300/80 hover:text-[#B3ABABD4] shadow-sm font-bold disabled:text-[#C9C1C1D4] shadow-lg shadow-slate-950/20 rounded-xl",
-				secondary: "btn-secondary disabled:bg-[#5E5C6FC8]  rounded-lg border-1 border-[#31c5be] text-slate-300/80 shadow-[0px_4px_rgba(26, 40, 46, 0.9)] w-full md:max-w-fit px-4  text-[1rem] shadow-lg shadow-black shadow-slate-950/20",
-				ghost: "bg-transparent",
-				link: "text-primary-forefround underline-offset-4 hover:underline",
+				outline: "border border-input-border bg-[#2F32322C] disabled:bg-[#6B6791C8] text-slate-300 shadow-sm font-bold disabled:text-[#A1B7F4D4] shadow-lg shadow-slate-950/20 rounded-xl",
+				secondary: "btn-secondary disabled:bg-[#5E5C6FC8]  rounded-lg border-1 border-[#31c5be] text-slate-300/80 shadow-[0px_4px_rgba(26, 40, 46, 0.9)] w-full md:max-w-fit px-4  text-[1rem] hover:text-secondary-foreground hover:text-secondary-foreground shadow-lg shadow-black shadow-slate-950/20",
+				ghost: "text-secondary-foreground",
+				link: "text-secondary-foreground underline-offset-4 text-secondary-foreground hover:underline",
 				play: "p-0 m-0",
 				icon: "",
 			},

@@ -6,7 +6,6 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
 import { Button } from "@/components/ui/button";
-import { CardContent } from "@/components/ui/card";
 import ComponentSpinner from "@/components/ui/component-spinner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -101,8 +100,7 @@ export function EpisodeCreator() {
 		videoDuration !== null &&
 		(maxDuration ? videoDuration <= maxDuration * 60 : videoDuration <= YT_MAX_DURATION_SECONDS);
 
-	const canSubmitNews =
-		!isBusy && selectedSources.length > 0 && Boolean(selectedTopic) && (generationMode === "single" || (voiceA && voiceB));
+	const canSubmitNews = !isBusy && selectedSources.length > 0 && Boolean(selectedTopic) && (generationMode === "single" || (voiceA && voiceB));
 
 	const canSubmit = creatorMode === "youtube" ? canSubmitYouTube : canSubmitNews;
 
@@ -325,7 +323,7 @@ export function EpisodeCreator() {
 				if (!res.ok) throw new Error(await res.text());
 				// Get the array buffer and explicitly create a blob with audio/wav MIME type
 				const arrayBuffer = await res.arrayBuffer();
-				const blob = new Blob([arrayBuffer], { type: 'audio/wav' });
+				const blob = new Blob([arrayBuffer], { type: "audio/wav" });
 				url = URL.createObjectURL(blob);
 				setAudioUrlCache(prev => ({ ...prev, [voiceName]: url }));
 				setIsLoadingSample(null);
@@ -335,7 +333,7 @@ export function EpisodeCreator() {
 			setIsPlaying(voiceName);
 			const audio = new Audio(url);
 			audio.onended = () => setIsPlaying(null);
-			audio.onerror = (e) => {
+			audio.onerror = e => {
 				console.error("Audio playback error:", e);
 				throw new Error("Audio element failed to load source");
 			};
@@ -354,16 +352,15 @@ export function EpisodeCreator() {
 
 	return (
 		<div className="w-full  bg-bigcard h-auto mb-0 px-0 py-0 md:px-8 md:py-8 lg:px-10 lg:py-6  rounded-lg border border-[#4a4e4e1a] shadow-lg">
-			<div className="w-full flex flex-col gap-3 md:gap-8">
+			<div className="w-full flex flex-col gap-3 md:gap-8 md:w-full md:min-w-full md:max-w-full">
 				<PageHeader title="Create Episode" className="pt-0" description="Generate a summary and audio version of a	 podcast episode from any YouTube video" />
 
-				<CardContent>
-
+				<div>
 					{/* <ComponentSpinner isLabel={false} /> */}
 
-					<div className="flex flex-col px-4 md:px-0">
-						<Label>Create</Label>
-						<div className="flex   gap-2 mb-6">
+					<div className="flex flex-col px-0 md:px-4">
+						<Label className="mb-0 md:mb-4">Pick a Summary Type:</Label>
+						<div className="flex  gap-2 ">
 							<Button type="button" variant={creatorMode === "youtube" ? "default" : "outline"} onClick={() => setCreatorMode("youtube")} disabled={isBusy}>
 								podcast summary
 							</Button>
@@ -385,13 +382,12 @@ export function EpisodeCreator() {
 								console.log("[DEBUG] Form submission proceeding to handleCreate");
 								void handleCreate();
 							}}>
-
 							{creatorMode === "youtube" && (
-								<div className="grid grid-cols-1 md:grid-cols-2 my-8 gap-4 mx-2 md:mx-4">
-									<div className="space-y-2 md:col-span-2 lg:max-w-lg">
-										<Label htmlFor="youtubeUrl">YouTube URL<span className="pl-2 text-[0.65rem] font-mono  font-medium text-success">
-											MAX {maxDuration}min duration
-										</span></Label>
+								<div className="grid grid-cols-1 md:grid-cols-2 my-8 gap-4 mx-0 md:mx-0">
+									<div className="space-y-2 md:w-full md:min-w-full lg:max-w-lg">
+										<Label htmlFor="youtubeUrl">
+											YouTube URL<span className="pl-0 text-[0.65rem] font-mono  font-medium text-success">MAX {maxDuration}min duration</span>
+										</Label>
 
 										<Input className="max-h-4" id="youtubeUrl" placeholder="https://www.youtube.com/..." value={youtubeUrl} onChange={e => setYouTubeUrl(e.target.value)} disabled={isBusy} required />
 										{isFetchingMetadata && <ComponentSpinner />}
@@ -435,11 +431,7 @@ export function EpisodeCreator() {
 														key={s.id}
 														type="button"
 														variant={active ? "default" : "outline"}
-														onClick={() =>
-															setSelectedSources(prev =>
-																active ? prev.filter(p => p !== s.id) : [...prev, s.id]
-															)
-														}
+														onClick={() => setSelectedSources(prev => (active ? prev.filter(p => p !== s.id) : [...prev, s.id]))}
 														disabled={isBusy}
 														className="px-3 py-1">
 														{s.label}
@@ -474,7 +466,7 @@ export function EpisodeCreator() {
 								</div>
 							</div>
 
-							<div className="space-y-6 border-1 border-[rgba(86,114,114,0.48)] rounded-xl md:rounded-4xl shadow-md px-4 md:px-10 pt-8 pb-6 bg-[#110d1730]">
+							<div className="space-y-6 border-1 border-[rgba(86,114,114,0.48)] rounded-xl md:rounded-4xl md:w-full md:min-w-full md:max-w-full shadow-md px-4 md:px-10 pt-8 pb-12 bg-[#110d1712]">
 								<div className="space-y-2">
 									<Label>Voice Settings</Label>
 									<div className="flex flex-row gap-3 mt-4">
@@ -488,7 +480,7 @@ export function EpisodeCreator() {
 									<button
 										type="button"
 										onClick={() => setShowTips(!showTips)}
-										className="flex mt-4 items-center gap-2 text-sm font-medium text-secondary-foreground/60 hover:text-foreground transition-colors mb-3">
+										className="flex mt-4 items-center gap-2 font-medium text-cyan-200/80 hover:text-foreground transition-colors mb-3 text-[0.6rem] uppercase">
 										{showTips ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}💡 Helpful Tips
 									</button>
 
@@ -510,7 +502,6 @@ export function EpisodeCreator() {
 													<span>
 														<strong className="text-teal-500 ">For videos over 2 hours:</strong> We recommend Single Speaker for faster processing and guaranteed success
 													</span>
-
 												</li>
 												<li className="flex items-start gap-2">
 													<span className="text-blue-500">⚡</span>
@@ -561,7 +552,7 @@ export function EpisodeCreator() {
 													))}
 												</SelectContent>
 											</Select>
-											<div className="mt-2">
+											<div className="mt-4">
 												<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceA)} disabled={isBusy || isAudioBusy}>
 													<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceA ? "Loading sample" : isPlaying === voiceA ? "Playing" : "Play sample"}
 												</Button>
@@ -593,13 +584,13 @@ export function EpisodeCreator() {
 																		void playSample(v.name);
 																	}}
 																	aria-label={`Play ${v.name} sample`}
-																	className="inline-flex items-center gap-1 text-xs opacity-80 hover:opacity-100"></button>
+																	className="inline-flex items-center gap-1 text-xs opacity-80 hover:opacity-100 mt-3"></button>
 															</div>
 														</SelectItem>
 													))}
 												</SelectContent>
 											</Select>
-											<div className="mt-2">
+											<div className="mt-4">
 												<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceA)} disabled={isBusy || isAudioBusy}>
 													<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceA ? "Loading sample" : isPlaying === voiceA ? "Playing" : "Play sample"}
 												</Button>
@@ -633,7 +624,7 @@ export function EpisodeCreator() {
 													))}
 												</SelectContent>
 											</Select>
-											<div className="mt-2">
+											<div className="mt-4">
 												<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceB)} disabled={isBusy || isAudioBusy}>
 													<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceB ? "Loading sample" : isPlaying === voiceB ? "Playing" : "Play sample"}
 												</Button>
@@ -649,8 +640,7 @@ export function EpisodeCreator() {
 						</form>
 						{error && <p className="text-red-500 mt-4">{error}</p>}
 					</div>
-
-				</CardContent>
+				</div>
 			</div>
 
 			<Dialog open={showRestrictionDialog} onOpenChange={() => { }} modal={true}>
