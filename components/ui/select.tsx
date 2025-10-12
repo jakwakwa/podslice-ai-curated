@@ -30,7 +30,7 @@ function SelectTrigger({
 			data-slot="select-trigger"
 			data-size={size}
 			className={cn(
-				" border-[#b1bfc559] outline-0 mt-0  focus-visible:bg-[#141123] focus-visible:outline-transparent focus-visible:text-[#baa4e0] focus-visible:font-light focus-visible:outline-1 focus-visible:border-0 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:bg-[#1c163113] focus:border-1 focus:border-[#9d82d8] focus:text-[#9b9be7] bg-[#1113141f] dark:hover:bg-[#000] flex items-center justify-between gap-2 rounded-lg border-1 px-4 py-[17px] whitespace-nowrap shadow-sm transition-[color,box-shadow] outline-none focus-visible:ring-[0px] focus-visible:ring-[#000] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-12 data-[size=sm]:h-12  *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&>svg]:transition-transform [&>svg]:duration-200 data-[state=open]:[&>svg]:rotate-180 mr-2 w-full max-w-[180px]",
+				"bg-input border-input-border outline-0 mt-0  focus-visible:bg-secondary text-primary-foreground focus-visible:outline-transparent focus-visible:text-ring focus-visible:font-light focus-visible:outline-1 focus-visible:border-0 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:bg-background/20 focus:border-2 focus:border-ring focus:text-ring/80  flex items-center justify-between gap-2 rounded-lg border-1 px-4 py-[17px] whitespace-nowrap shadow-sm transition-[color,box-shadow] outline-none focus-visible:ring-[0px] focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-12 data-[size=sm]:h-12  *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&>svg]:transition-transform [&>svg]:duration-200 data-[state=open]:[&>svg]:rotate-180 mr-2 w-full max-w-[180px]",
 				className
 			)}
 			{...props}
@@ -52,7 +52,7 @@ function SelectContent({ className, children, position = "popper", ...props }: R
 					className={cn(
 						"p-1 overflow-y-auto cursor-pointer",
 						position === "popper" &&
-						"bg-[#0d0d1115] py-4 px-4 border-1 border-[#ffffff78] w-full min-w-[var(--radix-select-trigger-width)] backdrop-blur-[20px] scroll-my-1 flex flex-col gap-1 text-[14px] rounded-2xl"
+						"bg-sidebar py-4 px-4 border-1 border-[#ffffff78] w-full min-w-[var(--radix-select-trigger-width)] backdrop-blur-[20px] scroll-my-1 flex flex-col gap-1 text-[14px] rounded-2xl"
 					)}
 				>
 					{children}
@@ -72,7 +72,7 @@ function SelectItem({ className, children, ...props }: React.ComponentProps<type
 		<SelectPrimitive.Item
 			data-slot="select-item"
 			className={cn(
-				"font-medium hover:bg-[#aa99f340] hover:rounded-sm hover:text-foreground cursor-pointer px-2 py-1.5 transition-colors flex flex-row items-center rounded-md",
+				"font-medium hover:rounded-sm hover:text-foreground cursor-pointer px-2 py-1.5 transition-colors flex flex-row items-center rounded-md",
 				className
 			)}
 			{...props}

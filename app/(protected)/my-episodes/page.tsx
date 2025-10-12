@@ -31,14 +31,14 @@ export default async function MyEpisodesPage({ searchParams }: { searchParams?: 
 	}
 
 	return (
-		<div className="flex md:episode-card-wrapper mt-0 flex-col justify-center mx-auto w-screen md:w-screen max-w-full">
+		<div className="flex mt-0 flex-col justify-center mx-auto w-screen md:w-screen max-w-full">
 			<PageHeader
 				title="Your Generated Episodes"
 				description={
 					"View your recently generated episodes."
 				}
 				button={
-					<div className="flex flex-col gap-4">
+					<div className="flex flex-col gap-4 ">
 						<CreateBundleModalWrapper />
 						<Button variant="default" size="sm" className="w-fit" disabled={!isActive}>
 							<Link className="text-slate-200" href="/generate-my-episodes">

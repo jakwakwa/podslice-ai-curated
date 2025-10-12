@@ -73,10 +73,10 @@ export default function EditUserFeedModal({ isOpen, onClose, collection, onSave 
 						<div className="space-y-2">
 							<Label htmlFor="bundle">Change Bundle</Label>
 							<Select value={selectedBundleId} onValueChange={setSelectedBundleId} disabled={isLoadingBundles || availableBundles.length === 0}>
-								<SelectTrigger className=" text-foreground/80">
+								<SelectTrigger>
 									<SelectValue placeholder={isLoadingBundles ? "Loading bundles..." : "Select a new bundle"} />
 								</SelectTrigger>
-								<SelectContent className="bg-[#000] border border-border h-auto max-h-60 overflow-y-auto">
+								<SelectContent>
 									{isLoadingBundles ? (
 										<SelectItem value="loading" disabled>
 											Loading...

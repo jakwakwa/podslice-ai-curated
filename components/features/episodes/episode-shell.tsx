@@ -6,7 +6,7 @@ interface EpisodeShellProps {
 }
 
 export default function EpisodeShell({ children, className }: EpisodeShellProps): ReactElement {
-	const base = "mt-0 episode-shell p-12 w-fit  mx-auto rounded-3xl";
+	const base = "mt-0 episode-shell w-fit  mx-auto rounded-3xl";
 	return <div className={className ? `${base} ${className}` : base}>{children}</div>;
 }
 

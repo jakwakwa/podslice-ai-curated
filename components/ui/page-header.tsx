@@ -29,17 +29,17 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(({ title, d
 	const _isPathAllowed = allowedPaths.includes(pathname);
 
 	return (
-		<div className="my-0 pt-8 md:pt-4 md:px-8 shadow-sm bg-secondary  relative border-b-none rounded-b-none md:rounded-b-3xl md:border-l-10 md:border-b-none md:border-border rounded-none md:rounded-3xl p-6 flex flex-col  justify-between gap-8 w-full mb-0 md:mb-3 md:flex-row lg:rounded-3xl md:shadow-lg   shadow-slate-950/50 md:justify-between overflow-hidden ">
+		<div className="my-0 pt-8 md:pt-4 md:px-8  h-fit lg:pt-12 lg:pb-12 shadow-sm bg-secondary  relative border-b-none rounded-b-none md:rounded-b-3xl md:border-l-10 md:border-b-none md:border-border rounded-none md:rounded-3xl p-6 flex flex-col  shadow-slate-700/30 md:shadow-lg justify-between gap-8 w-full mb-0 md:mb-3 md:flex-row lg:rounded-3xl    md:shadow-slate-900/20 md:items-center md:justify-between overflow-hidden ">
 			<div className="flex flex-col justify-center w-full">
 
 
 
-				<h2 className="flex flex-col w-full  text-xl font-bold px-0 md:px-0 pt-0 pb-0 md:py-0 text-shadow-md text-secondary-foreground leading-[1.5] max-w-screen lg:max-w-2xl lg:text-xl lg:py-2 lg:uppercase ">{title}</h2>
+				<h2 className="flex flex-col w-full  lg:text-2xl font-bold px-0 md:px-0 pt-0 pb-0 md:py-0  text-secondary-foreground leading-[1.5] max-w-screen lg:max-w-2xl text-xl lg:py-1 capitalize ">{title}</h2>
 				{description && (
 					<Typography
 						as="p"
 						variant="body"
-						className="text-sm md:text-[0.9rem] px-0  md:px-0  md:py-1  text-secondary-foreground-muted leading-[1.4] max-w-screen  text-shadow-sm font-normal w-full md:max-w-[97%] lg:text-base  lg:max-w-2xl">
+						className="text-sm md:text-[1rem] px-0  md:px-0  md:py-1  text-secondary-foreground-muted leading-[1.4] max-w-screen  font-normal w-full md:max-w-[97%] lg:text-base  lg:max-w-2xl">
 						{description}
 					</Typography>
 				)}

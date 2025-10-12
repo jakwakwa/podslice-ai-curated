@@ -97,8 +97,8 @@ export default function EpisodesPage() {
 					</Alert>
 				</div>
 			) : (
-				<div className="flex bg-bigcard md:rounded-3xl md:bg-bigcard p-4 md:mt-4 flex-col justify-center mx-auto w-screen md:w-screen max-w-full gap-4">
-					<div className="flex items-center gap-3 mb-6">
+				<div className="flex bg-bigcard md:rounded-3xl  md:bg-bigcard px-8  py-12 md:mt-4 flex-col justify-center mx-auto w-screen md:w-screen max-w-full gap-4">
+					<div className="flex items-center gap-1 mb-6">
 						<label htmlFor="bundle-type-select" className="text-sm font-medium text-primary-foreground">
 							Filter by:
 						</label>

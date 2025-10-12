@@ -181,10 +181,10 @@ export default function CurationProfileManagementPage() {
 								<h2 className="hidden md:block pt-8 md:text-secondary-foreground md:pt-0 md:px-0 text-shadow-md pb-3 text-sm max-w-[100%] ">Your Active Bundle Feed</h2>
 								<div className="shadow-md shadow-black/30 overflow-hidden rounded-2xl">
 									{userCurationProfile?.is_bundle_selection && userCurationProfile?.selectedBundle && (
-										<div className="bg-slate-900 border-none md:border-1  md:bg-primary border border-border mx-auto  py-6  md:pt-4 md:pb-0 px-5 w-full h-fit  md:rounded-t-lg overflow-hidden text-secondary-foreground md:text-primary-foreground ">
+										<div className="bg-slate-700 border-none md:border-1  md:bg-primary border border-border mx-auto  py-6  md:pt-4 md:pb-0 px-5 w-full h-fit  md:rounded-t-lg overflow-hidden text-secondary-foreground md:text-primary-foreground ">
 											<Button className="inline-flex text-sm md:text-xs justify-end w-full px-0" variant="ghost" size="xs" onClick={() => setIsModalOpen(true)}>
 												<Edit />
-												Edit Bundle
+												Edit Bundles
 											</Button>
 											<div className="mb-4 flex flex-col">
 												<p className="text-sm md:text-[10px] w-full md:uppercase font-sans font-bold  md:text-indigo-600 not-uppercase italic md:not-italic p-0 mb-2">Active bundle:</p>
@@ -204,14 +204,14 @@ export default function CurationProfileManagementPage() {
 									<div className="hidden md:inline mt-0 w-full ">
 										<div className="bg-[#393247]/30 border-t-0 overflow-hidden rounded-b-2xl border-1 border-[#51516500] px-4 p-4">
 											<Body className="pt-0 pl-2 text-foreground/90 uppercase font-bold font-sans text-[10px]"> Summary</Body>
-											<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full border-1 border-gray-800 rounded-md overflow-hidden pt-0">
+											<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full border-1 border-gray-800/30 rounded-md overflow-hidden pt-0">
 												<div className="flex flex-row justify-between gap-1 items-center h-9 w-full bg-black/10 py-3 px-2">
-													<span className="font-sans text-indigo-400 text-xs">Bundled Episodes:</span>
-													<span className="uppercase left text-indigo-300/60 text-[0.7rem] font-mono font-medium ">{userCurationProfile?.selectedBundle?.episodes?.length || 0}</span>
+													<span className="font-sans text-blue-200 text-xs">Bundled Episodes:</span>
+													<span className="uppercase left text-blue-300/90 text-[0.7rem] font-mono font-medium ">{userCurationProfile?.selectedBundle?.episodes?.length || 0}</span>
 												</div>
 
 												<div className="flex flex-row justify-between gap-2 items-center h-5 w-full py-3 px-2">
-													<span className="text-foreground/60 text-xs font-medium font-sans">Plan:</span>
+													<span className="text-primary text-xs font-medium font-sans">Plan:</span>
 													<span className="uppercase text-[0.7rem] w-full left text-indigo-200/80 font-sans">
 														{(() => {
 															const plan = (subscription?.plan_type || "").toLowerCase();
@@ -231,8 +231,8 @@ export default function CurationProfileManagementPage() {
 						</div>
 						{/* Latest Bundle Episode Section */}
 						<div className="w-full border-b-0 rounded-0 py-0  my-0 mx-0 border-[#2c2a2a17] mt-0 pt-6 px-4 sm:pt-0  md:pt-9 md:mt-0  md:mb-8  md:px-6 border-dark md:rounded-3xl overflow-hidden  ">
-							<h3 className="flex flex-col font-bold w-full  mb-4 md:flex-row items-start  text-lg md:text-lg gap-2 text-secondary-foreground text-shadow-slate-650 text-shadow-md">
-								<span className="bg-[#089e69] rounded-sm shadow shadow-[#1a0b2f3f]  animate-pulse ease-in-out  text-xs duration-200 px-1.5 py-0.5  md:text-sm mr-2 text-secondary-foreground">New</span>
+							<h3 className="flex flex-col font-bold w-full  mb-4 md:flex-row items-start  text-sm md:text-lg gap-2 text-secondary-foreground text-shadow-slate-650/10 text-shadow-xs">
+								<span className="bg-[#1bc396] rounded-sm shadow shadow-[#1a0b2f3f]  animate-bounce ease-in-out  text-[0.65rem]duration-200 px-2 py-0  md:text-sm mr-2 text-[#fff]/80">New</span>
 								Latest from your active bundle
 							</h3>
 							<CardDescription className="text-sm leading-relaxed  opacity-90 mb-0">See your latest roundup episodes here from {userCurationProfile?.selectedBundle?.name}</CardDescription>

@@ -32,14 +32,14 @@ export function EpisodeCard({ imageUrl, title, publishedAt, durationSeconds, act
 	const { channelImage: youtubeChannelImage, isLoading: isChannelLoading } = useYouTubeChannel(youtubeUrl ?? null);
 
 	return (
-		<Card className="bg-card w-full h-[230px] md:h-[200px]  lg:h-[130px] px-0">
+		<Card className="bg-card w-full h-[230px] md:h-[200px]  lg:h-[130px]  gap-2">
 			<CardAction>{actions}</CardAction>
-			<div className="w-full h-full flex flex-col-reverse justify-between px-4  lg:flex-row gap-2 lg:gap-3 items-start lg:items-start py-4 lg:py-2 lg:px-1 content-center relative ">
+			<div className="w-full h-full flex flex-col-reverse justify-between px-4  lg:flex-row gap-2 lg:gap-3 items-start lg:items-start py-4 lg:py-1 lg:px-1 content-center relative ">
 				{(() => {
 					// For bundle episodes, use the episode's image_url
 					if (imageUrl) {
 						return (
-							<div className="aspect-video h-2/3 md:h-16 lg:h-20 shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#1f2e54ed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0911199e]   lg:min-w-[20%]">
+							<div className="aspect-video h-2/3 md:h-16 lg:h-20 shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#506497ed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0911199e]   lg:min-w-[20%]">
 								<Image src={imageUrl} alt={title} className="h-full w-full inline-flex content-center object-cover mix-blend-exclusion  shadow-zinc-800  opacity-80 " width={200} height={80} />
 							</div>
 						);
@@ -47,7 +47,7 @@ export function EpisodeCard({ imageUrl, title, publishedAt, durationSeconds, act
 					// For news episodes, use the generic news placeholder
 					if (isNewsEpisode) {
 						return (
-							<div className="aspect-video h-24	 md:h-16 lg:h-20 min-w-[120px] lg:min-w-[130px]  shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#1f2e54ed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0911199e]   ">
+							<div className="aspect-video h-24	 md:h-16 lg:h-20 min-w-[120px] lg:min-w-[130px]  shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#596fa5ed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0911199e]   ">
 								<Image
 									src="/generic-news-placeholder.png"
 									alt={title}
@@ -62,7 +62,7 @@ export function EpisodeCard({ imageUrl, title, publishedAt, durationSeconds, act
 					if (youtubeUrl) {
 						if (youtubeChannelImage) {
 							return (
-								<div className="aspect-video h-16 md:h-17 lg:h-20 shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#1f2e54ed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0911199e] relative">
+								<div className="aspect-video h-16 md:h-17 lg:h-20 shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692]  shadow-black/35 border-[#596fa5ed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#09111964] relative">
 									<Image
 										src={youtubeChannelImage}
 										alt={title}

@@ -29,12 +29,12 @@ function BreadcrumbLink({
 }
 
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
-	return <span data-slot="breadcrumb-page" role="link" aria-disabled="true" aria-current="page" tabIndex={0} className={cn("text-[#A5F1D8] font-normal letter-wide  font-semibold uppercase text-[11px]", className)} {...props} />
+	return <span data-slot="breadcrumb-page" role="link" aria-disabled="true" aria-current="page" tabIndex={0} className={cn("text-secondary-foreground  letter-wide  font-semibold uppercase text-[11px]", className)} {...props} />
 }
 
 function BreadcrumbSeparator({ children, className, ...props }: React.ComponentProps<"li">) {
 	return (
-		<li data-slot="breadcrumb-separator" role="presentation" aria-hidden="true" className={cn("[&>svg]:size-3.5", className)} {...props}>
+		<li data-slot="breadcrumb-separator" role="presentation" aria-hidden="true" className={cn("[&>svg]:size-3.5 bg-transparent w-0 h-0", className)} {...props}>
 			{children ?? <ChevronRight />}
 		</li>
 	)
