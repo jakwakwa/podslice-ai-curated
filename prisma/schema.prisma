@@ -38,23 +38,26 @@ model User {
 /// USER-GENERATED EPISODES
 /// ───────────────────────────────────
 model UserEpisode {
-  episode_id        String             @id @default(uuid()) @map("episode_id")
-  user_id           String             @map("user_id")
-  episode_title     String             @map("episode_title")
-  youtube_url       String             @map("youtube_url")
-  transcript        String?            @db.Text @map("transcript")
-  summary           String?            @db.Text @map("summary")
-  gcs_audio_url     String?            @map("gcs_audio_url")
-  duration_seconds  Int?               @map("duration_seconds")
-  status            UserEpisodeStatus  @default(PENDING) @map("status")
-  news_sources      String?            @map("news_sources")
-  news_topic        String?            @map("news_topic")
-  created_at        DateTime           @default(now()) @map("created_at")
-  updated_at        DateTime           @updatedAt @map("updated_at")
-  user              User               @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-  sharedBundleEpisodes SharedBundleEpisode[]
+  episode_id            String             @id @default(uuid()) @map("episode_id")
+  user_id               String             @map("user_id")
+  episode_title         String             @map("episode_title")
+  youtube_url           String             @map("youtube_url")
+  transcript            String?            @db.Text @map("transcript")
+  summary               String?            @db.Text @map("summary")
+  gcs_audio_url         String?            @map("gcs_audio_url")
+  is_public             Boolean            @default(false) @map("is_public")
+  public_gcs_audio_url  String?            @map("public_gcs_audio_url")
+  duration_seconds      Int?               @map("duration_seconds")
+  status                UserEpisodeStatus  @default(PENDING) @map("status")
+  news_sources          String?            @map("news_sources")
+  news_topic            String?            @map("news_topic")
+  created_at            DateTime           @default(now()) @map("created_at")
+  updated_at            DateTime           @updatedAt @map("updated_at")
+  user                  User               @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  sharedBundleEpisodes  SharedBundleEpisode[]
 
   @@index([user_id])
+  @@index([is_public])
   @@map("user_episode")
 }
 

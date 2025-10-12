@@ -67,6 +67,8 @@ export function SharedBundleView({ bundle, bundleId }: SharedBundleViewProps) {
 				duration_seconds: episode.duration_seconds,
 				news_sources: null,
 				news_topic: null,
+				is_public: false,
+				public_gcs_audio_url: null,
 			};
 
 			setEpisode(normalizedEpisode as unknown as UserEpisode);

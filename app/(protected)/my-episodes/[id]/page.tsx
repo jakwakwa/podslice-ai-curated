@@ -6,6 +6,7 @@ import EpisodeHeader from "@/components/features/episodes/episode-header";
 import EpisodeShell from "@/components/features/episodes/episode-shell";
 import KeyTakeaways from "@/components/features/episodes/key-takeaways";
 import PlayAndShare from "@/components/features/episodes/play-and-share";
+import PublicToggleButton from "@/components/features/episodes/public-toggle-button";
 import { Separator } from "@/components/ui/separator";
 import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
 import { extractKeyTakeaways, extractNarrativeRecap } from "@/lib/markdown/episode-text";
@@ -23,6 +24,8 @@ const UserEpisodeSchema = z.object({
 	transcript: z.string().nullable().optional(),
 	summary: z.string().nullable().optional(),
 	gcs_audio_url: z.string().nullable().optional(),
+	is_public: z.boolean(),
+	public_gcs_audio_url: z.string().nullable().optional(),
 	duration_seconds: z.number().nullable().optional(),
 	status: z.enum(["PENDING", "PROCESSING", "COMPLETED", "FAILED"]),
 	news_sources: z.string().nullable().optional(),
@@ -31,7 +34,7 @@ const UserEpisodeSchema = z.object({
 	updated_at: z.date(),
 });
 
-type EpisodeWithSigned = UserEpisode & { signedAudioUrl: string | null };
+type EpisodeWithSigned = UserEpisode & { signedAudioUrl: string | null; is_public: boolean };
 
 async function getEpisodeWithSignedUrl(id: string, currentUserId: string): Promise<EpisodeWithSigned | null> {
 	const episode = await prisma.userEpisode.findUnique({ where: { episode_id: id } });
@@ -50,7 +53,7 @@ async function getEpisodeWithSignedUrl(id: string, currentUserId: string): Promi
 		}
 	}
 
-	const safe = UserEpisodeSchema.parse(episode) as UserEpisode;
+	const safe = UserEpisodeSchema.parse(episode) as UserEpisode & { is_public: boolean };
 	return { ...safe, signedAudioUrl };
 }
 
@@ -107,8 +110,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 				/>
 				{sourceDisplay && <div className="mt-2 text-lg font-bold text-[#ac91fc]">{sourceDisplay}</div>}
 				<div className="mt-4 my-8">
-					<div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-start">
-						<PlayAndShare kind="user" episode={episode} signedAudioUrl={episode.signedAudioUrl} />
+					<div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+						<PlayAndShare kind="user" episode={episode} signedAudioUrl={episode.signedAudioUrl} isPublic={episode.is_public} />
+						<PublicToggleButton episodeId={episode.episode_id} initialIsPublic={episode.is_public} />
 					</div>
 
 					<Separator className="my-8" />

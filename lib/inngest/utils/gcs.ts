@@ -27,6 +27,14 @@ export function ensureUserEpisodesBucketName(): string {
 	return ensureBucketName();
 }
 
+export function ensureSharedBucketName(): string {
+	const name = process.env.GOOGLE_CLOUD_SHARED_STORAGE_BUCKET_NAME;
+	if (!name) {
+		throw new Error("GOOGLE_CLOUD_SHARED_STORAGE_BUCKET_NAME is not set");
+	}
+	return name;
+}
+
 function initStorageClients(): { storageUploader: Storage; storageReader: Storage } {
 	if (storageUploader && storageReader) {
 		return { storageUploader, storageReader };
@@ -122,4 +130,48 @@ export async function storeUrlInGCS(url: string, destinationObjectName: string, 
 	const contentType = (res.headers.get("content-type") || contentTypeHint || "audio/mpeg").split(";")[0];
 	await uploader.bucket(bucketName).file(destinationObjectName).save(buf, { contentType, public: true });
 	return `https://storage.googleapis.com/${bucketName}/${encodeURIComponent(destinationObjectName)}`;
+}
+
+/**
+ * Copies a file from the private bucket to the shared (public) bucket.
+ * Makes the file publicly accessible in the shared bucket.
+ */
+export async function copyToSharedBucket(sourceGcsUrl: string): Promise<string> {
+	const uploader = getStorageUploader();
+	const sharedBucket = ensureSharedBucketName();
+
+	// Parse the source URL
+	const parsed = parseGcsUri(sourceGcsUrl);
+	if (!parsed) {
+		throw new Error(`Invalid GCS URI: ${sourceGcsUrl}`);
+	}
+
+	// Source file
+	const sourceFile = uploader.bucket(parsed.bucket).file(parsed.object);
+
+	// Destination: use same object name in shared bucket
+	const destinationFile = uploader.bucket(sharedBucket).file(parsed.object);
+
+	// Copy the file
+	await sourceFile.copy(destinationFile);
+
+	// Make the file public
+	await destinationFile.makePublic();
+
+	// Return the public GCS URI
+	return `gs://${sharedBucket}/${parsed.object}`;
+}
+
+/**
+ * Deletes a file from the shared (public) bucket.
+ */
+export async function deleteFromSharedBucket(publicGcsUrl: string): Promise<void> {
+	const uploader = getStorageUploader();
+	const parsed = parseGcsUri(publicGcsUrl);
+	if (!parsed) {
+		throw new Error(`Invalid GCS URI: ${publicGcsUrl}`);
+	}
+
+	const file = uploader.bucket(parsed.bucket).file(parsed.object);
+	await file.delete();
 }

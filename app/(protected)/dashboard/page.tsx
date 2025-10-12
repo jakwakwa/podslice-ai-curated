@@ -331,6 +331,8 @@ export default function CurationProfileManagementPage() {
 																duration_seconds: episode.duration_seconds,
 																news_sources: episode.news_sources ?? null,
 																news_topic: episode.news_topic ?? null,
+																is_public: false,
+																public_gcs_audio_url: null,
 															};
 
 															playEpisode(normalizedEpisode);
