@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { copyToSharedBucket, deleteFromSharedBucket } from "@/lib/inngest/utils/gcs";
+import { copyToSharedBucket, deleteFromSharedBucket } from "@/lib/gcs/utils/gcs";
 import { prisma } from "@/lib/prisma";
 import { userIsActive } from "@/lib/usage";
 

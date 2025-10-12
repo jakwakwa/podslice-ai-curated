@@ -43,16 +43,16 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		id: "generate-user-episode-multi-workflow",
 		name: "Generate User Episode Multi-Speaker Workflow",
 		retries: 2,
-	onFailure: async ({ event }) => {
-		const { userEpisodeId } = (event as unknown as { data: { event: { data: { userEpisodeId: string } } } }).data.event.data;
-		if (!userEpisodeId) {
-			console.error("[USER_EPISODE_MULTI_FAILED] Missing userEpisodeId in failure event", event);
-			return;
-		}
-		await prisma.userEpisode.update({
-			where: { episode_id: userEpisodeId },
-			data: { status: "FAILED" },
-		});
+		onFailure: async ({ event }) => {
+			const { userEpisodeId } = (event as unknown as { data: { event: { data: { userEpisodeId: string } } } }).data.event.data;
+			if (!userEpisodeId) {
+				console.error("[USER_EPISODE_MULTI_FAILED] Missing userEpisodeId in failure event", event);
+				return;
+			}
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: { status: "FAILED" },
+			});
 			try {
 				const episode = await prisma.userEpisode.findUnique({
 					where: { episode_id: userEpisodeId },
@@ -135,7 +135,7 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		const lineChunkUrls = await step.run("generate-and-upload-dialogue-audio", async () => {
 			const urls: string[] = [];
 			const tempPath = `user-episodes/${userEpisodeId}/temp-dialogue-chunks`;
-			
+
 			for (let i = 0; i < duetLines.length; i++) {
 				const line = duetLines[i];
 				console.log(`[TTS] Generating and uploading line ${i + 1}/${duetLines.length} (Speaker ${line.speaker})`);
@@ -146,43 +146,48 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 				const gcsUrl = await uploadBufferToPrimaryBucket(audio, chunkFileName);
 				urls.push(gcsUrl);
 			}
-			
+
 			console.log(`[TTS] Uploaded ${urls.length} dialogue chunks to GCS`);
 			return urls;
 		});
 
-	const { gcsAudioUrl, durationSeconds } = await step.run("download-combine-upload-multi-voice", async () => {
-		// Download chunks from GCS, combine them, and upload final file
-		const { getStorageReader, parseGcsUri } = await import("@/lib/inngest/utils/gcs");
-		const storageReader = getStorageReader();
-		
-		console.log(`[COMBINE] Downloading ${lineChunkUrls.length} dialogue chunks from GCS`);
-		const lineAudioBase64: string[] = [];
-		
-		for (const gcsUrl of lineChunkUrls) {
-			const parsed = parseGcsUri(gcsUrl);
-			if (!parsed) throw new Error(`Invalid GCS URI: ${gcsUrl}`);
-			const [buffer] = await storageReader.bucket(parsed.bucket).file(parsed.object).download();
-			lineAudioBase64.push(buffer.toString("base64"));
-		}
-		
-		console.log(`[COMBINE] Downloaded ${lineAudioBase64.length} chunks, combining`);
-		const fileName = `user-episodes/${userEpisodeId}-duet-${Date.now()}.wav`;
-		const { finalBuffer, durationSeconds } = combineAndUploadWavChunks(lineAudioBase64, fileName);
-		const gcsUrl = await uploadBufferToPrimaryBucket(finalBuffer, fileName);
-		
-		// Clean up temporary chunk files
-		try {
-			for (const chunkUrl of lineChunkUrls) {
-				const parsed = parseGcsUri(chunkUrl);
-				if (parsed) await storageReader.bucket(parsed.bucket).file(parsed.object).delete().catch(() => {});
+		const { gcsAudioUrl, durationSeconds } = await step.run("download-combine-upload-multi-voice", async () => {
+			// Download chunks from GCS, combine them, and upload final file
+			const { getStorageReader, parseGcsUri } = await import("@/lib/gcs/utils/gcs");
+			const storageReader = getStorageReader();
+
+			console.log(`[COMBINE] Downloading ${lineChunkUrls.length} dialogue chunks from GCS`);
+			const lineAudioBase64: string[] = [];
+
+			for (const gcsUrl of lineChunkUrls) {
+				const parsed = parseGcsUri(gcsUrl);
+				if (!parsed) throw new Error(`Invalid GCS URI: ${gcsUrl}`);
+				const [buffer] = await storageReader.bucket(parsed.bucket).file(parsed.object).download();
+				lineAudioBase64.push(buffer.toString("base64"));
 			}
-		} catch (cleanupError) {
-			console.warn(`[CLEANUP] Failed to delete temp chunks:`, cleanupError);
-		}
-		
-		return { gcsAudioUrl: gcsUrl, durationSeconds };
-	});
+
+			console.log(`[COMBINE] Downloaded ${lineAudioBase64.length} chunks, combining`);
+			const fileName = `user-episodes/${userEpisodeId}-duet-${Date.now()}.wav`;
+			const { finalBuffer, durationSeconds } = combineAndUploadWavChunks(lineAudioBase64, fileName);
+			const gcsUrl = await uploadBufferToPrimaryBucket(finalBuffer, fileName);
+
+			// Clean up temporary chunk files
+			try {
+				for (const chunkUrl of lineChunkUrls) {
+					const parsed = parseGcsUri(chunkUrl);
+					if (parsed)
+						await storageReader
+							.bucket(parsed.bucket)
+							.file(parsed.object)
+							.delete()
+							.catch(() => {});
+				}
+			} catch (cleanupError) {
+				console.warn(`[CLEANUP] Failed to delete temp chunks:`, cleanupError);
+			}
+
+			return { gcsAudioUrl: gcsUrl, durationSeconds };
+		});
 
 		await step.run("finalize-episode", async () => {
 			return await prisma.userEpisode.update({

@@ -5,7 +5,7 @@ import EpisodeHeader from "@/components/features/episodes/episode-header";
 import EpisodeShell from "@/components/features/episodes/episode-shell";
 import KeyTakeaways from "@/components/features/episodes/key-takeaways";
 import { Separator } from "@/components/ui/separator";
-import { ensureSharedBucketName, parseGcsUri } from "@/lib/inngest/utils/gcs";
+import { ensureSharedBucketName, parseGcsUri } from "@/lib/gcs/utils/gcs";
 import { extractKeyTakeaways } from "@/lib/markdown/episode-text";
 import { prisma } from "@/lib/prisma";
 import type { UserEpisode } from "@/lib/types";
@@ -72,17 +72,77 @@ async function getPublicEpisode(id: string): Promise<EpisodeWithPublicUrl | null
   return { ...safe, publicAudioUrl, transcript: null };
 }
 
+/**
+ * Extract clean description from summary (handles JSON summaries for news episodes)
+ */
+function extractCleanDescription(summary: string | null | undefined, maxLength = 160): string | undefined {
+  if (!summary) return undefined;
+
+  try {
+    // Try to parse as JSON first (news episodes)
+    let cleanSummary = summary.trim();
+
+    // Remove code block markers if present
+    if (cleanSummary.startsWith("```json")) {
+      cleanSummary = cleanSummary.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+    } else if (cleanSummary.startsWith("```")) {
+      cleanSummary = cleanSummary.replace(/^```\s*/, "").replace(/\s*```$/, "");
+    } else if (cleanSummary.includes("```json")) {
+      const jsonMatch = cleanSummary.match(/```json\s*(\{[\s\S]*?\})\s*```/);
+      if (jsonMatch) {
+        cleanSummary = jsonMatch[1];
+      }
+    } else if (cleanSummary.includes("```")) {
+      const jsonMatch = cleanSummary.match(/```\s*(\{[\s\S]*?\})\s*```/);
+      if (jsonMatch) {
+        cleanSummary = jsonMatch[1];
+      }
+    }
+
+    cleanSummary = cleanSummary.trim();
+
+    // Try to parse as JSON
+    const summaryData = JSON.parse(cleanSummary);
+
+    // Extract meaningful text from JSON (prioritize fields that make good descriptions)
+    if (summaryData.top_headlines) {
+      return summaryData.top_headlines.substring(0, maxLength);
+    }
+    if (summaryData.ai_summary) {
+      return summaryData.ai_summary.substring(0, maxLength);
+    }
+    if (summaryData.summary_title) {
+      return summaryData.summary_title.substring(0, maxLength);
+    }
+
+    // Fallback: just use a generic description
+    return "Listen to this AI-curated podcast episode";
+  } catch {
+    // Not JSON, use as-is (regular YouTube episode summary)
+    return summary.substring(0, maxLength);
+  }
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const ep = await getPublicEpisode(id);
   if (!ep) return { title: "Episode not found" };
+
+  const description = extractCleanDescription(ep.summary);
+
   return {
     title: ep.episode_title,
-    description: ep.summary ? ep.summary.substring(0, 160) : undefined,
+    description,
     openGraph: {
       title: ep.episode_title,
-      description: ep.summary ? ep.summary.substring(0, 160) : undefined,
+      description,
       type: "music.song",
+      siteName: "Podslice",
+    },
+    twitter: {
+      card: "summary_large_card",
+      title: ep.episode_title,
+      description,
     },
   };
 }

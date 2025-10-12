@@ -155,8 +155,7 @@ export async function copyToSharedBucket(sourceGcsUrl: string): Promise<string> 
 	// Copy the file
 	await sourceFile.copy(destinationFile);
 
-	// Make the file public
-	await destinationFile.makePublic();
+	// The file is now public by virtue of being in a public bucket.
 
 	// Return the public GCS URI
 	return `gs://${sharedBucket}/${parsed.object}`;

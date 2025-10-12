@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { ensureBucketName, getStorageReader } from "@/lib/inngest/utils/gcs";
+import { ensureBucketName, getStorageReader } from "@/lib/gcs/utils/gcs";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(request: Request) {

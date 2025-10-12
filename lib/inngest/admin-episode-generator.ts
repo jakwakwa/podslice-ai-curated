@@ -60,12 +60,12 @@ export const generateAdminEpisode = inngest.createFunction(
 			return generateObjectiveSummary(transcript, { modelName });
 		});
 
-	// 3. Script (admin curated tone)
-	const script = await step.run("generate-script", async () => {
-		const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
-		const targetMinutes = getEpisodeTargetMinutes();
-		const minWords = Math.floor(targetMinutes * 140);
-		const maxWords = Math.floor(targetMinutes * 180);
+		// 3. Script (admin curated tone)
+		const script = await step.run("generate-script", async () => {
+			const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
+			const targetMinutes = getEpisodeTargetMinutes();
+			const minWords = Math.floor(targetMinutes * 140);
+			const maxWords = Math.floor(targetMinutes * 180);
 			return genText(
 				modelName2,
 				`Task: Based on the SOURCE SUMMARY below, write a ${minWords}-${maxWords} word (about ${targetMinutes} minutes) single-narrator podcast segment for the Podslice curated catalog.
@@ -98,7 +98,7 @@ ${summary}`
 			const scriptParts = splitScriptIntoChunks(script, chunkWordLimit);
 			const urls: string[] = [];
 			const tempPath = `podcasts/${podcastId}/temp-chunks/${Date.now()}`;
-			
+
 			for (let i = 0; i < scriptParts.length; i++) {
 				console.log(`[TTS] Generating and uploading admin chunk ${i + 1}/${scriptParts.length}`);
 				const buf = await generateSingleSpeakerTts(scriptParts[i]);
@@ -106,41 +106,46 @@ ${summary}`
 				const gcsUrl = await uploadBufferToPrimaryBucket(buf, chunkFileName);
 				urls.push(gcsUrl);
 			}
-			
+
 			console.log(`[TTS] Uploaded ${urls.length} admin chunks to GCS`);
 			return urls;
 		});
 
 		// 5. Download, combine, and upload final audio
 		const { gcsAudioUrl, durationSeconds } = await step.run("download-combine-upload", async () => {
-			const { getStorageReader, parseGcsUri } = await import("@/lib/inngest/utils/gcs");
+			const { getStorageReader, parseGcsUri } = await import("@/lib/gcs/utils/gcs");
 			const storageReader = getStorageReader();
-			
+
 			console.log(`[COMBINE] Downloading ${chunkUrls.length} admin chunks from GCS`);
 			const audioChunkBase64: string[] = [];
-			
+
 			for (const gcsUrl of chunkUrls) {
 				const parsed = parseGcsUri(gcsUrl);
 				if (!parsed) throw new Error(`Invalid GCS URI: ${gcsUrl}`);
 				const [buffer] = await storageReader.bucket(parsed.bucket).file(parsed.object).download();
 				audioChunkBase64.push(buffer.toString("base64"));
 			}
-			
+
 			console.log(`[COMBINE] Downloaded ${audioChunkBase64.length} chunks, combining`);
 			const fileName = `podcasts/${podcastId}/admin-${Date.now()}.wav`;
 			const { finalBuffer, durationSeconds } = combineAndUploadWavChunks(audioChunkBase64, fileName);
 			const gcsUrl = await uploadBufferToPrimaryBucket(finalBuffer, fileName);
-			
+
 			// Clean up temporary chunks
 			try {
 				for (const chunkUrl of chunkUrls) {
 					const parsed = parseGcsUri(chunkUrl);
-					if (parsed) await storageReader.bucket(parsed.bucket).file(parsed.object).delete().catch(() => {});
+					if (parsed)
+						await storageReader
+							.bucket(parsed.bucket)
+							.file(parsed.object)
+							.delete()
+							.catch(() => {});
 				}
 			} catch (cleanupError) {
 				console.warn(`[CLEANUP] Failed to delete temp chunks:`, cleanupError);
 			}
-			
+
 			return { gcsAudioUrl: gcsUrl, durationSeconds };
 		});
 

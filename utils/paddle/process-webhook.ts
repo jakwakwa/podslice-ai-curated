@@ -1,6 +1,6 @@
 import { type CustomerCreatedEvent, type CustomerUpdatedEvent, type EventEntity, EventName, type SubscriptionCreatedEvent, type SubscriptionUpdatedEvent } from "@paddle/paddle-node-sdk";
 import { z } from "zod";
-import { ensureBucketName, getStorageUploader } from "@/lib/inngest/utils/gcs";
+import { ensureBucketName, getStorageUploader } from "@/lib/gcs/utils/gcs";
 import { prisma } from "@/lib/prisma";
 import { priceIdToPlanType } from "@/utils/paddle/plan-utils";
 

@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
+import { getStorageReader, parseGcsUri } from "@/lib/gcs/utils/gcs";
 import { prisma } from "@/lib/prisma";
 
 function extractGcsFromHttp(url: string): { bucket: string; object: string } | null {
@@ -22,10 +22,7 @@ function extractGcsFromHttp(url: string): { bucket: string; object: string } | n
 	return null;
 }
 
-export async function GET(
-	_request: Request,
-	{ params }: { params: Promise<{ bundleId: string; episodeId: string }> }
-) {
+export async function GET(_request: Request, { params }: { params: Promise<{ bundleId: string; episodeId: string }> }) {
 	try {
 		// Require authentication
 		const { userId } = await auth();

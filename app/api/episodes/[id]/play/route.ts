@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
+import { getStorageReader, parseGcsUri } from "@/lib/gcs/utils/gcs";
 import { prisma } from "@/lib/prisma";
 
 function extractGcsFromHttp(url: string): { bucket: string; object: string } | null {

@@ -259,7 +259,7 @@ ${summaryContent}`,
 			});
 
 			const { gcsAudioUrl, durationSeconds } = await step.run("download-combine-upload-audio", async () => {
-				const { getStorageReader, parseGcsUri } = await import("@/lib/inngest/utils/gcs");
+				const { getStorageReader, parseGcsUri } = await import("@/lib/gcs/utils/gcs");
 				const storageReader = getStorageReader();
 
 				console.log(`[COMBINE] Downloading ${chunkUrls.length} chunks from GCS`);
@@ -376,7 +376,7 @@ ${summaryContent}`,
 			});
 
 			const { gcsAudioUrl, durationSeconds } = await step.run("download-combine-upload-multi-voice", async () => {
-				const { getStorageReader, parseGcsUri } = await import("@/lib/inngest/utils/gcs");
+				const { getStorageReader, parseGcsUri } = await import("@/lib/gcs/utils/gcs");
 				const storageReader = getStorageReader();
 
 				console.log(`[COMBINE] Downloading ${lineChunkUrls.length} dialogue chunks from GCS`);

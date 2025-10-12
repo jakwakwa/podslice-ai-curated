@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 
 import { extractDurationFromGCSFile } from "@/app/(protected)/admin/audio-duration/duration-extractor";
-import { getStorageUploader } from "@/lib/inngest/utils/gcs";
+import { getStorageUploader } from "@/lib/gcs/utils/gcs";
 import { prisma } from "@/lib/prisma";
 
 type ParsedGcs = { bucket: string; filePath: string };
