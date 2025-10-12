@@ -147,7 +147,7 @@ export const generateUserEpisode = inngest.createFunction(
 
 		const { gcsAudioUrl, durationSeconds } = await step.run("download-combine-upload-audio", async () => {
 			// Download chunks from GCS, combine them, and upload final file
-			const { getStorageReader, parseGcsUri } = await import("@/lib/gcs/utils/gcs");
+			const { getStorageReader, parseGcsUri } = await import("@/lib/inngest/utils/gcs");
 			const storageReader = getStorageReader();
 
 			console.log(`[COMBINE] Downloading ${chunkUrls.length} chunks from GCS`);

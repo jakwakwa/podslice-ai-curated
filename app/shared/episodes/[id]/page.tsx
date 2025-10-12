@@ -5,7 +5,7 @@ import EpisodeHeader from "@/components/features/episodes/episode-header";
 import EpisodeShell from "@/components/features/episodes/episode-shell";
 import KeyTakeaways from "@/components/features/episodes/key-takeaways";
 import { Separator } from "@/components/ui/separator";
-import { ensureSharedBucketName, parseGcsUri } from "@/lib/gcs/utils/gcs";
+import { ensureSharedBucketName, parseGcsUri } from "@/lib/inngest/utils/gcs";
 import { extractKeyTakeaways } from "@/lib/markdown/episode-text";
 import { prisma } from "@/lib/prisma";
 import type { UserEpisode } from "@/lib/types";

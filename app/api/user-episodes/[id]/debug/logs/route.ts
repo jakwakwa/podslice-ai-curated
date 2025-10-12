@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdminMiddleware } from "@/lib/admin-middleware";
-import { ensureBucketName, getStorageReader } from "@/lib/gcs/utils/gcs";
+import { ensureBucketName, getStorageReader } from "@/lib/inngest/utils/gcs";
 
 interface RouteParams {
 	params: Promise<{ id: string }>;

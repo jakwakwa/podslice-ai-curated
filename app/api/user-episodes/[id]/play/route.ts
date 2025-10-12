@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { getStorageReader, parseGcsUri } from "@/lib/gcs/utils/gcs";
+import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
 import { prisma } from "@/lib/prisma";
 import { userIsActive } from "@/lib/usage";
 

@@ -1,4 +1,4 @@
-import { ensureBucketName, getStorageUploader } from "@/lib/gcs/utils/gcs";
+import { ensureBucketName, getStorageUploader } from "@/lib/inngest/utils/gcs";
 
 const DEBUG_ENABLED = process.env.ENABLE_EPISODE_DEBUG === "true";
 

@@ -7,7 +7,7 @@ import EpisodeShell from "@/components/features/episodes/episode-shell";
 import KeyTakeaways from "@/components/features/episodes/key-takeaways";
 import PlayAndShare from "@/components/features/episodes/play-and-share";
 import { Separator } from "@/components/ui/separator";
-import { getStorageReader, parseGcsUri } from "@/lib/gcs/utils/gcs";
+import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
 import { extractKeyTakeaways } from "@/lib/markdown/episode-text";
 import { prisma } from "@/lib/prisma";
 import type { Episode } from "@/lib/types";

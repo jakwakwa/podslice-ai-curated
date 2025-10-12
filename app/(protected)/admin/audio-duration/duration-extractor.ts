@@ -1,5 +1,5 @@
-import { getStorageUploader } from "@/lib/gcs/utils/gcs";
 import { extractAudioDuration } from "@/lib/inngest/utils/audio-metadata";
+import { getStorageUploader } from "@/lib/inngest/utils/gcs";
 import { prisma } from "@/lib/prisma";
 
 type ParsedGcs = { bucket: string; filePath: string };
