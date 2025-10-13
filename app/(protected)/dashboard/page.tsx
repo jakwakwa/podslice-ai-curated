@@ -174,7 +174,7 @@ export default function CurationProfileManagementPage() {
 				</div>
 			) : userCurationProfile && latestBundleEpisode ? (
 				<div className="bg-bigcard rounded-tr-none rounded-tl-none mt-0 w-full max-w-screen md:w-full flex flex-col gap-0 justify-center items-baseline shadow-md shadow-stone-950 md:mt-4 md:m-0 xl:flex-row md:gap-4 pt-0 md:mb-0 border-[#12121760]  border-1 md:rounded-3xl overflow-hidden ">
-					<div className="w-full rounded-tr-none rounded-tl-none pt-0 mt-0 flex flex-col lg:flex-row overflow-hidden  ">
+					<div className="hidden md:flex w-full rounded-tr-none rounded-tl-none pt-0 mt-0 flex-col lg:flex-row overflow-hidden  ">
 						{/* FEED BOX */}
 						<div className="rounded-tr-none rounded-tl-none w-screen md:w-full pt-0 md:pr-4 mt-0 md:mr-3 flex flex-col  lg:flex-col md:p-8 sm:pt-0 md:pt-9 md:mt-0  md:max-w-[280px]   md:bg-secondary/40 rounded-0  md:overflow-hidden shadow-md shadow-black/30">
 							<div className="w-full flex flex-col justify-between p-0 md:rounded-none ">
@@ -252,7 +252,7 @@ export default function CurationProfileManagementPage() {
 			) : null}
 
 			{!(isLoading || userCurationProfile) ? (
-				<div className="max-w-2xl mt-12">
+				<div className="hidden md:block max-w-2xl mt-12">
 					<Alert>
 						<AlertTitle>
 							<AlertCircle className="h-4 w-4" />
