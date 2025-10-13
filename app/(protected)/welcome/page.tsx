@@ -39,56 +39,62 @@ export default function WelcomePage() {
 	const _handleUpgrade = async (_planCode: string | undefined) => { };
 
 	return (
-		<div className="bg-sidebar rounded-3xl px-4">
-			<section className="text-left mt-8  w-full pt-0 md:pt-0 pb-4 mb-0">
-				<div className="w-full px-2 md:px-4">
-					<Typography className="text-2xl font-bold text-left">Welcome!</Typography>
-					<Body className="text-foreground/70 leading-6 mt-4 font-normal tracking-wide mb-0  max-w-[600px] w-full">
-						Your personal AI-powered podcast curator that creates weekly episodes tailored to your interests. Choose from hand-picked content or create your own custom Personalized Feed.
+		<div className="flex flex-col sm:flex-col md:flex-col lg:flex-col xl:flex-row rounded-3xl mt-12 md:mt-0 px-0 xl:p-6
+		bg-episode-card-wrapper gap-4 w-screen md:w-full">
+			<section className=" text-center text-sm w-full max-w-none xl:max-w-[270px]  p-6 mb-0 z-10 bg-primary md:text-left  rounded-3xl md:px-4 md:py-6">
+				<div className="w-full px-2 md:px-4 z-10">
+					<Typography className="text-2xl text-primary-foreground font-bold text-center md:text-left">Welcome!</Typography>
+					<Body className="text-secondary-foreground-muted leading-3 mt-4 font-medium mb-0  md:max-w-[600px] text-base w-full">
+						Digest long form content using ou AI-powered content curation engine by activating bundles or using our Ai engine to get your own personalised summaries by  subscribing to the Curate Control plan.
 					</Body>
-					<div className="mt-6">
+					<div className="mt-8">
+						<p className="text-sm my-1 text-center md:text-left leading-6 font-semibold text-secondary-foreground">Claim Your 14 Day Premium Trial</p>
 						<Link href="/manage-membership">
-							<Button variant="default" size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-								Start Your Free Trial
+							<Button variant="default" size="lg" className="bg-primary hover:bg-primary/90 text-foreground">
+								Start Free Trial
 							</Button>
 						</Link>
 					</div>
-					<div className="flex justify-start  md:justify-end items-center space-x-4 text-foreground/70 mt-8">
-						<Link href="/terms" className="hover:text-foreground transition-colors text-xs underline">
-							Terms of Service
+					<div className="flex  text-center md:text-left w-full justify-center  md:justify-end items-center space-x-4 text-secondary mt-8">
+						<Link href="/terms" className="transition-colors text-xs hover:underline  text-secondary-foreground w-fit font-medium ">
+							Terms of use
 						</Link>
 						<span>•</span>
-						<Link href="/privacy" className="hover:text-foreground transition-colors text-xs underline">
+						<Link href="/privacy" className="w-fit transition-colors text-xs hover:underline  text-secondary-foreground font-medium">
 							Privacy Policy
 						</Link>
 					</div>
 				</div>
 			</section>
 			{/* How It Works */}
-			<section className="flex flex-col justify-center w-full mb-4 py-8  mt-4 bg-card rounded-2xl md:px-12">
-				<div className="text-left px-3 pt-2 mb-0">
-					<h2 className="text-xl leading-9 font-semibold tracking-tight mb-4">How It Works</h2>
-					<p className="text-custom-h5 leading-6 font-normal tracking-wide max-w-[600px] pb-6">
-						Getting started with PODSLICE is simple. Follow these three easy steps to create your personalized podcast experience.
-					</p>
-				</div>
+			<section className="w-[full] border-none  mb-0 p-0  mt-4 md:m-0 rounded-4xl md:p-0  outline-0  shadow-xl bg-sidebar/30 overflow-hidden" >
+				<div className="text-left mb-0 min-w-full min-h-full bg-card ">
+					<div className="text-left mb-0 px-6 xl:px-12 pt-8 ">
+						<h2 className="text-2xl leading-9 font-semibold tracking-tight mb-4 text-primary-foreground">How It Works</h2>
+						<p className=" leading-5 font-normal text-secondary-foreground 	 tracking-wide max-w-[600px] pb-6">
+							Getting started with PODSLICE is simple. Follow these three easy steps to create your personalized podcast experience.
+						</p>
+					</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-0 pb-2">
-					{howItWorks.map(step => (
-						<Card key={step.step} className="transition-all episode-card-wrapper duration-200 ease-in-out h-full relative hover:-translate-y-1 hover:shadow-lg main-card py-12">
-							<div className="flex flex-col	 items-start justify-center w-full gap-2 h-10 my-4">
-								<div className="flex items-center justify-center w-7 h-10 rounded-full bg-[#1D7558] border-2 mx-0 border-[#3C8C7091] text-primary-foreground font-semibold text-h5 mb-1">
-									{step.step}
+					<div className="md:px-4 pb-8  rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 p-1 ">
+						{howItWorks.map(step => (
+							<Card key={step.step} className="transition-all bg-primary  h-full min-h-64 duration-200 ease-in-out relative rounded-3xl hover:-translate-y-1 shadow-lg  p-2 max-h-74 gap-2">
+								<div className="flex flex-col p-3.5	h-fit items-center justify-center w-full gap-3 ">
+									<div className="flex items-center justify-center w-4 h-4 p-4.5 rounded-full bg-teal-600 mx-0  text-success-foreground shadow-md  shadow-green-950/30  font-mono font-semibold text-h5 mb-1 ">
+										{step.step}
+									</div>
+									<h3 className="text-xl text-center font-bold tracking-tight mb-2 mt-0 w-full text-secondary-foreground">
+										{step.title}
+									</h3>
+									<p className="text-link/90 text-center font-medium text-sm leading-relaxed mb-4 text-secondary-foreground/70">{step.description}</p>
 								</div>
-								<Typography variant="h3" className="text-lg font-semibold tracking-tight mb-2 mt-0 w-full">
-									{step.title}
-								</Typography>
-							</div>
-							<p className="text-foreground/90 text-sm leading-relaxed mb-4">{step.description}</p>
-						</Card>
-					))}
+
+							</Card >
+						))
+						}
+					</div >
 				</div>
-			</section>
-		</div>
+			</section >
+		</div >
 	);
 }

@@ -1,3 +1,4 @@
+import { NewspaperIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { z } from "zod";
@@ -157,11 +158,11 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 	const isNewsEpisode = episode.youtube_url === "news";
 	const sourceDisplay =
 		isNewsEpisode && episode.news_sources
-			? `Source/s: ${episode.news_sources === "stocks"
+			? ` ${episode.news_sources === "stocks"
 				? "PolyMarket, Traderview, Yahoo! Finance"
 				: episode.news_sources
 					?.split(", ")
-					.map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+					.map(s => s.charAt(0).toUpperCase() + s.slice(1))
 					.join(", ")
 			}`
 			: null;
@@ -178,14 +179,13 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 							title={episode.episode_title}
 							createdAt={episode.created_at}
 							durationSeconds={episode.duration_seconds ?? null}
-							metaBadges={
-								<span className="inline-flex items-center gap-2 rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400">
-									Public Episode
-								</span>
-							}
+							metaBadges={<span className="inline-flex items-center gap-2 rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400">Public Episode</span>}
 							rightLink={isNewsEpisode ? undefined : { href: episode.youtube_url, label: "Youtube Url", external: true }}
 						/>
-						{sourceDisplay && <div className="mt-2 text-lg font-bold text-[#ac91fc]">{sourceDisplay}</div>}
+						<div className="flex items-center gap-2 mt-2 text-lg font-bold text-[#90b4f7]">
+							{sourceDisplay && <NewspaperIcon color="#71D1E7" />}
+							{sourceDisplay}
+						</div>
 						<div className="mt-4 my-8">
 							{episode.publicAudioUrl && (
 								<div className="mb-6">
@@ -237,7 +237,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 														<div className="flex flex-col flex-wrap gap-6 md:gap-8">
 															<div className="flex flex-row gap-4 min-w-[20%]">
 																{summaryData.topic && summaryData.topic.length > 0 && (
-																	<div className="text-[#87f4f2fe] text-sm uppercase">
+																	<div className="text-[#ac91fc] text-sm uppercase">
 																		<h4 className="font-medium mb-2">Topic</h4>
 																		<div className="flex flex-wrap gap-2">
 																			{summaryData.topic.map((t: string, i: number) => (
@@ -250,7 +250,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 																)}
 
 																{summaryData.sentiment && (
-																	<div className="text-[#87f4f2fe]">
+																	<div className="text-[#ac91fc]">
 																		<h4 className="font-medium mb-2 uppercase text-sm">Sentiment Analysis</h4>
 																		<div className="flex flex-wrap gap-2">
 																			{Array.isArray(summaryData.sentiment) ? (
@@ -260,20 +260,18 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 																					</span>
 																				))
 																			) : (
-																				<span className="px-2 py-1 rounded-md text-lg bg-violet-800 text-slate-200">
-																					{summaryData.sentiment}
-																				</span>
+																				<span className="px-2 py-1 rounded-md text-lg bg-violet-800 text-slate-200">{summaryData.sentiment}</span>
 																			)}
 																		</div>
 																	</div>
 																)}
 															</div>
 															{summaryData.tags && summaryData.tags.length > 0 && (
-																<div className="text-[#87f4f2fe]">
-																	<h4 className="font-medium mb-2 text-sm uppercase text-[#87f4f2fe]">Tags</h4>
+																<div className="text-[#ac91fc]">
+																	<h4 className="font-medium mb-2 text-sm uppercase text-[#ac91fc]">Tags</h4>
 																	<div className="flex flex-wrap gap-2">
 																		{summaryData.tags.map((tag: string, i: number) => (
-																			<span key={i} className="px-2 py-1 bg-slate-950 text-purple-400/80 rounded-md text-sm">
+																			<span key={i} className="px-2 py-1 bg-slate-950 text-[#91affcbb] rounded-md text-sm">
 																				#{tag}
 																			</span>
 																		))}
@@ -282,20 +280,18 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 															)}
 
 															{summaryData.target_audience && (
-																<div className="text-[#87f4f2fe]">
-																	<h4 className="font-medium text-sm mb-3 uppercase">Target Audience</h4>
-																	<p className="text-[#D7C4F6D7] text-base">{summaryData.target_audience}</p>
+																<div className="text-[#ac91fc]">
+																	<h4 className="font-medium text-lg mb-3 uppercase">Target Audience</h4>
+																	<p className="text-[#7c98f6] text-base">{summaryData.target_audience}</p>
 																</div>
 															)}
 														</div>
 														<hr />
 
 														{summaryData.ai_summary && (
-															<div className="text-[#ac91fc]">
+															<div className="text-[#9574fb]">
 																<h4 className="font-bold text-xl mt-8 mb-4">Ai Summary</h4>
-																<div className="whitespace-pre-wrap text-[#D7C4F6D7]/90 leading-[1.8] text-[17px]">
-																	{summaryData.ai_summary}
-																</div>
+																<div className="whitespace-pre-wrap text-[#93A3F2]/80 leading	-[1.8] text-[17px]">{summaryData.ai_summary}</div>
 															</div>
 														)}
 													</div>
@@ -322,4 +318,3 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 		</div>
 	);
 }
-

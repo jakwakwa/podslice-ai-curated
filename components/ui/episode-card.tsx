@@ -39,19 +39,19 @@ export function EpisodeCard({ imageUrl, title, publishedAt, durationSeconds, act
 					// For bundle episodes, use the episode's image_url
 					if (imageUrl) {
 						return (
-							<div className="aspect-video h-2/3 md:h-16 lg:h-20 shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#506497ed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0911199e]   lg:min-w-[20%]">
-								<Image src={imageUrl} alt={title} className="h-full w-full inline-flex content-center object-cover mix-blend-exclusion  shadow-zinc-800  opacity-80 " width={200} height={80} />
+							<div className="aspect-video md:h-24 lg:h-25 shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#0689aaed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0c98fc9e]   lg:min-w-[18%]">
+								<Image src={imageUrl} alt={title} className="h-full w-full inline-flex content-center object-cover mix-blend-screen  shadow-zinc-800  opacity-80 " width={200} height={80} />
 							</div>
 						);
 					}
 					// For news episodes, use the generic news placeholder
 					if (isNewsEpisode) {
 						return (
-							<div className="aspect-video h-24	 md:h-16 lg:h-20 min-w-[120px] lg:min-w-[130px]  shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#596fa5ed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0911199e]   ">
+							<div className="aspect-video md:h-24 lg:h-25 shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#db72ebed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#cb15b99e]   lg:min-w-[18%]">
 								<Image
 									src="/generic-news-placeholder.png"
 									alt={title}
-									className="h-full w-full inline-flex content-center object-fit mix-blend-exclusion  shadow-zinc-800  opacity-80 "
+									className="h-full w-full inline-flex content-center object-fit   shadow-zinc-800  opacity-80 "
 									width={200}
 									height={80}
 								/>
@@ -62,13 +62,13 @@ export function EpisodeCard({ imageUrl, title, publishedAt, durationSeconds, act
 					if (youtubeUrl) {
 						if (youtubeChannelImage) {
 							return (
-								<div className="aspect-video h-16 md:h-17 lg:h-20 shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692]  shadow-black/35 border-[#596fa5ed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#09111964] relative">
+								<div className="aspect-video md:h-24 lg:h-25 shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#7630eded] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#301f4f9e]   lg:min-w-[18%]">
 									<Image
 										src={youtubeChannelImage}
 										alt={title}
-										className="h-42 w-100 inline-flex justify-center content-center object-cover mix-blend-screen absolute my-auto shadow-zinc-600 bottom-0 top-2 opacity-60 "
+										className="h-full w-full inline-flex content-center object-cover   shadow-zinc-800  opacity-80 "
 										width={300}
-										height={100}
+										height={200}
 									/>
 								</div>
 							);
@@ -88,7 +88,7 @@ export function EpisodeCard({ imageUrl, title, publishedAt, durationSeconds, act
 				<div className="flex w-[97%] flex-col justify-between h-fit items-start content-start py-0 md:px-3 md:flex-col  md:pl-0  md:gap-0 md:justify-between md:min-h-fit lg:pl-2 lg:pt-2">
 					{detailsHref ? (
 						<Link
-							className="text-[0.9rem] font-semibold md:w-full md:text-[0.65]  leading-tight line-clamp-2 h-auto max-h-14 lg:max-w-[85%] lg:text-base mb-5 lg:pb-0 text-primary-foreground text-shadow-2xs hover:text-cyan-200 hover:decoration-teal-800 hover:opacity-90 transition-all duration-300 text-left capitalize"
+							className="text-[0.9rem] font-semibold md:w-full md:text-[0.65]  leading-tight line-clamp-2 h-auto max-h-14 lg:max-w-[85%] lg:text-base mb-5 lg:pb-0 text-primary-foreground-muted text-shadow-2xs hover:text-cyan-200 hover:decoration-teal-800 hover:opacity-90 transition-all duration-300 text-left capitalize"
 							href={detailsHref}>
 							{title}
 						</Link>

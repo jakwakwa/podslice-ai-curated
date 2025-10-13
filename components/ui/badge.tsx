@@ -4,17 +4,17 @@ import type * as React from "react"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-	"inline-flex items-center text-indigp-400 content-center justify-center rounded border px-3.5 py-0 font-normal transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 h-5 text-[0.6rem] text-center",
+	"inline-flex items-center text-primary content-center justify-center rounded border px-3.5 py-0 font-light transition-colors focus:outline-none focus:ring-2 rounded-sm text-foreground focus:ring-ring focus:ring-offset-2 h-5 text-[0.6rem] text-center",
 	{
 		variants: {
 			variant: {
 				default:
-					"border-teal-300 bg-teal-800 font-normal font-mono text-primary-foreground shadow hover:bg-primary",
+					"border-primary font-light font-sans text-primary-foreground  shadow hover:bg-primary border-1 rounded-sm",
 				secondary:
-					"flex items-center  border-slate-600 bg-slate-800/90 text-xs font-mono font-medium font-mono  text-secondary-foreground border-1   h-5",
+					"flex items-center  text-teal-400 border-teal-400 text-[0.6rem]  font-light border-1 bg-cyan-700 rounded-sm",
 				destructive:
-					"border-amber-400 border-red-600  text-[#6156BB] text-amber-300 shadow hover:bg-amber/80 font-normal",
-				outline: "flex items-center bg-indigo-950/50 border-slate-600 border-1 min-w-[90px] px-0   h-5  text-left overflow-hidden",
+					"border-destructive-foreground  text-destructive-foreground shadow hover:bg-amber/80 font-light border-1 rounded-sm",
+				outline: "text-xs flex bg-indigo-950/70  font-sans items-center shadow-md  px-0 text-left overflow-hidden rounded-sm font-light border-1 border-violet-400",
 			},
 		},
 		defaultVariants: {

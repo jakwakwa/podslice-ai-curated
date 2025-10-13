@@ -178,7 +178,7 @@ export default function CurationProfileManagementPage() {
 						{/* FEED BOX */}
 						<div className="rounded-tr-none rounded-tl-none w-screen md:w-full pt-0 md:pr-4 mt-0 md:mr-3 flex flex-col  lg:flex-col md:p-8 sm:pt-0 md:pt-9 md:mt-0  md:max-w-[280px]   md:bg-secondary/40 rounded-0  md:overflow-hidden shadow-md shadow-black/30">
 							<div className="w-full flex flex-col justify-between p-0 md:rounded-none ">
-								<h2 className="hidden md:block pt-8 md:text-secondary-foreground md:pt-0 md:px-0 text-shadow-md pb-3 text-sm max-w-[100%] ">Your Active Bundle Feed</h2>
+								<h2 className="hidden md:block pt-8  font-bold md:text-secondary-foreground md:pt-0 md:px-0  pb-3 text-sm max-w-[100%] ">Your Active Bundle Feed</h2>
 								<div className="shadow-md shadow-black/30 overflow-hidden rounded-2xl">
 									{userCurationProfile?.is_bundle_selection && userCurationProfile?.selectedBundle && (
 										<div className="bg-slate-700 border-none md:border-1  md:bg-primary border border-border mx-auto  py-6  md:pt-4 md:pb-0 px-5 w-full h-fit  md:rounded-t-lg overflow-hidden text-secondary-foreground md:text-primary-foreground ">
@@ -231,8 +231,8 @@ export default function CurationProfileManagementPage() {
 						</div>
 						{/* Latest Bundle Episode Section */}
 						<div className="w-full border-b-0 rounded-0 py-0  my-0 mx-0 border-[#2c2a2a17] mt-0 pt-6 px-4 sm:pt-0  md:pt-9 md:mt-0  md:mb-8  md:px-6 border-dark md:rounded-3xl overflow-hidden  ">
-							<h3 className="flex flex-col font-bold w-full  mb-4 md:flex-row items-start  text-sm md:text-lg gap-2 text-secondary-foreground text-shadow-slate-650/10 text-shadow-xs">
-								<span className="bg-[#1bc396] rounded-sm shadow shadow-[#1a0b2f3f]  animate-bounce ease-in-out  text-[0.65rem]duration-200 px-2 py-0  md:text-sm mr-2 text-[#fff]/80">New</span>
+							<h3 className="flex flex-col font-bold w-full  mb-4 md:flex-row items-start  text-sm md:text-lg gap-2 text-secondary-foreground ">
+								<span className="bg-[#1ca896]  font-medium  text-xs rounded-sm shadow-md shadow-[#53998e91]  animate-bounce ease-in-out  text-[0.65rem]duration-200 lg:text-xs px-2 py-1  mr-2 text-[#fff]/80">New</span>
 								Latest from your active bundle
 							</h3>
 							<CardDescription className="text-sm leading-relaxed  opacity-90 mb-0">See your latest roundup episodes here from {userCurationProfile?.selectedBundle?.name}</CardDescription>
