@@ -123,7 +123,7 @@ export default function CurationProfileManagementPage() {
 		bundleEpisodes.length > 0 ? bundleEpisodes.sort((a, b) => new Date(b.published_at || b.created_at).getTime() - new Date(a.published_at || a.created_at).getTime())[0] : null;
 
 	return (
-		<div className=" h-full min-h-[84vh] overflow-hidden rounded-none bg-episode-card-wrapper 	px-0  mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:border-2 md:border-[#c8d3da32] md:rounded-4xl  md:mt-4 md:p-8 md:w-full">
+		<div className=" h-full min-h-[84vh]  rounded-none 	px-0  mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:border-2 md:border-[#c8d3da32] md:rounded-4xl  md:mt-4 md:p-8 md:w-full  bg-episode-card-wrapper ">
 			<PageHeader
 				title="Your dashboard"
 				description="Choose from our pre-curated podcast bundles. Each bundle is a fixed selection of 2-5 carefully selected shows and cannot be modified once selected."
@@ -270,7 +270,7 @@ export default function CurationProfileManagementPage() {
 
 			<div className="bg-bigcard w-full flex flex-col gap-0 justify-start items-start   shadow-xl shadow-black/30  mt-0 md:m-0 xl:flex-row md:gap-4 py-8 p-0 md:mt-4 md:mb-0 border-1 border-[#1a1d1dc0]  md:rounded-3xl overflow-hidden  md:p-0 md:justify-center align-start ">
 				<div className="pt-2 pl-8 md:mt-8 w-full max-w-[300px] flex flex-col items-start justify-items-start">
-					<p className="w-full px-0  text-secondary-foreground md:px-0 text-base font-bold mb-4">Recently created episodes</p>
+					<p className="w-full mx-0 px-0  text-secondary-foreground md:px-0 text-base font-bold mb-4">Recently created episodes</p>
 					<CardDescription className="w-full px-0 md:px-0 text-sm text-secondary-foreground-muted  opacity-90">View and manage your recently generated episodes.</CardDescription>
 					<div className="w-full flex flex-row md:flex-col gap-2">
 						{(subscription?.plan_type || "").toLowerCase() === "curate_control" && (

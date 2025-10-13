@@ -166,13 +166,13 @@ export const badgeVariants = cva(
 );
 
 // Avatar variants - profile picture styling
-export const avatarVariants = cva("relative flex shrink-0 overflow-hidden rounded-full", {
+export const avatarVariants = cva("relative flex shrink-0 overflow-hidden rounded-full content-center items-center justify-center", {
 	variants: {
 		size: {
-			default: "h-10 w-10",
-			sm: "h-8 w-8",
-			lg: "h-12 w-12",
-			xl: "h-16 w-16",
+			default: "h-6 w-6 md:h-10 md:w-10	overflow-hidden	",
+			sm: "h-6 w-6 md:h-10 md:w-10 rounded-full",
+			lg: "h-6 w-6 md:h-12 md:w-12 rounded-full",
+			xl: "h-6 w-6 md:h-16 md:w-16 rounded-full",
 		},
 	},
 	defaultVariants: {

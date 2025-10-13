@@ -78,16 +78,23 @@ export function NavUser({
 			<SidebarMenuItem>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<SidebarMenuButton size="lg" className="h-16 px-2 bg-[#4846b618] border-1 border-[#a075e729]  data-[state=open]:bg-[#141421] data-[state=open]:text-[#4d8fe0]">
+						<SidebarMenuButton size="lg" className="h-11 w-fit md:h-16 px-2 bg-[#1b13336a] border-1 border-input-border data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+
+
 							<Avatar className="h-8 w-8 rounded-lg filter ">
 								<AvatarImage src={user.avatar} alt={user.name} />
 								<AvatarFallback className="rounded-lg">{getInitials(user.name)}</AvatarFallback>
 							</Avatar>
-							<div className="flex flex-col my-2 p-1  flex-1 text-left text-sm leading-tight">
-								<span className="truncate font-medium text-foreground/90 text-sm">{user.name}</span>
-								<span className="truncate text-xs text-muted-foreground/80 font-[300] mt-1">{user.email}</span>
-							</div>
-							<MoreVerticalIcon className="ml-auto h-4 w-4" />
+
+							{!isMobile ? (
+								<>
+									<div className="flex flex-col my-2 p-1  flex-1 text-left text-sm leading-tight">
+										<span className="truncate font-medium text-foreground/90 text-sm">{user.name}</span>
+										<span className="truncate text-foreground/80 font-[300] mt-1">{user.email}</span>
+									</div>
+									<MoreVerticalIcon className="ml-auto h-4 w-4" />
+								</>
+							) : <MoreVerticalIcon className="ml-auto h-4 w-4" />}
 						</SidebarMenuButton>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent

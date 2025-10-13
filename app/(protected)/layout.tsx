@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { Menu, MoonIcon, SunIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,7 +9,7 @@ import { useTheme } from "next-themes";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { AppSidebar, navItems } from "@/components/app-sidebar";
-import InstallButton from "@/components/pwa/InstallButton";
+import { NavUser } from "@/components/nav-user";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { DynamicBreadcrumb } from "@/components/ui/dynamic-breadcrumb";
@@ -23,6 +23,12 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 	const { state } = useSidebar();
 	const [openMobileDrawer, setOpenMobileDrawer] = useState(false);
 	const isMobile = useIsMobile();
+	const { user } = useUser();
+	const userData = {
+		name: user?.fullName || user?.firstName || "User",
+		email: user?.emailAddresses?.[0]?.emailAddress || "user@example.com",
+		avatar: user?.imageUrl || "/placeholder-user.jpg",
+	};
 
 	useSubscriptionInit();
 
@@ -42,7 +48,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 			<SidebarInset>
 				<header
-					className={`fixed flex h-16 bg-secondary/70 backdrop-blur-[10px] shrink-0 items-center border-1 border-b-secondary gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 mt-0 w-screen justify-between px-4  py-0 overflow-y-scrol shadow-[0_4px_8px_1px_rgba(0,0,0,0.1)] duration-300 z-50 ${state === "expanded" ? "" : ""}`}>
+					className={`fixed flex h-16 bg-header backdrop-blur-[10px] shrink-0 items-center border-1 border-b-secondary gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 mt-0 w-screen justify-between px-4  py-0 overflow-y-scrol shadow-[0_4px_8px_1px_rgba(0,0,0,0.1)] duration-300 z-50 ${state === "expanded" ? "" : ""}`}>
 					<div className={`flex items-center h-16 justify-between gap-2 px-2  ${state === "expanded" ? "md:px-4" : "md:px-0"}`}>
 						<Image className={`w-full max-w-[100px] ${state === "expanded" ? "inline " : "hidden"}`} src="/logo.svg" width={300} height={100} alt="logo" />
 
@@ -63,26 +69,31 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 						<DynamicBreadcrumb />
 					</div>
 					<div className="flex flex-row-reverse items-center gap-2">
-						<InstallButton />
+						{/* <InstallButton /> */}
+
 						{isMobile && typeof window !== "undefined" && (
 							<Drawer open={openMobileDrawer} onOpenChange={setOpenMobileDrawer}>
 								<DrawerTrigger asChild>
-									<Button variant="outline" className="bg-purple-600/50 rounded-full">
+									<Button variant="outline" size="sm" className="">
 										<Menu />
-										<span className="hidden">Edit Profile</span>
+										<span className="hidden">Nav Menu Drawer</span>
 									</Button>
 								</DrawerTrigger>
-								<DrawerContent className="sm:max-w-screen bg-cyan-400/35 border-none rounded-t-xl backdrop-blur-sm mix-blend-hard-light ">
+								<DrawerContent className="sm:max-w-screen flex flex-col justify-center items-center bg-cyan-400/35 border-none rounded-t-xl backdrop-blur-sm mix-blend-hard-light p-0 w-full ">
 									<DrawerHeader>
-										<DrawerTitle className="text-cyan-100/90">Menu</DrawerTitle>
-										<DrawerDescription className="text-cyan-100/50">Navigate within the app</DrawerDescription>
+										<DrawerTitle className=" text-center text-cyan-100/90">Menu</DrawerTitle>
+										<DrawerDescription className="text-center text-cyan-100/50">Navigate within the app</DrawerDescription>
 										<ProfileForm setOpenMobileDrawer={setOpenMobileDrawer} />
 									</DrawerHeader>
 								</DrawerContent>
 							</Drawer>
 						)}
+
 						<ModeToggle />
 						<NotificationBell />
+
+
+						{isMobile && <UserNavMobile user={userData} />}
 					</div>
 				</header>
 
@@ -93,15 +104,20 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 					<div className={"grain-background background-base"} />
 
 					<div className={"layout-inset"} />
-					<div className="w-full md:w-full p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-20 mx-0 pl-0 md:pr-3 md:px-2 min-w-full md:my-2 lg:ml-6 lg:pl-0 lg:pr-12">
-						{children}
-
-					</div>
+					<div className="w-full md:w-full p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-20 mx-0 pl-0 md:pr-3 md:px-2 min-w-full md:my-2 lg:ml-6 lg:pl-0 lg:pr-12">{children}</div>
 				</div>
 			</SidebarInset>
 		</>
 	);
 }
+
+export const UserNavMobile = ({ user }: { user: { name: string; email: string; avatar: string } }) => {
+	return (
+		<div className="left-0 bottom-0  rounded-lg relative max-h-8 md:max-h-9 flex items-center md:items-center min-w-13 h-full border-1 border-cyan-100/10 bg-secondary overflow-hidden justify-center  outline-none  p-0 m-0  transition-all duration-300 ease-in-out ">
+			<NavUser user={user} />
+		</div>
+	);
+};
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
 	const { isSignedIn, isLoaded } = useAuth();
@@ -180,17 +196,27 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 	);
 }
 function ProfileForm({ setOpenMobileDrawer }: { setOpenMobileDrawer: (open: boolean) => void }) {
+	const { user } = useUser();
+	const _userData = {
+		name: user?.fullName || user?.firstName || "User",
+		email: user?.emailAddresses?.[0]?.emailAddress || "user@example.com",
+		avatar: user?.imageUrl || "/placeholder-user.jpg",
+	};
 	const mobileNav = navItems;
 
-
 	return (
-		<div className="grid gap-3 bottom-10 "  >
-			<ul className="grid gap-4 py-2">
+		<div className="grid gap-3 bottom-10 w-full">
+			<ul className="grid gap-2 py-2 w-full">
 				{mobileNav.map(item => (
-					<li key={item.title} className=" text-left text-sm " >
+					<li key={item.title} className=" text-left text-sm w-full ">
 						{/* hide drawer when link is clicked */}
-						<Link href={item.url} onClick={() => setOpenMobileDrawer(false)} className="py-3 bg-cyan-900/10 rounded-full flex w-full text-left flex-row items-center cursor-pointer  max-w-[260px] my-0 mx-auto justify-center gap-2 font-medium border border-cyan-200/10 shadow-lg shadow-cyan-200/10 text-shadow-cyan-200/10  text-cyan-100/70 ">{item.icon && <item.icon className="size-4 opacity-[0.5]" />}{item.title} </Link>
-
+						<Link
+							href={item.url}
+							onClick={() => setOpenMobileDrawer(false)}
+							className="py-3 bg-teal-900/30 rounded-lg flex text-left flex-row items-center justify-start cursor-pointer  my-0 mx-auto gap-2 font-medium border border-cyan-200/10 shadow-lg shadow-cyan-400/10 text-shadow-cyan-900/10  text-cyan-100/70 w-screen max-w-[70%] md:max-w-fit pl-8 backdrop-blur-md ">
+							{item.icon && <item.icon className="size-4 opacity-[0.5]" />}
+							{item.title}{" "}
+						</Link>
 					</li>
 				))}
 			</ul>

@@ -9,11 +9,11 @@ function Breadcrumb({ ...props }: React.ComponentProps<"nav">) {
 }
 
 function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
-	return <ol data-slot="breadcrumb-list" className={cn("block hidden text-muted-foreground md:flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-1 ", className)} {...props} />
+	return <ol data-slot="breadcrumb-list" className={cn("block hidden text-muted-foreground md:flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-1 h-fit", className)} {...props} />
 }
 
 function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
-	return <li data-slot="breadcrumb-item" className={cn("inline-flex items-center gap-0 ", className)} {...props} />
+	return <li data-slot="breadcrumb-item" className={cn("inline-flex items-center gap-0 h-fit underline-offset-0", className)} {...props} />
 }
 
 function BreadcrumbLink({
@@ -25,16 +25,16 @@ function BreadcrumbLink({
 }) {
 	const Comp = asChild ? Slot : "a"
 
-	return <Comp data-slot="breadcrumb-link" className={cn("text-foreground hover:text-foreground/70 transition-colors font-semibold uppercase text-[11px]", className)} {...props} />
+	return <Comp data-slot="breadcrumb-link" className={cn("text-foreground hover:text-foreground/70 transition-colors font-semibold uppercase text-sm h-fit", className)} {...props} />
 }
 
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
-	return <span data-slot="breadcrumb-page" role="link" aria-disabled="true" aria-current="page" tabIndex={0} className={cn("text-secondary-foreground  letter-wide  font-semibold uppercase text-[11px]", className)} {...props} />
+	return <span data-slot="breadcrumb-page" role="link" aria-disabled="true" aria-current="page" tabIndex={0} className={cn(" hover:text-foreground/70 transition-colors font-semibold uppercase text-sm h-fit leading-none text-ring", className)} {...props} />
 }
 
 function BreadcrumbSeparator({ children, className, ...props }: React.ComponentProps<"li">) {
 	return (
-		<li data-slot="breadcrumb-separator" role="presentation" aria-hidden="true" className={cn("[&>svg]:size-3.5 bg-transparent w-0 h-0", className)} {...props}>
+		<li data-slot="breadcrumb-separator" role="presentation" aria-hidden="true" className={cn("[&>svg]:size-3 bg-transparent w-3 h-3 p-0 m-0 text-secondary-foreground-muted", className)} {...props}>
 			{children ?? <ChevronRight />}
 		</li>
 	)
