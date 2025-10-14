@@ -48,7 +48,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 			<SidebarInset>
 				<header
-					className={`fixed flex h-16 bg-header backdrop-blur-[10px] shrink-0 items-center border-1 border-b-secondary gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 mt-0 w-screen justify-between px-4  py-0 overflow-y-scrol shadow-[0_4px_8px_1px_rgba(0,0,0,0.1)] duration-300 z-50 ${state === "expanded" ? "" : ""}`}>
+					className={`fixed flex h-16 bg-header backdrop-blur-[10px] shrink-0 items-center border-1 border-b-secondary gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 mt-0 max-w-screen justify-between px-4  py-0 overflow-y-scrol shadow-[0_4px_8px_1px_rgba(0,0,0,0.1)] duration-300 z-50 ${state === "expanded" ? "" : ""}`}>
 					<div className={`flex items-center h-16 justify-between gap-2 px-2  ${state === "expanded" ? "md:px-4" : "md:px-0"}`}>
 						<Image className={`w-full max-w-[100px] ${state === "expanded" ? "inline " : "hidden"}`} src="/logo.svg" width={300} height={100} alt="logo" />
 
@@ -88,10 +88,13 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 								</DrawerContent>
 							</Drawer>
 						)}
+						{!isMobile && typeof window !== "undefined" && (
+							<>
+								<ModeToggle />
+								<NotificationBell />
+							</>
 
-						<ModeToggle />
-						<NotificationBell />
-
+						)}
 
 						{isMobile && <UserNavMobile user={userData} />}
 					</div>
@@ -99,9 +102,6 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 				<div
 					className={`flex flex-col flex-grow transition-all duration-300 ease-in-out px-0 md:px-0 mt-8 md:mt-0 mb-2 m-0 p-0 h-screen ${state === "expanded" ? "ml-0 w-full md:ml-3 md:pr-2 " : "ml-0 md:ml-12 w-full md:max-w-[95vw]"}`}>
-					<div className={"grain-blur "} />
-					<div className={"grid-bg-one "} />
-					<div className={"grain-background background-base"} />
 
 					<div className={"layout-inset"} />
 					<div className="w-full md:w-full p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-20 mx-0 pl-0 md:pr-3 md:px-2 min-w-full md:my-2 lg:ml-6 lg:pl-0 lg:pr-12">{children}</div>
@@ -113,7 +113,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 export const UserNavMobile = ({ user }: { user: { name: string; email: string; avatar: string } }) => {
 	return (
-		<div className="left-0 bottom-0  rounded-lg relative max-h-8 md:max-h-9 flex items-center md:items-center min-w-13 h-full border-1 border-cyan-100/10 bg-secondary overflow-hidden justify-center  outline-none  p-0 m-0  transition-all duration-300 ease-in-out ">
+		<div className=" rounded-lg relative  md:max-h-9 flex items-center md:items-start  max-w-[36px]  border-0 border-cyan-100/10 bg-secondary overflow-hidden justify-center  outline-0  p-1  transition-all duration-300 ease-in-out max-h-9 h-9 mx-auto ">
 			<NavUser user={user} />
 		</div>
 	);
@@ -213,7 +213,7 @@ function ProfileForm({ setOpenMobileDrawer }: { setOpenMobileDrawer: (open: bool
 						<Link
 							href={item.url}
 							onClick={() => setOpenMobileDrawer(false)}
-							className="py-3 bg-teal-900/30 rounded-lg flex text-left flex-row items-center justify-start cursor-pointer  my-0 mx-auto gap-2 font-medium border border-cyan-200/10 shadow-lg shadow-cyan-400/10 text-shadow-cyan-900/10  text-cyan-100/70 w-screen max-w-[70%] md:max-w-fit pl-8 backdrop-blur-md ">
+							className="py-3 bg-teal-900/30 rounded-lg flex text-left flex-row items-center justify-start cursor-pointer  my-0 mx-auto gap-2 font-medium border border-cyan-200/10 shadow-lg shadow-cyan-400/10 text-shadow-cyan-900/10  text-cyan-100/70 max-w-[70%] md:max-w-fit pl-8 backdrop-blur-md ">
 							{item.icon && <item.icon className="size-4 opacity-[0.5]" />}
 							{item.title}{" "}
 						</Link>

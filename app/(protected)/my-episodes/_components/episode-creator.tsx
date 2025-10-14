@@ -360,7 +360,7 @@ export function EpisodeCreator() {
 
 					<div className="flex flex-col px-0 md:px-4">
 						<Label className="mb-0 md:mb-4">Pick a Summary Type:</Label>
-						<div className="flex  gap-2 ">
+						<div className="w-[300px] flex flex-row items-center justify-start gap-2 ">
 							<Button type="button" variant={creatorMode === "youtube" ? "default" : "outline"} onClick={() => setCreatorMode("youtube")} disabled={isBusy}>
 								podcast summary
 							</Button>
@@ -423,7 +423,7 @@ export function EpisodeCreator() {
 								<div className="grid grid-cols-1 md:grid-cols-2 my-8 gap-4 mx-2 md:mx-4">
 									<div className="space-y-2 md:col-span-2 lg:max-w-lg">
 										<Label>Sources</Label>
-										<div className="flex flex-wrap gap-2">
+										<div className="flex justify-start items-start flex-wrap gap-1">
 											{NEWS_SOURCES.map(s => {
 												const active = selectedSources.includes(s.id);
 												return (
@@ -433,7 +433,7 @@ export function EpisodeCreator() {
 														variant={active ? "default" : "outline"}
 														onClick={() => setSelectedSources(prev => (active ? prev.filter(p => p !== s.id) : [...prev, s.id]))}
 														disabled={isBusy}
-														className="px-3 py-1">
+														className="px-3 py-1 my-1">
 														{s.label}
 													</Button>
 												);
@@ -466,8 +466,8 @@ export function EpisodeCreator() {
 								</div>
 							</div>
 
-							<div className="space-y-6 border-1 border-[rgba(86,114,114,0.48)] rounded-xl md:rounded-4xl md:w-full md:min-w-full md:max-w-full shadow-md px-4 md:px-10 pt-8 pb-12 bg-[#110d1712]">
-								<div className="space-y-2">
+							<div className="space-y-6 border-1 border-[rgba(86,114,114,0.48)] rounded-xl md:rounded-4xl md:w-full md:min-w-full md:max-w-2/3 shadow-md px-0 md:px-10 pt-8 pb-12 bg-[#110d1712]">
+								<div className="w-[250px] flex flex-col gap-0">
 									<Label>Voice Settings</Label>
 									<div className="flex flex-row gap-3 mt-4">
 										<Button type="button" variant={generationMode === "single" ? "default" : "outline"} onClick={() => setGenerationMode("single")} disabled={isBusy} className="px-4">

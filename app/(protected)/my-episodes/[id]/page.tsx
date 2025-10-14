@@ -108,7 +108,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 					}
 					rightLink={isNewsEpisode ? undefined : { href: episode.youtube_url, label: "Youtube Url", external: true }}
 				/>
-				{sourceDisplay && <div className="mt-2 text-lg font-bold text-[#ac91fc]">{sourceDisplay}</div>}
+				{sourceDisplay && <div className="mt-2 text-lg font-bold text-primary-foreground">{sourceDisplay}</div>}
 				<div className="mt-4 my-8">
 					<div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
 						<PlayAndShare kind="user" episode={episode} signedAudioUrl={episode.signedAudioUrl} isPublic={episode.is_public} />
@@ -153,9 +153,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 										return (
 											<div className="space-y-6 " >
 												{summaryData.top_headlines && (
-													<div className="text-[#87f4f2fe]">
-														<h4 className=" mb-2 text-large font-bold text-[#ac91fc]">Top Headlines</h4>
-														<p className=" text-[#ddd8ee] font-bold	 text-2xl">{summaryData.top_headlines}</p>
+													<div className="text-primary-foreground">
+														<h4 className="font-bold text-xl mt-8 mb-4">Top Headlines</h4>
+														<p className="text-secondary-foreground font-bold	 text-2xl">{summaryData.top_headlines}</p>
 													</div>
 												)}
 												<hr />
@@ -165,8 +165,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
 													<div className="flex flex-row gap-4 min-w-[20%]">
 														{summaryData.topic && summaryData.topic.length > 0 && (
-															<div className="text-[#87f4f2fe] text-sm uppercase">
-																<h4 className="font-medium mb-2">Topic</h4>
+															<div className="text-primary-foreground">
+																<h4 className="font-bold text-xl mt-2 mb-4">Topic</h4>
 																<div className="flex flex-wrap gap-2">
 																	{summaryData.topic.map((t: string, i: number) => (
 																		<span key={i} className="px-2 py-1 bg-pink-800 text-pink-300 rounded-md text-lg capitalize">
@@ -180,8 +180,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
 
 														{summaryData.sentiment && (
-															<div className="text-[#87f4f2fe]">
-																<h4 className="font-medium mb-2 uppercase text-sm ">Sentiment Analysis</h4>
+															<div className="text-primary-foreground">
+																<h4 className="font-bold text-xl mt-2 mb-4">Sentiment Analysis</h4>
 																<div className="flex flex-wrap gap-2 ">
 																	{Array.isArray(summaryData.sentiment) ? (
 																		summaryData.sentiment.map((s: string, i: number) => (
@@ -197,8 +197,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 														)}
 													</div>
 													{summaryData.tags && summaryData.tags.length > 0 && (
-														<div className="text-[#87f4f2fe] ">
-															<h4 className="font-medium mb-2 text-sm uppercase text-[#87f4f2fe]">Tags</h4>
+														<div className="text-primary-foreground">
+															<h4 className="font-bold text-xl mt-2 mb-4">Tags</h4>
 															<div className="flex flex-wrap gap-2">
 																{summaryData.tags.map((tag: string, i: number) => (
 																	<span key={i} className="px-2 py-1 bg-slate-950 text-purple-400/80 rounded-md text-sm">
@@ -210,18 +210,18 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 													)}
 
 													{summaryData.target_audience && (
-														<div className="text-[#87f4f2fe]">
-															<h4 className="font-medium text-sm mb-3 uppercase">Target Audience</h4>
-															<p className=" text-[#D7C4F6D7] text-base">{summaryData.target_audience}</p>
+														<div className="text-primary-foreground">
+															<h4 className="font-bold text-xl mt-2 mb-4">Target Audience</h4>
+															<p className=" text-primary-foreground text-base">{summaryData.target_audience}</p>
 														</div>
 													)}
 												</div>
 												<hr />
 
 												{summaryData.ai_summary && (
-													<div className="text-[#ac91fc]">
-														<h4 className="font-bold text-xl mt-8 mb-4">Ai Summary</h4>
-														<div className="whitespace-pre-wrap text-[#D7C4F6D7]/90 leading-[1.8] text-[17px]" >{summaryData.ai_summary}</div>
+													<div className="text-primary-foreground">
+														<h4 className="font-bold text-xl mt-2 mb-4">Ai Summary</h4>
+														<div className="whitespace-pre-wrap text-secondary-foreground leading-[1.8] text-[17px]" >{summaryData.ai_summary}</div>
 													</div>
 												)}
 											</div>

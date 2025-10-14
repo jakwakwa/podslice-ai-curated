@@ -58,15 +58,15 @@ export function NavUser({
 		return (
 			<SidebarMenu>
 				<SidebarMenuItem>
-					<SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-						<Avatar className="h-8 w-8 rounded-lg filter grayscale">
-							<AvatarFallback className="rounded-lg">...</AvatarFallback>
+					<SidebarMenuButton size="sm" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+						<Avatar className="h-6 w-6 p-0 rounded-lg filter grayscale">
+							<AvatarFallback className="rounded-lg w-8">...</AvatarFallback>
 						</Avatar>
-						<div className="grid flex-1 text-left text-sm leading-tight">
-							<span className="truncate font-medium">Loading...3</span>
+						<div className="grid flex-1 text-left text-sm leading-tight w-0">
+							<span className="truncate font-medium w-0">Loading...3</span>
 							<span className="truncate text-xs text-muted-foreground">Loading. 2..</span>
 						</div>
-						<MoreVerticalIcon className="ml-auto h-4 w-4" />
+						<MoreVerticalIcon className="ml-auto h-4 w-0" />
 					</SidebarMenuButton>
 				</SidebarMenuItem>
 			</SidebarMenu>
@@ -78,12 +78,12 @@ export function NavUser({
 			<SidebarMenuItem>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<SidebarMenuButton size="lg" className="h-11 w-fit md:h-16 px-2 bg-[#1b13336a] border-1 border-input-border data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+						<SidebarMenuButton className="h-fit w-fit m-0 pl-[2px] pr-0 outline-0">
 
 
-							<Avatar className="h-8 w-8 rounded-lg filter ">
+							<Avatar className=" h-6 md:h-auto rounded-lg filter mx-auto p-0 ">
 								<AvatarImage src={user.avatar} alt={user.name} />
-								<AvatarFallback className="rounded-lg">{getInitials(user.name)}</AvatarFallback>
+								<AvatarFallback className="rounded-none hidden overflow-hidden">{getInitials(user.name)}</AvatarFallback>
 							</Avatar>
 
 							{!isMobile ? (
@@ -92,9 +92,9 @@ export function NavUser({
 										<span className="truncate font-medium text-foreground/90 text-sm">{user.name}</span>
 										<span className="truncate text-foreground/80 font-[300] mt-1">{user.email}</span>
 									</div>
-									<MoreVerticalIcon className="ml-auto h-4 w-4" />
+									<MoreVerticalIcon className=" md:block m-auto h-4 w-0" />
 								</>
-							) : <MoreVerticalIcon className="ml-auto h-4 w-4" />}
+							) : null}
 						</SidebarMenuButton>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent

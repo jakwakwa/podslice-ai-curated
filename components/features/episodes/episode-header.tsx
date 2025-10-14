@@ -15,7 +15,7 @@ export default function EpisodeHeader({ title, createdAt, durationSeconds, metaB
 	const durationMin = durationSeconds ? Math.round(durationSeconds / 60) : null;
 	return (
 		<div className="flex flex-col gap-2">
-			<div className="text-[#f7e9fbf1] text-xl font-bold text-shadow-sm text-shadow-slate-900/30 md:text-5xl capitalize">{title}</div>
+			<div className="text-primary-foreground text-xl font-bold text-shadow-sm text-shadow-slate-900/30 md:text-5xl capitalize">{title}</div>
 			<div className="text-sm text-[#8A97A5D4]/80 episode-p pr-[10%] mb-1">
 				<div className="flex flex-wrap items-center gap-2 my-2">
 					{durationMin ? <Badge variant="secondary">{durationMin} min</Badge> : null}

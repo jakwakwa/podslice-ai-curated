@@ -15,7 +15,7 @@
 			body {
 				@apply backdrop-blur-sm text-foreground;
 				width: 100vw !important;
-				max-width: 100%;
+				max-width: 100vw !important;
 				background: linear-gradient(135deg, #484747EF 0%, #464545E7 100%) !important;
 				margin: 0 !important;
 				overflow-x: hidden !important;
@@ -52,14 +52,14 @@
 			::-webkit-scrollbar-track {
 				border: 1px solid var(--secondary) !important;
 				/* outline: 1px solid var(--secondary) !important; */
-				background: var(--secondary);
+				/* background: var(--secondary); */
 			}
 
 			/* Handle */
 			::-webkit-scrollbar-thumb {
 				outline: 1px solid var(--secondary) !important;
 
-				background: hsla(267.08 66.67% 57.65% / 0.88);
+				background: hsla(206.07 77.96% 51.96% / 0.88);
 				/* Color of the scroll thumb */
 				border-radius: 4px;
 				/* height: 100px !important; */
@@ -192,15 +192,6 @@
 
 			--color-sidebar-ring: var(--sidebar-ring);
 			--color-episode-primary: var(--episode-primary);
-			--color-episode-primary-foreground: var(--episode-primary-foreground);
-			--color-episode-secondary: var(--episode-secondary);
-			--color-episode-secondary-foreground: var(--episode-secondary-foreground);
-			--color-episode-accent: var(--episode-accent);
-			--color-episode-accent-foreground: var(--episode-accent-foreground);
-			--color-episode-border: var(--episode-border);
-			--color-episode-ring: var(--episode-ring);
-			--color-episode-shadow: var(--episode-shadow);
-			--color-episode-shadow-muted: var(--episode-shadow-muted);
 			--color-header: var(--header);
 		}
 
@@ -263,22 +254,22 @@
 
 		.light {
 			--radius: 0.65rem;
-			--background: oklch(0.51 0.12 275.08);
-			--foreground: oklch(0.92 0.03 269.12 / 0.58);
+			--background: oklch(0.75 0.09 277.41);
+			--foreground: oklch(0.31 0.09 280.82 / 0.99);
 			--card: oklch(0.45 0.09 275.77);
-			--card-foreground: oklch(0.84 0.07 259.82);
-			--popover: oklch(0.8 0.11 292.86 / 0.82);
+			--card-foreground: oklch(0.76 0.11 259.69);
+			--popover: oklch(0.63 0.1 280.5 / 0.82);
 			--popover-foreground: oklch(0.63 0.2 299.94);
-			--primary: oklch(0.6 0.18 280.76 / 0.39);
+			--primary: oklch(0.6 0.15 277 / 0.9);
 			--primary-foreground: oklch(0.34 0.09 278.93);
-			--primary-foreground-muted: oklch(0.79 0.08 263.59 / 0.99);
-			--secondary: oklch(0.7 0.12 232.41 / 0.33);
+			--primary-foreground-muted: oklch(0.53 0.06 234.59 / 0.99);
+			--secondary: oklch(0.54 0.1 233.5 / 0.33);
 			--header: oklch(0.29 0.06 232.88 / 0.67);
 			--secondary-foreground: oklch(0.37 0.08 249.42 / 0.79);
 			--secondary-foreground-muted: rgba(44 84 127 / 0.7);
 			--muted: oklch(0.47 0.08 273.94 / 0.89);
-			--muted-foreground: oklch(0.56 0.21 278.7 / 0.63);
-			--sidebar-shadow: oklch(0.28 0.04 267.78 / 0.02);
+			--muted-foreground: oklch(0.51 0.1 283.58 / 0.63);
+
 			--sidebar-shadow-muted: oklch(0.68 0.16 293.35);
 			--accent: oklch(0.42 0.1 245.47 / 0.78);
 			--accent-foreground: oklch(0.69 0.11 277.25);
@@ -289,11 +280,11 @@
 			--success: hsl(186.17 96.69% 35.49%);
 			--success-foreground-muted: hsl(183.58 34.01% 38.63%);
 
-			--border: oklch(0.67 0.17 270.44 / 0.59);
-			--input: oklch(0.81 0.09 262.36 / 0.99);
+			--border: oklch(0.81 0.09 273.61 / 0.72);
+			--input: oklch(0.82 0.09 271.12 / 0.99);
 			--input-ring: oklch(0.82 0.11 209.4 / 0.93);
 			--input-ring-muted: oklch(0.68 0.14 258.5 / 0.82);
-			--input-border: oklch(0.9 0.1 193.95 / 0.74);
+			--input-border: oklch(0.62 0.08 263.65 / 0.74);
 			--input-placeholder: oklch(0.48 0.04 259.35 / 0.8);
 
 
@@ -303,20 +294,21 @@
 			--chart-3: oklch(0.398 0.07 227.392);
 			--chart-4: oklch(0.828 0.189 84.429);
 			--chart-5: oklch(0.769 0.188 70.08);
-			--sidebar: oklch(0.47 0.17 279.6 / 0.62);
-			--sidebar-foreground: oklch(0.67 0.16 289.11) --sidebar-primary: oklch(0.606 0.25 292.717);
-			--sidebar-primary-foreground: oklch(0.58 0.11 311.63);
-			--sidebar-accent: oklch(0.58 0.2 278.96) --sidebar-accent-foreground: oklch(0.47 0.23 273.15);
-			--sidebar-shadow: oklch(0.59 0.17 264.58 / 0.22);
-			--sidebar-border: oklch(0.87 0.14 198.75 / 0.45);
-			--sidebar-ring: oklch(0.87 0.1 207.95);
-			--container-gradient: linear-gradient(to bottom, rgba(149 214 251 / 0.44) -50%, rgba(145 145 230 / 0.14) 100%);
-			--inset-gradient: linear-gradient(oklch(0.76 0.11 251.35 / 0.7) 20%, oklch(0.64 0.18 282.11 / 0.71) 140%);
-			--bigepisode-gradient: linear-gradient(210deg, oklch(0.72 0.12 251.15 / 0.21) 30%, oklch(0.62 0.21 285.36 / 0.82) 130%);
+			--sidebar: oklch(0.47 0.2 288.09 / 0.4);
+			--sidebar-foreground: oklch(0.55 0.16 284.56);
+			--sidebar-primary: oklch(0.606 0.25 292.717);
+			--sidebar-primary-foreground: oklch(0.31 0.04 273.65);
+			--sidebar-accent: oklch(0.57 0.14 282.32) --sidebar-accent-foreground: oklch(0.47 0.23 273.15);
+			--sidebar-shadow: oklch(0.57 0.09 254.19 / 0.31);
+			--sidebar-border: oklch(0.65 0.18 280 / 0.97);
+			--sidebar-ring: oklch(0.74 0.11 203.6);
+			--container-gradient: linear-gradient(to bottom, rgba(134 157 250 / 0.44) -50%, rgba(164 181 237 / 0.14) 100%);
+			--inset-gradient: linear-gradient(oklch(0.8 0.1 266.66 / 0.92) 20%, oklch(0.64 0.13 270.76 / 0.62) 140%);
+			--bigepisode-gradient: linear-gradient(210deg, oklch(0.76 0.07 253.39 / 0.56) 0%, oklch(0.68 0.13 281.29 / 0.46) 160%);
 
-			--episode-gradient: linear-gradient(90deg, oklch(0.81 0.09 235.85 / 0.82) -40%, color(a98-rgb 0.41 0.49 0.88 / 0.85) 100%);
+			--episode-gradient: linear-gradient(180deg, oklch(0.73 0.08 238.7 / 0.82) -40%, color(a98-rgb 0.44 0.44 0.84 / 0.85) 100%);
 			--container-dark: linear-gradient(to top, oklab(0.25 -0.01 -0.03 / 0.7) -50%, rgba(79 119 157 / 0.35) 150%);
-			--episode-shell-gradient: linear-gradient(20deg, oklch(0.71 0.09 232.62 / 0.93) -10%, oklch(0.61 0.12 265.63 / 0.95) 100%);
+			--episode-shell-gradient: linear-gradient(0deg, oklch(0.78 0.06 274.43 / 0.88) -10%, oklch(0.8 0.07 280.2 / 0.92) 100%);
 			--episode-card-wrapper-gradient: linear-gradient(to bottom, oklab(0.7 -0.03 -0.09 / 0.65) -50%, rgba(2 2 2 / 0.9) 150%);
 		}
 
@@ -659,11 +651,13 @@
 		}
 
 		.btn-secondary {
-			background: linear-gradient(180deg, hsla(193.1 91.97% 48.82% / 0.45), #094853);
+			background: linear-gradient(180deg, hsla(193.07 77.49% 45.29% / 0.86) -20%, oklch(0.31 0.05 218.57 / 0.95) 140%);
 			text-shadow: 0px 1px 1px 1px #23222788 !important;
 			font-size: 0.8rem !important;
 			font-weight: 600 !important;
-			color: #B3CEC7 !important;
+			height: 50px;
+			padding: 10px 30px;
+			color: lch(91.27 19.16 210.82) !important;
 			border-radius: 0.75rem !important;
 			outline: 0px solid transparent;
 			min-width: 150px !important;
@@ -678,7 +672,7 @@
 		}
 
 		.btn-secondary:hover {
-			background: linear-gradient(180deg, #009E76, hsl(167.03 87.4% 24.9%)) !important;
+			background: linear-gradient(180deg, #00919E, hsl(197.5 60% 15.69%)) !important;
 			transform: translateY(1px);
 			color: #78F7DE !important;
 		}
