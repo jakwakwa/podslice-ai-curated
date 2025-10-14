@@ -343,7 +343,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 			{/* Curated Bundles Section */}
 			{curatedBundles.length > 0 && (
 				<div className="mb-8">
-					<H3 className="text-[1.2rem] text-[#a7dbe7] font-bold font-sans mb-4 px-2 md:px-12 xl:px-[40px]">
+					<H3 className="text-[1.2rem] text-primary-foreground font-bold font-sans mb-4 px-2 md:px-12 xl:px-[40px]">
 						🎯 Curated by Podslice
 					</H3>
 					<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-3 xl:px-[40px] xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark lg:px-[40px] rounded-3xl border-1 border-[#a497cdfc] shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]">
@@ -354,17 +354,20 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 
 							return (
 								<Card
+									variant="bundle"
+									hoverable={canInteract}
+									selected={selectedBundle ? selectedBundle.bundle_id === bundle.bundle_id : false}
 									key={bundle.bundle_id}
-									className={`flex flex-row sm:flex-col px-5 rounded-4xl bg-bigcard border-3 border-border-1 w-full transition-shadow duration-200 gap-3 bundle-card-hover xl:max-w-[500px]  xl:overflow-hidden 	 xl:h-[500px] ease-in-out text-shadow-sm shadow-[0_4px_4px_1px_#0506062c] ${canInteract ? "cursor-pointer hover:bg-[#c1bdef17]/50" : "cursor-pointer hover:bg-[#c1bdef17]/20 opacity-75"}`}
+
 									onClick={() => handleBundleClick(bundle)}>
 									<CardHeader className="w-full py-4 px-2">
 										<div className="w-full flex flex-col-reverse xl:flex-col-reverse gap-6">
 											<div className="flex items-start gap-3 text-sm font-normal tracking-wide flex-col w-full md:max-w-[240px]">
-												<H3 className="text-lg text-[##fff]/70 font-black font-sans mt-2 text-shadow-sm tracking-tight uppercase leading-tight mb-0 truncate">{bundle.name}</H3>
+												<H3 className="text-lg text-bundle-card-foreground font-black font-sans mt-2 text-shadow-sm tracking-tight uppercase leading-tight mb-0 truncate">{bundle.name}</H3>
 
 												<div className="flex flex-wrap items-center gap-2">
 													{isShared ? (
-														<Badge variant="outline" className="uppercase tracking-wide text-[0.6rem] font-semibold px-2 py-0.5 bg-purple-500/20 border-purple-400">
+														<Badge variant="outline" className="uppercase tracking-wide text-[0.6rem] font-semibold px-2 py-0.5  text-bundle-card-foreground border-bundle-card-border">
 															🎁 Shared Bundle
 														</Badge>
 													) : (
@@ -373,7 +376,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 														</Badge>
 													)}
 													{canInteract ? (
-														<Badge variant="outline" className="text-emerald-300 border-emerald-500/60 bg-emerald-500/10 text-[0.6rem] font-semibold px-2 py-0.5">
+														<Badge variant="outline" className="text-emerald-100 border-emerald-500/60 bg-emerald-500/0 text-[0.6rem] font-semibold px-2 py-0.5">
 															{planMeta.statusLabel}
 														</Badge>
 													) : (
@@ -383,12 +386,12 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 													)}
 												</div>
 
-												<Badge variant="default" className="font-normal tracking-wide">
-													<Lock size={8} className="mr-2" />
-													<Typography className="text-xxs">Podslice Bundle</Typography>
+												<Badge className="font-normal bg-sidebar tracking-wide">
+													<Lock size={8} className="mr-2 text-[#fff]" />
+													<Typography className="text-xxs text-[#fff]">Podslice Bundle</Typography>
 												</Badge>
 												{isShared && bundle.owner && (
-													<Typography className="text-[0.65rem] text-[#f1e9e9b3] font-normal leading-tight mt-0 mb-0">
+													<Typography className="text-[0.65rem] text-[#ffecece7] font-normal leading-tight mt-0 mb-0">
 														Shared by {bundle.owner.full_name}
 													</Typography>
 												)}
@@ -417,17 +420,17 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 													) : (
 														<div key={bundle.bundle_id} className="w-full flex flex-row flex-wrap gap-1">
 															{bundle.podcasts.slice(0, 4).map((podcast: Podcast, index: number) => (
-																<>
-
-																	<span key={podcast.podcast_id} className=" leading-none text-[0.75rem]">
-
-																		{podcast.name}{index < bundle.podcasts.length - 1 && "," + "  "}
 
 
+																<span key={podcast.podcast_id} className=" leading-none text-[0.75rem]">
 
-																	</span>
+																	{podcast.name}{index < bundle.podcasts.length - 1 && "," + "  "}
 
-																</>
+
+
+																</span>
+
+
 															))}
 															{bundle.podcasts.length > 4 && (
 																<span className="text-[0.8rem] text-[#89d3d7b3] font-bold leading-tight mt-0 mb-0 line-clamp-3 pl-1">
@@ -467,13 +470,16 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 
 							return (
 								<Card
+									variant="bundle"
+									hoverable={canInteract}
+									selected={selectedBundle ? selectedBundle.bundle_id === bundle.bundle_id : false}
 									key={bundle.bundle_id}
-									className={`flex flex-row sm:flex-col px-5 rounded-4xl bg-[#3f386d7e] border-3 border-[#68739830] w-full transition-shadow duration-200 gap-3 bundle-card-hover xl:max-w-[500px]  xl:overflow-hidden 	 xl:h-[500px] ease-in-out text-shadow-sm shadow-[0_4px_4px_1px_#0506062c] ${canInteract ? "cursor-pointer hover:bg-[#c1bdef17]/50" : "cursor-pointer hover:bg-[#c1bdef17]/20 opacity-75"}`}
+									className={`flex flex-row sm:flex-col px-5 rounded-4xl bundle-card border-3 border-bundle-card-border w-full transition-shadow duration-200 gap-3 bundle-card-hover xl:max-w-[500px]  xl:overflow-hidden 	 xl:h-[500px] ease-in-out text-shadow-sm shadow-[0_4px_4px_1px_#0506062c] ${canInteract ? "cursor-pointer hover:bg-bundle-card/20 hover:translate-y-1" : "cursor-pointer hover:bg-bundle-card/0 opacity-0"}`}
 									onClick={() => handleBundleClick(bundle)}>
 									<CardHeader className="w-full py-4 px-2">
 										<div className="w-full flex flex-col-reverse xl:flex-col-reverse gap-6">
 											<div className="flex items-start gap-3 text-sm font-normal tracking-wide flex-col w-full md:max-w-[240px]">
-												<H3 className="text-[0.8rem] text-[#a7dbe7]/70 font-black font-sans mt-2 text-shadow-sm tracking-tight uppercase leading-tight mb-0 truncate">{bundle.name}</H3>
+												<H3 className="text-[0.8rem] text-bundle-card-foreground font-black font-sans mt-2 text-shadow-sm tracking-tight uppercase leading-tight mb-0 truncate">{bundle.name}</H3>
 
 												<div className="flex flex-wrap items-center gap-2">
 													{isShared ? (
@@ -481,7 +487,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 															🎁 Shared Bundle
 														</Badge>
 													) : (
-														<Badge variant="secondary" className="uppercase tracking-wide text-[0.6rem] font-semibold px-2 py-0.5">
+														<Badge variant="outline" className="uppercase tracking-wide text-[0.6rem] font-semibold px-2 py-0.5">
 															{planMeta.badgeLabel}
 														</Badge>
 													)}

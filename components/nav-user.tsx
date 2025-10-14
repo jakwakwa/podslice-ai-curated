@@ -78,19 +78,19 @@ export function NavUser({
 			<SidebarMenuItem>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<SidebarMenuButton className="h-fit w-fit m-0 pl-[2px] pr-0 outline-0">
+						<SidebarMenuButton className="h-fit w-fit  md:bg-foreground/40 m-0 p-0 md:pl-2 outline-0">
 
 
 							<Avatar className=" h-6 md:h-auto rounded-lg filter mx-auto p-0 ">
 								<AvatarImage src={user.avatar} alt={user.name} />
-								<AvatarFallback className="rounded-none hidden overflow-hidden">{getInitials(user.name)}</AvatarFallback>
+								<AvatarFallback className="text-foreground rounded-none hidden overflow-hidden">{getInitials(user.name)}</AvatarFallback>
 							</Avatar>
 
 							{!isMobile ? (
 								<>
 									<div className="flex flex-col my-2 p-1  flex-1 text-left text-sm leading-tight">
-										<span className="truncate font-medium text-foreground/90 text-sm">{user.name}</span>
-										<span className="truncate text-foreground/80 font-[300] mt-1">{user.email}</span>
+										<span className="truncate font-medium text-muted text-sm">{user.name}</span>
+										<span className="truncate text-muted text-xs font-[300] mt-1">{user.email}</span>
 									</div>
 									<MoreVerticalIcon className=" md:block m-auto h-4 w-0" />
 								</>
@@ -98,7 +98,7 @@ export function NavUser({
 						</SidebarMenuButton>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
-						className="dropdown-menu-card w-[--radix-dropdown-menu-trigger-width] min-w-full md:min-w-56 rounded-lg text-foreground text-sm font-[400] leading-tight"
+						className="dropdown-menu-card w-[--radix-dropdown-menu-trigger-width] min-w-full md:min-w-56 rounded-lg text-muted text-sm font-[400] leading-tight"
 						side={isMobile ? "bottom" : "right"}
 						align="end"
 						sideOffset={4}>
@@ -109,27 +109,27 @@ export function NavUser({
 									<AvatarFallback className="rounded-lg">{getInitials(user.name)}</AvatarFallback>
 								</Avatar>
 								<div className="flex flex-col gap-1 items-start justify-center flex-1 text-left text-xs leading-tight py-1 my-0">
-									<span className="truncate font-medium text-sm text-foreground">{user.name}</span>
-									<span className="truncate my-0 font-[200] text-xs text-foreground/70">{user.email}</span>
+									<span className="truncate font-medium text-sm text-white">{user.name}</span>
+									<span className="truncate my-0 font-[200] text-xs text-white">{user.email}</span>
 								</div>
 							</div>
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup className="flex flex-col gap-1 py-2">
 							<DropdownMenuItem asChild>
-								<Link href="/notification-preferences" className="text-[#beb5b5] text-xs">
+								<Link href="/notification-preferences" className="text-white text-xs">
 									<Bell className="h-4 w-4" />
 									Notification Preferences
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem asChild>
-								<Link href="/manage-membership" className="text-[#beb5b5] text-xs">
+								<Link href="/manage-membership" className="text-[#d9e1f8] text-xs">
 									<CreditCard className="h-4 w-4" />
 									Subscription
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem asChild>
-								<Link href="/user-profile" className="text-[#beb5b5] text-xs">
+								<Link href="/user-profile" className="text-[#d9e1f8] text-xs">
 									<CreditCard className="h-4 w-4" />
 									Account Management
 								</Link>
@@ -140,7 +140,7 @@ export function NavUser({
 								<DropdownMenuSeparator />
 								<DropdownMenuGroup>
 									<DropdownMenuItem asChild>
-										<Link href="/admin" className="text-[#beb5b5] text-xs">
+										<Link href="/admin" className="text-[#d9e1f8] text-xs">
 											<Shield className="h-4 w-4" />
 											Admin Portal
 										</Link>
@@ -150,7 +150,7 @@ export function NavUser({
 						)}
 						<DropdownMenuSeparator />
 						<DropdownMenuItem
-							className="text-[#beb5b5] text-xs"
+							className="text-[#dc9bf0] text-xs"
 							onClick={async () => {
 								try {
 									await signOut();

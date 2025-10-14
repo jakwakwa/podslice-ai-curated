@@ -4,7 +4,7 @@ const PRICING_TIER: PlanTier[] = [
 	{
 		priceId: "pri_01k2q2kvxscyyn0w5wsg32pf3w",
 		planId: "FREE_SLICE",
-		productTitle: "Free Slice (14 day platinum trial)",
+		productTitle: "Free Slice (14 day trial)",
 		icon: "/assets/icons/price-tiers/free-icon.svg",
 		description: "Starting out",
 		features: ["Access to limited platinum features", "Stay Informed with Smart Notifications"],
@@ -13,7 +13,7 @@ const PRICING_TIER: PlanTier[] = [
 	},
 	{
 		priceId: "pri_01k1dzhm5ccevk59y626z80mmf",
-		productTitle: "PREMIUM: Casual Listener",
+		productTitle: "Casual Listener",
 		planId: "CASUAL_LISTENER",
 		icon: "/assets/icons/price-tiers/free-icon.svg",
 		features: [
@@ -27,7 +27,7 @@ const PRICING_TIER: PlanTier[] = [
 	},
 	{
 		priceId: "pri_01k23mdwkrr8g9cp7bdbp8xqm8",
-		productTitle: "PLATINUM: Curate Control",
+		productTitle: "Curate Control",
 		planId: "CURATE_CONTROL",
 		icon: "/assets/icons/price-tiers/free-icon.svg",
 		features: [

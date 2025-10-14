@@ -123,65 +123,68 @@ export default function CurationProfileManagementPage() {
 		bundleEpisodes.length > 0 ? bundleEpisodes.sort((a, b) => new Date(b.published_at || b.created_at).getTime() - new Date(a.published_at || a.created_at).getTime())[0] : null;
 
 	return (
-		<div className=" h-full min-h-[84vh]  rounded-none 	px-0  mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:border-2 md:border-[#c8d3da32] md:rounded-4xl  md:mt-4 md:p-8 md:w-full  bg-episode-card-wrapper ">
+		<div className="bg-episode-card-wrapper h-full min-h-[84vh]  rounded-none 	px-0  mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:rounded-4xl  md:mt-0 md:p-8 md:w-full  md:bg-episode-card-wrapper ">
 			<PageHeader
 				title="Your dashboard"
 				description="Choose from our pre-curated podcast bundles. Each bundle is a fixed selection of 2-5 carefully selected shows and cannot be modified once selected."
 			/>
 			{/* BUNDLE FEED */}
 			{isLoading ? (
-				<div className=" w-full flex flex-col gap-0 justify-center items-baseline shadow-md shadow-stone-950  mt-0 md:mt-4 md:m-0 xl:flex-row md:gap-4 pt-0 md:mb-0 border-[#12121760]  border-1 bg-[#141d2682] md:rounded-3xl overflow-hidden ">
+				<div className=" w-full flex flex-col gap-0 justify-center items-baseline shadow-md shadow-stone-950/20  mt-0 md:mt-4 md:m-0 xl:flex-row md:gap-4 pt-0 md:mb-0  border-1 md:bg-[#2F438335]/40 md:rounded-3xl overflow-hidden ">
 					<div className="w-full pt-0 mt-0 flex flex-col lg:flex-row">
 						{/* FEED BOX SKELETON */}
-						<div className="w-full pt-0 pr-4 mt-0 md:mr-3 flex flex-col  md:bg-lg:flex-col md:p-8 sm:pt-0 md:pt-9 md:mt-0  md:max-w-[280px]   md:bg-[#131621] overflow-hidden ">
+						<div className="w-full pt-0 pr-4 mt-0 md:mr-3 flex flex-col  md:bg-lg:flex-col md:p-8 sm:pt-0 md:pt-9 md:mt-0  md:max-w-[280px]   md:bg-[#131621]/0 overflow-hidden ">
 							<div className="w-full flex flex-col justify-between p-0 rounded-2xl ">
-								<div className="pt-8 md:pt-0 md:px-0 pb-3 h-6 w-48 bg-[#2f4383]/30 animate-pulse rounded" />
-								<div className="bg-[#262b3f67] border-b-0  border-0 border-[#0e0d0da9] mx-auto px-5 w-full h-fit  rounded-t-lg overflow-hidden">
-									<div className="h-8 w-24 ml-auto bg-[#2f4383]/30 animate-pulse rounded my-2" />
+								<div className="w-[90%] mx-4 mt-8  md:w-48 pt-8 md:pt-0 md:px-0 md:pb-3 md:h-6  bg-[#2f4383]/30 animate-pulse rounded" />
+								<div className="w-2/3 mx-4 h-12 mt-2  md:hidden md:pb-3 md:h-6  bg-[#2f4383]/30 animate-pulse rounded" />
+								<div className="w-1/3 mx-4 h-12  mt-2 md:hidden md:pb-3 md:h-6  bg-[#2f4383]/30 animate-pulse rounded" />
+								<div className="w-1/3 mx-4  h-12 md:hidden md:pb-3 md:h-6  bg-[#2f4383]/30 animate-pulse rounded" />
+								<div className="md:bg-[#262b3f67]/50 border-b-0  border-0 md:border-[#0e0d0da9] mx-auto px-5 w-full h-fit  rounded-t-lg overflow-hidden">
+									<div className="h-8 w-24 ml-0 md:bg-[#2f4383]/0 animate-pulse rounded my-2" />
 									<div className="mb-4 flex flex-col">
-										<div className="h-4 w-32 bg-[#2f4383]/30 animate-pulse rounded mb-2" />
-										<div className="flex w-full px-2 md:px-2 py-1 border-[#d4b1e125] rounded border-1 gap-3">
-											<div className="h-6 w-full bg-[#2f4383]/30 animate-pulse rounded" />
+										<div className="h-4 w-32 md:bg-[#2F438335]/30 animate-pulse rounded mb-2" />
+										<div className="flex w-full px-2 md:px-2 py-1 md:border-[#d4b1e125] rounded md:border-1 gap-3">
+											<div className="h-6 w-full md:bg-[#2f4383]/30 animate-pulse rounded" />
 										</div>
 									</div>
 								</div>
 							</div>
 							<div className="mt-0 w-full overflow-hidden shadow-md">
-								<div className="bg-[#393247]/30 border-t-0 overflow-hidden rounded-b-2xl border-1 border-[#51516500] px-4 p-4">
-									<div className="h-4 w-20 bg-[#2f4383]/30 animate-pulse rounded mb-2" />
-									<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full border-1 border-gray-800 rounded-md overflow-hidden pt-0">
-										<div className="flex flex-row justify-between gap-1 items-center h-9 w-full bg-black/10 py-3 px-2">
-											<div className="h-4 w-32 bg-[#2f4383]/30 animate-pulse rounded" />
-											<div className="h-4 w-8 bg-[#2f4383]/30 animate-pulse rounded" />
+								<div className="md:bg-[#2F438335]/30 border-t-0 overflow-hidden rounded-b-2xl border-1 px-4 p-4">
+									<div className="h-4 w-20 md:bg-[#2F438335]/30 animate-pulse rounded mb-2" />
+									<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full md:border-1 md:border-gray-800 rounded-md overflow-hidden pt-0">
+										<div className="flex flex-row justify-between gap-1 items-center h-9 w-full md:bg-black/10 py-3 px-2">
+											<div className="h-4 w-32 md:bg-[#2F438335]/30 animate-pulse rounded" />
+											<div className="h-4 w-8 md:bg-[#2F438335]/30 animate-pulse rounded" />
 										</div>
 										<div className="flex flex-row justify-between gap-2 items-center h-5 w-full py-3 px-2">
-											<div className="h-4 w-16 bg-[#2f4383]/30 animate-pulse rounded" />
-											<div className="h-4 w-24 bg-[#2f4383]/30 animate-pulse rounded" />
+											<div className="h-4 w-16 md:bg-[#2F438335]/30 animate-pulse rounded" />
+											<div className="h-4 w-24 md:bg-[#2F438335]/30 animate-pulse rounded" />
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 						{/* Latest Episode SKELETON */}
-						<div className="w-full border-b-0 rounded-0 py-0  my-0 mx-0 border-[#2c2a2a17] mt-0 pt-6 px-4 sm:pt-0  md:pt-9 md:mt-0  md:mb-8  md:px-6 border-dark md:rounded-3xl overflow-hidden  ">
-							<div className="h-7 w-64 bg-[#2f4383]/30 animate-pulse rounded mb-4" />
-							<div className="h-5 w-full bg-[#2f4383]/30 animate-pulse rounded mb-6" />
+						<div className="w-full border-b-0 rounded-0 py-0  my-0 mx-0  mt-0 pt-6 px-4 sm:pt-0  md:pt-9 md:mt-0  md:mb-8  md:px-6 border-dark md:rounded-3xl overflow-hidden  ">
+							<div className="h-7 w-64 md:bg-[#2F438335]/30 animate-pulse rounded mb-4" />
+							<div className="h-5 w-full md:bg-[#2F438335]/30 animate-pulse rounded mb-6" />
 							<div className="px-0">
-								<div className="bg-[#2f4383]/30 h-[130px] w-full animate-pulse rounded-lg" />
+								<div className="md:bg-[#2F438335]/30 h-[130px] w-full animate-pulse rounded-lg" />
 							</div>
 						</div>
 					</div>
 				</div>
 			) : userCurationProfile && latestBundleEpisode ? (
-				<div className="bg-bigcard rounded-tr-none rounded-tl-none mt-0 w-full max-w-screen md:w-full flex flex-col gap-0 justify-center items-baseline shadow-md shadow-stone-950 md:mt-4 md:m-0 xl:flex-row md:gap-4 pt-0 md:mb-0 border-[#12121760]  border-1 md:rounded-3xl overflow-hidden ">
+				<div className="bg-bigcard rounded-tr-none rounded-tl-none mt-0 w-full max-w-screen md:w-full flex flex-col gap-0 justify-center items-baseline shadow-md shadow-stone-950 md:mt-4 md:m-0 xl:flex-row md:gap-4 pt-0 md:mb-0 md:border-[#12121760]  md:border-1 md:rounded-3xl overflow-hidden ">
 					<div className="hidden md:flex w-full rounded-tr-none rounded-tl-none pt-0 mt-0 flex-col lg:flex-row overflow-hidden  ">
 						{/* FEED BOX */}
-						<div className="rounded-tr-none rounded-tl-none w-screen md:w-full pt-0 md:pr-4 mt-0 md:mr-3 flex flex-col  lg:flex-col md:p-8 sm:pt-0 md:pt-9 md:mt-0  md:max-w-[280px]   md:bg-secondary/40 rounded-0  md:overflow-hidden shadow-md shadow-black/30">
+						<div className="rounded-tr-none rounded-tl-none w-screen md:w-full pt-0 md:pr-4 mt-0 md:mr-3 flex flex-col  lg:flex-col md:p-8 sm:pt-0 md:pt-9 md:mt-0  md:max-w-[280px]  md:bg-secondary/40 rounded-0  md:overflow-hidden shadow-md shadow-black/30">
 							<div className="w-full flex flex-col justify-between p-0 md:rounded-none ">
 								<h2 className="hidden md:block pt-8  font-bold md:text-secondary-foreground md:pt-0 md:px-0  pb-3 text-sm max-w-[100%] ">Your Active Bundle Feed</h2>
 								<div className="shadow-md shadow-black/30 overflow-hidden rounded-2xl">
 									{userCurationProfile?.is_bundle_selection && userCurationProfile?.selectedBundle && (
-										<div className="bg-slate-700 border-none md:border-1  md:bg-primary border border-border mx-auto  py-6  md:pt-4 md:pb-0 px-5 w-full h-fit  md:rounded-t-lg overflow-hidden text-secondary-foreground md:text-primary-foreground ">
+										<div className="bg-slate-700 border-none md:border-1  md:bg-primary  border border-border mx-auto  py-6  md:pt-4 md:pb-0 px-5 w-full h-fit  md:rounded-t-lg overflow-hidden text-secondary-foreground md:text-primary-foreground ">
 											<Button className="inline-flex text-sm md:text-xs justify-end w-full px-0" variant="ghost" size="xs" onClick={() => setIsModalOpen(true)}>
 												<Edit />
 												Edit Bundles
@@ -268,8 +271,8 @@ export default function CurationProfileManagementPage() {
 				</div>
 			) : null}
 
-			<div className="bg-bigcard w-full flex flex-col gap-0 justify-start items-start   shadow-xl shadow-black/30  mt-0 md:m-0 xl:flex-row md:gap-4 py-8 p-0 md:mt-4 md:mb-0 border-1 border-[#1a1d1dc0]  md:rounded-3xl overflow-hidden  md:p-0 md:justify-center align-start ">
-				<div className="pt-2 pl-8 md:mt-8 w-full max-w-[300px] flex flex-col items-start justify-items-start">
+			<div className="bg-primary/30 md:bg-episode-card-wrapper w-full flex flex-col gap-0 justify-start items-start   shadow-xl shadow-black/30  mt-0 md:m-0 xl:flex-row md:gap-4 py-8 p-1  md:mt-4 md:mb-0 border-1  md:rounded-3xl overflow-hidden  md:p-0 md:justify-center align-start ">
+				<div className="pt-0 px-5 md:pl-8 md:mt-8 w-full max-w-[300px] flex flex-col items-start justify-items-start">
 					<p className="w-full mx-0 px-0  text-secondary-foreground md:px-0 text-base font-bold mb-4">Recently created episodes</p>
 					<CardDescription className="w-full px-0 md:px-0 text-sm text-secondary-foreground-muted  opacity-90">View and manage your recently generated episodes.</CardDescription>
 					<div className="w-full flex flex-row md:flex-col gap-2">

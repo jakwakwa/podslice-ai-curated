@@ -7,7 +7,7 @@ import type { Bundle, Podcast } from "@/lib/types"
 import { CuratedBundlesClient } from "./_components/curated-bundles-client"
 import { CuratedBundlesFilters } from "./_components/filters.client"
 
-type BundleWithPodcasts = Bundle & { 
+type BundleWithPodcasts = Bundle & {
 	podcasts: Podcast[]
 	bundleType?: "curated" | "shared"
 	shared_bundle_id?: string
@@ -97,12 +97,12 @@ export default async function CuratedBundlesPage({ searchParams }: { searchParam
 					},
 					orderBy: { display_order: "asc" },
 				},
-			owner: {
-				select: {
-					user_id: true,
-					name: true,
+				owner: {
+					select: {
+						user_id: true,
+						name: true,
+					},
 				},
-			},
 			},
 			orderBy: { created_at: "desc" },
 		})
@@ -149,7 +149,7 @@ export default async function CuratedBundlesPage({ searchParams }: { searchParam
 	}
 
 	return (
-		<div className="w-full episode-card-wrapper">
+		<div className="bg-episode-card-wrapper h-full min-h-[84vh]  rounded-none 	px-0  mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:rounded-4xl  md:mt-0 md:p-8 md:w-full  md:bg-episode-card-wrapper ">
 			<PageHeader
 				title="Explore Bundles"
 				description="Choose from our pre-curated podcast bundles or discover bundles shared by other users. Each bundle is a fixed selection you can select for your feed."

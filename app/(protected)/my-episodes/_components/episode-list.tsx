@@ -124,11 +124,11 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 	}
 
 	return (
-		<Card className="episode-card-wrapper h-full">
+		<div className="px-4 mx-2 py-4 mt-0	 md:px-8 md:py-8 bg-bigcard rounded-4xl h-full">
 			<div className="episode-card-wrapper-dark">
 				{isLoading ? (
-					<Card>
-						<CardContent className="episode-card-wrapper-dark space-y-2 flex-col flex w-full">
+					<Card variant="default">
+						<CardContent className=" space-y-2 flex-col flex w-full">
 							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
 							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
 							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
@@ -138,7 +138,7 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 					<p>You haven't created any episodes yet.</p>
 				) : (
 					episodes.map(episode => (
-						<div key={episode.episode_id} className="p-1">
+						<div key={episode.episode_id} className="py-0">
 							<EpisodeCard
 								imageUrl={null}
 								title={episode.episode_title}
@@ -192,6 +192,6 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 					))
 				)}
 			</div>
-		</Card>
+		</div>
 	);
 }

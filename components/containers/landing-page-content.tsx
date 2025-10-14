@@ -7,12 +7,12 @@ import Image from "next/image";
 import Link from "next/link";
 import LandingAudioPlayer from "@/components/demo/landing-audio-player";
 import { Button } from "@/components/ui/button";
+import { CardContent } from "@/components/ui/card";
 import { PRICING_TIER } from "@/config/paddle-config";
 import { getClerkSignInUrl } from "@/lib/env";
 import styles from "@/styles/landing-page-content.module.css";
 import { LandingPageHeader } from "../layout/LandingPageHeader";
 import { Badge } from "../ui/badge";
-import { CardContent, CardHeader } from "../ui/card";
 import { Typography } from "../ui/typography";
 
 // Map PRICING_TIER to landing page format
@@ -36,7 +36,6 @@ const _curateText = `**Key Features & How They Benefit You:**
     - **Weekly Email Reminders:** A helpful email will be sent out weekly, reminding you about your newly generated podcast episode and encouraging you to listen.
     - **Personalised Preferences:** You'll have full control over your notification preferences in your account settings, allowing you to tailor how and when you receive updates.
 - **Your Episodes, Always Accessible:** Should you decide to remove a collection, rest assured that any episodes previously generated from it will remain accessible in your "all podcast episodes" view. Your listening history is always preserved.`;
-
 
 export default function LandingPageContent() {
 	const _features = [
@@ -196,7 +195,7 @@ export default function LandingPageContent() {
 							<div
 								key={tier.name}
 								className={`transition-all duration-200 ease-in-out relative h-full flex  border-[#29264d] border-1  flex-col px-8 py-4 rounded-3xl overflow-hidden max-w-screen md:max-w-5xl hover:-translate-y-1 hover:shadow-lg shadow-4x  ${tier.popular ? "bg-[#000] border-[#6750f8]/50 border-2 " : "bg-[#0d0d0f]"} `}>
-								<CardHeader>
+								<div>
 									<div className="flex flex-col mt-4">
 										<h5 className="text-3	xl font-bold tracking-normal  text-[#8f99f0] mb-2">{tier.name}</h5>
 										<div className="flex items-baseline gap-1 mb-4">
@@ -218,7 +217,7 @@ export default function LandingPageContent() {
 											Create your own Ai Generated Audio Summaries from any podcast show
 										</Badge>
 									)}
-								</CardHeader>
+								</div>
 								<CardContent className="flex flex-col flex-1 justify-start">
 									<ul className="list-none p-0 m-0 mt-2">
 										{tier.features.map((feature, index) => (

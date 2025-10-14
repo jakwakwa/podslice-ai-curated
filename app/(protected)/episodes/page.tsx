@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { EpisodeList } from "@/components/episode-list";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -64,8 +64,9 @@ export default function EpisodesPage() {
 			/>
 
 			{isLoading ? (
-				<div className="px-0 md:p-6 mx-auto">
-					<Card className="md:episode-card-wrapper-dark">
+				<div className="px-0 md:px-8 md:pt-12 md:mt-4 border-1 border-input-border rounded-4xl mx-auto bg-big-card">
+					<div className="">
+						<Skeleton className="bg-[#2f4383]/30 h-[25px] w-full animate-pulse" />
 						<CardContent className="md:episode-card-wrapper-dark space-y-2 flex-col flex w-full">
 							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
 							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
@@ -73,7 +74,7 @@ export default function EpisodesPage() {
 							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
 							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
 						</CardContent>
-					</Card>
+					</div>
 				</div>
 			) : error ? (
 				<div className="max-w-2xl mx-auto mt-8">

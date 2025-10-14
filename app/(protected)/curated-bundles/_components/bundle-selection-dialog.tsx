@@ -9,13 +9,15 @@ import { Label } from "@/components/ui/label";
 import { Typography } from "@/components/ui/typography";
 import type { Bundle, Podcast } from "@/lib/types";
 
-type DialogBundle = (Bundle & { 
-	podcasts: Podcast[]; 
-	canInteract?: boolean; 
-	lockReason?: string | null;
-	bundleType?: "curated" | "shared";
-	shared_bundle_id?: string;
-}) | null;
+type DialogBundle =
+	| (Bundle & {
+		podcasts: Podcast[];
+		canInteract?: boolean;
+		lockReason?: string | null;
+		bundleType?: "curated" | "shared";
+		shared_bundle_id?: string;
+	})
+	| null;
 
 // Simple function to sanitize text for safe display
 function sanitizeText(text: string | null | undefined): string {
@@ -80,10 +82,10 @@ export function BundleSelectionDialog({
 
 	const isLocked = mode === "locked";
 	const isFirstSelection = requiresProfileCreation && !isLocked;
-	
+
 	// Determine bundle type
 	const isSharedBundle = selectedBundle?.bundleType === "shared";
-	
+
 	// Get the appropriate current bundle name based on type being selected
 	const currentBundleName = isSharedBundle ? currentSharedBundleName : currentCuratedBundleName;
 	const currentBundleId = isSharedBundle ? currentSharedBundleId : currentCuratedBundleId;
@@ -180,129 +182,143 @@ export function BundleSelectionDialog({
 		}
 	}
 
-	let shouldShowAlreadySelectedReminder = false;
+	let _shouldShowAlreadySelectedReminder = false;
 	if (!isLocked) {
 		if (isAlreadySelected) {
-			shouldShowAlreadySelectedReminder = true;
+			_shouldShowAlreadySelectedReminder = true;
 		}
 	}
 
 	return (
 		<Dialog open={isOpen} onOpenChange={onClose}>
-			<DialogContent className="max-w-2xl">
+			<DialogContent className="w-full">
 				<DialogHeader>
 					<DialogTitle>
 						{isLocked
 							? "Upgrade required"
 							: isAlreadySelected
-								? "Just a reminder!"
-							: isFirstSelection
-								? (isSharedBundle ? "Select Shared Bundle" : "Activate Curated Bundle")
-								: (isSharedBundle ? "Switching Shared Bundle..." : "Switching Curated Bundle...")}
+								? "This is your active bundle"
+								: isFirstSelection
+									? isSharedBundle
+										? "Select Shared Bundle"
+										: "Activate Curated Bundle"
+									: isSharedBundle
+										? "Switching Shared Bundle..."
+										: "Switching Curated Bundle..."}
 					</DialogTitle>
-					<DialogDescription className="mt-4">
+					<DialogDescription className=" min-w-full gap-6 flex flex-col text-base ">
 						{(() => {
 							if (isLocked) {
-								return lockReason ?? `'${sanitizedSelectedBundleName}' requires the ${requiredPlanText} plan.`;
+								return (
+									lockReason ?? (
+										<span>
+											{sanitizedSelectedBundleName} requires the ${requiredPlanText} plan.
+										</span>
+									)
+								);
 							}
-							
+
 							if (isAlreadySelected) {
-								return `You already have "${sanitizeText(selectedBundle.name)}" selected`;
+								return (
+									<span>
+										<strong className="font-bold text-cyan-950/90">{sanitizeText(selectedBundle.name)} Bundle </strong> is already active in your profile
+									</span>
+								);
 							}
-							
+
 							if (isFirstSelection) {
 								if (isSharedBundle) {
-									return `You're about to select the shared bundle '${sanitizeText(selectedBundle.name)}'. Name your profile below to continue.`;
+									return `You're about to select the shared bundle '$sanitizeText(selectedBundle.name)'. Name your profile below to continue.`;
 								}
 								return `You're about to activate '${sanitizeText(selectedBundle.name)}' as your curated podcast bundle. Name it below to finish setting up your feed.`;
 							}
-							
+
 							if (sanitizedCurrentBundleName) {
 								if (isSharedBundle) {
-									return `You're about to change your shared bundle from '${sanitizedCurrentBundleName}' to '${sanitizeText(selectedBundle.name)}'`;
+									return (
+										<span>
+											You're about to change your shared bundle from {sanitizedCurrentBundleName} to {sanitizeText(selectedBundle.name)}{" "}
+										</span>
+									);
 								}
-								return `You're about to change your curated bundle from '${sanitizedCurrentBundleName}' to '${sanitizeText(selectedBundle.name)}'`;
+								return (
+									<span className="leading-8">
+										You're about to change your curated bundle:
+										<br /> <span className="uppercase text-xs italic font-bold text-foreground/50">From </span>
+										<strong className="font-bold italic text-cyan-950/90">{sanitizedCurrentBundleName}</strong> →{" "}
+										<strong className="font-bold italic text-cyan-900/80">{sanitizeText(selectedBundle.name)}</strong>{" "}
+									</span>
+								);
 							}
-							
+
 							if (isSharedBundle) {
 								return `You're about to select '${sanitizeText(selectedBundle.name)}' as your shared bundle. This will add episodes from this bundle to your feed.`;
 							}
 							return `You're about to select '${sanitizeText(selectedBundle.name)}' as your curated podcast bundle. This will update your podcast feed.`;
 						})()}
+						{shouldShowSwitchWarning && (
+							<div className="space-y-4 min-w-full">
+								{/* Warning Message */}
+								<div className="px-3 py-2 bg-amber-600/50 outline outline-amber-600/30 dark:border-amber-800 rounded-sm inline-block">
+									<Typography variant="body" className="text-amber-200  text-sm">
+										{isSharedBundle
+											? `You'll lose access to episodes from '${sanitizedCurrentBundleName}' after switching`
+											: `You won't have access to '${sanitizedCurrentBundleName}' episodes after changing`}
+									</Typography>
+								</div>
+							</div>
+						)}
+
+						{shouldShowNameInput && (
+							<div className=" space-y-2 min-w-full">
+								<Label htmlFor="bundle-profile-name">Bundle name</Label>
+								<Input id="bundle-profile-name" value={profileName} onChange={handleProfileNameChange} placeholder="e.g. My Weekly Slice" autoComplete="off" disabled={isConfirming || isLoading} />
+								{nameError && (
+									<Typography variant="body" className="text-xs text-red-400">
+										{nameError}
+									</Typography>
+								)}
+							</div>
+						)}
+
+						{isLocked && requiredPlanDescriptionText && (
+							<div className=" min-w-full">
+								<Typography variant="body" className="text-sm text-muted-foreground">
+									{requiredPlanDescriptionText}
+								</Typography>
+							</div>
+						)}
 					</DialogDescription>
 				</DialogHeader>
 
-				{shouldShowSwitchWarning && (
-					<div className="space-y-4">
-					{/* Warning Message */}
-					<div className="px-2 bg-amber-50 dark:bg-amber-600/10 outline outline-amber-700/50 dark:border-amber-800 rounded-lg inline-block">
-						<Typography variant="body" className="text-amber-400 dark:text-amber-400/70 text-xs">
-							{isSharedBundle
-								? `You'll lose access to episodes from '${sanitizedCurrentBundleName}' after switching`
-								: `You won't have access to '${sanitizedCurrentBundleName}' episodes after changing`
-							}
-						</Typography>
-					</div>
-					</div>
-				)}
-
-				{shouldShowAlreadySelectedReminder && (
-					<div className="space-y-4">
-						{/* Reminder Message */}
-						<div className="px-2 bg-blue-50 dark:bg-teal-400/10 border border-blue-200 dark:border-teal-800 rounded-lg w-fit">
-							<Typography variant="body" className="text-teal-100 dark:text-teal-200 text-xs">
-								This bundle is already active in your profile.
-							</Typography>
-						</div>
-					</div>
-				)}
-
-				{shouldShowNameInput && (
-					<div className="mt-4 space-y-2">
-						<Label htmlFor="bundle-profile-name">Bundle name</Label>
-						<Input id="bundle-profile-name" value={profileName} onChange={handleProfileNameChange} placeholder="e.g. My Weekly Slice" autoComplete="off" disabled={isConfirming || isLoading} />
-						{nameError && (
-							<Typography variant="body" className="text-xs text-red-400">
-								{nameError}
-							</Typography>
+				<DialogFooter>
+					<div className="w-full p-0 m-0 max-w-full flex flex-row items-center justify-between">
+						{isLocked ? (
+							<Button type="button" variant="default" onClick={onClose} className="">
+								Back
+							</Button>
+						) : isAlreadySelected ? (
+							<Button type="button" variant="default" onClick={onClose} className="">
+								Close
+							</Button>
+						) : (
+							<>
+								<Button type="button" variant="outline" className="w-full px-0 mx-0" onClick={onClose} disabled={isConfirming}>
+									Cancel
+								</Button>
+								<Button type="button" variant="default" onClick={handleConfirm} disabled={isConfirming || isLoading} className="min-w-[120px]">
+									{isConfirming ? (
+										<div className="flex items-center">
+											<Loader2 className="w-4 h-4 mr-2 animate-spin" />
+											Updating...
+										</div>
+									) : (
+										"Confirm Selection"
+									)}
+								</Button>
+							</>
 						)}
 					</div>
-				)}
-
-				{isLocked && requiredPlanDescriptionText && (
-					<div className="mt-6">
-						<Typography variant="body" className="text-sm text-muted-foreground">
-							{requiredPlanDescriptionText}
-						</Typography>
-					</div>
-				)}
-
-				<DialogFooter className="gap-2 mt-4">
-					{isLocked ? (
-						<Button type="button" variant="outline" onClick={onClose} className="min-w-[120px]">
-							Back
-						</Button>
-					) : isAlreadySelected ? (
-						<Button type="button" variant="default" onClick={onClose} className="w-1/3">
-							Close
-						</Button>
-					) : (
-						<>
-							<Button type="button" variant="outline" onClick={onClose} disabled={isConfirming}>
-								Cancel
-							</Button>
-							<Button type="button" variant="default" onClick={handleConfirm} disabled={isConfirming || isLoading} className="min-w-[120px]">
-								{isConfirming ? (
-									<div className="flex items-center">
-										<Loader2 className="w-4 h-4 mr-2 animate-spin" />
-										Updating...
-									</div>
-								) : (
-									"Confirm Selection"
-								)}
-							</Button>
-						</>
-					)}
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>

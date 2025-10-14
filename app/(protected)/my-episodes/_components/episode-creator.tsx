@@ -351,11 +351,11 @@ export function EpisodeCreator() {
 	const handleGoBack = () => router.back();
 
 	return (
-		<div className="w-full  bg-bigcard h-auto mb-0 px-0 py-0 md:px-8 md:py-8 lg:px-10 lg:py-6  rounded-lg border border-[#4a4e4e1a] shadow-lg">
+		<div className="w-full  bg-bigcard h-auto mb-0 px-0 py-0 md:px-8 md:py-8 lg:px-10 lg:py-6  rounded-lg  shadow-lg">
 			<div className="w-full flex flex-col gap-3 md:gap-8 md:w-full md:min-w-full md:max-w-full">
 				<PageHeader title="Create Episode" className="pt-0" description="Generate a summary and audio version of a	 podcast episode from any YouTube video" />
 
-				<div>
+				<div className="py-8 px-4 md:p-0 ">
 					{/* <ComponentSpinner isLabel={false} /> */}
 
 					<div className="flex flex-col px-0 md:px-4">
@@ -441,7 +441,7 @@ export function EpisodeCreator() {
 										</div>
 									</div>
 
-									<div className="mt-4 md:col-span-2 lg:max-w-lg">
+									<div className="mt-4 md:col-span-2 lg:max-w-lg w-full">
 										<Label>Topic</Label>
 										<Select value={selectedTopic ?? ""} onValueChange={v => setSelectedTopic(v)}>
 											<SelectTrigger className="w-full" disabled={isBusy}>
@@ -459,181 +459,182 @@ export function EpisodeCreator() {
 								</div>
 							)}
 
-							<div className="hidden not-only:grid-cols-1 gap-4">
+							<div className="hidden not-only:grid-cols-1 gap-4 w-full">
 								<div className="space-y-2">
 									<Label htmlFor="podcastName">Podcast Name (optional)</Label>
 									<Input id="podcastName" placeholder="Podcast show name" value={podcastName} onChange={e => setPodcastName(e.target.value)} disabled={isBusy} />
 								</div>
 							</div>
 
-							<div className="space-y-6 border-1 border-[rgba(86,114,114,0.48)] rounded-xl md:rounded-4xl md:w-full md:min-w-full md:max-w-2/3 shadow-md px-0 md:px-10 pt-8 pb-12 bg-[#110d1712]">
-								<div className="w-[250px] flex flex-col gap-0">
-									<Label>Voice Settings</Label>
-									<div className="flex flex-row gap-3 mt-4">
-										<Button type="button" variant={generationMode === "single" ? "default" : "outline"} onClick={() => setGenerationMode("single")} disabled={isBusy} className="px-4">
-											Single speaker
-										</Button>
-										<Button type="button" variant={generationMode === "multi" ? "default" : "outline"} onClick={() => setGenerationMode("multi")} disabled={isBusy} className="px-4">
-											Multi speaker
-										</Button>
+							<div className="space-y-6 border-1 rounded-xl md:rounded-4xl w-full md:max-w-full shadow-md px-0 md:px-10 pt-8 pb-12 bg-[#110d1712] md:min-w-full ">
+								<div className="py-0 px-4 md:p-0 ">
+									<div className="w-[250px] flex flex-col gap-0 md:min-w-full ">
+										<Label>Voice Settings</Label>
+										<div className="flex flex-row gap-3 mt-4">
+											<Button type="button" variant={generationMode === "single" ? "default" : "outline"} onClick={() => setGenerationMode("single")} disabled={isBusy} className="px-4">
+												Single speaker
+											</Button>
+											<Button type="button" variant={generationMode === "multi" ? "default" : "outline"} onClick={() => setGenerationMode("multi")} disabled={isBusy} className="px-4">
+												Multi speaker
+											</Button>
+										</div>
+										<button
+											type="button"
+											onClick={() => setShowTips(!showTips)}
+											className="flex mt-4 items-center gap-2 font-medium text-cyan-200/80 hover:text-foreground transition-colors mb-3 text-[0.6rem] uppercase ">
+											{showTips ? <ChevronDown className="h-4 w-4 md:max-w-full " /> : <ChevronRight className="h-4 w-4" />}💡 Helpful Tips
+										</button>
+
+										{showTips && (
+											<div className="space-y-3 p-4 bg-primary/50 shadow-sm mb-4	 rounded-xl w-full min-w-full md:max-w-full md:min-w-full ">
+												<p className="text-xs font-semibold foreground/80">
+													Both options can handle 90% of any youtube URL you provide! The quality of your generated episode depends on the content you choose to upload. These tips can help you decide if
+													you're unsure:
+												</p>
+												<ul className="space-y-2 leading-relaxed text-primary-foreground text-xs mt-1 md:max-w-full ">
+													<li className="flex items-start gap-2">
+														<span className="text-indigo-300">💡</span>
+														<span>
+															<strong className="text-cyan-200">Pro tip:</strong> If you're unsure, start with Single Speaker - it's our most reliable option for any content type
+														</span>
+													</li>
+													<li className="flex my-1 content-center gap-2">
+														<span className="text-orange-500">⏱️</span>
+														<span>
+															<strong className="text-cyan-300 ">For videos over 2 hours:</strong> We recommend Single Speaker for faster processing and guaranteed success
+														</span>
+													</li>
+													<li className="flex items-start gap-2">
+														<span className="text-blue-500">⚡</span>
+														<span>
+															<strong className="text-cyan-300">Single Speaker</strong> processes faster and is ideal for solo presentations, tutorials, or monologues
+														</span>
+													</li>
+													<li className="flex items-start gap-2">
+														<span className="text-green-200">🎙️</span>
+														<span>
+															<strong className="text-cyan-300">Multi Speaker</strong> results will be generated into two speaker conversational podcast syled episode. For more engaging information
+															consumption. May not be suite for all types of content.
+														</span>
+													</li>
+
+													<li className="flex items-start gap-2">
+														<span className="text-purple-500">🎯</span>
+														<span>
+															<strong className="text-cyan-300">Best results come from:</strong> Clear audio, minimal background noise, and well-structured content
+														</span>
+													</li>
+													<li className="flex items-start gap-2">
+														<span className="text-red-500">⚠️</span>
+														<span>
+															<strong className="text-amber-400">Avoid:</strong> Music-heavy content, very fast speech, or videos with poor audio quality
+														</span>
+													</li>
+												</ul>
+											</div>
+										)}
 									</div>
-									<button
-										type="button"
-										onClick={() => setShowTips(!showTips)}
-										className="flex mt-4 items-center gap-2 font-medium text-cyan-200/80 hover:text-foreground transition-colors mb-3 text-[0.6rem] uppercase">
-										{showTips ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}💡 Helpful Tips
-									</button>
 
-									{showTips && (
-										<div className="space-y-3 p-4 bg-[#00000074]/70	 rounded-xl border-1 border-[#151723af] ">
-											<p className="text-xs font-semibold foreground/80">
-												Both options can handle 90% of any youtube URL you provide! The quality of your generated episode depends on the content you choose to upload. These tips can help you decide if
-												you're unsure:
-											</p>
-											<ul className="space-y-2 leading-relaxed text-foreground/80 text-xs mt-1">
-												<li className="flex items-start gap-2">
-													<span className="text-indigo-100">💡</span>
-													<span>
-														<strong className="text-indigo-300">Pro tip:</strong> If you're unsure, start with Single Speaker - it's our most reliable option for any content type
-													</span>
-												</li>
-												<li className="flex my-1 content-center gap-2">
-													<span className="text-orange-500">⏱️</span>
-													<span>
-														<strong className="text-teal-500 ">For videos over 2 hours:</strong> We recommend Single Speaker for faster processing and guaranteed success
-													</span>
-												</li>
-												<li className="flex items-start gap-2">
-													<span className="text-blue-500">⚡</span>
-													<span>
-														<strong className="text-teal-500">Single Speaker</strong> processes faster and is ideal for solo presentations, tutorials, or monologues
-													</span>
-												</li>
-												<li className="flex items-start gap-2">
-													<span className="text-green-200">🎙️</span>
-													<span>
-														<strong className="text-teal-500">Multi Speaker</strong> results will be generated into two speaker conversational podcast syled episode. For more engaging information
-														consumption. May not be suite for all types of content.
-													</span>
-												</li>
+									{generationMode === "single" && (
+										<div className="space-y-4 md:max-w-full ">
+											<div>
+												<div className="py-2 pl-2 uppercase font-bold text-secondary-foreground text-xs">Voice</div>
+												<Select value={voiceA} onValueChange={setVoiceA}>
+													<SelectTrigger className="w-full" disabled={isBusy}>
+														<SelectValue placeholder="Select Voice" />
+													</SelectTrigger>
+													<SelectContent>
+														{VOICE_OPTIONS.map(v => (
+															<SelectItem key={v.name} value={v.name}>
+																<div className="flex items-center justify-between w-full gap-3">
+																	<span>{v.label}</span>
+																</div>
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+												<div className="mt-4">
+													<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceA)} disabled={isBusy || isAudioBusy}>
+														<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceA ? "Loading sample" : isPlaying === voiceA ? "Playing" : "Play sample"}
+													</Button>
+												</div>
+											</div>
+										</div>
+									)}
 
-												<li className="flex items-start gap-2">
-													<span className="text-purple-500">🎯</span>
-													<span>
-														<strong className="text-teal-500">Best results come from:</strong> Clear audio, minimal background noise, and well-structured content
-													</span>
-												</li>
-												<li className="flex items-start gap-2">
-													<span className="text-red-500">⚠️</span>
-													<span>
-														<strong className="text-amber-400">Avoid:</strong> Music-heavy content, very fast speech, or videos with poor audio quality
-													</span>
-												</li>
-											</ul>
+									{generationMode === "multi" && (
+										<div className="grid grid-cols-1  md:max-w-full md:grid-cols-2 gap-4">
+											<div>
+												<div className="py-2 pl-2 uppercase font-bold text-secondary-foreground text-xs">Voice A</div>
+												<Select value={voiceA} onValueChange={setVoiceA}>
+													<SelectTrigger className="w/full" disabled={isBusy}>
+														<SelectValue placeholder="Select Voice A" />
+													</SelectTrigger>
+													<SelectContent>
+														{VOICE_OPTIONS.map(v => (
+															<SelectItem key={v.name} value={v.name}>
+																<div className="flex items-center justify-between w/full gap-3 ">
+																	<div className="flex flex-col">
+																		<span>{v.label}</span>
+																	</div>
+																	<button
+																		type="button"
+																		onMouseDown={e => e.preventDefault()}
+																		onClick={e => {
+																			e.stopPropagation();
+																			void playSample(v.name);
+																		}}
+																		aria-label={`Play ${v.name} sample`}
+																		className="inline-flex items-center gap-1 text-xs opacity-80 hover:opacity-100 mt-3"></button>
+																</div>
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+												<div className="mt-4 md:max-w-full " >
+													<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceA)} disabled={isBusy || isAudioBusy}>
+														<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceA ? "Loading sample" : isPlaying === voiceA ? "Playing" : "Play sample"}
+													</Button>
+												</div>
+											</div>
+											<div>
+												<div className="py-2 pl-2 uppercase font-bold text-primary-foreground text-xs">Voice B</div>
+												<Select value={voiceB} onValueChange={setVoiceB}>
+													<SelectTrigger className="w/full" disabled={isBusy}>
+														<SelectValue placeholder="Select Voice B" />
+													</SelectTrigger>
+													<SelectContent>
+														{VOICE_OPTIONS.map(v => (
+															<SelectItem key={v.name} value={v.name}>
+																<div className="flex items-center justify-between w/full gap-3">
+																	<div className="flex flex-col">
+																		<span>{v.label}</span>
+																		{/* <span className="text-xs opacity-75">{v.sample}</span> */}
+																	</div>
+																	<button
+																		type="button"
+																		onMouseDown={e => e.preventDefault()}
+																		onClick={e => {
+																			e.stopPropagation();
+																			void playSample(v.name);
+																		}}
+																		aria-label={`Play ${v.name} sample`}
+																		className="inline-flex items-center gap-1 text-xs opacity-80 hover:opacity-100"></button>
+																</div>
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+												<div className="mt-4 md:max-w-full ">
+													<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceB)} disabled={isBusy || isAudioBusy}>
+														<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceB ? "Loading sample" : isPlaying === voiceB ? "Playing" : "Play sample"}
+													</Button>
+												</div>
+											</div>
 										</div>
 									)}
 								</div>
-
-								{generationMode === "single" && (
-									<div className="space-y-4">
-										<div>
-											<div className="py-2 pl-2 uppercase font-bold text-secondary-foreground text-xs">Voice</div>
-											<Select value={voiceA} onValueChange={setVoiceA}>
-												<SelectTrigger className="w-full" disabled={isBusy}>
-													<SelectValue placeholder="Select Voice" />
-												</SelectTrigger>
-												<SelectContent>
-													{VOICE_OPTIONS.map(v => (
-														<SelectItem key={v.name} value={v.name}>
-															<div className="flex items-center justify-between w-full gap-3">
-																<span>{v.label}</span>
-															</div>
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-											<div className="mt-4">
-												<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceA)} disabled={isBusy || isAudioBusy}>
-													<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceA ? "Loading sample" : isPlaying === voiceA ? "Playing" : "Play sample"}
-												</Button>
-											</div>
-										</div>
-									</div>
-								)}
-
-								{generationMode === "multi" && (
-									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-										<div>
-											<div className="py-2 pl-2 uppercase font-bold text-secondary-foreground text-xs">Voice A</div>
-											<Select value={voiceA} onValueChange={setVoiceA}>
-												<SelectTrigger className="w/full" disabled={isBusy}>
-													<SelectValue placeholder="Select Voice A" />
-												</SelectTrigger>
-												<SelectContent>
-													{VOICE_OPTIONS.map(v => (
-														<SelectItem key={v.name} value={v.name}>
-															<div className="flex items-center justify-between w/full gap-3 ">
-																<div className="flex flex-col">
-																	<span>{v.label}</span>
-																</div>
-																<button
-																	type="button"
-																	onMouseDown={e => e.preventDefault()}
-																	onClick={e => {
-																		e.stopPropagation();
-																		void playSample(v.name);
-																	}}
-																	aria-label={`Play ${v.name} sample`}
-																	className="inline-flex items-center gap-1 text-xs opacity-80 hover:opacity-100 mt-3"></button>
-															</div>
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-											<div className="mt-4">
-												<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceA)} disabled={isBusy || isAudioBusy}>
-													<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceA ? "Loading sample" : isPlaying === voiceA ? "Playing" : "Play sample"}
-												</Button>
-											</div>
-										</div>
-										<div>
-											<div className="py-2 pl-2 uppercase font-bold text-primary-foreground text-xs">Voice B</div>
-											<Select value={voiceB} onValueChange={setVoiceB}>
-												<SelectTrigger className="w/full" disabled={isBusy}>
-													<SelectValue placeholder="Select Voice B" />
-												</SelectTrigger>
-												<SelectContent>
-													{VOICE_OPTIONS.map(v => (
-														<SelectItem key={v.name} value={v.name}>
-															<div className="flex items-center justify-between w/full gap-3">
-																<div className="flex flex-col">
-																	<span>{v.label}</span>
-																	{/* <span className="text-xs opacity-75">{v.sample}</span> */}
-																</div>
-																<button
-																	type="button"
-																	onMouseDown={e => e.preventDefault()}
-																	onClick={e => {
-																		e.stopPropagation();
-																		void playSample(v.name);
-																	}}
-																	aria-label={`Play ${v.name} sample`}
-																	className="inline-flex items-center gap-1 text-xs opacity-80 hover:opacity-100"></button>
-															</div>
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-											<div className="mt-4">
-												<Button type="button" variant="outline" size="sm" onClick={() => void playSample(voiceB)} disabled={isBusy || isAudioBusy}>
-													<PlayCircle className="mr-2 h-4 w-4" /> {isLoadingSample === voiceB ? "Loading sample" : isPlaying === voiceB ? "Playing" : "Play sample"}
-												</Button>
-											</div>
-										</div>
-									</div>
-								)}
 							</div>
-
 							<Button type="submit" variant="secondary" disabled={!canSubmit} className="w-full p-4">
 								{isCreating ? "Creating..." : "Create & Generate"}
 							</Button>

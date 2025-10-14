@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { Home, Info, Play, Radio } from "lucide-react";
+import { BoxesIcon, Home, PlayCircleIcon, Radio, WandSparkles } from "lucide-react";
 import type * as React from "react";
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -14,24 +14,33 @@ export const navItems = [
 		icon: Home,
 	},
 	{
-		title: "Explore Curated Bundles",
+		title: "Discover",
 		url: "/curated-bundles",
 		icon: Radio,
 	},
 	{
-		title: "Generate Custom Episodes",
-		url: "/generate-my-episodes",
-		icon: Info,
+		title: "Bundles",
+		url: "/my-bundles",
+		icon: BoxesIcon,
 	},
 	{
-		title: "Bundle Episodes",
-		url: "/episodes",
-		icon: Play,
-	},
-	{
-		title: "My Episodes",
-		url: "/my-episodes",
-		icon: Play,
+		title: "Create with AI",
+		url: "#",
+		icon: WandSparkles,
+		hasSubitems: true,
+		subItems: [
+			{
+				name: "Generate",
+				url: "/generate-my-episodes",
+				icon: WandSparkles,
+			},
+			{
+				name: "Your Creations",
+				url: "/my-episodes",
+				icon: PlayCircleIcon,
+			},
+
+		],
 	},
 ];
 
@@ -48,7 +57,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	// Navigation items
 
 	return (
-		<Sidebar collapsible="offcanvas" {...props} className="border-1 border-l-0 border-b-0 border-r-[#6e648bfd] text-sidebar-foreground bg-sidebar shadow-[0px_0px_5px_5px_#261c4b5b]  backdrop-blur-[3px]  w-[var(--sidebar-width)]  data-[state=collapsed]:w-[--sidebar-collapsed-width] duration-300 ease-linear  ">
+		<Sidebar
+			collapsible="offcanvas"
+			{...props}
+			className="border-1 border-l-0 border-b-0 border-r-[#6e648b06] text-sidebar-foreground bg-sidebar shadow-[0px_0px_5px_5px_#261c4b5b]  backdrop-blur-[3px]  w-[var(--sidebar-width)]  data-[state=collapsed]:w-[--sidebar-collapsed-width] duration-300 ease-linear  ">
 			<SidebarContent>
 				<NavMain items={navItems} />
 			</SidebarContent>

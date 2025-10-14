@@ -9,8 +9,8 @@ const buttonVariants = cva(
 		variants: {
 			variant: {
 				default: "bg-linear-to-br from-[#886FCD] to-violet-700 text-slate-100/80 hover:text-cyan-100 shadow-md text-shadow-black/20 text-shadow-md  md:min-w-[100px] px-4 text-lg leading-0  text-[0.95rem] shadow-[0_2px_4px_1px]  shadow-slate-950/70 rounded-xl  shadow-md shadow-slate-900/30 h-12",
-				destructive: "bg-[#2909129B] border-2 border-[#763751] text-[#C67E98] shadow-[0_2px_4px_1px] shadow-slate-900/40 rounded-full px-0 w-10 h-14 shadow-lg shadow-slate-950/20 text-slate-300/80",
-				outline: "border-1 border-teal-400/40 bg-[#2735487E] disabled:bg-[#6B6791C8] text-slate-300 shadow-sm font-bold disabled:text-[#A1B7F4D4] shadow-lg shadow-slate-950/20 px-0 overflow-hidden w-[36px] h-9 px-4 w-fit max-w-[200px] rounded-xl",
+				destructive: "bg-[#2909129B] border-2 border-[#763751] text-[#C67E98] shadow-[0_2px_4px_1px] shadow-slate-900/40 rounded-full px-0 w-10 h-14 shadow-lg shadow-slate-950/10 text-slate-300/80",
+				outline: "border-1 border-border bg-black/40 disabled:bg-[#6B6791C8] text-accent-foreground  font-bold disabled:text-[#A1B7F4D4] shadow-md shadow-slate-950/20 px-0 overflow-hidden w-[36px] px-4 w-fit max-w-[200px] rounded-xl",
 				secondary: "btn-secondary disabled:bg-[#5E5C6FC8]  rounded-lg border-1 border-[#86D2F5] text-slate-300/80 shadow-[0px_4px_rgba(26, 40, 46, 0.9)] w-full md:max-w-fit px-4 text-[1rem] hover:text-secondary-foreground hover:text-secondary-foreground shadow-lg shadow-black shadow-slate-950/20 h-8",
 				ghost: "text-secondary-foreground h-6 ",
 				link: "text-secondary-foreground underline-offset-4 text-secondary-foreground hover:underline h-6",
@@ -18,12 +18,12 @@ const buttonVariants = cva(
 				icon: "h-8 ",
 			},
 			size: {
-				default: "h-10 md:px-4 mx-auto flex items-center justify-center text-[0.8rem] capitalize font-semibold",
-				sm: "h-9",
-				lg: "",
+				default: "h-12 md:px-4 flex items-center justify-center text-[0.8rem] capitalize font-semibold",
+				sm: "h-10",
+				lg: "h-14",
 				md: " rounded-md text-[0.9rem]  font-medium",
-				xs: "p-0  text-xs",
-				icon: "",
+				xs: "p-0  h-8 text-xs",
+				icon: "h-8 w-8",
 				play: "btn-playicon",
 				playSmall: "btn-playicon-sm ",
 				playLarge: "btn-playicon-lg",

@@ -1,50 +1,75 @@
-"use client"
+"use client";
 
-import type { LucideIcon } from "lucide-react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import type { LucideIcon } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator, useSidebar } from "@/components/ui/sidebar"
-import { cn } from "@/lib/utils"
+import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator, useSidebar } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 
 export function NavMain({
 	items,
 }: {
 	items: {
-		title: string
-		url: string
-		icon?: LucideIcon
-		separator?: boolean
-	}[]
+		title: string;
+		url: string;
+		isActive?: boolean;
+		icon?: LucideIcon;
+		separator?: boolean;
+		hasSubitems?: boolean;
+		subItems?: {
+			isActive?: boolean;
+			name: string;
+			url: string;
+			icon?: LucideIcon;
+		}[];
+	}[];
 }) {
-	const pathname = usePathname()
-	const { isMobile, setOpenMobile } = useSidebar()
+	const pathname = usePathname();
+	const { isMobile, setOpenMobile } = useSidebar();
 
 	const handleLinkClick = () => {
 		// Close sidebar on mobile when navigation item is clicked
 		if (isMobile) {
-			setOpenMobile(false)
+			setOpenMobile(false);
 		}
-	}
+	};
 
 	return (
 		<SidebarGroup>
 			<SidebarMenu className=" mt-24 px-2">
 				{items.map((item, index) => (
-					<div key={item.title} className="my-1">
-						{item.separator && index > 0 && <SidebarSeparator className="border-none bg-[#98818128] mx-0 my-5 h-[1px]" />}
+					<div key={item.url} className="my-1">
+						{item.separator && index > 0 && <SidebarSeparator className="border-none text-sidebar-accent-foreground opacity-[0.9] mx-0 my-5 h-[1px]" />}
 						<SidebarMenuItem>
 							<SidebarMenuButton asChild isActive={pathname === item.url}>
-								<Link href={item.url} className={cn("flex items-center gap-4")} onClick={handleLinkClick}>
-									{item.icon && <item.icon className="size-4 opacity-[0.5]" />}
-									<span className="text-[0.8rem] text-foreground opacity-[0.9]">{item.title}</span>
+								<Link href={item.url} className={cn("flex text-sidebar-primary-foreground opacity-[0.7] items-center gap-4")} onClick={handleLinkClick}>
+									{!item.hasSubitems && item.icon && <item.icon className={`size-6 ${item.isActive ? `text-indigo-600 opacity-[0.6]` : `text-sidebar-foreground-muted opacity-[0.9]`}`} />}
+									<span className={item.hasSubitems ? `mt-3 text-primary-foreground font-bold ppercase text-xs uppercase ` : `text-sm text-[1rem] text-sidebar-primary opacity-[0.9]`}>{item.title}</span>
 								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
+						{item.subItems && (
+							<SidebarGroup>
+								{/* <SidebarGroupLabel>{item.title}</SidebarGroupLabel> */}
+								<SidebarMenu>
+									{item.subItems.map(subItem => (
+										<SidebarMenuItem key={subItem.url}>
+											<SidebarMenuButton asChild>
+												<Link href={subItem.url}>
+													{subItem.icon && <subItem.icon className={`size-6 ${subItem.isActive ? `text-indigo-600 opacity-[0.6]` : `text-sidebar-foreground-muted opacity-[0.9]`}`} />}
+													<span className="text-[1rem] text-sidebar-primary opacity-[0.9]">{subItem.name}</span>
+												</Link>
+											</SidebarMenuButton>
+										</SidebarMenuItem>
+									))}
+								</SidebarMenu>
+							</SidebarGroup>
+						)}
 					</div>
 				))}
 				<SidebarSeparator className="my-2" />
 			</SidebarMenu>
 		</SidebarGroup>
-	)
+	);
 }

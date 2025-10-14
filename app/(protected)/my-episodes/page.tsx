@@ -31,7 +31,7 @@ export default async function MyEpisodesPage({ searchParams }: { searchParams?: 
 	}
 
 	return (
-		<div className="flex mt-0 flex-col justify-center mx-auto w-screen md:w-screen max-w-full">
+		<div className="flex md:px-0 m-0 flex-col justify-center mx-auto w-screen md:w-screen max-w-full h-full  gap-8">
 			<PageHeader
 				title="Your Generated Episodes"
 				description={

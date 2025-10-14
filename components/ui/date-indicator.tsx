@@ -44,13 +44,13 @@ function DateIndicator({ indicator, label, size = "sm" }: DateIndicatorProps): R
 	}
 	if (!label) {
 		return (
-			<div className={`flex py-0 h-auto leading-none font-normal mr-1 ${sizeClasses[size]} no-wrap text-foreground/70  text-[0.6rem]`}>
+			<div className={`flex py-0 pl-1 h-auto leading-none font-normal mr-1 ${sizeClasses[size]} no-wrap font-mono text-primary-foreground   text-[0.55rem]`}>
 				{getTimeAgoInDays(indicator)}
 			</div>
 		)
 	}
 	return (
-		<div className={`w-full  inline py-0 mr-1  h-auto leading-none ${sizeClasses[size]} no-wrap `}>
+		<div className={`w-full px-1 text-center inline py-0 mr-1  text-primary-foreground shadow-md h-auto tracking-tighter leading-none ${sizeClasses[size]} font-mono no-wrap `}>
 			{label}: {getTimeAgoInDays(indicator)}
 		</div>
 	)

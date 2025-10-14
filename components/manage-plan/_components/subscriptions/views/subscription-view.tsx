@@ -196,8 +196,8 @@ export function SubscriptionView() {
 			{isPolling && <span className="ml-2 text-xs text-muted-foreground">(syncing changes…)</span>}
 			<div className="p-0 space-y-0">
 				<div className="flex justify-start items-center pb-2">
-					<div className="text-base leading-6 text-[#72c9ac] mr-4">
-						Subscription:<span className="text-[#fff] ml-2 font-bold">{currentPlan?.productTitle ?? "Free Slice"}</span>{" "}
+					<div className="text-base leading-6 text-secondary-foreground mr-4">
+						Subscription:<span className="text-primary-foreground-muted ml-2 font-bold">{currentPlan?.productTitle ?? "Free Slice"}</span>{" "}
 					</div>
 					{subscription?.status && <Badge variant="secondary">{subscription.status}</Badge>}
 				</div>

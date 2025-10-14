@@ -18,20 +18,27 @@ export const typographyVariants = cva("", {
 	},
 });
 
-// Card variants - ONE unified card system to replace all your different card implementations
-export const cardVariants = cva("border sm:px-24 md:px-4 transition-all duration-200 pt-0	 pb-0 md:pb-1 w-full", {
+// Card variants - ONE unified card system to replace all your different card i
+export interface CardVariantProps extends React.HTMLAttributes<HTMLDivElement> {
+	variant: "bundle" | "default";
+	hoverable: boolean;
+	selected: boolean;
+	className: string;
+}
+
+export const cardVariants = cva("", {
 	variants: {
 		variant: {
-			toggle: "bg-dark",
 			default: "bg-background border text-card-foreground px-4",
 			glass: "md:bg-background/80 md:backdrop-blur-[24px] border text-card-foreground px-4",
 			episode: "bg-linear-to-br from-card/20 via-accent/90 to-muted  hover:shadow-md hover:-translate-y-2 ",
-			bundle: "border-light border-1 px-0  shadow-lg text-card-foreground hover:bg-card/25 hover:shadow-md pb-6 bg-bundle",
 			transparent: "main-card",
+			bundle:
+				"bg-bundle-card border-3 border-bundle-card-border w-full transition-shadow duration-200 gap-3 bundle-card-hover xl:max-w-[500px]  xl:overflow-hidden 	 xl:h-[500px] ease-in-out text-shadow-sm shadow-[0_4px_4px_1px_#0506062c]",
 		},
 		selected: {
 			true: "border-2 border-accent-selection-border bg-gradient-to-br from-accent-selection-bg to-card shadow-lg shadow-accent-selection-bg/20",
-			false: "",
+			false: "bg-bundle-card border-3 border-bundle-card-border",
 		},
 		hoverable: {
 			true: "hover:shadow-xl hover:-translate-y-1",

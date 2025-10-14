@@ -182,7 +182,7 @@ export default function BundlesPanelClient({
 	const createButtonLabel = bundles.length === 0 ? "Add your first bundle" : "Add Another Bundle"
 
 	return (
-		<Card className="episode-card-wrapper">
+		<Card variant="bundle" className="episode-card-wrapper">
 			<PanelHeader
 				title="Bundle Management"
 				description="Create new bundles and manage existing ones"
@@ -201,7 +201,7 @@ export default function BundlesPanelClient({
 					<div className="space-y-3 p-4 border rounded-lg w-full max-w-[500px]">
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<div>
-								<Label htmlFor="bundleName">Bundle Name</Label>
+								<Label htmlFor="bundleName">Bundle Names</Label>
 								<Input id="bundleName" value={createForm.name} onChange={e => setCreateForm(s => ({ ...s, name: e.target.value }))} placeholder="e.g., Tech Weekly" />
 							</div>
 

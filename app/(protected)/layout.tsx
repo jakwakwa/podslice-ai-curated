@@ -36,8 +36,8 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 		const { setTheme, theme } = useTheme();
 
 		return (
-			<Button onClick={() => setTheme(theme === "light" ? "dark" : "light")} variant="outline">
-				{theme === "light" ? <MoonIcon className="w-4 h-4" /> : <SunIcon className="w-4 h-4" />}
+			<Button onClick={() => setTheme(theme === "light" ? "dark" : "light")} variant="icon">
+				{theme === "light" ? <MoonIcon className="w-4 h-4 text-white" /> : <SunIcon className="w-4 h-4 text-blue-300" />}
 			</Button>
 		);
 	}
@@ -68,7 +68,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 						<DynamicBreadcrumb />
 					</div>
-					<div className="flex flex-row-reverse items-center gap-2">
+					<div className="flex flex-row-reverse items-center gap-5">
 						{/* <InstallButton /> */}
 
 						{isMobile && typeof window !== "undefined" && (
@@ -88,21 +88,15 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 								</DrawerContent>
 							</Drawer>
 						)}
-						{!isMobile && typeof window !== "undefined" && (
-							<>
-								<ModeToggle />
-								<NotificationBell />
-							</>
-
-						)}
+						{!isMobile && typeof window !== "undefined" && <NotificationBell />}
 
 						{isMobile && <UserNavMobile user={userData} />}
+						<ModeToggle />
 					</div>
 				</header>
 
 				<div
 					className={`flex flex-col flex-grow transition-all duration-300 ease-in-out px-0 md:px-0 mt-8 md:mt-0 mb-2 m-0 p-0 h-screen ${state === "expanded" ? "ml-0 w-full md:ml-3 md:pr-2 " : "ml-0 md:ml-12 w-full md:max-w-[95vw]"}`}>
-
 					<div className={"layout-inset"} />
 					<div className="w-full md:w-full p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-20 mx-0 pl-0 md:pr-3 md:px-2 min-w-full md:my-2 lg:ml-6 lg:pl-0 lg:pr-12">{children}</div>
 				</div>
@@ -196,27 +190,48 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 	);
 }
 function ProfileForm({ setOpenMobileDrawer }: { setOpenMobileDrawer: (open: boolean) => void }) {
-	const { user } = useUser();
-	const _userData = {
-		name: user?.fullName || user?.firstName || "User",
-		email: user?.emailAddresses?.[0]?.emailAddress || "user@example.com",
-		avatar: user?.imageUrl || "/placeholder-user.jpg",
-	};
+
+
 	const mobileNav = navItems;
 
 	return (
-		<div className="grid gap-3 bottom-10 w-full">
+		<div className="grid gap-3 bottom-0 w-full mb-6">
 			<ul className="grid gap-2 py-2 w-full">
 				{mobileNav.map(item => (
 					<li key={item.title} className=" text-left text-sm w-full ">
-						{/* hide drawer when link is clicked */}
-						<Link
-							href={item.url}
-							onClick={() => setOpenMobileDrawer(false)}
-							className="py-3 bg-teal-900/30 rounded-lg flex text-left flex-row items-center justify-start cursor-pointer  my-0 mx-auto gap-2 font-medium border border-cyan-200/10 shadow-lg shadow-cyan-400/10 text-shadow-cyan-900/10  text-cyan-100/70 max-w-[70%] md:max-w-fit pl-8 backdrop-blur-md ">
-							{item.icon && <item.icon className="size-4 opacity-[0.5]" />}
-							{item.title}{" "}
-						</Link>
+						{item.subItems && item.subItems.length > 0 ? (
+							// Parent item with subItems - not clickable
+							<div className=" bg-teal-900/30 rounded-lg flex text-left flex-col items-start justify-start  mx-auto gap-2 font-medium border border-cyan-200/10 shadow-lg shadow-cyan-400/10 text-shadow-cyan-900/10 text-cyan-100/70 max-w-[70%] md:max-w-full backdrop-blur-md my-0 p-0 ">
+								<div className="flex pl-8 flex-row items-center justify-start gap-2 mt-4">
+
+									{item.icon && <item.icon className="size-4 opacity-[0.5]" />}
+									{item.title}
+								</div>
+
+								<ul className="flex flex-col gap-2 py-2 px-8 w-full mt-0 mb-2">
+									{item.subItems.map(subItem => (
+										<li key={subItem.name} className="text-left text-sm w-full">
+											<Link
+												href={subItem.url}
+												onClick={() => setOpenMobileDrawer(false)}
+												className="py-3 bg-white/10 rounded-lg flex text-left flex-row items-center justify-start cursor-pointer gap-2 font-normal shadow-sm text-cyan-100/60 max-w-[60%] px-8 backdrop-blur-sm min-w-full my-0">
+
+												{subItem.name}
+											</Link>
+										</li>
+									))}
+								</ul>
+							</div>
+						) : (
+							// Regular item without subItems - clickable
+							<Link
+								href={item.url}
+								onClick={() => setOpenMobileDrawer(false)}
+								className="py-3 bg-teal-900/30 rounded-lg flex text-left flex-row items-center justify-start cursor-pointer  my-0 mx-auto gap-2 font-medium border border-cyan-200/10 shadow-lg shadow-cyan-400/10 text-shadow-cyan-900/10  text-cyan-100/70 max-w-[70%] md:max-w-fit pl-8 backdrop-blur-md ">
+								{item.icon && <item.icon className="size-4 opacity-[0.5]" />}
+								{item.title}
+							</Link>
+						)}
 					</li>
 				))}
 			</ul>
