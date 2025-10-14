@@ -444,7 +444,7 @@ export function EpisodeCreator() {
 									<div className="mt-4 md:col-span-2 lg:max-w-lg w-full">
 										<Label>Topic</Label>
 										<Select value={selectedTopic ?? ""} onValueChange={v => setSelectedTopic(v)}>
-											<SelectTrigger className="w-full" disabled={isBusy}>
+											<SelectTrigger className="w-full mt-4" disabled={isBusy}>
 												<SelectValue placeholder="Select topic" />
 											</SelectTrigger>
 											<SelectContent>

@@ -6,8 +6,8 @@ import styles from "@/styles/landing-page-content.module.css";
 
 export function LandingPageHeader() {
 	return (
-		<header className="w-full fixed h-16">
-			<div className={styles.landingHeaderContainer}>
+		<header className="w-full   z-50 ">
+			<div className="w-full flex justify-between items-center fixed h-[80px] z-50 max-w-screen mx-auto bg-gray-900/80 px-8 md:px-24 py-4 md:py-0 ">
 				<Link href="/">
 					<Image src="/logo.svg" width={100} height={60} alt="PODSLICE Logo" className={styles.landingLogo} />
 				</Link>

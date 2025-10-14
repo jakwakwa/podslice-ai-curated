@@ -28,11 +28,11 @@
 	background-position: 100% 190%, 100% 190%, 100% 190%, 100% 180%, 100% 150% !important;
 	background-attachment: fixed;
 	background-repeat: repeat;
-	/* background-size: 400% 400%, 400% 400%, 400% 400%, 400% 400%, 400% 400% !important; */
-	/* mix-blend-mode: normal !important; */
+	background-size: 400% 400%, 400% 400%, 400% 400%, 400% 400%, 400% 400% !important;
+	mix-blend-mode: normal !important;
 	background-image: linear-gradient(45deg, oklch(0.2 0.04 281.74 / 0.96) -40%, oklch(0.12 0 325.79 / 0.97)) !important;
-	/* background-blend-mode: screen !important; */
-	/* background-size: 110% 110%, 100% 100%, 150% 150% !important; */
+	background-blend-mode: screen !important;
+	background-size: 110% 110%, 100% 100%, 150% 150% !important;
 	/* z-index: -2 !important; */
 }
 
@@ -49,7 +49,7 @@
 	align-items: center;
 	justify-content: space-between;
 	padding: 0px 3rem !important;
-	backdrop-filter: blur(10px);
+	/* backdrop-filter: blur(10px); */
 	box-shadow: inset 0 10px 30px rgba(171, 216, 215, 0.1 5);
 	margin-bottom: 2rem !important;
 }
@@ -73,6 +73,7 @@
 /* Hero */
 .heroSection {
 	position: relative;
+	z-index: -1;
 	/* position: relative; */
 	padding-top: 8rem !important;
 	padding-bottom: 2.5rem;
@@ -83,28 +84,54 @@
 	height: 100vh;
 	padding: 5rem 1.5rem;
 
-	background-image: url('/assets/background/grain-bg.svg'), radial-gradient(120% 120% at 0% 0%,
-			oklch(0.83 0.11 222.04 / 0.24) -40%,
-			oklch(0.17 0.04 293.01 / 0.76) 40%,
-			oklab(0.11 0.01 -0.01 / 0.75) 120%),
-		radial-gradient(120% 120% at 100% 100%,
-			oklch(0.56 0.2 318.78) 0%,
-			oklch(0.21 0.11 293.78 / 0.88) 40%,
-			oklab(0.14 0 0 / 0.82) 120%),
-		radial-gradient(120% 120% at 100% 0%,
-			oklch(0.42 0.12 251.18 / 0.57) 0%,
-			oklch(0.24 0.04 223.36 / 0.66) 40%,
-			oklab(0.14 -0.02 -0.03 / 0.75) 120%),
+	background-image: url('/assets/background/grain-bg.svg'),
 		radial-gradient(120% 120% at 0% 100%,
-			oklch(66.8% 0.1126 199.37 / 0.932) -20%,
-			oklch(0.25 0.03 203.54 / 0.94) 40%,
-			oklab(0.28 -0.01 -0.01 / 0.56) 120%) !important;
+			oklch(0.53 0.11 232.34 / 0.89) -10%,
+			oklch(0.22 0.03 299.94 / 0.5) 30%,
+			oklch(0.22 0.03 299.94 / 0.5) 65%,
+			oklab(0.49 0.11 -0.24 / 0.86) 120%),
+		url('/assets/background/grid-bg.svg');
+	background-color: oklch(0.18 0.01 285.11 / 0.73);
 	text-align: center;
-	/* overflow: hidden; */
-	/* position: absolute; */
+	background-blend-mode: color-burn, color-dodge, screen;
+	background-size: 110%, 210%, 110%, 110%, 110%, 110%, 20%;
+	animation: gradientShift 10s ease-in-out infinite alternate;
+	/* mix-blend-mode: multiply, screen, lighten, color-dodge, saturation; */
+	background-position: 200% 0%, 50% 100%, 100% 100%, 0% 50%, 100% 0%;
+	overflow: hidden;
+
+
+	position: relative;
 	z-index: 44 !important;
 
 }
+
+.grainBackground {
+	background: url('/assets/background/grain-bg.svg') repeat center;
+	mix-blend-mode: screen;
+	background-blend-mode: screen;
+	position: absolute;
+	background-size: 330% 330%;
+	z-index: 10;
+	top: 0;
+
+}
+
+.gridBackground {
+	position: fixed;
+	background-size: 90% 90%;
+	background-position: 110% 110%;
+	mix-blend-mode: multiply;
+	background-blend-mode: multiply;
+	z-index: 120;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	top: 0;
+	background: url('/assets/backgrounds/grid-bg.svg') no-repeat;
+
+}
+
 
 .heroBackground {
 	position: absolute;
@@ -121,18 +148,29 @@
 
 }
 
+/* move background position to the right
+/* move background position to the left
+/* move background position to the top
+/* move background position to the bottom
+*/
+
 @keyframes gradientShift {
 	0% {
-		background-position: 20% 0%, 50% 50%, 50% 150%;
+		/* move background position to the right */
+		background-position: 30% 100%;
 	}
 
 	50% {
-		background-position: 10% 10%, 110% 0%, 50% 0%;
+		/* move background position to the left */
+		background-position: 40% 90%;
 	}
 
 	100% {
-		background-position: 15% 5%, 50% 50%, 50% 50%;
+		/* move background position to the top */
+		background-position: 80% 100%;
 	}
+
+
 }
 
 .heroContainer {
@@ -156,7 +194,7 @@
 	border: 1px solid rgba(168, 85, 247, 0.3);
 	border-radius: 9999px;
 	background: rgba(168, 85, 247, 0.2);
-	backdrop-filter: blur(4px);
+	/* backdrop-filter: blur(4px); */
 }
 
 .badgeIcon {
@@ -382,7 +420,7 @@
 	border: 1px solid var(--border-glass);
 	outline: 1px solid var(--outline-glass);
 	background: var(--background-glass);
-	backdrop-filter: blur(40px);
+	/* backdrop-filter: blur(40px); */
 	text-align: center;
 }
 
@@ -626,8 +664,7 @@
 @layer utilities {
 	.bg-card {
 		background-color: #1E202B;
-		box-shadow:
-			inset 0px -18px 45px oklch(0.15 0.02 300.36 / 0.77),
+		box-shadow: inset 0px -18px 45px oklch(0.15 0.02 300.36 / 0.77),
 			2px 3px 3px 1px oklch(0.47 0.05 300.72 / 0.81),
 			2px 2px 8px 2px #000000B5;
 		padding: 20px !important;
@@ -641,11 +678,10 @@
 		background-image: linear-gradient(180deg, oklch(0.88 0.13 201.88 / 0.27) -20%,
 				oklch(0.85 0.04 17.87 / 0.19) 40%, oklab(0.18 0.02 -0.1 / 0.56) 120%);
 		background-blend-mode: multiply, multiply;
-		box-shadow:
-			inset 0px 0px 9px 0px #0A0A0A41,
+		box-shadow: inset 0px 0px 9px 0px #0A0A0A41,
 			inset 0px -9px 19px 0px #0A0A0ABC,
 			inset 0px 20px 89px 10px #0A0A0A66 !important;
-		backdrop-filter: blur(8px) !important;
+		/* backdrop-filter: blur(8px) !important; */
 	}
 
 	.bg-bundle-card,
@@ -653,13 +689,12 @@
 		padding-bottom: 16px !important;
 		border-radius: 18px;
 		background-color: var(--sidebar);
-		box-shadow:
-			inset -5px -4px 59px 2px #0e0e10ea,
+		box-shadow: inset -5px -4px 59px 2px #0e0e10ea,
 			inset 0.5px 1px 0px 0px #4ce3db72,
 			3px 2px 3px 1px #000000cd,
 			0px 4px 10px 0px #00000062 !important;
 		/* outline-offset: 1px !important; */
-		backdrop-filter: blur(10px) !important;
+		/* backdrop-filter: blur(10px) !important; */
 		transition: all 0.2s ease-in-out;
 	}
 }

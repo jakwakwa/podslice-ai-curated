@@ -195,7 +195,8 @@
 			--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
 
 			--color-sidebar-border: var(--sidebar-border);
-
+			--color-link: var(--link);
+			--color-link-hover: var(--link-hover);
 			--color-sidebar-ring: var(--sidebar-ring);
 			--color-episode-primary: var(--episode-primary);
 			--color-header: var(--header);
@@ -251,6 +252,8 @@
 			--sidebar-accent-foreground: oklch(0.21 0.006 285.885);
 			--sidebar-border: oklch(0.92 0.004 286.32);
 			--sidebar-ring: oklch(0.79 0.09 300.47);
+			--link: oklch(0.21 0.006 285.885);
+			--link-hover: oklch(0.21 0.006 285.885);
 			--container-gradient: linear-gradient(to top, oklab(0.65 0.03 -0.13 / 0.65) -50%, rgba(138 225 220 / 0.9) 100%);
 			--episode-gradient: linear-gradient(90deg, oklch(0.66 0.11 210.42 / 0.88) 70%, oklch(0.85 0.05 223.45 / 0.64) 150%);
 			--inset-gradient: linear-gradient(to bottom, oklab(0.36 0 -0.12 / 0.65) -50%, rgba(2 2 2 / 0.9) 150%);
@@ -306,7 +309,8 @@
 			--input-border: oklch(0.62 0.08 263.65 / 0.74);
 			--input-placeholder: oklch(0.48 0.04 259.35 / 0.8);
 
-
+			--link: oklch(0.56 0.16 280);
+			--link-hover: oklch(0.56 0.25 302.24);
 			--ring: oklch(0.62 0.25 307.88 / 0.93);
 			--chart-1: oklch(0.646 0.222 41.116);
 			--chart-2: oklch(0.6 0.118 184.704);
@@ -315,21 +319,22 @@
 			--chart-5: oklch(0.769 0.188 70.08);
 			--sidebar: oklch(0.69 0.16 293.25 / 0.41);
 			--sidebar-foreground: oklch(0.76 0.1 288.83);
-			/* --sidebar-foreground-muted: oklch(0.84 0.11 183.36); */
+			--sidebar-foreground-muted: oklch(0.22 0.07 264.8);
 			--sidebar-primary: oklch(0.28 0.07 297.55);
 			--sidebar-primary-foreground: oklch(0.48 0.15 294.98);
 			--sidebar-accent: oklch(0.57 0.28 308.17);
 			--sidebar-accent-foreground: oklch(0.7 0.16 281.58);
 			--sidebar-shadow: oklch(0.57 0.09 254.19 / 0.31);
 			--sidebar-border: oklch(0.65 0.18 280 / 0.97);
-			--sidebar-ring: oklch(0.83 0.14 206.22);
+			/* --sidebar-ring: oklch(0.86 0.11 203.16); */
 			--text-sidebar-foreground-muted: oklch(0.38 0.08 277.33);
+
 			--container-gradient: linear-gradient(to bottom, rgba(146 203 232 / 0.84) -50%, rgba(106 139 249 / 0.3) 100%);
 			--inset-gradient: linear-gradient(rgba(157 190 250 / 0.83) 20%, oklch(0.52 0.15 268.76 / 0.62) 140%);
 			--bigepisode-gradient: linear-gradient(210deg, oklch(0.79 0.09 241.85 / 0.87) 0%, oklch(0.62 0.2 294.21 / 0.46) 120%);
 
 			--episode-gradient: linear-gradient(180deg, oklch(0.84 0.09 237.69 / 0.82) -40%, color(a98-rgb 0.52 0.52 0.89 / 0.85) 100%);
-			--container-dark: linear-gradient(to top, oklab(0.33 0.01 -0.05 / 0.86) -50%, rgba(150 194 235 / 0.35) 150%);
+			--container-dark: linear-gradient(to top, oklab(0.52 -0.09 -0.01 / 0.3) -50%, rgba(33 48 61 / 0.67) 150%);
 			--episode-shell-gradient: linear-gradient(0deg, oklch(0.72 0.12 272.25) -10%, oklch(0.79 0.09 279.91 / 0.92) 100%);
 			--episode-card-wrapper-gradient: linear-gradient(to bottom, oklch(0.84 0.06 279.81 / 0.15) -50%, rgba(164 177 252 / 0.9) 110%);
 		}
@@ -346,7 +351,7 @@
 			--bundle-card-shadow: oklch(0.19 0.04 247.91 / 0.87);
 			--popover: oklch(0.36 0.12 298.16);
 			--popover-foreground: oklch(0.8 0.1 271.11);
-			--header: oklch(0.29 0.06 232.88 / 0.67);
+			--header: oklch(0.21 0.04 228.24 / 0.77);
 			--muted: oklch(0.84 0.08 287.59);
 			--muted-foreground: oklch(0.68 0.13 285.05);
 			--accent: oklch(0.25 0.05 277.1);
@@ -385,7 +390,8 @@
 			--border: hsla(211.88 12.6% 49.8% / 0.15);
 			/* --input: hsla(227.69 20.21% 37.84% / 0.43); */
 			--dialog-card: oklch(0.43 0.09 239.89 / 0.62);
-
+			--link: oklch(0.6 0.12 282.19);
+			--link-hover: oklch(0.75 0.11 229.06);
 			--input-border: oklch(0.75 0.1 247.73 / 0.42);
 			--input-ring: oklch(0.9 0.11 203.25);
 			--input-ring-muted: oklch(0.74 0.12 274.62 / 0.91);
@@ -629,12 +635,10 @@
 			}
 
 			.episode-card-wrapper-dark {
-				position: relative;
 				background-image: var(--container-dark);
-				/* padding: 0px !important; */
-				/* display: flex; */
-				margin: 0;
-				padding: 10px !important;
+
+
+				padding: 20px !important;
 
 
 				border: 1px solid #14768C1D;
@@ -794,12 +798,14 @@
 
 
 			a {
-				color: #35FCE5;
-				text-decoration: none !important;
+				color: var(--link);
+				text-decoration: none;
+				text-underline-offset: 2px !important;
 			}
 
 
 			a:hover {
+				color: var(--link-hover);
 				opacity: 0.8;
 				text-decoration: underline;
 			}
@@ -1380,7 +1386,6 @@
 
 			.episode-card-wrapper-dark {
 				border-radius: 20px;
-				padding: 0px !important;
 				/* padding: 24px 130px 45px 130px; */
 			}
 

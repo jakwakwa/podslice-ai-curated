@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSubscriptionInit } from "@/hooks/useSubscriptionInit";
+import { Footer } from "./footer";
 
 function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 	const { state } = useSidebar();
@@ -37,7 +38,9 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 		return (
 			<Button onClick={() => setTheme(theme === "light" ? "dark" : "light")} variant="icon">
-				{theme === "light" ? <MoonIcon className="w-4 h-4 text-white" /> : <SunIcon className="w-4 h-4 text-blue-300" />}
+				<div className="flex flex-col md:flex-row items-center gap-2">
+					{theme === "light" ? <SunIcon className="w-4 h-4 text-amber-300" /> : <MoonIcon className="w-4 h-4 text-indigo-300" />} <span className="text-[0.5rem] uppercase">  theme</span>
+				</div>
 			</Button>
 		);
 	}
@@ -50,7 +53,9 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 				<header
 					className={`fixed flex h-16 bg-header backdrop-blur-[10px] shrink-0 items-center border-1 border-b-secondary gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 mt-0 max-w-screen justify-between px-4  py-0 overflow-y-scrol shadow-[0_4px_8px_1px_rgba(0,0,0,0.1)] duration-300 z-50 ${state === "expanded" ? "" : ""}`}>
 					<div className={`flex items-center h-16 justify-between gap-2 px-2  ${state === "expanded" ? "md:px-4" : "md:px-0"}`}>
-						<Image className={`w-full max-w-[100px] ${state === "expanded" ? "inline " : "hidden"}`} src="/logo.svg" width={300} height={100} alt="logo" />
+						<Link href="/" className="w-full max-w-[100px]">
+							<Image className={`w-full max-w-[100px] ${state === "expanded" ? "inline " : "hidden"}`} src="/logo.svg" width={300} height={100} alt="logo" />
+						</Link>
 
 						<Separator
 							orientation="vertical"
@@ -98,7 +103,10 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 				<div
 					className={`flex flex-col flex-grow transition-all duration-300 ease-in-out px-0 md:px-0 mt-8 md:mt-0 mb-2 m-0 p-0 h-screen ${state === "expanded" ? "ml-0 w-full md:ml-3 md:pr-2 " : "ml-0 md:ml-12 w-full md:max-w-[95vw]"}`}>
 					<div className={"layout-inset"} />
-					<div className="w-full md:w-full p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-20 mx-0 pl-0 md:pr-3 md:px-2 min-w-full md:my-2 lg:ml-6 lg:pl-0 lg:pr-12">{children}</div>
+					<div className="w-full md:w-full p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-20 mx-0 pl-0 md:pr-3 md:px-2 min-w-full md:my-2 lg:ml-6 lg:pl-0 lg:pr-12">{children}
+
+					</div>
+					<Footer />
 				</div>
 			</SidebarInset>
 		</>

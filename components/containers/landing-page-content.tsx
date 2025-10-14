@@ -1,6 +1,5 @@
 "use client";
 
-import { UilCheckCircle, UilClock, UilFile, UilPlay, UilSetting, UilStar } from "@iconscout/react-unicons";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { BadgePlusIcon, CheckCircle } from "lucide-react";
 import Image from "next/image";
@@ -24,6 +23,7 @@ const SUBSCRIPTION_TIERS = PRICING_TIER.map(tier => ({
 	features: tier.features,
 	popular: tier.featured,
 }));
+
 const _curateText = `**Key Features & How They Benefit You:**
 
 - **One Focused Bundle Per User:** To ensure the highest quality of your personalised episodes and to manage the significant costs associated with advanced AI processing (like ElevenReader), each user can now manage one primary collection at a time. This focus allows us to dedicate our resources to creating one truly exceptional weekly episode for you.
@@ -38,72 +38,35 @@ const _curateText = `**Key Features & How They Benefit You:**
 - **Your Episodes, Always Accessible:** Should you decide to remove a collection, rest assured that any episodes previously generated from it will remain accessible in your "all podcast episodes" view. Your listening history is always preserved.`;
 
 export default function LandingPageContent() {
-	const _features = [
-		{
-			icon: <UilStar className="w-6 h-6" />,
-			title: "Instantly grasp key takeaways in minutes, not hours",
-			description:
-				"Transform your overwhelm into clarity. No more struggling through lengthy episodes hoping to catch that one crucial insight. Our AI cuts straight to what matters, saving you 3-5 hours per week while ensuring you never miss the breakthrough moments that could change your perspective",
-		},
-		{
-			icon: <UilPlay className="w-6 h-6" />,
-			title: "Experience insights delivered in a remarkably human voice",
-			description:
-				"Forget robotic, artificial-sounding AI. Our advanced voice technology delivers summaries that feel like having a conversation with a knowledgeable friend—natural, engaging, and trustworthy. You'll actually want to listen, making every insight stick.",
-		},
-		{
-			icon: <UilFile className="w-6 h-6" />,
-			title: "Effortlessly search and review every word spoken",
-			description:
-				"Stop frantically taking notes or rewinding endlessly. Every key point is instantly searchable and reviewable. Find that specific quote, concept, or data point in seconds instead of scrubbing through audio files for minutes.",
-		},
-		{
-			icon: <UilCheckCircle className="w-6 h-5" />,
-			title: "Pinpoint the most critical information in seconds",
-			description:
-				"Cut through the noise to find what truly matters. Our intelligent extraction identifies the 3-5 most impactful insights from each episode, so you can immediately apply what you've learned instead of wondering what to do with scattered information.",
-		},
-		{
-			icon: <UilSetting className="w-6 h-6" />,
-			title: "Transform chaotic audio into crystal-clear knowledge",
-			description:
-				"Convert information overload into competitive advantage. Turn hours of scattered podcast listening into focused, purposeful learning that directly impacts your goals and decisions.",
-		},
-		{
-			icon: <UilClock className="w-6 h-6" />,
-			title: "Weekly Efficiency Delivered",
-			description:
-				"Fresh, focused episodes delivered every Friday - no more hunting through hours of content for the good parts. Get your personalized intelligence briefing and reclaim your weekend.",
-		},
-	];
-
 	const howItWorks = [
 		{
 			step: 1,
 			title: "Choose Your Focus",
-			description: "Select from expertly Podslice.ai Bundles or pick your favorite shows. Define what matters to you in under 2 minutes.",
+			description: "Define what matters to you in under 2 minutes.",
 			action: "Start your profile",
 		},
 		{
 			step: 2,
-			title: "Let AI Work",
-			description: "Our intelligent system processes your selections and extracts only the most valuable insights from each episode.",
+			title: "Free up your time",
+			description: "Let our AI process your selections and extract the most valuable insights from each episode.",
 			action: "AI processes content",
 		},
 		{
 			step: 3,
 			title: "Receive Weekly Insights",
-			description: "Get your personalized, human-quality audio summary delivered every Friday—no hunting, no fluff, just pure value.",
+			description: "Get your personalised, human-quality audio summary delivered every Friday—no hunting, no fluff, just pure value.",
 			action: "Get your briefing",
 		},
 	];
 
 	return (
-		<div className={styles.container}>
+		<div className="max-w-full w-screen md:w-full flex flex-col justify-center items-center content-center mx-auto px-8 md:px-0 py-4 md:py-0  gap-0 mb-0 ">
 			{/* <HomePageBackground /> */}
 			<LandingPageHeader />
+			<div className={`${styles.grainBackground} background-base`} />
+			<div className={`${styles.gridBackground} background-base`} />
 			{/* Hero Section */}
-			<section className={styles.heroSection}>
+			<section className={`${styles.heroSection} min-w-screen my-0 py-0 mix-blend-screen backdrop-blur-sm bg-blend-multiply-opacity-20`}>
 				<motion.div
 					className={styles.heroBackground}
 					style={{
@@ -112,10 +75,7 @@ export default function LandingPageContent() {
 				/>
 				<div className={styles.heroContainer}>
 					{/* <div className={"grain-blur background-base left-50 top-70"} /> */}
-					{/* <div className={"grain-background background-base"} /> */}
-					{/* <div className={"grid-bg background-base"} /> */}
-					{/* <div className={"large-blur background-base"} /> */}
-					{/* <div className={"small-blur background-base top-50"} /> */}
+
 					<div className={styles.heroContent}>
 						<motion.h1 className={styles.heroHeading} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}>
 							Cut the chatter.
@@ -143,18 +103,19 @@ export default function LandingPageContent() {
 					</div>
 				</div>
 			</section>
-
+			<div className={`${styles.grainBackground} background-base`} />
 			{/* How It Works Section */}
-			<section className="my-12  w-full px-4 md:my-32">
-				<div className={styles.howItWorksContainer}>
-					<motion.div className={styles.howItWorksHeader} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }}>
+			<section className=" h-full min-h-screen w-screen md:w-full px-4 bg-black/50  my-0 py-0 gap-0 mb-0 -mt-18">
+
+				<div className="w-full max-w-screen md:max-w-7xl mx-auto px-8 md:px-0 py-4 md:py-0 ">
+					<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }}>
 						<h2 className="text-left  sm:text-center text-[#919ceb] font-bold px-4 mt-4 md:px-0 md:mt-18  text-3xl md:text-[3rem]">How it Works</h2>
 
 						<Typography className="max-w-full text-base text-left md:max-w-2xl mx-auto px-4 sm:text-center pb-8 mt-4 sm:text-[1.4rem] my-8 leading-[1.4] text-[#c1f0ff]/80">
 							Getting started with Podslice.ai is straightforward. Follow these four simple steps to create your focused content experience.
 						</Typography>
 					</motion.div>
-					<div className={styles.howItWorksGrid}>
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-2 w-full mx-auto px-4 md:px-0">
 						{howItWorks.map((step, index) => (
 							<motion.div
 								key={step.step}
@@ -182,20 +143,20 @@ export default function LandingPageContent() {
 			</section>
 
 			{/* Pricing Section */}
-			<section className="my-12 w-full px-4 md:my-32">
-				<div className={styles.pricingContainer}>
+			<section className="hidden my-12 px-4 md:my-32 w-screen md:w-full ">
+				<div className="w-full max-w-screen md:max-w-7xl mx-auto px-8 md:px-0 py-4 md:py-0 bg-radial-gradient-secondary ">
 					<div>
 						<h2 className="text-left  sm:text-center text-[#5676e8] font-bold px-4 mt-4 md:px-0 md:mt-18  text-3xl md:text-[3rem]">Choose Your Plan</h2>
 						<Typography className="max-w-full text-base text-left md:max-w-2xl mx-auto px-4 sm:text-center pb-8 mt-4 sm:text-[1.4rem] my-8 leading-[1.4] text-[#c1f0ff]/80">
 							From free discovery to pro-level curation control. Each plan builds on the last to give you exactly what you need.
 						</Typography>
 					</div>
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-2 w-full mx-auto px-4 md:px-0">
+					<div className="  gap-2 md:gap-8 w-full mx-auto px-4 md:px-0 py-4 md:py-0 max-w-screen flex justify-between items-center">
 						{SUBSCRIPTION_TIERS.map(tier => (
 							<div
 								key={tier.name}
-								className={`transition-all duration-200 ease-in-out relative h-full flex  border-[#29264d] border-1  flex-col px-8 py-4 rounded-3xl overflow-hidden max-w-screen md:max-w-5xl hover:-translate-y-1 hover:shadow-lg shadow-4x  ${tier.popular ? "bg-[#000] border-[#6750f8]/50 border-2 " : "bg-[#0d0d0f]"} `}>
-								<div>
+								className={`transition-all w-full min-h-[800px] duration-200 ease-in-out relative h-full flex  border-[#29264d] border-1  flex-col px-8 py-4 rounded-3xl overflow-hidden max-w-screen md:max-w-5xl hover:-translate-y-1 hover:shadow-lg shadow-4x  ${tier.popular ? "bg-[#000] border-[#6750f8]/50 border-2 " : "bg-[#0d0d0f]"} `}>
+								<div className="flex flex-col justify-start h-full min-h-[250px]">
 									<div className="flex flex-col mt-4">
 										<h5 className="text-3	xl font-bold tracking-normal  text-[#8f99f0] mb-2">{tier.name}</h5>
 										<div className="flex items-baseline gap-1 mb-4">
@@ -218,10 +179,10 @@ export default function LandingPageContent() {
 										</Badge>
 									)}
 								</div>
-								<CardContent className="flex flex-col flex-1 justify-start">
+								<CardContent className="flex flex-col flex-1 justify-between">
 									<ul className="list-none p-0 m-0 mt-2">
 										{tier.features.map((feature, index) => (
-											<li key={index} className="flex content-center items-start gap-3 pb-3 text-foreground/60 text-xs font-light ">
+											<li key={index} className="flex content-center items-start gap-3 pb-3 text-foreground/60 text-sm font-light ">
 												<CheckCircle size={16} className="text-amber flex-shrink-0 mt-[1px]" color={"#abf3f5"} />
 												{feature}
 											</li>
@@ -243,7 +204,7 @@ export default function LandingPageContent() {
 			</section>
 
 			{/* Footer */}
-			<footer className="py-8 md:py-12 px-2 md:px-4 bg-radial-gradient mt-24">
+			<footer className="py-8 md:py-8 px-2 md:px-4 bg-gray-900/80 w-screen md:w-full">
 				<motion.div className="max-w-screen md:max-w-7xl mx-auto text-center" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
 					<div className="flex justify-center items-center mb-4">
 						<Image src="/logo.svg" width={90} height={40} alt="PODSLICE Logo" />

@@ -4,7 +4,7 @@ import type * as React from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-95 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer disabled:z-20 w-fit  overflow-hidden",
+	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-95 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer disabled:z-20 w-fit text-slate-100/80 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-150",
 	{
 		variants: {
 			variant: {
@@ -13,7 +13,7 @@ const buttonVariants = cva(
 				outline: "border-1 border-border bg-black/40 disabled:bg-[#6B6791C8] text-accent-foreground  font-bold disabled:text-[#A1B7F4D4] shadow-md shadow-slate-950/20 px-0 overflow-hidden w-[36px] px-4 w-fit max-w-[200px] rounded-xl",
 				secondary: "btn-secondary disabled:bg-[#5E5C6FC8]  rounded-lg border-1 border-[#86D2F5] text-slate-300/80 shadow-[0px_4px_rgba(26, 40, 46, 0.9)] w-full md:max-w-fit px-4 text-[1rem] hover:text-secondary-foreground hover:text-secondary-foreground shadow-lg shadow-black shadow-slate-950/20 h-8",
 				ghost: "text-secondary-foreground h-6 ",
-				link: "text-secondary-foreground underline-offset-4 text-secondary-foreground hover:underline h-6",
+				link: "text-secondary-foreground underline-offset-4 text-slate-100/80 hover:underline h-6",
 				play: "p-0 m-0 h-8",
 				icon: "h-8 ",
 			},
