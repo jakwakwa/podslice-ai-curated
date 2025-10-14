@@ -3,7 +3,7 @@ import type { CardProps } from "@/lib/component-variants";
 import { cardVariants } from "@/lib/component-variants";
 import { cn } from "@/lib/utils";
 
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & CardProps & { variant: "bundle" | "default" }>(({ className, variant, selected, hoverable, ...props }, ref) => (
+const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & CardProps>(({ className, variant, selected, hoverable, ...props }, ref) => (
 	<div ref={ref} className={cn(cardVariants({ variant, selected, hoverable }), className)} {...props} />
 ));
 Card.displayName = "Card";
