@@ -342,11 +342,11 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 		<>
 			{/* Curated Bundles Section */}
 			{curatedBundles.length > 0 && (
-				<div className="mb-8">
+				<div className="mb-8 px-4">
 					<H3 className="text-[1.2rem] text-primary-foreground font-bold font-sans mb-4 px-2 md:px-12 xl:px-[40px]">
 						🎯 Curated by Podslice
 					</H3>
-					<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-3 xl:px-[40px] xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark lg:px-[40px] rounded-3xl border-1 border-[#a497cdfc] shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]">
+					<div className="relative transition-all duration-200 text-card-foreground gap-4 p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-3 xl:px-[40px] xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark lg:px-[40px] rounded-3xl border-1 border-[#8a67fbfc] shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]">
 						{curatedBundles.map(bundle => {
 							const planMeta = PLAN_GATE_META[bundle.min_plan]
 							const canInteract = bundle.canInteract

@@ -106,7 +106,7 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, onPlayEpisod
 
 
 
-		<div className="relative px-23 transition-all duration-200 text-card-foreground episode-card-wrapper-dark my-0 rounded-xl p-0  w-full">
+		<div className="relative px-23 transition-all duration-200 text-card-foreground episode-card-wrapper-dark my-0  p-0  w-full">
 			<CardContent>
 				{episodes.length > 0 ? (
 					<ul className="w-full inline-flex flex-col gap-1 p-0">

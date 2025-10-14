@@ -19,8 +19,8 @@ export const navItems = [
 		icon: Radio,
 	},
 	{
-		title: "Bundles",
-		url: "/my-bundles",
+		title: "Bundled Content",
+		url: "/episodes",
 		icon: BoxesIcon,
 	},
 	{

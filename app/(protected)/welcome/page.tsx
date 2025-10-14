@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Body, Typography } from "@/components/ui/typography";
+import { PageHeader } from "@/components/ui/page-header";
 // Subscription store disabled in this build
 // CSS module migrated to Tailwind classes
 
@@ -39,34 +39,33 @@ export default function WelcomePage() {
 	const _handleUpgrade = async (_planCode: string | undefined) => { };
 
 	return (
-		<div className="flex flex-col sm:flex-col md:flex-col lg:flex-col xl:flex-row rounded-3xl mt-12 md:mt-0 px-0 xl:p-6
-		bg-episode-card-wrapper gap-4 w-screen md:w-full">
-			<section className=" text-center text-sm w-full max-w-none xl:max-w-[270px]  p-6 mb-0 z-10 bg-primary md:text-left  rounded-3xl md:px-4 md:py-6">
-				<div className="w-full px-2 md:px-4 z-10">
-					<Typography className="text-2xl text-primary-foreground font-bold text-center md:text-left">Welcome!</Typography>
-					<Body className="text-secondary-foreground-muted leading-3 mt-4 font-medium mb-0  md:max-w-[600px] text-base w-full">
-						Digest long form content using ou AI-powered content curation engine by activating bundles or using our Ai engine to get your own personalised summaries by  subscribing to the Curate Control plan.
-					</Body>
-					<div className="mt-8">
-						<p className="text-sm my-1 text-center md:text-left leading-6 font-semibold text-secondary-foreground">Claim Your 14 Day Premium Trial</p>
-						<Link href="/manage-membership">
-							<Button variant="default" size="lg" className="bg-primary hover:bg-primary/90 text-foreground">
-								Start Free Trial
-							</Button>
-						</Link>
-					</div>
-					<div className="flex  text-center md:text-left w-full justify-center  md:justify-end items-center space-x-4 text-secondary mt-8">
-						<Link href="/terms" className="transition-colors text-xs hover:underline  text-secondary-foreground w-fit font-medium ">
-							Terms of use
-						</Link>
-						<span>•</span>
-						<Link href="/privacy" className="w-fit transition-colors text-xs hover:underline  text-secondary-foreground font-medium">
-							Privacy Policy
-						</Link>
-					</div>
+		<div className="bg-episode-card-wrapper h-full min-h-[84vh]  rounded-none 	px-0  mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:rounded-4xl  md:mt-0 md:p-8 md:w-full  md:bg-episode-card-wrapper ">
+			<PageHeader
+				title="Your dashboard"
+				description="Choose from our pre-curated podcast bundles. Each bundle is a fixed selection of 2-5 carefully selected shows and cannot be modified once selected."
+			/>
+
+			<div className="mt-8">
+				<p className="text-sm my-1 text-center md:text-left leading-6 font-semibold text-secondary-foreground">Claim Your 14 Day Premium Trial</p>
+				<Link href="/manage-membership">
+					<Button variant="default" size="lg" className="bg-primary hover:bg-primary/90 text-foreground">
+						Start Free Trial
+					</Button>
+				</Link>
+
+				<div className="flex  text-center md:text-left w-full justify-center  md:justify-end items-center space-x-4 text-secondary mt-8">
+					<Link href="/terms" className="transition-colors text-xs hover:underline  text-secondary-foreground w-fit font-medium ">
+						Terms of use
+					</Link>
+					<span>•</span>
+					<Link href="/privacy" className="w-fit transition-colors text-xs hover:underline  text-secondary-foreground font-medium">
+						Privacy Policy
+					</Link>
 				</div>
-			</section>
-			{/* How It Works */}
+			</div>
+
+
+
 			<section className="w-[full] border-none  mb-0 p-0  mt-4 md:m-0 rounded-4xl md:p-0  outline-0  shadow-xl bg-sidebar/30 overflow-hidden" >
 				<div className="text-left mb-0 min-w-full min-h-full bg-card ">
 					<div className="text-left mb-0 px-6 xl:px-12 pt-8 ">
@@ -96,5 +95,6 @@ export default function WelcomePage() {
 				</div>
 			</section >
 		</div >
-	);
+	</div >
+	)
 }

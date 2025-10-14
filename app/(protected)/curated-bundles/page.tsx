@@ -152,7 +152,7 @@ export default async function CuratedBundlesPage({ searchParams }: { searchParam
 		<div className="bg-episode-card-wrapper h-full min-h-[84vh]  rounded-none 	px-0  mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:rounded-4xl  md:mt-0 md:p-8 md:w-full  md:bg-episode-card-wrapper ">
 			<PageHeader
 				title="Explore Bundles"
-				description="Choose from our pre-curated podcast bundles or discover bundles shared by other users. Each bundle is a fixed selection you can select for your feed."
+				description="Choose from our pre-curated podcast bundles created by our AI or discover bundles shared by other users. Each bundle is linked to a group of podcast shows. Each week we generate a new bundle of freshly generated episodes from the previous week's curated selection of shows."
 			/>
 
 			<CuratedBundlesFilters />

@@ -353,13 +353,13 @@ export function EpisodeCreator() {
 	return (
 		<div className="w-full  bg-bigcard h-auto mb-0 px-0 py-0 md:px-8 md:py-8 lg:px-10 lg:py-6  rounded-lg  shadow-lg">
 			<div className="w-full flex flex-col gap-3 md:gap-8 md:w-full md:min-w-full md:max-w-full">
-				<PageHeader title="Create Episode" className="pt-0" description="Generate a summary and audio version of a	 podcast episode from any YouTube video" />
+				<PageHeader title="Create Episode" className="pt-0" description="Generate a summary (text and podcast styled audio overview) of any podcast show's episode using a YouTube video link OR choose a news topic and source and we will generate the audio and summary for you." />
 
 				<div className="py-8 px-4 md:p-0 ">
 					{/* <ComponentSpinner isLabel={false} /> */}
 
 					<div className="flex flex-col px-0 md:px-4">
-						<Label className="mb-0 md:mb-4">Pick a Summary Type:</Label>
+						<Label className="mb-2 md:mb-4">Pick a Summary Type:</Label>
 						<div className="w-[300px] flex flex-row items-center justify-start gap-2 ">
 							<Button type="button" variant={creatorMode === "youtube" ? "default" : "outline"} onClick={() => setCreatorMode("youtube")} disabled={isBusy}>
 								podcast summary
@@ -386,7 +386,7 @@ export function EpisodeCreator() {
 								<div className="grid grid-cols-1 md:grid-cols-2 my-8 gap-4 mx-0 md:mx-0">
 									<div className="space-y-2 md:w-full md:min-w-full lg:max-w-lg">
 										<Label htmlFor="youtubeUrl">
-											YouTube URL<span className="pl-0 text-[0.65rem] font-mono  font-medium text-success">MAX {maxDuration}min duration</span>
+											YouTube URL<span className="pl-0 text-[0.65rem] font-mono  font-medium text-success-foreground">MAX {maxDuration}min duration</span>
 										</Label>
 
 										<Input className="max-h-4" id="youtubeUrl" placeholder="https://www.youtube.com/..." value={youtubeUrl} onChange={e => setYouTubeUrl(e.target.value)} disabled={isBusy} required />

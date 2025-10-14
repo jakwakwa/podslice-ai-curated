@@ -126,7 +126,7 @@ export default function CurationProfileManagementPage() {
 		<div className="bg-episode-card-wrapper h-full min-h-[84vh]  rounded-none 	px-0  mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:rounded-4xl  md:mt-0 md:p-8 md:w-full  md:bg-episode-card-wrapper ">
 			<PageHeader
 				title="Your dashboard"
-				description="Choose from our pre-curated podcast bundles. Each bundle is a fixed selection of 2-5 carefully selected shows and cannot be modified once selected."
+				description="This is your dashboard. Here you can manage your bundle selection and view your recently generated episodes."
 			/>
 			{/* BUNDLE FEED */}
 			{isLoading ? (

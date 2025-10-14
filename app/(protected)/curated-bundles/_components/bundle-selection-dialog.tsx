@@ -245,8 +245,8 @@ export function BundleSelectionDialog({
 									<span className="leading-8">
 										You're about to change your curated bundle:
 										<br /> <span className="uppercase text-xs italic font-bold text-foreground/50">From </span>
-										<strong className="font-bold italic text-cyan-950/90">{sanitizedCurrentBundleName}</strong> →{" "}
-										<strong className="font-bold italic text-cyan-900/80">{sanitizeText(selectedBundle.name)}</strong>{" "}
+										<strong className="font-bold italic text-foreground">{sanitizedCurrentBundleName}</strong> →{" "}
+										<strong className="font-bold italic text-foreground">{sanitizeText(selectedBundle.name)}</strong>{" "}
 									</span>
 								);
 							}
