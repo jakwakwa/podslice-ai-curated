@@ -190,12 +190,12 @@ export default function CurationProfileManagementPage() {
 												Update Bundle
 											</Button>
 											<div className="mb-4 flex flex-col">
-												<p className="text-xs md:text-[10px] w-full uppercase font-sans font-bold text-primary-foreground-muted md:text-primary-foreground-muted  md:not-italic p-0 mb-2  ">Your Active bundle:</p>
+												<p className="text-xs  w-full uppercase font-sans font-bold text-primary-foreground-muted md:text-secondary-foreground-muted  md:not-italic p-0 mb-2  ">Your Active bundle:</p>
 
-												<div className="bg-card flex w-full px-3 md:px-2 md:py-1 md:rounded-sm border-1 border-sidebar-border/50 shadow-sm shadow-indigo-950/90 rounded-md gap-3 ">
-													<Typography className="flex w-full text-[10px] font-bold items-center gap-2">
-														<BoxesIcon size={16} className="text-ring md:text-accent-foreground " />
-														<span className="text-sm md:text-[12px]  text-foreground   gap-3 font-sans  text-left font-bold">
+												<div className="bg-card flex w-full py-8 px-3 md:px-2 md:py-1 md:rounded-sm border-1 border-sidebar-border/50 shadow-sm shadow-indigo-950/90 rounded-md gap-3 ">
+													<Typography className="flex w-full  font-bold items-center gap-2">
+														<BoxesIcon size={16} className="text-ring md:text-accent-foreground text-2xl " />
+														<span className="text-base  text-foreground   gap-3 font-sans  text-left font-bold">
 															{userCurationProfile.selectedBundle.name}
 														</span>
 													</Typography>
