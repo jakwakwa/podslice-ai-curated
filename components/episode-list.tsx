@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { PlayButton } from "@/components/episodes/play-button";
 import { Button } from "@/components/ui/button";
-import { CardContent } from "@/components/ui/card";
 import type { Episode } from "@/lib/types";
 import EpisodeCard from "./ui/episode-card";
 
@@ -102,12 +101,8 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, onPlayEpisod
 	};
 
 	return (
-
-
-
-
-		<div className="relative px-23 transition-all duration-200 text-card-foreground episode-card-wrapper-dark my-0  p-0  w-full">
-			<CardContent>
+		<div className="transition-all duration-200 text-card-foreground episode-card-wrapper-dark  rounded-2xl p-0  w-full">
+			<div>
 				{episodes.length > 0 ? (
 					<ul className="w-full inline-flex flex-col gap-1 p-0">
 						{episodes.map(episode => {
@@ -155,8 +150,7 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, onPlayEpisod
 						<p>No episodes available</p>
 					</div>
 				)}
-			</CardContent>
+			</div>
 		</div>
-
 	);
 };

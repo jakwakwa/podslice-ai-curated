@@ -239,7 +239,7 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
 			onClick={toggleSidebar}
 			title="Toggle Sidebar"
 			className={cn(
-				"hover:after:bg-none absolute inset-y-0 z-90 hidden w-1 p-0 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 sm:flex",
+				"hover:after:bg-none  absolute inset-y-0 z-90 hidden w-1 p-0 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 sm:flex",
 				"in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize",
 				"[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
 				"hover:group-data-[collapsible=offcanvas]:bg-none group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full",
@@ -300,7 +300,7 @@ function SidebarGroupLabel({ className, asChild = false, ...props }: React.Compo
 			data-slot="sidebar-group-label"
 			data-sidebar="group-label"
 			className={cn(
-				"text-sidebar-foreground/70 ring-sidebar-ring flex h-8 shrink-0 items-center rounded-md mt-0 px-2 text-xs font-medium outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+				"text-sidebar-foreground/70 ring-sidebar-ring flex h-8 shrink-0 items-center rounded-md mt-0 px-2 text-xs font-medium outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0 ",
 				"group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
 				className
 			)}
@@ -348,11 +348,11 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-	"peer/menu-button flex w-full items-center gap-2 overflow-hidden p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-[#0000001B] focus-visible:ring-2 active:bg-sidebar-menu active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-menu data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-[#000] data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 text-primary-foreground  rounded-xl overflow-hidden ease-linear transition-all",
+	"peer/menu-button flex w-full items-center gap-2 overflow-hidden p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-[#0000001B] focus-visible:ring-2 active:bg-sidebar-menu active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent/50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-[#000] data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 text-primary-foreground  rounded-xl overflow-hidden ease-linear transition-all",
 	{
 		variants: {
 			variant: {
-				default: "hover:bg-[#00000037] hover:text-[#60cdbb] data-[active=true]:text-[#60cdbb] rounded-xl overflow-hidden",
+				default: "hover:text-[#60cdbb] data-[active=true]:text-[#60cdbb] rounded-xl overflow-hidden",
 				outline: "",
 			},
 			size: {

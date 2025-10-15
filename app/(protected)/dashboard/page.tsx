@@ -166,7 +166,7 @@ export default function CurationProfileManagementPage() {
 							</div>
 						</div>
 						{/* Latest Episode SKELETON */}
-						<div className="w-full border-b-0 rounded-0 py-0  my-0 mx-0  mt-0 pt-6 px-4 sm:pt-0  md:pt-9 md:mt-0  md:mb-8  md:px-6 border-dark md:rounded-3xl overflow-hidden  ">
+						<div className="w-full border-b-0 hidden rounded-0 py-0  my-0 mx-0  mt-0 pt-6 px-4 sm:pt-0  md:pt-9 md:mt-0  md:mb-8  md:px-6 border-dark md:rounded-3xl overflow-hidden  ">
 							<div className="h-7 w-64 md:bg-[#2F438335]/30 animate-pulse rounded mb-4" />
 							<div className="h-5 w-full md:bg-[#2F438335]/30 animate-pulse rounded mb-6" />
 							<div className="px-0">
@@ -176,26 +176,26 @@ export default function CurationProfileManagementPage() {
 					</div>
 				</div>
 			) : userCurationProfile && latestBundleEpisode ? (
-				<div className="bg-bigcard rounded-tr-none rounded-tl-none mt-0 w-full max-w-screen md:w-full flex flex-col gap-0 justify-center items-baseline shadow-md shadow-stone-950 md:mt-4 md:m-0 xl:flex-row md:gap-4 pt-0 md:mb-0 md:border-[#12121760]  md:border-1 md:rounded-3xl overflow-hidden ">
-					<div className="hidden md:flex w-full rounded-tr-none rounded-tl-none pt-0 mt-0 flex-col lg:flex-row overflow-hidden  ">
+				<div className="md:bg-bigcard  visible px-6  mt-0 w-full max-w-screen md:w-full flex flex-col gap-0 justify-center items-baseline shadow-md shadow-stone-950 md:mt-4 md:m-0 xl:flex-row md:gap-1 pt-0 md:mb-0 md:border-[#12121760]  md:border-1 md:rounded-3xl overflow-hidden rounded-lg  ">
+					<div className=" md:flex w-full pt-0 mt-0 flex-col lg:flex-row rounded-lg   ">
 						{/* FEED BOX */}
-						<div className="rounded-tr-none rounded-tl-none w-screen md:w-full pt-0 md:pr-4 mt-0 md:mr-3 flex flex-col  lg:flex-col md:p-8 sm:pt-0 md:pt-9 md:mt-0  md:max-w-[280px]  md:bg-secondary/40 rounded-0  md:overflow-hidden shadow-md shadow-black/30">
-							<div className="w-full flex flex-col justify-between p-0 md:rounded-none ">
-								<h2 className="hidden md:block pt-8  font-bold md:text-secondary-foreground md:pt-0 md:px-0  pb-3 text-sm max-w-[100%] ">Your Active Bundle Feed</h2>
-								<div className="shadow-md shadow-black/30 overflow-hidden rounded-2xl">
+						<div className="rounded-xl w-screen md:w-full pt-0 md:pr-0 md:mr-0 flex flex-col  lg:flex-col lg:justify-center lg:items-center  md:p-8 sm:pt-0 md:pt-6 max-w-[87vw] p-0  m-0  mx-auto md:mx-0 md:overflow-hidden  lg:max-w-[249px] lg:gap-12 overflow-hidden mt-8 mb-4 md:mt-0  ">
+							<div className="px-0  lg:gap-2 md:w-full flex flex-col md:justify-between md:p-0 md:rounded-none ">
+								<h2 className=" pt-8  font-bold md:text-secondary-foreground md:pt-0 md:px-0  pb-3 text-sm max-w-[100%] hidden md:block ">Your Active Bundle Feed</h2>
+								<div className=" md:rounded-2xl">
 									{userCurationProfile?.is_bundle_selection && userCurationProfile?.selectedBundle && (
-										<div className="bg-slate-700 border-none md:border-1  md:bg-primary  border border-border mx-auto  py-6  md:pt-4 md:pb-0 px-5 w-full h-fit  md:rounded-t-lg overflow-hidden text-secondary-foreground md:text-primary-foreground ">
-											<Button className="inline-flex text-sm md:text-xs justify-end w-full px-0" variant="ghost" size="xs" onClick={() => setIsModalOpen(true)}>
-												<Edit />
-												Edit Bundles
+										<div className=" md:border-1 bg-sidebar    shadow-indigo-800/90 md:shadow-none     border border-border mx-auto  py-6  md:pt-4 md:pb-0 px-5 w-full h-fit shadow-lg  md:rounded-t-lg text-secondary-foreground md:text-primary-foreground ">
+											<Button className="inline-flex text-sm md:text-xs justify-end w-full px-0 mb-2 text-foreground" variant="ghost" size="xs" onClick={() => setIsModalOpen(true)}>
+												<Edit className="text-ring" />
+												Update Bundle
 											</Button>
 											<div className="mb-4 flex flex-col">
-												<p className="text-sm md:text-[10px] w-full md:uppercase font-sans font-bold  md:text-indigo-600 not-uppercase italic md:not-italic p-0 mb-2">Active bundle:</p>
+												<p className="text-xs md:text-[10px] w-full uppercase font-sans font-bold text-primary-foreground-muted md:text-primary-foreground-muted  md:not-italic p-0 mb-2  ">Your Active bundle:</p>
 
-												<div className="bg-slate-800 md:bg-transparent flex w-full px-3 py-3 md:px-2 md:py-1 rounded-md border-1 gap-3">
+												<div className="bg-card flex w-full px-3 md:px-2 md:py-1 md:rounded-sm border-1 border-sidebar-border/50 shadow-sm shadow-indigo-950/90 rounded-md gap-3 ">
 													<Typography className="flex w-full text-[10px] font-bold items-center gap-2">
-														<BoxesIcon size={16} />
-														<span className="text-sm md:text-[12px] text-secondary-foreground md:text-primary-foreground  gap-3 font-sans  text-left font-bold">
+														<BoxesIcon size={16} className="text-ring md:text-accent-foreground " />
+														<span className="text-sm md:text-[12px]  text-foreground   gap-3 font-sans  text-left font-bold">
 															{userCurationProfile.selectedBundle.name}
 														</span>
 													</Typography>
