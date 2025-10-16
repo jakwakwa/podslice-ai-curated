@@ -104,7 +104,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 					className={` shimmer flex flex-col flex-grow transition-all duration-300 ease-in-out px-0 md:px-0 mt-8 md:mt-0 mb-2 m-0 p-0 h-screen ${state === "expanded" ? "ml-0 w-full md:ml-0 md:p-0  " : "ml-0 md:ml-0 w-full md:max-w-[80vw]"}`}>
 						
 					<div className={"layout-inset "} />
-					<div className={` md:w-full animated-gradient   mx-0  p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-20 md:mx-0 pl-0  md:my-2   ${state === "expanded" ? "m-0 md:ml-0 md:p-0 max-w-full" : "pl-12 pr-24 md:ml-0  min-w-screen  "}`} >
+					<div className={` md:w-full animated-gradient   mx-0  p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-16 md:mx-0 pl-0  md:my-2   ${state === "expanded" ? "m-0 md:ml-0 md:p-0 max-w-full" : "pl-12 pr-24 md:ml-0  min-w-screen  "}`} >
 						
 						{children}
 

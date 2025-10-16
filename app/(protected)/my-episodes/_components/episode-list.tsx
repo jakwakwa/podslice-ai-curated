@@ -124,7 +124,7 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 	}
 
 	return (
-		<div className="px-2 mx-0 py-5 pb-28 mt-0	 md:px-8 md:py-8 bg-bigcard md:rounded-4xl h-full w-screen md:w-full md:mx-2">
+		<div className="px-2 mx-0 py-5 pb-28 mt-0	 md:px-8 md:py-8 bg-bigcard md:rounded-4xl h-full w-screen md:w-full md:mx-2 md:bg-bigcard md:p-12">
 			<div className="episode-card-wrapper-dark rounded-3xl flex flex-col gap-2">
 				{isLoading ? (
 					<Card variant="default">
