@@ -1,0 +1,508 @@
+# Refactoring guidelines
+
+## Before Refactor
+
+ example of a page with a lot of logic and no separation of concerns
+
+```typescript
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+
+export default function WelcomePage() {
+	const router = useRouter();
+
+	const isLoading = false;
+	const tiers = [
+		{ name: "FreeSlice", price: 0, description: "Free tier", features: ["Basic features"] },
+		{ name: "Casual Listener", price: 5, description: "Tier 2", features: ["Weekly combo"] },
+		{ name: "Curate & Control", price: 12, description: "Tier 3", features: ["All features"], popular: true },
+	];
+
+	const howItWorks = [
+		{
+			step: 1,
+			title: "Create Your Profile",
+			description: "Start by building a custom Personalized Feed or choose from our pre-PODSLICE Bundles.",
+		},
+		{
+			step: 2,
+			title: "Select Your Content",
+			description: "Choose up to 5 individual podcasts or pick one of our 3 PODSLICE Bundles.",
+		},
+		{
+			step: 3,
+			title: "Get & Enjoy Your Podcast",
+			description: "Our AI processes your selections and generates a personalized episode every Friday, then listen through our built-in audio player.",
+		},
+	];
+
+	const _handleUpgrade = async (_planCode: string | undefined) => { };
+
+	return (
+		<div className="bg-episode-card-wrapper h-full min-h-[84vh]  md:gap-4 rounded-none  overflow-hidden	px-0  mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:rounded-4xl  mb-12 md:mt-0 md:p-8 md:w-full  md:bg-episode-card-wrapper ">
+			<PageHeader
+				title="Welcome to PODSLICE"
+				description={`We're excited to have you on board. Let's get started! Click the button to explore our bundles and try out our AI curated bundles.`}
+				button={
+					<Link href="/curated-bundles">
+						<Button variant="default" size="md">
+							Explore Bundles
+						</Button>
+					</Link>
+				}
+			/>
+			<div className="hidden p-4 my-8  md:px-8 md:my-8 flex-col justify-center items-center ">
+				<p className=" my-3  py-2 flex flex-col justify-center items-center text-center text-base  leading-6 font-bold text-secondary-foreground  md:text-xl md:text-left md:justify-start md:items-start">Claim Your 14 Day Premium Trial</p>
+				<Link href="/manage-membership">
+					<Button variant="default" size="lg" className="w-full md:w-fit mx-auto md:mx-0  md:px-4">
+						Start Free Trial
+					</Button>
+				</Link>
+			</div>
+
+			<section className="w-[full] border-none rounded-none  overflow-hidden mb-0 p-0  mt-0 md:mt-4 md:m-0  md:p-0  outline-0 md:rounded-4xl md:shadow-xl " >
+				<div className="text-left pt-8 rounded-none  mb-5 pb-7 overflow-hidden md:rounded-4xl  md:py-0 min-w-full min-h-full bg-primary/70  ">
+					<div className="text-left mb-0 px-6 xl:px-12  py-8 md:pt-8">
+						<h2 className="text-2xl leading-9 font-semibold tracking-tight mb-4 text-primary-foreground">How It Works</h2>
+						<p className=" leading-5 font-normal text-secondary-foreground tracking-wide max-w-[600px] pb-6">
+							Getting started with PODSLICE is simple. Follow these three easy steps to create your personalized podcast experience.
+						</p>
+					</div>
+
+					<div className="md:px-4 pb-8 mx-5 rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-1 gap-4">
+						{howItWorks.map(step => (
+							<Card key={step.step} className="transition-all bg-background/80 h-full min-h-64 duration-200 ease-in-out relative rounded-3xl hover:-translate-y-1 shadow-lg  p-2 max-h-74 gap-2">
+								<div className="flex flex-col p-3.5	h-fit items-center justify-center w-full gap-3 ">
+									<div className="flex items-center justify-center w-4 h-4 p-4.5 rounded-full bg-teal-600 mx-0 text-success-foreground shadow-md  shadow-green-950/30  font-mono font-semibold text-h5 mb-1 ">
+										{step.step}
+									</div>
+									<h3 className="text-xl text-center font-bold tracking-tight mb-2 mt-0 w-full text-secondary-foreground">
+										{step.title}
+									</h3>
+									<p className="text-link/90 text-center font-medium text-sm leading-relaxed mb-4">{step.description}</p>
+								</div>
+							</Card >
+						))
+						}
+					</div >
+				</div>
+			</section >
+		</div >
+
+	)
+}
+```
+
+## After Refactoring
+
+## Refactoring Guidelines
+
+### 1. Extract content into a separate file
+
+```typescript
+export const welcomePageContent = {
+	title: "How It Works",
+	description: "Getting started with Podslice.ai is straightforward. Follow these four simple steps to create your focused content experience.",
+	howItWorks: [
+		{
+			step: 1,
+			title: "Create Your Profile",
+			description: "Start by building a custom Personalized Feed or choose from our pre-PODSLICE Bundles.",
+		},
+	],
+	cta: {
+		title: "Start Free Trial",
+		description: "Click the button to explore our bundles and try out our AI curated bundles.",
+		button: {
+			text: "Start Free Trial",
+			link: "/manage-membership",
+		},
+	},
+};		
+```
+
+### 2. Create a component for the sections ensuring it can use childreen and pass content or JSX to render as props
+
+example:
+```typescript
+<CommonSectionWithChildren title={title} description={description}>
+	<div className="md:px-4 pb-8 mx-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-1 gap-4">
+		{howItWorks.map((step, index: number) => (
+			<StepCard key={`${index + 1}-${step.title}`} step={index + 1} title={step.title} description={step.description} />
+		))}
+	</div>
+</CommonSectionWithChildren>
+```
+
+example:
+```typescript
+<StepCard step={1} title="Create Your Profile" description="Start by building a custom Personalized Feed or choose from our pre-PODSLICE Bundles." />
+<StepCard step={2} title="Select Your Content" description="Choose up to 5 individual podcasts or pick one of our 3 PODSLICE Bundles." />
+<StepCard step={3} title="Get & Enjoy Your Podcast" description="Our AI processes your selections and generates a personalized episode every Friday, then listen through our built-in audio player." />
+```
+
+### 3. Use the component in the page
+
+example:
+```typescript
+<WelcomePage />
+```
+
+example:
+```typescript
+export default function WelcomePage() {
+	const { title, description, howItWorks, cta } = welcomePageContent;
+	return (
+		<div className="flex flex-col gap-4">
+			<PageHeader title={cta.title} description={cta.description} />
+			<FreeTrialPromo href={cta.button.link} size="lg" variant="default" buttonText={cta.button.text} />
+			<CommonSectionWithChildren title={title} description={description}>
+				<div className="md:px-4 pb-8 mx-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-1 gap-4">
+					{howItWorks.map((step, index: number) => (
+						<StepCard key={`${index + 1}-${step.title}`} step={index + 1} title={step.title} description={step.description} />
+					))}
+				</div>
+			</CommonSectionWithChildren>
+		</div>
+	);
+}
+```
+
+example:	
+```typescript
+export const welcomePageContent = {
+	title: "How It Works",
+	description: "Getting started with Podslice.ai is straightforward. Follow these four simple steps to create your focused content experience.",
+	howItWorks: [
+		{
+			step: 1,
+			title: "Create Your Profile",
+			description: "Start by building a custom Personalized Feed or choose from our pre-PODSLICE Bundles.",
+		},
+		{
+			step: 2,
+			title: "Select Your Content",
+			description: "Choose up to 5 individual podcasts or pick one of our 3 PODSLICE Bundles.",
+		},
+		{
+			step: 3,
+			title: "Get & Enjoy Your Podcast",
+			description: "Our AI processes your selections and generates a personalized episode every Friday, then listen through our built-in audio player.",
+		},
+	],
+	cta: {
+		title: "Start Free Trial",
+		description: "Click the button to explore our bundles and try out our AI curated bundles.",
+		button: {
+			text: "Start Free Trial",
+			link: "/manage-membership",
+		},
+	},
+};
+```
+### 4. Extract any additional logic to a hook
+
+example:
+```typescript	
+const useWelcomePage = () => {
+	const { title, description, howItWorks, cta } = welcomePageContent;
+	return { title, description, howItWorks, cta };
+};
+```
+
+
+
+# Refactoring Standards and Playbook
+
+This playbook documents the canonical refactor pattern introduced on the `app/(protected)/welcome` page. Use it for any similar UI refactor across the app. It aligns with the project rules for Next.js App Router: thin pages, Server Components by default, typed props, and reusable UI.
+
+---
+
+## Objectives
+
+- **Thin pages**: `page.tsx` is minimal and declarative.
+- **Content extraction**: Move static copy/config into a dedicated object or `content.ts` file.
+- **Componentization**: Replace repeated markup with small, reusable, typed components under `components/shared` (or feature folders).
+- **Consistency**: Centralize section layout/typography to ensure consistent UX/UI.
+- **Maintainability**: Clear responsibilities, fewer props, explicit types.
+
+---
+
+## Anti-patterns to avoid
+
+- Mixing content, layout, and interactivity in one large `page.tsx`.
+- Duplicating markup/classes across pages instead of extracting components.
+- Implicit `any` or missing prop types.
+- Using Client Components without need; prefer Server Components.
+
+---
+
+## Standard component building blocks (Welcome pattern)
+
+1) Section header
+
+```tsx
+// components/shared/section-header.tsx
+interface SectionHeaderProps {
+	title: string;
+	description: string;
+}
+
+const SectionHeader = ({ title, description }: SectionHeaderProps) => {
+	return (
+		<div className="text-left mb-0 px-6 xl:px-12  py-8 md:pt-8  ">
+			<h2 className="text-2xl leading-9 font-semibold tracking-tight mb-4 text-primary-foreground">{title}</h2>
+			<p className=" leading-5 font-normal text-secondary-foreground 		tracking-wide max-w-[600px] pb-6">
+				{description}
+			</p>
+		</div>
+	);
+};
+
+export { SectionHeader as default };
+```
+
+2) Section wrapper with children
+
+```tsx
+// components/shared/section-common.tsx
+import type React from "react";
+import SectionHeader from "./section-header";
+
+interface CommonSectionWithChildrenProps {
+	children: React.ReactNode;
+	title: string;
+	description: string;
+}
+
+const CommonSectionWithChildren = ({ children, title, description }: CommonSectionWithChildrenProps) => {
+	return (
+		<div className="border-none rounded-none overflow-hidden mb-0 p-0  mt-0 md:mt-4 md:m-0  md:p-0  outline-0 md:rounded-4xl md:shadow-xl">
+			<div className="text-left pt-8 rounded-none  mb-5 pb-7 overflow-hidden md:rounded-4xl  md:py-0 min-w-full min-h-full bg-primary/70  ">
+				<SectionHeader title={title} description={description} />
+				{children}
+			</div>
+		</div>
+	);
+}
+
+export { CommonSectionWithChildren as default };
+```
+
+3) Step number and card
+
+```tsx
+// components/shared/step-nr.tsx
+const StepNr = ({ step }: { step: number | string }) => {
+	return (
+		<div className="flex items-center justify-center w-4 h-4 p-4.5 rounded-full mx-0 bg-success text-success-foreground font-mono font-semibold text-h5 mb-1 ">{step}</div>
+	)
+}
+
+export default StepNr;
+```
+
+```tsx
+// components/shared/step-card.tsx
+import { Card } from "../ui/card";
+import StepNr from "./step-nr";
+
+interface StepCardProps {
+	step: number;
+	title: string;
+	description: string;
+}
+
+const StepCard = ({ step, title, description }: StepCardProps) => {
+	return (
+		<Card className="glass-dark h-full min-h-64 duration-200 ease-in-out relative rounded-3xl p-2 max-h-74 gap-2">
+			<div className="flex flex-col p-3.5\th-fit items-center justify-center w-full gap-3">
+				<StepNr step={step} />
+				<h3 className="text-xl text-center font-bold tracking-tight mb-2 mt-0 w-full text-secondary-foreground">{title}</h3>
+				<p className="text-link/90 text-center font-medium text-xs mb-4">{description}</p>
+			</div>
+		</Card>
+	);
+};
+
+export default StepCard;
+```
+
+4) CTA banner
+
+```tsx
+// components/shared/free-trial-promo.tsx
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
+interface FreeTrialPromoProps {
+	href: string;
+	size: "lg" | "default" | "sm" | "xs" | "md" | "icon" | "play" | "playSmall" | "playLarge";
+	variant: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "play" | "icon";
+	buttonText: string;
+}
+const FreeTrialPromo = ({ href, size, variant, buttonText }: FreeTrialPromoProps) => {
+	return (
+		<div className="hidden p-4 my-8  md:px-8 md:my-8 flex-col justify-center items-center ">
+			<p className=" my-3 py-2 flex flex-col justify-center items-center text-center text-base leading-normal font-bold text-secondary-foreground  md:text-xl md:text-left md:justify-start md:items-start">
+				Claim Your 14 Day Premium Trial
+			</p>
+			<Link href={href}>
+				<Button variant={variant} size={size} className="w-full md:w-fit mx-auto md:mx-0 md:px-4">
+					{buttonText}
+				</Button>
+			</Link>
+		</div>
+	);
+}
+
+export default FreeTrialPromo;
+```
+
+---
+
+## File and naming conventions
+
+- Place shared, reusable UI in `components/shared`.
+- Page-specific variants can live alongside the page or under a feature directory.
+- Extract static copy/config to `content.ts` next to `page.tsx` for non-trivial pages; tiny pages can use an exported const inside `page.tsx`.
+- Keep `page.tsx` minimal: compose shared components and pass typed content.
+- Co-locate `loading.tsx` and `error.tsx` if the route fetches data.
+
+---
+
+## Step-by-step refactor recipe
+
+1) Identify content and structure
+
+- Separate static copy (headings, descriptions, steps) from layout.
+- Decide whether content belongs in `content.ts` or an inline const.
+
+2) Extract content
+
+```ts
+// app/(protected)/welcome/content.ts (example)
+export const welcomePageContent = {
+	title: "How It Works",
+	description: "Getting started with Podslice.ai is straightforward. Follow these four simple steps to create your focused content experience.",
+	howItWorks: [
+		{ step: 1, title: "Create Your Profile", description: "Start by building a custom Personalized Feed or choose from our pre-PODSLICE Bundles." },
+		{ step: 2, title: "Select Your Content", description: "Choose up to 5 individual podcasts or pick one of our 3 PODSLICE Bundles." },
+		{ step: 3, title: "Get & Enjoy Your Podcast", description: "Our AI processes your selections and generates a personalized episode every Friday, then listen through our built-in audio player." },
+	],
+	cta: { title: "Start Free Trial", description: "Click the button to explore our bundles and try out our AI curated bundles.", button: { text: "Start Free Trial", link: "/manage-membership" } },
+};
+```
+
+3) Compose a thin page
+
+```tsx
+// app/(protected)/welcome/page.tsx (simplified)
+"use client";
+import FreeTrialPromo from "@/components/shared/free-trial-promo";
+import CommonSectionWithChildren from "@/components/shared/section-common";
+import StepCard from "@/components/shared/step-card";
+import { PageHeader } from "@/components/ui/page-header";
+import { welcomePageContent } from "./content"; // or inline const for tiny pages
+
+export default function WelcomePage() {
+	const { title, description, howItWorks, cta } = welcomePageContent;
+	return (
+		<div className="flex flex-col gap-4">
+			<PageHeader title={cta.title} description={cta.description} />
+			<FreeTrialPromo href={cta.button.link} size="lg" variant="default" buttonText={cta.button.text} />
+			<CommonSectionWithChildren title={title} description={description}>
+				<div className="md:px-4 pb-8 mx-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-1 gap-4">
+					{howItWorks.map((step, index: number) => (
+						<StepCard key={`${index + 1}-${step.title}`} step={index + 1} title={step.title} description={step.description} />
+					))}
+				</div>
+			</CommonSectionWithChildren>
+		</div>
+	);
+}
+```
+
+4) Type props explicitly
+
+- Define component prop interfaces/types in component files.
+- Use `import type` for type-only imports.
+
+5) Styling and accessibility
+
+- Reuse existing utility classes and design tokens.
+- Keep headings semantic (`h2` for section titles inside pages).
+- Provide alt text for images and labels for buttons/links.
+
+6) Server vs Client
+
+- Prefer Server Components. Mark Client Components with `"use client"` only when needed.
+- Keep data fetching in Server Components, validate with Zod where applicable, and pass data to Client Components via props.
+
+---
+
+## Acceptance checklist
+
+- [ ] `page.tsx` is thin; no duplicated markup.
+- [ ] Shared UI extracted or reused from `components/shared`.
+- [ ] Props are explicitly typed; no implicit `any`.
+- [ ] Content isolated in a `content.ts` (or inline const for tiny pages).
+- [ ] Accessibility: semantic headings, labels, focus states.
+- [ ] Styling consistent with existing classes.
+- [ ] `pnpm build` and `pnpm lint` pass.
+
+---
+
+## LLM playbook (Cursor rule)
+
+When refactoring a similar page, follow this sequence:
+
+1. Read current `page.tsx`. Separate copy from layout and interactivity.
+2. Create/extend shared components where markup repeats (headers, sections, cards, CTAs). Do not duplicate existing components.
+3. Extract content into `content.ts` next to the page (or use a small exported const for trivial pages).
+4. Rebuild `page.tsx` using shared components with explicit prop types.
+5. If data fetching exists, keep it server-side and validate with Zod; keep interactivity in Client Components.
+6. Replace any `<img>` with `<Image />` and ensure accessibility.
+7. Run `pnpm build` and `pnpm lint`. Fix issues.
+
+Do not:
+
+- Invent types or fields; import from `@/lib/types` or use local prop interfaces only.
+- Modify middleware or routing logic; this pattern targets UI composition.
+- Introduce new styling patterns without justification.
+
+---
+
+## Minimal before/after snapshot
+
+Before (mixed concerns):
+
+```tsx
+// One large page handling copy, layout, and repeated markup in-place
+```
+
+After (thin page using shared components):
+
+```tsx
+<PageHeader title={cta.title} description={cta.description} />
+<FreeTrialPromo href={cta.button.link} size="lg" variant="default" buttonText={cta.button.text} />
+<CommonSectionWithChildren title={title} description={description}>
+	{howItWorks.map((step, index) => (
+		<StepCard key={`${index + 1}-${step.title}`} step={index + 1} title={step.title} description={step.description} />
+	))}
+</CommonSectionWithChildren>
+```
+
+---
+
+## Appendix: Applying this pattern elsewhere
+
+- Pricing/Plans: extract tiers/features into `content.ts`, reuse `SectionHeader` and create a `TierCard` analog to `StepCard`.
+- Onboarding: extract steps/checklists; reuse `StepCard` or a checklist variant.
+- Marketing sections: reuse `CommonSectionWithChildren` to keep consistent spacing and typography.
+

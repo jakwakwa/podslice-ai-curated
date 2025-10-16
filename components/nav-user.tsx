@@ -81,7 +81,7 @@ export function NavUser({
 						<SidebarMenuButton className="h-9 w-22 md:h-10 md:w-fit md:ml-0 m-0 p-0 -ml-2   rounded-xl overflow-hidden  outline-0">
 
 
-							<Avatar className=" h-10 w-11 object-cover flex items-center justify-center md:h-auto rounded-lg filter p-0 md:h-10 md:w-10">
+							<Avatar className=" h-10 w-11 object-cover flex items-center justify-center rounded-lg filter p-0 md:h-10 md:w-10">
 								<AvatarImage src={user.avatar} alt={user.name} />
 								<AvatarFallback className="text-foreground rounded-none hidden overflow-hidden">{getInitials(user.name)}</AvatarFallback>
 							</Avatar>
