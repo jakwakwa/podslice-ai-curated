@@ -292,7 +292,7 @@
 			--accent-foreground: oklch(0.74 0.14 275.62);
 			--destructive: oklch(0.12 0 17.53);
 			--border: rgba(160 175 255 / 0.15);
-			--input: oklch(0.26 0.05 262.58 / 0.75);
+			--input: oklch(0.22 0.02 266.12 / 0.75);
 			--ring: oklch(0.75 0.14 221.98 / 0.73);
 			--chart-1: oklch(0.488 0.243 264.376);
 			--chart-2: oklch(0.696 0.17 162.48);
@@ -311,10 +311,10 @@
 			--sidebar-shadow: oklch(0.48 0.27 273.8 / 0.48);
 			--sidebar-menu: oklch(0.14 0 285.82 / 0);
 			--primary: hsla(220.71 33.33% 16.47% / 0.91);
-			--primary-foreground: hsla(168.26 100% 81.96% / 0.9);
+			--primary-foreground: hsla(180 2.38% 83.53% / 0.9);
 			--secondary: hsla(206.8 98.1% 20.59% / 0.61);
 			--secondary-foreground: hsl(223.64 79.71% 86.47%);
-			--secondary-foreground-muted: hsla(210.77 81.25% 81.18% / 0.7);
+			--secondary-foreground-muted: hsla(212 68.18% 91.37% / 0.7);
 			/* --muted: hsl(217.65 41.46% 24.12%); */
 			--destructive: hsl(331.97 91.97% 48.82%);
 			--destructive-foreground: hsl(334.69 51.61% 48.63%);
@@ -372,7 +372,7 @@
 			--accent-foreground: oklch(0.74 0.14 275.62);
 			--destructive: oklch(0.12 0 17.53);
 			--border: rgba(160 175 255 / 0.15);
-			--input: oklch(0.26 0.05 262.58 / 0.75);
+			--input: oklch(0 0 0 / 0.95);
 			--ring: oklch(0.75 0.14 221.98 / 0.73);
 			--chart-1: oklch(0.488 0.243 264.376);
 			--chart-2: oklch(0.696 0.17 162.48);
@@ -391,10 +391,10 @@
 			--sidebar-shadow: oklch(0.48 0.27 273.8 / 0.48);
 			--sidebar-menu: oklch(0.14 0 285.82 / 0);
 			--primary: hsla(220.71 33.33% 16.47% / 0.91);
-			--primary-foreground: hsla(168.26 100% 81.96% / 0.9);
+			--primary-foreground: hsla(180 2.38% 83.53% / 0.9);
 			--secondary: hsla(206.8 98.1% 20.59% / 0.61);
 			--secondary-foreground: hsl(223.64 79.71% 86.47%);
-			--secondary-foreground-muted: hsla(210.77 81.25% 81.18% / 0.7);
+			--secondary-foreground-muted: hsla(212 68.18% 91.37% / 0.7);
 			/* --muted: hsl(217.65 41.46% 24.12%); */
 			--destructive: hsl(331.97 91.97% 48.82%);
 			--destructive-foreground: hsl(347.1 75.61% 75.88%);
@@ -404,11 +404,11 @@
 			--success-foreground-muted: hsl(140.65 51.96% 64.9%);
 			--success: hsl(140.87 55.42% 67.45%);
 			--border: hsla(211.88 12.6% 49.8% / 0.15);
-			--input: hsla(228.16 34.55% 56.86% / 0.93);
+			--input: hsla(228.33 37.5% 18.82% / 0.93);
 			--dialog-card: oklch(0.43 0.09 239.89 / 0.62);
 			--link: oklch(0.74 0.08 242.01);
 			--link-hover: oklch(0.82 0.14 186.78);
-				--input-shadow: oklch(0.14 0.01 276.51 / 0.76);
+			--input-shadow: oklch(0.14 0.01 276.51 / 0.76);
 			--input-border: oklch(0.75 0.1 247.73 / 0.42);
 			--input-ring: oklch(0.9 0.11 203.25);
 			--input-ring-muted: oklch(0.74 0.12 274.62 / 0.91);
@@ -629,12 +629,12 @@
 
 			}
 .cl-formFieldInput {
-		padding: 20px !important;
+		padding: 27px !important;
 		border-radius: 10px !important;
 		color: var(--color-primary-foreground) !important;
 }
 .cl-formFieldInput::placeholder {
-	color: #31375F8E !important;
+	color: #949EDE8E !important;
 	font-weight: 300 !important;
 }
 
@@ -992,8 +992,13 @@
 				border: var(--ring) !important;
 				padding: 15px !important;
 				letter-spacing: 0.3px;
+				margin-bottom: 50px !important;
 			}
 
+
+			label {
+				margin-top: 10px !important;
+			}
 
 
 
@@ -1018,7 +1023,7 @@
 			button.btn-playicon-lg>svg {
 				position: relative !important;
 				width: 32px !important;
-				height: 32px !important;
+				/* height: 32px !important; */
 				padding: 0.5rem !important;
 				justify-self: center !important;
 				background: oklch(0.62 0.08 262.68 / 0.69) !important;
@@ -1029,7 +1034,9 @@
 			}
 
 			input {
-
+				outline: 1px solid transparent !important;
+				outline-offset: 1px !important;
+				height: 45px !important;
 				/* max-height: 80px !important; */
 				/* margin-top: 10px !important; */
 				box-shadow: inset 0px 3px 9px 1px var(--input-shadow) !important;
@@ -1037,7 +1044,7 @@
 
 			input::placeholder {
 				color: var(--input-placeholder) ;
-				font-weight: 300;
+				
 			}
 
 			textarea:focus,
@@ -1050,18 +1057,23 @@
 				outline: 1px solid var(--input-ring) !important;
 			}
 
+			input:hover {
+				outline: 1px solid transparent !important;
+				outline-offset: 1px !important;
+			}
+
 
 			textarea:active,
 			textarea:hover,
 			textarea:focus,
 			input:active,
-			input:hover,
 			input:focus {
 				color: var(--color-primary-foreground) !important;
 				outline: 1px solid var(--input-ring) !important;
 				outline-offset: 1px !important;
 				transition: all 0.2s ease-in-out;
-				font-weight: 600 !important;
+	
+				font-weight: 300 !important;
 				box-shadow: inset 0px 4px 9px 1px #3732693D !important;
 			}
 
@@ -1228,17 +1240,58 @@
 				background: #2E0F66 !important;
 			}
 
-			.cl-button {
-				background: #411FA6DD !important;
-				border: 1.2px solid #394093E8 !important;
-				outline: 1px solid #0521459C !important;
-				height: 35px !important;
-				padding: 2px !important;
-				height: 45px !important;
-				padding: 10px !important;
-				font-size: 0.9rem !important;
-				;
+			.cl-internal {
+				box-sizing: border-box;
+				flex-flow: row;
+				-webkit-box-align: stretch;
+				align-items: stretch;
+				-webkit-box-pack: start;
+				justify-content: flex-start;
+				display: none;
+				background: #06212f;
+				padding: calc(var(--clerk-spacing, 1rem) * 0.5) calc(var(--clerk-spacing, 1rem) * 0.75) var(--clerk-spacing, 1rem) calc(var(--clerk-spacing, 1rem) * 0.75);
+				margin-bottom: calc(calc(var(--clerk-spacing, 1rem) * 0.5) * -1);
 			}
+
+			.cl-footer {
+				display: none !important;
+				visibility:hidden !important;
+			}
+			.cl-navbar{
+					width: 100%;
+					/* background: #0F162A !important; */
+					min-height: auto;
+					max-width: 65vw;
+					/* height: fit-content !important; */
+				
+								overflow: hidden !important;
+								background-color: #10214F !important;
+							}
+
+
+							.cl-navbar::last-of-type		 {
+								visibility: hidden !important;
+							}
+				
+				.cl-userProfile-root {
+				background: #000 !important;
+				box-shadow: none !important;
+				overflow: hidden !important;
+
+					  background: #1c233e !important;
+				}
+					.cl-cardBox,
+				.cl-scrollBox {
+					background: transparent !important;
+					background: none !important;
+    padding-bottom: 0px !important;
+					background: #131419 !important;
+				}
+
+				
+				.cl-rootBox.cl-userProfile-root {
+					background-color: transparent !important;
+				}
 
 			/* Clerk-specific form overrides */
 			.cl-formFieldInput {
@@ -1284,7 +1337,8 @@
 			}
 
 			.cl-navbar {
-				background: #080909EC !important;
+				background: #00919E;
+				/* background: #080909EC !important; */
 			}
 
 			.cl-formFieldRow {

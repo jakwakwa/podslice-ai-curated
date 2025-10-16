@@ -175,7 +175,7 @@ export default function PodcastsPanelClient({ podcasts }: { podcasts: Podcast[] 
 									<Label htmlFor="podUrl">Feed URL</Label>
 									<Input id="podUrl" value={createForm.url} onChange={e => setCreateForm(s => ({ ...s, url: e.target.value }))} placeholder="https://example.com/feed.xml" />
 								</div>
-								<div className="md:col-span-2">
+								<div className="md:col-span-2 my-2 mb-11">
 									<Label htmlFor="podDesc">Description</Label>
 									<Textarea id="podDesc" rows={2} value={createForm.description} onChange={e => setCreateForm(s => ({ ...s, description: e.target.value }))} />
 								</div>
@@ -199,7 +199,7 @@ export default function PodcastsPanelClient({ podcasts }: { podcasts: Podcast[] 
 						{podcasts.map((podcast: Podcast) => {
 							const p = optimisticPodcast(podcast)
 							return (
-								<div key={p.podcast_id} className="p-3 border rounded-lg bg-card content">
+								<div key={p.podcast_id} className="p-3 border rounded-lg ">
 									{/* Row 1: title */}
 									<div className="mb-2">
 										<h4 className="font-medium truncate">{p.name}</h4>
@@ -234,7 +234,7 @@ export default function PodcastsPanelClient({ podcasts }: { podcasts: Podcast[] 
 														<Label htmlFor="editUrl">Feed URL</Label>
 														<Input id="editUrl" value={editForm.url} onChange={e => setEditForm(s => ({ ...s, url: e.target.value }))} />
 													</div>
-													<div className="md:col-span-2">
+													<div className="">
 														<Label htmlFor="editDesc">Description</Label>
 														<Textarea id="editDesc" rows={2} value={editForm.description} onChange={e => setEditForm(s => ({ ...s, description: e.target.value }))} />
 													</div>
