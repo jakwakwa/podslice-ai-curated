@@ -284,13 +284,13 @@
 			--bundle-card-shadow: oklch(0.2 0.04 227.98 / 0.8);
 			--popover: oklch(0.63 0.1 280.5 / 0.82);
 			--popover-foreground: oklch(0.7 0.12 302.48);
-			--primary: oklch(0.6 0.15 277 / 0.9);
-			--primary-foreground: oklch(0.34 0.09 278.93);
+			--primary: oklch(0.76 0.11 279.41 / 0.98);
+			--primary-foreground: oklch(0.26 0.05 280.88);
 			--primary-foreground-muted: oklch(0.41 0.04 235.12 / 0.99);
 			--secondary: oklch(0.7 0.1 228.75 / 0.55);
 			--header: oklch(0.29 0.06 232.88 / 0.67);
-			--secondary-foreground: oklch(0.81 0.08 248.37 / 0.79);
-			--secondary-foreground-muted: rgba(180 208 237 / 0.7);
+			--secondary-foreground: oklch(0.2 0.02 249.17 / 0.79);
+			--secondary-foreground-muted: rgba(25 43 61 / 0.7);
 			--muted: oklch(0.25 0.03 276.12 / 0.89);
 			--muted-foreground: oklch(0.45 0.06 285.16 / 0.63);
 
@@ -315,7 +315,7 @@
 			--input-placeholder: oklch(0.48 0.04 259.35 / 0.8);
 
 			--link: oklch(0.51 0.17 280.16);
-			--link-hover: oklch(0.5 0.27 295.74);
+			--link-hover: oklch(0.74 0.11 306.8);
 			--ring: oklch(0.62 0.25 307.88 / 0.93);
 			--chart-1: oklch(0.646 0.222 41.116);
 			--chart-2: oklch(0.6 0.118 184.704);
@@ -517,10 +517,10 @@
 
 .animated-gradient {
 	background: linear-gradient(-45deg,
-			oklch(0.16 0.06 290.08 / 0.94) 0%,
-			oklch(0.18 0.02 263.79 / 0.67) 30%,
+			oklch(0.25 0.11 287.72 / 0.94) 0%,
+			oklch(0.3 0.05 201.93 / 0.67) 30%,
 			hsla(210.64 97.92% 18.82% / 0.57) 60%,
-			oklch(0.34 0.18 296.44 / 0.76) 100%);
+			oklch(0.39 0.2 297.67 / 0.76) 100%);
 	background-size: 400% 400%;
 	animation: gradientShift 20s ease infinite;
 }
