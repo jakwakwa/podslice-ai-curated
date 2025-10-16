@@ -104,7 +104,7 @@ export default function LandingPageContent() {
 			</section>
 			<div className="background-base bg-primary" />
 			{/* How It Works Section */}
-			<section className="overflow-hidden px-0 min-w-screen w-full md:h-full md:min-w-screen md:w-full md:px-4  bg-linear-to-bl from-cyan-200/70 to-violet-400/70 my-0 md:py-0 md:gap-0 md:mb-0 md:-mt-18">
+			<section className="overflow-hidden px-0 min-w-screen w-full md:h-full md:min-w-screen md:w-full md:px-4  bg-linear-to-b from-violet-950 to-violet-900 my-0 md:py-0 md:gap-0 md:mb-0 md:-mt-0">
 				<div className="w-full max-w-screen md:min-w-7xl mx-auto md:px-12 px-0 py-8 md:py-24 mt-0 ">
 					<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }}>
 						<h2 className="text-left  sm:text-center text-primary-foreground font-bold px-4 mt-4 md:px-0 md:mt-18  text-3xl md:text-[3rem] text-shadow-lg text-shadow-[#445DB781]/60">How it Works</h2>
@@ -132,7 +132,7 @@ export default function LandingPageContent() {
 									transition: { duration: 0.2 },
 								}}>
 								<div
-									className="rounded-full align-center text-blue-700/50 bg-teal-300/10 	 font-black shadow-lg shadow-violet-950/10 
+									className="rounded-full align-center text-blue-200 bg-teal-500/50 	 font-black shadow-lg shadow-violet-950/10 
 								 mb-3 inline-flex justify-center items-center w-10 h-10">
 									{step.step}
 								</div>
