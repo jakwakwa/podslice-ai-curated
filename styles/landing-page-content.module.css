@@ -50,7 +50,7 @@
 	justify-content: space-between;
 	padding: 0px 3rem !important;
 	/* backdrop-filter: blur(10px); */
-	box-shadow: inset 0 10px 30px rgba(171, 216, 215, 0.1 5);
+	/* box-shadow:  0 30px 10px 8px rgba(4 15 14 / 0.9) !important; */
 	margin-bottom: 2rem !important;
 }
 
@@ -77,7 +77,7 @@
 	/* position: relative; */
 	padding-top: 8rem !important;
 	padding-bottom: 2.5rem;
-	margin-bottom: 4rem;
+	margin-bottom: 0rem;
 	height: 100%;
 	width: 100%;
 	/* max-width: 100%; */
@@ -86,12 +86,12 @@
 
 	background-image: url('/assets/background/grain-bg.svg'),
 		radial-gradient(120% 120% at 0% 100%,
-			oklch(0.53 0.11 232.34 / 0.89) -10%,
-			oklch(0.22 0.03 299.94 / 0.5) 30%,
-			oklch(0.22 0.03 299.94 / 0.5) 65%,
-			oklab(0.49 0.11 -0.24 / 0.86) 120%),
+			oklch(0.18 0.1 285.55) -10%,
+			oklch(0.32 0.18 291.24 / 0.97) 40%,
+			oklch(0.8 0.14 190.64 / 0.55) 85%,
+			oklab(0.3 -0.01 -0.16) 120%),
 		url('/assets/background/grid-bg.svg');
-	background-color: oklch(0.18 0.01 285.11 / 0.73);
+	background-color: oklch(0.18 0.01 285.11 / 0.83);
 	text-align: center;
 	background-blend-mode: color-burn, color-dodge, screen;
 	background-size: 110%, 210%, 110%, 110%, 110%, 110%, 20%;
@@ -107,11 +107,13 @@
 }
 
 .grainBackground {
-	background: url('/assets/background/grain-bg.svg') repeat center;
-	mix-blend-mode: screen;
-	background-blend-mode: screen;
+	background-image: url('/assets/background/grain-bg.svg') repeat center;
+	background-color: oklch(0.24 0.03 214.44 / 0.13);
+	mix-blend-mode: darken, darken !important;
+	background-blend-mode: overlay,color-burn !important;
 	position: absolute;
-	background-size: 330% 330%;
+	opacity: 100;
+	background-size: 200% 200%;
 	z-index: 10;
 	top: 0;
 
@@ -265,7 +267,7 @@
 	padding: 0.75rem 1.25rem;
 	border-radius: 0.75rem;
 	background: radial-gradient(120% 120% at 0% 0%, oklch(0.63 0.16 264.76) 0%, oklch(0.35 0.18 296.27) 100%);
-	color: oklch(var(--primary-foreground));
+	color: white;
 	font-weight: 600;
 	border: 1px solid rgba(33 98 114 / 0.95);
 	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08);

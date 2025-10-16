@@ -4,13 +4,13 @@ import Link from "next/link";
 
 export function Footer() {
 	return (
-		<div className="flex flex-col gap-4 mt-8 items-center justify-center bg-background py-4 text-xs">
-			<div className="flex items-center justify-center gap-2 text-sm text-muted-foreground  w-full text-center" >
-				<Link href="/terms">Terms of use</Link>
+		<div className=" px-4 py-8 mb-0 w-screen md:-ml-4 bottom-0 md:w-[102%] flex flex-col gap-4 md:py-12 items-center justify-center text-xs overflow-hidden rounded-none md:bg-bigcard opacity-90 ">
+			<div className="flex items-center justify-center gap-2 text-sm text-secondary  w-full text-center" >
+				<Link href="/terms" className="hover:text-secondary-foreground transition-colors">Terms of use</Link>
 				<span>|</span>
-				<Link href="/privacy">Privacy Policy</Link>
+				<Link href="/privacy" className="hover:text-secondary-foreground transition-colors">Privacy Policy</Link>
 				<span>|</span>
-				<Link href="mailto:support@podslice.ai">Need help?</Link>
+				<Link href="mailto:support@podslice.ai" className="hover:text-secondary-foreground transition-colors">Need help?</Link>
 
 
 			</div>

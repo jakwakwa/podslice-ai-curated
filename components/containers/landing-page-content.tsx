@@ -2,13 +2,12 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { BadgePlusIcon, CheckCircle } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+import { Footer } from "@/app/(protected)/footer";
 import LandingAudioPlayer from "@/components/demo/landing-audio-player";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
 import { PRICING_TIER } from "@/config/paddle-config";
-import { getClerkSignInUrl } from "@/lib/env";
 import styles from "@/styles/landing-page-content.module.css";
 import { LandingPageHeader } from "../layout/LandingPageHeader";
 import { Badge } from "../ui/badge";
@@ -60,13 +59,13 @@ export default function LandingPageContent() {
 	];
 
 	return (
-		<div className="max-w-full w-screen md:w-full flex flex-col justify-center items-center content-center mx-auto px-8 md:px-0 py-4 md:py-0  gap-0 mb-0 ">
+		<div className="max-w-full w-screen md:w-full flex flex-col justify-center items-center content-center mx-auto px-8 md:px-0 pb-4 md:py-0  gap-0 mb-0 ">
 			{/* <HomePageBackground /> */}
 			<LandingPageHeader />
 			<div className={`${styles.grainBackground} background-base`} />
 			<div className={`${styles.gridBackground} background-base`} />
 			{/* Hero Section */}
-			<section className={`${styles.heroSection} min-w-screen my-0 py-0 mix-blend-screen backdrop-blur-sm bg-blend-multiply-opacity-20`}>
+			<section className={`${styles.heroSection} min-w-screen my-0 py-0 mix-blend-multiply `}>
 				<motion.div
 					className={styles.heroBackground}
 					style={{
@@ -93,7 +92,7 @@ export default function LandingPageContent() {
 						transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}>
 						<Link href="/sign-in">
 							<div>
-								<div className={styles.heroBtn}>Start Free Trial</div>
+								<div className={`${styles.heroBtn} text-amber-50 ` }>Start Free Trial</div>
 							</div>
 						</Link>
 					</motion.div>
@@ -103,23 +102,22 @@ export default function LandingPageContent() {
 					</div>
 				</div>
 			</section>
-			<div className={`${styles.grainBackground} background-base`} />
+			<div className="background-base bg-primary" />
 			{/* How It Works Section */}
-			<section className=" h-full min-h-screen w-screen md:w-full px-4 bg-black/50  my-0 py-0 gap-0 mb-0 -mt-18">
-
-				<div className="w-full max-w-screen md:max-w-7xl mx-auto px-8 md:px-0 py-4 md:py-0 ">
+			<section className="overflow-hidden px-0 min-w-screen w-full md:h-full md:min-w-screen md:w-full md:px-4  bg-linear-to-bl from-cyan-200/70 to-violet-400/70 my-0 md:py-0 md:gap-0 md:mb-0 md:-mt-18">
+				<div className="w-full max-w-screen md:min-w-7xl mx-auto md:px-12 px-0 py-8 md:py-24 mt-0 ">
 					<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }}>
-						<h2 className="text-left  sm:text-center text-[#919ceb] font-bold px-4 mt-4 md:px-0 md:mt-18  text-3xl md:text-[3rem]">How it Works</h2>
+						<h2 className="text-left  sm:text-center text-primary-foreground font-bold px-4 mt-4 md:px-0 md:mt-18  text-3xl md:text-[3rem] text-shadow-lg text-shadow-[#445DB781]/60">How it Works</h2>
 
-						<Typography className="max-w-full text-base text-left md:max-w-2xl mx-auto px-4 sm:text-center pb-8 mt-4 sm:text-[1.4rem] my-8 leading-[1.4] text-[#c1f0ff]/80">
+						<p className="w-full text-base md:text-center  md:mx-auto md:max-w-2xl  px-4 text-left pb-8 mt-4 sm:text-[1.4rem] my-8 leading-[1.4] text-secondary-foreground-muted/90 text-shadow-sm  font-medium text-shadow-[#3684de0c]">
 							Getting started with Podslice.ai is straightforward. Follow these four simple steps to create your focused content experience.
-						</Typography>
+						</p>
 					</motion.div>
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-2 w-full mx-auto px-4 md:px-0">
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-8 max-w-screen  w-screen min-w-full  px-0  mx-0  lg:max-w-6xl md:mx-auto">
 						{howItWorks.map((step, index) => (
 							<motion.div
 								key={step.step}
-								className="bg-default py-5 px-4 flex flex-col justify-center p-0 rounded-[20px] border-2 border-light shadow-lg items-center "
+								className="bg-default py-5 px-4 max-w-[89vw]  mx-auto flex   flex-col justify-center lg:mx-auto text-center p-0 rounded-[20px] border-2 border-light  bg-linear-to-br from-fuchsia-700/10 via-indigo-200/10 to-fuchsia-100/20  backdrop-blur-3xl border-violet-400/10 shadow-lg items-center "
 								initial={{ opacity: 0, y: 30, scale: 0.95 }}
 								whileInView={{ opacity: 1, y: 0, scale: 1 }}
 								viewport={{ once: true, margin: "-100px" }}
@@ -133,16 +131,18 @@ export default function LandingPageContent() {
 									scale: 1.02,
 									transition: { duration: 0.2 },
 								}}>
-								<div className="rounded-full align-center font-bold text-[#fff] bg-[#A35DC4]/50 mb-3 inline-flex justify-center items-center w-10 h-10">{step.step}</div>
-								<h3 className="text-xl font-bold text-popover-foreground">{step.title}</h3>
-								<p className="text-md leading-7 text-center my-6 w-full p-0">{step.description}</p>
+								<div
+									className="rounded-full align-center text-blue-700/50 bg-teal-300/10 	 font-black shadow-lg shadow-violet-950/10 
+								 mb-3 inline-flex justify-center items-center w-10 h-10">
+									{step.step}
+								</div>
+								<h3 className="text-lg font-bold text-secondary-foreground/80 text-shadow text-shadow-[#1C45DAE9]/10 text-shadow-lg">{step.title}</h3>
+								<p className="w-full text-md leading-7 text-center my-6 mx-auto p-0 text-secondary-foreground/50 text-shadow-sm text-shadow-[#3684de0c]">{step.description}</p>
 							</motion.div>
 						))}
 					</div>
 				</div>
 			</section>
-
-			{/* Pricing Section */}
 			<section className="hidden my-12 px-4 md:my-32 w-screen md:w-full ">
 				<div className="w-full max-w-screen md:max-w-7xl mx-auto px-8 md:px-0 py-4 md:py-0 bg-radial-gradient-secondary ">
 					<div>
@@ -202,29 +202,8 @@ export default function LandingPageContent() {
 					</div>
 				</div>
 			</section>
-
-			{/* Footer */}
-			<footer className="py-8 md:py-8 px-2 md:px-4 bg-gray-900/80 w-screen md:w-full">
-				<motion.div className="max-w-screen md:max-w-7xl mx-auto text-center" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-					<div className="flex justify-center items-center mb-4">
-						<Image src="/logo.svg" width={90} height={40} alt="PODSLICE Logo" />
-					</div>
-					<div className="flex justify-center items-center space-x-6 text-sm text-foreground/70">
-						<Link href="/sign-up" className="hover:text-foreground transition-colors">
-							Sign Up
-						</Link>
-						<Link href={getClerkSignInUrl()} className="hover:text-foreground transition-colors">
-							Log in
-						</Link>
-						<Link href="/terms" className="hover:text-foreground transition-colors">
-							Terms
-						</Link>
-						<Link href="/privacy" className="hover:text-foreground transition-colors">
-							Privacy
-						</Link>
-					</div>
-				</motion.div>
-			</footer>
+			
+			<Footer />
 		</div>
 	);
 }

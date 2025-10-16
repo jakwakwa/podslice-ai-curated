@@ -260,7 +260,7 @@ export function BundleSelectionDialog({
 							<div className="space-y-4 min-w-full">
 								{/* Warning Message */}
 								<div className="px-3 py-2 bg-amber-600/50 outline outline-amber-600/30 dark:border-amber-800 rounded-sm inline-block">
-									<Typography variant="body" className="text-amber-200  text-sm">
+									<Typography variant="body" as="span" className="text-amber-200  text-sm">
 										{isSharedBundle
 											? `You'll lose access to episodes from '${sanitizedCurrentBundleName}' after switching`
 											: `You won't have access to '${sanitizedCurrentBundleName}' episodes after changing`}
@@ -274,7 +274,7 @@ export function BundleSelectionDialog({
 								<Label htmlFor="bundle-profile-name">Bundle name</Label>
 								<Input id="bundle-profile-name" value={profileName} onChange={handleProfileNameChange} placeholder="e.g. My Weekly Slice" autoComplete="off" disabled={isConfirming || isLoading} />
 								{nameError && (
-									<Typography variant="body" className="text-xs text-red-400">
+									<Typography variant="body" as="span" className="text-xs text-red-400">
 										{nameError}
 									</Typography>
 								)}
@@ -283,7 +283,7 @@ export function BundleSelectionDialog({
 
 						{isLocked && requiredPlanDescriptionText && (
 							<div className=" min-w-full">
-								<Typography variant="body" className="text-sm text-muted-foreground">
+								<Typography variant="body" as="span" className="text-sm text-muted-foreground">
 									{requiredPlanDescriptionText}
 								</Typography>
 							</div>

@@ -40,12 +40,12 @@ export function NavMain({
 			<SidebarMenu className=" mt-24 px-2">
 				{items.map((item, index) => (
 					<div key={item.url} className="my-1">
-						{item.separator && index > 0 && <SidebarSeparator className="border-none text-sidebar-accent-foreground opacity-[0.9] mx-0 my-5 h-[1px]" />}
+						{item.separator && index > 0 && <SidebarSeparator className="border-none text-sidebar-accent-foreground  mx-0 my-5 h-[1px]" />}
 						<SidebarMenuItem>
 							<SidebarMenuButton asChild isActive={pathname === item.url}>
-								<Link href={item.url} className={cn("flex text-sidebar-primary-foreground opacity-[0.7] items-center gap-4")} onClick={handleLinkClick}>
-									{!item.hasSubitems && item.icon && <item.icon className={`size-6 ${item.isActive ? `text-indigo-600 opacity-[0.6]` : `text-sidebar-foreground-muted opacity-[0.9]`}`} />}
-									<span className={item.hasSubitems ? `mt-3 text-primary-foreground font-bold ppercase text-xs uppercase ` : `text-sm text-[1rem] text-sidebar-primary opacity-[0.9]`}>{item.title}</span>
+								<Link href={item.url} className={cn("flex text-sidebar-primary-foreground opacity-100 items-center gap-4")} onClick={handleLinkClick}>
+									{!item.hasSubitems && item.icon && <item.icon className={`size-6 ${item.isActive ? `text-indigo-600 opacity-100` : `text-sidebar-foreground-muted font-light`}`} />}
+									<span className={item.hasSubitems ? `mt-3 text-primary-foreground font-light ppercase text-[0.7rem] uppercase ` : `text-sm font-light text-[0.86rem] text-sidebar-primary font-light opacity-[0.9]`}>{item.title}</span>
 								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
@@ -57,8 +57,8 @@ export function NavMain({
 										<SidebarMenuItem key={subItem.url}>
 											<SidebarMenuButton asChild>
 												<Link href={subItem.url}>
-													{subItem.icon && <subItem.icon className={`size-6 ${subItem.isActive ? `text-indigo-600 opacity-[0.6]` : `text-sidebar-foreground-muted opacity-[0.9]`}`} />}
-													<span className="text-[1rem] text-sidebar-primary opacity-[0.9]">{subItem.name}</span>
+													{subItem.icon && <subItem.icon className={`size-6 ${subItem.isActive ? `text-indigo-100 font-light opacity-100` : `text-sidebar-foreground-muted opacity-100`}`} />}
+													<span className="text-[0.9rem] font-light text-sidebar-primary opacity-[0.7]">{subItem.name}</span>
 												</Link>
 											</SidebarMenuButton>
 										</SidebarMenuItem>
