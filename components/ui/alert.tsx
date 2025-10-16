@@ -3,10 +3,10 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-const alertVariants = cva("relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground", {
+const alertVariants = cva("relative w-full rounded-lg  border-2 border-border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground", {
 	variants: {
 		variant: {
-			default: "backdrop-blur-sm bg-[#432b6c46] shadow shadow-[0_4px_30px_-4px_rgba(0, 0, 0, 0.916)] p-8 text-foreground rounded-3xl border-3 border-[#4f6d99b4] mt-1 text-primary-foreground max-w-lg",
+			default: "backdrop-blur-sm bg-[#432b6c46] shadow shadow-[0_4px_30px_-4px_rgba(0, 0, 0, 0.916)] p-8 text-foreground rounded-3xl border-2 border-border text-primary-foreground mt-6 ml-0 max-w-lg",
 			destructive: " bg-[#b002b099] shadow shadow-[0_4px_30px_-4px_rgba(10, 192, 147, 0.143)] p-8 rounded-3xl border-[#ee4ad8b4] text-red-foreground bg-[#b91a5229]",
 		},
 	},

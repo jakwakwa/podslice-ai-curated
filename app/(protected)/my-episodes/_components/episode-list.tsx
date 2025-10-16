@@ -135,7 +135,7 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 						</CardContent>
 					</Card>
 				) : episodes.length === 0 ? (
-					<p>You haven't created any episodes yet.</p>
+					<p className="text-primary m-4 text-sm">You haven't created any episodes yet.</p>
 				) : (
 					episodes.map(episode => (
 						<div key={episode.episode_id} className="py-0">
