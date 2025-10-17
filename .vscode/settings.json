@@ -82,9 +82,7 @@
 	"terminal.integrated.fontLigatures.enabled": true,
 	"editor.fontVariations": true,
 	"editor.wordWrap": "wordWrapColumn",
-	"[css]": {
-		"editor.defaultFormatter": "vscode.css-language-features"
-	},
 	"tailwindCSS.lint.invalidConfigPath": "warning",
 	"editor.defaultFoldingRangeProvider": "VisualStudioExptTeam.vscodeintellicode",
+	"css.format.spaceAroundSelectorSeparator": true,
 }

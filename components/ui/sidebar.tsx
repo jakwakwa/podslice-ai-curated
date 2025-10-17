@@ -1,8 +1,9 @@
 "use client";
 
 import { Slot } from "@radix-ui/react-slot";
+import { IconLayoutSidebarRightCollapseFilled } from "@tabler/icons-react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { SidebarCloseIcon, SidebarOpenIcon } from "lucide-react";
+import { SidebarCloseIcon } from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -213,7 +214,7 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
 			data-slot="sidebar-trigger"
 			size="sm"
 			className={cn(
-				"inline-flex outline-0 border-0 px-1 py-3 items-center justify-center gap-2 whitespace-nowrap leading-5 tracking-wide transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 outline-none focus-visible:outline-0 focus-visible:outline-offset-0 rounded-sm bg-[#000]/0 hover:bg-[#272244]/0 text-[#d6d0f6] hover:text-[#76e8ff]",
+				"inline-flex content-center outline-0 w-7 h-7 border-0 px-0 py-0 my-auto items-center justify-center gap-0 whitespace-nowrap leading-5 tracking-wide transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 outline-none  overflow-visible focus-visible:outline-0 focus-visible:outline-offset-0 rounded-sm bg-[#000]/0 hover:bg-[#272244]/0 text-[#d6d0f6] hover:text-[#76e8ff]",
 				className
 			)}
 			onClick={event => {
@@ -221,8 +222,12 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
 				toggleSidebar();
 			}}
 			{...props}>
-			{open ? <SidebarCloseIcon /> : <SidebarOpenIcon />}
-			<span className="sr-only"></span>
+			{open ? (
+				<SidebarCloseIcon size={14} className="m-auto h-full w-full text-primary-foreground max-w-[16px] max-h-[16px]" />
+			) : (
+				<IconLayoutSidebarRightCollapseFilled size={14} className="m-auto h-full w-full text-primary-foreground max-w-[16px] max-h-[16px]" />
+			)}
+			<span className="sr-only hidden">menu</span>
 		</Button>
 	);
 }
@@ -430,7 +435,7 @@ function SidebarMenuAction({
 				"peer-data-[size=lg]/menu-button:top-2.5",
 				"group-data-[collapsible=icon]:hidden",
 				showOnHover &&
-				"peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 md:opacity-0",
+					"peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 md:opacity-0",
 				className
 			)}
 			{...props}></Comp>

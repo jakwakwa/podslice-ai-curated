@@ -12,9 +12,7 @@ import { AppSidebar, navItems } from "@/components/app-sidebar";
 import { NavUser } from "@/components/nav-user";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
-import { DynamicBreadcrumb } from "@/components/ui/dynamic-breadcrumb";
 import { NotificationBell } from "@/components/ui/notification-bell";
-import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSubscriptionInit } from "@/hooks/useSubscriptionInit";
@@ -39,7 +37,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 		return (
 			<Button onClick={() => setTheme(theme === "light" ? "dark" : "light")} variant="icon">
 				<div className="flex flex-col md:flex-row items-center gap-2">
-					{theme === "light" ? <SunIcon className="w-4 h-4 text-amber-300" /> : <MoonIcon className="w-4 h-4 text-indigo-300" />} <span className="text-[0.5rem] uppercase">  theme</span>
+					{theme === "light" ? <SunIcon className="w-4 h-4 text-amber-300" /> : <MoonIcon className="w-4 h-4 text-indigo-300" />} <span className="text-[0.5rem] uppercase"> theme</span>
 				</div>
 			</Button>
 		);
@@ -51,27 +49,19 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 			<SidebarInset>
 				<header
-					className={`fixed flex h-16 bg-header backdrop-blur-[10px] shrink-0 items-center border-1 border-b-secondary gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 mt-0 max-w-screen justify-between px-4  py-0 overflow-y-scrol shadow-[0_4px_8px_1px_rgba(0,0,0,0.1)] duration-300 z-50 ${state === "expanded" ? "" : ""}`}>
-					<div className={`flex items-center h-16 justify-between gap-2 px-2  ${state === "expanded" ? "md:px-4" : "md:px-0"}`}>
-						<Link href="/" className="w-full max-w-[100px]">
-							<Image className={`w-full max-w-[100px] ${state === "expanded" ? "inline " : "hidden"}`} src="/logo.svg" width={300} height={100} alt="logo" />
+					className={`fixed flex h-18 bg-header backdrop-blur-[4px]  shadow-[0_4px_8px_1px_rgba(0,0,0,0.3)] overflow-hidden shrink-0 items-center border-none gap-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 mt-0 max-w-screen justify-between px-4  py-0 overflow-y-scrol  duration-300 z-50 ${state === "expanded" ? "" : "collapsed"}`}>
+					<div className={`flex items-center h-14 justify-start  ${state === "expanded" ? "md:px-4 w-[240px]" : "md:px-0 w-[80px] "}`}>
+						<Link href="/" className={`flex items-center h-24 justify-center gap-2   ${state === "expanded" ? "md:px-4" : "md:px-0"}`}>
+							<Image
+								className={`transition-all flex flex-row items-center  duration-75 w-full ${state === "expanded" ? "h-14 max-w-[94px] " : "max-w-[40px]   justify-center"}`}
+								src={`${state === "expanded" ? "/logo" : "/icon"}.svg`}
+								width={100}
+								height={14}
+								alt={`Menu`}
+							/>
 						</Link>
 
-						<Separator
-							orientation="vertical"
-							className={`data-[orientation=vertical]:min-h-[8px] border-[0px] border-r-[#00000089] bg-[#14171600] w-[1px] ${state === "expanded" ? "ml-12" : "ml-0 mr-0"}`}>
-							{""}
-						</Separator>
-
-						<SidebarTrigger className="w-[52px] h-[24px] border border-[#50647a0] border-none shadow-none" size={"xs"} variant="outline" />
-
-						<Separator
-							orientation="vertical"
-							className={`data-[orientation=vertical]:min-h-[8px] border-[0px] border-r-[#342d3d0] bg-[#75737b3b] w-[1px] ${state === "expanded" ? "mr-12 ml-5.5" : "mx-2 ml-0	"}`}>
-							{""}
-						</Separator>
-
-						<DynamicBreadcrumb />
+						<SidebarTrigger className="hidden md:block md:w-[px] w-0 h-0 md:h-[14px] border border-[#50647a0] border-none shadow-none" size={"xs"} variant="outline" />
 					</div>
 					<div className="flex flex-row-reverse items-center gap-5">
 						{/* <InstallButton /> */}
@@ -102,12 +92,10 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 				<div
 					className={` shimmer flex flex-col flex-grow transition-all duration-300 ease-in-out px-0 md:px-0 mt-8 md:mt-0 mb-2 m-0 p-0 h-screen ${state === "expanded" ? "ml-0 w-full md:ml-0 md:p-0  " : "ml-0 md:ml-0 w-full md:max-w-[80vw]"}`}>
-						
 					<div className={"layout-inset "} />
-					<div className={` md:w-full animated-gradient   mx-0  p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-16 md:mx-0 pl-0  md:my-2   ${state === "expanded" ? "m-0 md:ml-0 md:p-0  lg:px-2 lg:pb-8 max-w-full" : "pl-12 pr-24 md:ml-0  min-w-screen  "}`} >
-						
+					<div
+						className={` md:w-full animated-gradient   mx-0  p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-16 md:mx-0 pl-0  md:my-2   ${state === "expanded" ? "m-0 md:ml-0 md:p-0  lg:px-2 lg:pb-8 max-w-full" : "pl-12 pr-24 md:ml-0  min-w-screen  "}`}>
 						{children}
-
 					</div>
 					<Footer />
 				</div>
@@ -201,8 +189,6 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 	);
 }
 function ProfileForm({ setOpenMobileDrawer }: { setOpenMobileDrawer: (open: boolean) => void }) {
-
-
 	const mobileNav = navItems;
 
 	return (
@@ -214,7 +200,6 @@ function ProfileForm({ setOpenMobileDrawer }: { setOpenMobileDrawer: (open: bool
 							// Parent item with subItems - not clickable
 							<div className=" bg-teal-900/30 rounded-lg flex text-left flex-col items-start justify-start  mx-auto gap-2 font-medium border border-cyan-200/10 shadow-lg shadow-cyan-400/10 text-shadow-cyan-900/10 text-cyan-100/70 max-w-[70%] md:max-w-full backdrop-blur-md my-0 p-0 ">
 								<div className="flex pl-8 flex-row items-center justify-start gap-2 mt-4">
-
 									{item.icon && <item.icon className="size-4 opacity-[0.5]" />}
 									{item.title}
 								</div>
@@ -226,7 +211,6 @@ function ProfileForm({ setOpenMobileDrawer }: { setOpenMobileDrawer: (open: bool
 												href={subItem.url}
 												onClick={() => setOpenMobileDrawer(false)}
 												className="py-3 bg-white/10 rounded-lg flex text-left flex-row items-center justify-start cursor-pointer gap-2 font-normal shadow-sm text-cyan-100/60 max-w-[60%] px-8 backdrop-blur-sm min-w-full my-0">
-
 												{subItem.name}
 											</Link>
 										</li>
