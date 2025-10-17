@@ -57,9 +57,9 @@
 
 			/* Handle */
 			::-webkit-scrollbar-thumb {
-				outline: 1px solid var(--secondary) !important;
+				outline: 2cap solid var(--secondary) !important;
 
-				background: hsla(206.07 77.96% 51.96% / 0.88);
+				background: hsla(255.87 73.46% 58.63% / 0.58);
 				/* Color of the scroll thumb */
 				border-radius: 4px;
 				/* height: 100px !important; */
