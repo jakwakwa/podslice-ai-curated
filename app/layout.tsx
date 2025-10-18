@@ -3,11 +3,10 @@ import { dark } from "@clerk/themes";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-
 import type React from "react";
+import { Toaster } from "sonner";
 import { GlobalAudioPlayerSheet } from "@/components/ui/global-audio-player-sheet";
 import { GlobalProgressBar } from "@/components/ui/global-progress-bar";
-import { Toaster } from "@/components/ui/sonner";
 import { ClientProviders } from "./client-providers";
 
 import "./globals.css";
@@ -59,7 +58,7 @@ export default function RootLayout({
 				<ClerkProvider
 					publishableKey={clerkPublishableKey || ""}
 					appearance={{
-						baseTheme: dark,
+						baseTheme: [dark],
 						variables: { colorPrimary: "#0AB38E", colorBackground: "#3932593d", colorPrimaryForeground: "#000", colorForeground: "#9cc69b", colorInputForeground: "#000000" },
 						signIn: { variables: { colorPrimaryForeground: "#3f347d", colorForeground: "#9eb1c2", colorInputForeground: "#000000", borderRadius: "2rem" } },
 					}}>
