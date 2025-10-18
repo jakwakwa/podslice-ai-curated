@@ -49,19 +49,19 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 			<SidebarInset>
 				<header
-					className={`fixed flex h-18 bg-header backdrop-blur-[4px]  shadow-[0_4px_8px_1px_rgba(0,0,0,0.3)] overflow-hidden shrink-0 items-center border-none gap-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 mt-0 max-w-screen justify-between px-4  py-0 overflow-y-scrol  duration-300 z-50 ${state === "expanded" ? "" : "collapsed"}`}>
+					className={`fixed flex h-14	 bg-header backdrop-blur-[4px]  shadow-[0_4px_8px_1px_rgba(0,0,0,0.3)] overflow-hidden shrink-0 items-center border-none gap-4 transition-[width,height]  group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 mt-0 max-w-screen justify-between px-4  py-0 overflow-y-scrol  duration-700 ease-in-out z-50 ${state === "expanded" ? "" : "collapsed"}`}>
 					<div className={`flex items-center h-14 justify-start  ${state === "expanded" ? "md:px-4 w-[240px]" : "md:px-0 w-[80px] "}`}>
 						<Link href="/" className={`flex items-center h-24 justify-center gap-2   ${state === "expanded" ? "md:px-4" : "md:px-0"}`}>
 
 						{!isMobile ?
 							<Image
-								className={`transition-all flex flex-row items-center  duration-75 w-full ${state === "expanded" ? "h-14 max-w-[94px] " : "max-w-[40px]   justify-center"}`}
+								className={`transition-all flex flex-row items-center  duration-300 ease-in-out w-full ${state === "expanded" ? "h-14 max-w-[94px] " : "max-w-[40px]   justify-center"}`}
 								src={`${state === "expanded" ? "/logo" : "/icon"}.svg`}
 								width={100}
 								height={14}
 								alt={`Menu`}
 							/> : 			<Image
-							className={`transition-all flex flex-row items-center  duration-75 w-full ${state === "expanded" ? "h-14 max-w-[94px] " : "max-w-[40px]   justify-center"}`}
+							className={`transition-all flex flex-row items-center  duration-300 ease-in-out w-full ${state === "expanded" ? "h-14 max-w-[94px] " : "max-w-[40px]   justify-center"}`}
 							src={"/icon.svg"}
 							width={100}
 							height={14}

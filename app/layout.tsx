@@ -59,8 +59,8 @@ export default function RootLayout({
 					publishableKey={clerkPublishableKey || ""}
 					appearance={{
 						baseTheme: [dark],
-						variables: { colorPrimary: "#0AB38E", colorBackground: "#3932593d", colorPrimaryForeground: "#000", colorForeground: "#9cc69b", colorInputForeground: "#000000" },
-						signIn: { variables: { colorPrimaryForeground: "#3f347d", colorForeground: "#9eb1c2", colorInputForeground: "#000000", borderRadius: "2rem" } },
+						variables: { colorPrimary: "rgb(122 178 237)", colorBackground: "#051D31D8", colorPrimaryForeground: "#95C2E4", colorForeground: "rgba(198 229 242 / 0.82)", colorInputForeground: "rgb(27 56 123)" },
+						signIn: { variables: { colorPrimaryForeground: "#3f347d", colorForeground: "#9eb1c2", colorInputForeground: "rgb(174 162 231)", borderRadius: "2rem" } },
 					}}>
 					<ClientProviders>
 						{children}

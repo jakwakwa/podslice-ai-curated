@@ -57,7 +57,7 @@
 
 			/* Handle */
 			::-webkit-scrollbar-thumb {
-				outline: 2cap solid var(--secondary) !important;
+				outline: 4px solid hsla(255.87 73.46% 58.63% / 0.98) !important;
 
 				background: hsla(255.87 73.46% 58.63% / 0.58);
 				/* Color of the scroll thumb */
@@ -669,7 +669,7 @@
 
 
 			.cl-rootBox {
-				background-color: #090B11BD !important;
+				/* background-color: #090B11BD !important; */
 				width: 60%;
 				/* max-width: 100px; */
 				/* min-width: 200px; */
@@ -717,7 +717,7 @@
 
 			h1.cl-headerTitle {
 				display: none !important;
-				height: 100px !important;
+				/* height: 100px !important; */
 			}
 
 			.cl-headerSubtitle {
@@ -1266,7 +1266,7 @@
 				min-height: auto;
 				max-width: 65vw;
 				overflow: hidden !important;
-				background-color: #10214F !important;
+				/* background-color: #041135 !important; */
 			}
 
 
@@ -1285,7 +1285,7 @@
 				background: transparent !important;
 				background: none !important;
 				padding-bottom: 0px !important;
-				background: #131419 !important;
+				background: #222C6154 !important;
 			}
 
 
@@ -1311,6 +1311,7 @@
 				background-color: #131516 !important;
 				max-width: 90% !important;
 				min-width: 70% !important;
+
 				/* border: 0px solid #7ad7d200 !important; */
 				border-radius: 0px;
 				box-shadow: 0px 6px 5px 1px #06060677, 0px 2px 4px 0px #1A162457, 0px 1px 150px 0px #69A3F00D inset, 0px 1px 1px 0px #D5FCF711 inset;
@@ -1322,7 +1323,7 @@
 			}
 
 			.cl-cardBox {
-
+				margin-top: 12px !important;
 				/* background-color: #040405ED !important; */
 				max-width: 100% !important;
 				overflow: hidden;
@@ -1337,8 +1338,9 @@
 			}
 
 			.cl-navbar {
-				background: #00919E;
-				/* background: #080909EC !important; */
+
+				/* background: #00919E; */
+				background: #0B032846 !important;
 			}
 
 			.cl-formFieldRow {
