@@ -140,5 +140,4 @@ function getStorage() {
 ## Misc
 - Use existing shadcn/ui components and theme tokens for UI.
 - Keep Tailwind usage as-is unless converting to CSS Modules per workspace rules.
-- After changes, ensure `pnpm build` and `pnpm lint` pass before merging.
 

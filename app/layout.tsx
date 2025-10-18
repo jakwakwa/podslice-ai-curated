@@ -1,13 +1,13 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import { dark, shadcn } from "@clerk/themes";
+import { dark } from "@clerk/themes";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import type React from "react";
-import { Toaster } from "sonner";
 import { GlobalAudioPlayerSheet } from "@/components/ui/global-audio-player-sheet";
 import { GlobalProgressBar } from "@/components/ui/global-progress-bar";
+import { Toaster } from "@/components/ui/sonner";
 import { ClientProviders } from "./client-providers";
 
 import "./globals.css";
@@ -53,14 +53,13 @@ export default function RootLayout({
 				<link rel="preconnect" href="https://fonts.googleapis.com" />
 				<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Vend+Sans:wght@500&display=swap" rel="stylesheet" />
-
 			</head>
 			<body className={`${InterSans.className}`}>
 				<GlobalProgressBar />
 				<ClerkProvider
 					publishableKey={clerkPublishableKey || ""}
 					appearance={{
-						baseTheme: [dark, shadcn],
+						baseTheme: dark,
 						variables: { colorPrimary: "#0AB38E", colorBackground: "#3932593d", colorPrimaryForeground: "#000", colorForeground: "#9cc69b", colorInputForeground: "#000000" },
 						signIn: { variables: { colorPrimaryForeground: "#3f347d", colorForeground: "#9eb1c2", colorInputForeground: "#000000", borderRadius: "2rem" } },
 					}}>

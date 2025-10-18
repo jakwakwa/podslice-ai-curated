@@ -1,0 +1,5 @@
+---
+alwaysApply: false
+---
+# CRITICAL:
+- After changes, ensure `pnpm build` and `pnpm lint` pass before merging.

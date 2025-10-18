@@ -33,21 +33,16 @@ yarn-error.log*
 
 # env files
 .env*
-env.example.txt
 # vercel
 .vercel
 
 # typescript
-*.tsbuildinfo
-next-env.d.ts
 .package-lock.json
 .yarn.lock
 .DS_Store
 .clerk/
 /.clerk/
 # /src/generated/prisma
-.vscode/v0-ai-curated-podcast-app.code-workspace
-.env*.local
 
 .flaskenv*
 # never commit raw creds
