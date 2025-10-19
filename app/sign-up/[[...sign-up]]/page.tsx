@@ -5,15 +5,13 @@ export default function SignInPage() {
 	return (
 		<>
 
-			{/* <div className="grid-bg background-base heroSection  rounded-none" /> */}
-			{/* <div className="large-blur background-base" /> */}
-			{/* <div className="background-overlay" /> */}
 
-
-			<div className="grid-bg background-base heroSection rounded-none max-h-screen" />
 			{/* <div className="large-blur background-base" /> */}
-			{/* <div className="background-overlay" /> */}
-			<div className=" flex items-center	 justify-center   min-h-screen relative z-10 rounded-none">
+
+			<div className=" background-base rounded-none backdrop-blur-2xl mix-blend-normal opacity-25 fixed -z-100 min-h-screen" />
+			<div className="flex flex-col bg-gray-900/80 content-center items-center justify-center min-h-screen h-fit relative z-1 mix-blend-screen" >
+				{/* <div className="background-overlay" /> */}
+
 				<SignUp />
 
 			</div>

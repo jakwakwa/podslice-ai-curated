@@ -4,13 +4,14 @@ import "@/styles/login.css";
 export default function SignInPage() {
 	return (
 		<>
-			{/* <div className="container login-background-base" /> */}
-			{/* <div className="grid-bg background-base heroSection rounded-none" /> */}
-			{/* <div className="large-blur background-base" /> */}
-			{/* <div className="background-overlay" /> */}
-			<div className=" flex items-center	 justify-center h-full max-h-[90vh] relative z-10 rounded-none">
+			<div className=" background-base rounded-none backdrop-blur-2xl mix-blend-normal opacity-25 fixed -z-100 min-h-screen" />
+			<div className="flex flex-col bg-gray-900/80 content-center items-center justify-center min-h-screen h-fit relative z-1 mix-blend-screen">
+
+
 				<SignIn />
 			</div>
+
 		</>
+
 	);
 }

@@ -62,7 +62,7 @@ export default function LandingPageContent() {
 		<div className="max-w-full w-screen md:w-full flex flex-col justify-center items-center content-center mx-auto px-8 md:px-0 pb-4 md:py-0  gap-0 mb-0 ">
 			{/* <HomePageBackground /> */}
 			<LandingPageHeader />
-			<div className={`${styles.grainBackground} background-base`} />
+
 			<div className={`${styles.gridBackground} background-base`} />
 			{/* Hero Section */}
 			<section className={`${styles.heroSection} min-w-screen my-0 py-0 mix-blend-multiply `}>
@@ -73,7 +73,7 @@ export default function LandingPageContent() {
 					}}
 				/>
 				<div className={styles.heroContainer}>
-					{/* <div className={"grain-blur background-base left-50 top-70"} /> */}
+
 
 					<div className={styles.heroContent}>
 						<motion.h1 className={styles.heroHeading} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}>
@@ -92,7 +92,7 @@ export default function LandingPageContent() {
 						transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}>
 						<Link href="/sign-in">
 							<div>
-								<div className={`${styles.heroBtn} text-amber-50 ` }>Start Free Trial</div>
+								<div className={`${styles.heroBtn} text-amber-50 `}>Start Free Trial</div>
 							</div>
 						</Link>
 					</motion.div>
@@ -202,7 +202,7 @@ export default function LandingPageContent() {
 					</div>
 				</div>
 			</section>
-			
+
 			<Footer />
 		</div>
 	);

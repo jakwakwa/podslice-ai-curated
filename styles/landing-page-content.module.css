@@ -107,10 +107,10 @@
 }
 
 .grainBackground {
-	background-image: url('/assets/background/grain-bg.svg') repeat center;
+
 	background-color: oklch(0.24 0.03 214.44 / 0.13);
 	mix-blend-mode: darken, darken !important;
-	background-blend-mode: overlay,color-burn !important;
+	background-blend-mode: overlay, color-burn !important;
 	position: absolute;
 	opacity: 100;
 	background-size: 200% 200%;
@@ -130,7 +130,7 @@
 	left: 0;
 	right: 0;
 	top: 0;
-	background: url('/assets/backgrounds/grid-bg.svg') no-repeat;
+
 
 }
 

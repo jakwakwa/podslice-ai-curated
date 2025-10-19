@@ -1,5 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
+import { shadcn, neobrutalism, dark, shadesOfPurple } from "@clerk/themes";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -58,10 +58,19 @@ export default function RootLayout({
 				<ClerkProvider
 					publishableKey={clerkPublishableKey || ""}
 					appearance={{
-						baseTheme: [dark],
-						variables: { colorPrimary: "rgb(122 178 237)", colorBackground: "#051D31D8", colorPrimaryForeground: "#95C2E4", colorForeground: "rgba(198 229 242 / 0.82)", colorInputForeground: "rgb(27 56 123)" },
-						signIn: { variables: { colorPrimaryForeground: "#3f347d", colorForeground: "#9eb1c2", colorInputForeground: "rgb(174 162 231)", borderRadius: "2rem" } },
-					}}>
+						baseTheme: [dark, shadesOfPurple],
+						variables: { colorPrimary: 'aqua' },
+						signIn: {
+							baseTheme: [shadesOfPurple],
+							variables: { colorPrimary: 'lightseagreen' },
+						},
+						signUp: {
+							baseTheme: [shadesOfPurple],
+							variables: { colorPrimary: 'lightseagreen' },
+						},
+
+					}}
+				>
 					<ClientProviders>
 						{children}
 						<Toaster closeButton />

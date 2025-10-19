@@ -1,97 +1,88 @@
 .login-background-base {
-  width: 100%;
-  position: absolute;
-  z-index: -1;
-  /* height: 100vh; */
+	width: 100%;
+	position: absolute;
+	z-index: -1;
 }
 
 /* Layout */
 .container {
-  /* position: fixed; */
-  position: sticky;
-  width: 100%;
-  max-width: 100%;
-  top: 0%;
-  margin: 0;
-  padding: 0px 0 0 0;
-  /* height: fit-content; */
-  /* text-align: left; */
-  overflow-y: hidden;
-  /* background: oklab(8.932% 0.00576 -0.00387 / 0.944) 120%; */
-  background-position: 100% 190%, 100% 190%, 100% 190%, 100% 180%, 100% 150% !important;
-  background-attachment: fixed;
-  background-repeat: repeat;
-  /* background-size: 400% 400%, 400% 400%, 400% 400%, 400% 400%, 400% 400% !important; */
-  /* mix-blend-mode: normal !important; */
-  /* background-image: linear-gradient(to bottom, oklch(0% 0 0 / 0.959), oklch(19.01% 0.01413 284.965 / 0.972)) !important; */
-  /* background-blend-mode: screen !important; */
-  /* background-size: 110% 110%, 100% 100%, 150% 150% !important; */
-  /* z-index: -2 !important; */
+	/* position: fixed; */
+	position: sticky;
+	width: 100%;
+	max-width: 100%;
+	top: 0%;
+	margin: 0;
+	padding: 0px 0 0 0;
+	/* height: fit-content; */
+	/* text-align: left; */
+	overflow-y: hidden;
+	background-position: 100% 190%, 100% 190%, 100% 190%, 100% 180%, 100% 150% !important;
+	background-attachment: fixed;
+	background-repeat: repeat;
+	/* background-size: 400% 400%, 400% 400%, 400% 400%, 400% 400%, 400% 400% !important; */
+	/* mix-blend-mode: normal !important; */
+	/* background-image: linear-gradient(to bottom, oklch(0% 0 0 / 0.959), oklch(19.01% 0.01413 284.965 / 0.972)) !important; */
+	/* background-blend-mode: screen !important; */
+	/* background-size: 110% 110%, 100% 100%, 150% 150% !important; */
+	/* z-index: -2 !important; */
 }
 
 /* Hero */
 .heroSection {
-  /* position: relative; */
-  position: absolute;
-  padding-top: 0rem !important;
-  padding-bottom: 2.5rem;
-  margin-bottom: 0rem;
-  height: 140%;
-  width: 100%;
-  /* max-width: 100%; */
-  /* min-height: 100vh; */
-  padding: 0rem 1.5rem;
-  overflow: hidden;
+	/* position: relative; */
+	position: absolute;
+	padding-top: 0rem !important;
+	padding-bottom: 2.5rem;
+	margin-bottom: 0rem;
+	height: 140%;
+	width: 100%;
+	/* max-width: 100%; */
+	/* min-height: 100vh; */
+	padding: 0rem 1.5rem;
+	overflow: hidden;
 
-  background-image: url('/assets/background/grain-bg.svg'), radial-gradient(120% 120% at 0% 0%,
-      oklch(84.33% 0.11825 191.818 / 0.296) -20%,
-      oklch(0% 0 0 / 0.66) 40%,
-      oklab(17.716% 0.01665 -0.04693 / 0.749) 120%),
-    radial-gradient(120% 120% at 100% 100%,
-      oklch(55.561% 0.06203 273.128) -20%,
-      oklch(43.529% 0.01009 300.985 / 0.879) 40%,
-      oklab(38.188% -0.03071 -0.02638 / 0.46) 120%),
-    radial-gradient(120% 120% at 100% 0%,
-      oklch(62.151% 0.09075 165.131 / 0.623) 20%,
-      oklch(31.398% 0.07186 245.083 / 0.483) 40%,
-      oklab(13.519% -0.01495 -0.0087 / 0.749) 120%),
-    radial-gradient(120% 120% at 0% 100%,
-      oklch(64.779% 0.05987 198.689 / 0.932) 20%,
-      oklch(59.56% 0.08836 295.464 / 0.938) 40%,
-      oklab(59.4% -0.04816 -0.15124 / 0.56) 120%) !important;
-  text-align: center;
-  /* overflow: hidden; */
-  /* position: absolute; */
-  z-index: 0 !important;
-  border-radius: 0px !important
+	background-image: radial-gradient(120% 120% at 0% 0%,
+			oklch(84.33% 0.11825 191.818 / 0.296) -20%,
+			oklch(0% 0 0 / 0.66) 40%,
+			oklab(17.716% 0.01665 -0.04693 / 0.749) 120%),
+		radial-gradient(120% 120% at 100% 100%,
+			oklch(55.561% 0.06203 273.128) -20%,
+			oklch(43.529% 0.01009 300.985 / 0.879) 40%,
+			oklab(38.188% -0.03071 -0.02638 / 0.46) 120%),
+		radial-gradient(120% 120% at 100% 0%,
+			oklch(62.151% 0.09075 165.131 / 0.623) 20%,
+			oklch(31.398% 0.07186 245.083 / 0.483) 40%,
+			oklab(13.519% -0.01495 -0.0087 / 0.749) 120%),
+		radial-gradient(120% 120% at 0% 100%,
+			oklch(64.779% 0.05987 198.689 / 0.932) 20%,
+			oklch(59.56% 0.08836 295.464 / 0.938) 40%,
+			oklab(59.4% -0.04816 -0.15124 / 0.56) 120%) !important;
+	text-align: center;
+	/* overflow: hidden; */
+	/* position: absolute; */
+	z-index: 0 !important;
+	border-radius: 0px !important
 }
 
 .heroBackground {
-  position: absolute;
-  /* overflow-y: hidden; */
-  /* height: auto; */
-  background: oklch(44.971% 0.0836 277.387 / 0.757) no-repeat;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
+	position: absolute;
+	/* overflow-y: hidden; */
+	/* height: auto; */
+	background: oklch(44.971% 0.0836 277.387 / 0.757) no-repeat;
+	background-position: center;
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+	background-size: cover;
 
-  background-blend-mode: normal !important;
-  background-size: 110% 110%, 100% 100%, 150% 150% !important;
+	background-blend-mode: normal !important;
+	background-size: 110% 110%, 100% 100%, 150% 150% !important;
 
 }
 
-.grid-bg {
-  background: url('/assets/background/grid-bg.svg') no-repeat;
-}
-
-.grain-background {
-  mix-blend-mode: overlay;
-  background: url('/assets/background/grain-bg.svg') repeat;
-}
 
 .login-gradient-background {
-  background: url('/assets/background/login-gradient.svg') no-repeat top;
+	background: oklch(0.31 0.1 301.27 / 0.76) no-repeat !important;
+
 }
 
 .login-card-border,
@@ -99,89 +90,89 @@
 .login-card-vertical-hard-blur,
 .login-card-soft-blur,
 .login-card-yellow-highlight {
-  position: relative;
+	position: relative;
 }
 
 .login-card-border::before {
-  content: '';
-  z-index: -1;
-  position: absolute;
-  inset: 0;
-  border-radius: 16px 16px 0 0;
-  padding: 1px 1px 0;
-  background: linear-gradient(180deg, #414b4e 49.5%, rgba(65, 75, 78, 0) 100%);
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
+	content: '';
+	z-index: -1;
+	position: absolute;
+	inset: 0;
+	border-radius: 16px 16px 0 0;
+	padding: 1px 1px 0;
+	background: linear-gradient(180deg, #414b4e 49.5%, rgba(65, 75, 78, 0) 100%);
+	-webkit-mask:
+		linear-gradient(#fff 0 0) content-box,
+		linear-gradient(#fff 0 0);
+	-webkit-mask-composite: xor;
+	mask-composite: exclude;
 }
 
 .login-card-hard-blur::before {
-  content: '';
-  width: 88px;
-  height: 4px;
-  position: absolute;
-  left: 50%;
-  margin-left: -44px;
-  top: -2px;
-  background: #fff800;
-  opacity: 0.5;
-  filter: blur(12px);
+	content: '';
+	width: 88px;
+	height: 4px;
+	position: absolute;
+	left: 50%;
+	margin-left: -44px;
+	top: -2px;
+	background: #fff800;
+	opacity: 0.5;
+	filter: blur(12px);
 }
 
 .login-card-vertical-hard-blur::before {
-  content: '';
-  width: 128px;
-  height: 280px;
-  position: absolute;
-  left: 50%;
-  margin-left: -64px;
-  top: -140px;
-  border-radius: 280px;
-  opacity: 0.1;
-  background: #fff800;
-  filter: blur(48px);
+	content: '';
+	width: 128px;
+	height: 280px;
+	position: absolute;
+	left: 50%;
+	margin-left: -64px;
+	top: -140px;
+	border-radius: 280px;
+	opacity: 0.1;
+	background: #fff800;
+	filter: blur(48px);
 }
 
 .login-card-small-soft-blur::before {
-  width: 250px;
+	width: 250px;
 }
 
 .login-card-medium-soft-blur::before {
-  width: 384px;
+	width: 384px;
 }
 
 .login-card-soft-blur::before {
-  content: '';
-  height: 37px;
-  position: absolute;
-  left: 52px;
-  top: -19px;
-  border-radius: 384px;
-  opacity: 0.2;
-  background: #fff800;
-  filter: blur(32px);
+	content: '';
+	height: 37px;
+	position: absolute;
+	left: 52px;
+	top: -19px;
+	border-radius: 384px;
+	opacity: 0.2;
+	background: #fff800;
+	filter: blur(32px);
 }
 
 .login-card-small-yellow-highlight::before {
-  width: 250px;
-  margin-left: -125px;
+	width: 250px;
+	margin-left: -125px;
 }
 
 .login-card-medium-yellow-highlight::before {
-  width: 384px;
-  margin-left: -192px;
+	width: 384px;
+	margin-left: -192px;
 }
 
 .login-card-yellow-highlight::before {
-  content: '';
-  height: 1px;
-  left: 50%;
+	content: '';
+	height: 1px;
+	left: 50%;
 
-  position: absolute;
-  background: linear-gradient(90deg,
-      rgba(255, 255, 255, 0) 15%,
-      rgba(255, 248, 0, 0.9) 50%,
-      rgba(255, 255, 255, 0) 85%);
+	position: absolute;
+	background: linear-gradient(90deg,
+			rgba(255, 255, 255, 0) 15%,
+			rgba(255, 248, 0, 0.9) 50%,
+			rgba(255, 255, 255, 0) 85%);
 }
