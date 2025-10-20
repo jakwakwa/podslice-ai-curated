@@ -61,9 +61,12 @@ export function EpisodeStatusTable({ defaultExpanded = true }: EpisodeStatusTabl
 				});
 
 				// Auto-expand when new episode appears
-				if (!isOpen) {
-					setIsOpen(true);
-				}
+				setIsOpen((prevIsOpen) => {
+					if (!prevIsOpen) {
+						return true;
+					}
+					return prevIsOpen;
+				});
 			} catch (error) {
 				console.error("[EPISODE_STATUS_TABLE] Failed to parse update:", error);
 			}
@@ -77,7 +80,7 @@ export function EpisodeStatusTable({ defaultExpanded = true }: EpisodeStatusTabl
 		return () => {
 			eventSource.close();
 		};
-	}, [isOpen]);
+	}, []); // Empty dependency array - connection should persist for component lifetime
 
 	// Filter out completed/failed episodes after a delay
 	useEffect(() => {
