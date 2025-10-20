@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import type { EpisodeFailedEmailProps, EpisodeReadyEmailProps, SubscriptionExpiringEmailProps, TestEmailProps, TrialEndingEmailProps, WeeklyReminderEmailProps } from "@/src/emails";
 import { EMAIL_TEMPLATES } from "@/src/emails";
 import { renderEmailSync } from "@/src/emails/render";
+import { getAppUrl } from "@/lib/env";
 
 export interface EmailNotification {
 	to: string;
@@ -79,17 +80,42 @@ class EmailService {
 		}
 	}
 
+	private async sendViaInternalProxy(notification: EmailNotification): Promise<boolean> {
+		try {
+			const baseUrl = getAppUrl() || process.env.NEXT_PUBLIC_APP_URL || "";
+			const url = `${baseUrl.replace(/\/$/, "")}/api/internal/send-email`;
+			const secret = process.env.INTERNAL_API_SECRET;
+			if (!baseUrl || !secret) {
+				console.warn("Email proxy unavailable - missing NEXT_PUBLIC_APP_URL/getAppUrl or INTERNAL_API_SECRET");
+				return false;
+			}
+			const res = await fetch(url, {
+				method: "POST",
+				headers: {
+					"content-type": "application/json",
+					"x-internal-secret": secret,
+				},
+				body: JSON.stringify(notification),
+			});
+			if (!res.ok) {
+				console.error("Email proxy request failed:", res.status, await res.text());
+				return false;
+			}
+			return true;
+		} catch (err) {
+			console.error("Email proxy error:", err);
+			return false;
+		}
+	}
+
 	async sendEmail(notification: EmailNotification): Promise<boolean> {
 		// Lazy initialize on first use
 		this.initializeClient();
 
-		if (!this.client) {
-			console.warn("Resend client not available - check RESEND_API_KEY");
-			return false;
-		}
-		if (!process.env.EMAIL_FROM) {
-			console.warn("EMAIL_FROM not set - cannot send email");
-			return false;
+		if (!this.client || !process.env.EMAIL_FROM) {
+			console.warn("Primary email transport unavailable; attempting proxy...");
+			const proxied = await this.sendViaInternalProxy(notification);
+			return proxied;
 		}
 
 		try {
@@ -107,7 +133,9 @@ class EmailService {
 			return true;
 		} catch (error) {
 			console.error("Failed to send email via Resend:", error);
-			return false;
+			// Fallback to proxy if direct send fails
+			const proxied = await this.sendViaInternalProxy(notification);
+			return proxied;
 		}
 	}
 
