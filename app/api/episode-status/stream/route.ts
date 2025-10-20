@@ -53,6 +53,7 @@ export async function GET(request: Request) {
 							episode_id: true,
 							episode_title: true,
 							status: true,
+							progress_message: true,
 							created_at: true,
 							updated_at: true,
 						},
@@ -60,21 +61,24 @@ export async function GET(request: Request) {
 						take: 10,
 					});
 
-					// Check for status changes
+					// Check for status changes or progress updates
 					for (const episode of episodes) {
 						const lastStatus = lastSeenStatus.get(episode.episode_id);
-						if (lastStatus !== episode.status) {
+						const hasStatusChanged = lastStatus !== episode.status;
+						
+						// Always send update if status changed, or if there's an active progress message
+						if (hasStatusChanged || episode.progress_message) {
 							lastSeenStatus.set(episode.episode_id, episode.status);
 							
-						// Send update with user-friendly message
-						const message = getStatusMessage(episode.status);
-						const data = {
-							episodeId: episode.episode_id,
-							episodeTitle: episode.episode_title,
-							status: episode.status,
-							message,
-							timestamp: new Date().toISOString(),
-						};
+							// Use progress message if available, otherwise use status-based message
+							const message = episode.progress_message || getStatusMessage(episode.status);
+							const data = {
+								episodeId: episode.episode_id,
+								episodeTitle: episode.episode_title,
+								status: episode.status,
+								message,
+								timestamp: new Date().toISOString(),
+							};
 							
 							controller.enqueue(
 								encoder.encode(`data: ${JSON.stringify(data)}\n\n`)

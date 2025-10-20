@@ -167,17 +167,26 @@ export function EpisodeStatusTable({ defaultExpanded = true }: EpisodeStatusTabl
 									>
 										<TableCell className="font-medium">
 											<div className="flex flex-col gap-1">
-												<span>{episode.episodeTitle}</span>
+												<span className="line-clamp-1">{episode.episodeTitle}</span>
 												<span className="text-xs text-muted-foreground">
-													{new Date(episode.timestamp).toLocaleTimeString()}
+													Started {new Date(episode.timestamp).toLocaleTimeString()}
 												</span>
 											</div>
 										</TableCell>
 										<TableCell>
 											<StatusBadge status={episode.status} />
 										</TableCell>
-										<TableCell className="text-sm text-muted-foreground">
-											{episode.message}
+										<TableCell className="text-sm">
+											<div className="flex flex-col gap-1">
+												<span className={cn(
+													episode.status === "PROCESSING" && "text-blue-400 font-medium",
+													episode.status === "COMPLETED" && "text-green-400 font-medium",
+													episode.status === "FAILED" && "text-red-400",
+													episode.status === "PENDING" && "text-muted-foreground"
+												)}>
+													{episode.message}
+												</span>
+											</div>
 										</TableCell>
 									</TableRow>
 								))}

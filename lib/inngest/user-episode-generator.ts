@@ -81,12 +81,20 @@ export const generateUserEpisode = inngest.createFunction(
 		await step.run("update-status-to-processing", async () => {
 			return await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
-				data: { status: "PROCESSING" },
+				data: { 
+					status: "PROCESSING",
+					progress_message: "Getting started—preparing your episode for processing..."
+				},
 			});
 		});
 
 		// Step 1: Get Transcript from Database
 		const transcript = await step.run("get-transcript", async () => {
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: { progress_message: "Loading your video transcript..." },
+			});
+			
 			const episode = await prisma.userEpisode.findUnique({
 				where: { episode_id: userEpisodeId },
 			});
@@ -104,6 +112,11 @@ export const generateUserEpisode = inngest.createFunction(
 
 		// Step 2: Generate TRUE neutral summary (chunked if large)
 		const summary = await step.run("generate-summary", async () => {
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: { progress_message: "Analyzing content and extracting key insights..." },
+			});
+			
 			const modelName = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
 			const text = await generateObjectiveSummary(transcript, { modelName });
 			await prisma.userEpisode.update({
@@ -127,6 +140,11 @@ export const generateUserEpisode = inngest.createFunction(
 
 		// Step 4: Convert to Audio - Upload chunks to GCS immediately to avoid memory/opcode limits
 		const chunkUrls = await step.run("generate-and-upload-tts-chunks", async () => {
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: { progress_message: "Converting script to audio with your selected voice..." },
+			});
+			
 			const chunkWordLimit = getTtsChunkWordLimit();
 			const scriptParts = splitScriptIntoChunks(script, chunkWordLimit);
 			const urls: string[] = [];
@@ -134,6 +152,13 @@ export const generateUserEpisode = inngest.createFunction(
 
 			for (let i = 0; i < scriptParts.length; i++) {
 				console.log(`[TTS] Generating and uploading chunk ${i + 1}/${scriptParts.length}`);
+				
+				// Update progress with current chunk
+				await prisma.userEpisode.update({
+					where: { episode_id: userEpisodeId },
+					data: { progress_message: `Generating audio (part ${i + 1} of ${scriptParts.length})...` },
+				});
+				
 				const buf = await generateSingleSpeakerTts(scriptParts[i]);
 				// Upload immediately to GCS, return only the URL
 				const chunkFileName = `${tempPath}/chunk-${i}.wav`;
@@ -146,6 +171,11 @@ export const generateUserEpisode = inngest.createFunction(
 		});
 
 		const { gcsAudioUrl, durationSeconds } = await step.run("download-combine-upload-audio", async () => {
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: { progress_message: "Stitching audio segments together into your final episode..." },
+			});
+			
 			// Download chunks from GCS, combine them, and upload final file
 			const { getStorageReader, parseGcsUri } = await import("@/lib/inngest/utils/gcs");
 			const storageReader = getStorageReader();
@@ -196,6 +226,7 @@ export const generateUserEpisode = inngest.createFunction(
 					gcs_audio_url: gcsAudioUrl,
 					duration_seconds: durationSeconds,
 					status: "COMPLETED",
+					progress_message: null, // Clear progress message on completion
 				},
 			});
 		});
