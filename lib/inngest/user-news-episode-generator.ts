@@ -58,6 +58,7 @@ export const generateUserNewsEpisode = inngest.createFunction(
 		name: "Generate User News Episode Workflow",
 		retries: 2,
 		onFailure: async ({ event }) => {
+			// TODO: Send email notifications alongside the in-app notifications
 			const { userEpisodeId } = (event as unknown as { data: { event: { data: { userEpisodeId?: string } } } }).data.event.data;
 			if (!userEpisodeId) return;
 			await prisma.userEpisode.update({
@@ -83,8 +84,9 @@ export const generateUserNewsEpisode = inngest.createFunction(
 						},
 					});
 				}
+				// TODO: Send email notifications alongside the in-app notifications - not working - no issues with resend I checked
 				if (user?.email) {
-					const userFirstName = (user.name || "").trim().split(" ")[0] || "there";
+					const userFirstName = (user.name || "Podcast Member").trim().split(" ")[0] || "there";
 					await emailService.sendEpisodeFailedEmail(episode.user_id, user.email, {
 						userFirstName,
 						episodeTitle: episode.episode_title,
@@ -128,7 +130,7 @@ export const generateUserNewsEpisode = inngest.createFunction(
 			aljazeera: ["aljazeera.com"],
 			worldbank: ["worldbank.org"],
 			un: ["news.un.org"],
-			stocks: ["finance.yahoo.com", "barrons.com", "www.tradingview.com/news/"],
+			stocks: ["finance.yahoo.com", "tradingview.com/news/", "coindesk.com/", "seekingalpha.com/market-news", "perplexity.ai/finance"],
 		} as const;
 
 		// Build domain constraints string
