@@ -23,13 +23,31 @@ export async function GET(request: Request) {
 			// Function to send episode updates
 			const sendUpdate = async () => {
 				try {
-					// Fetch in-progress and pending episodes
+					// Fetch episodes:
+					// - All PENDING and PROCESSING episodes (active work)
+					// - COMPLETED and FAILED episodes updated in the last 5 minutes (terminal states)
+					const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+					
 					const episodes = await prisma.userEpisode.findMany({
 						where: {
 							user_id: userId,
-							status: {
-								in: ["PENDING", "PROCESSING"]
-							}
+							OR: [
+								// Active episodes (always include)
+								{
+									status: {
+										in: ["PENDING", "PROCESSING"]
+									}
+								},
+								// Recently completed/failed episodes (for final status updates)
+								{
+									status: {
+										in: ["COMPLETED", "FAILED"]
+									},
+									updated_at: {
+										gte: fiveMinutesAgo
+									}
+								}
+							]
 						},
 						select: {
 							episode_id: true,
