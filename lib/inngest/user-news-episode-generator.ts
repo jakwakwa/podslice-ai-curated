@@ -2,7 +2,6 @@ import { createVertex } from "@ai-sdk/google-vertex";
 import { generateText } from "ai";
 import { z } from "zod";
 import { extractUserEpisodeDuration } from "@/app/(protected)/admin/audio-duration/duration-extractor";
-import emailService from "@/lib/email-service";
 import { getEpisodeTargetMinutes } from "@/lib/env";
 import { ensureGoogleCredentialsForADC } from "@/lib/google-credentials";
 import { combineAndUploadWavChunks, generateSingleSpeakerTts, getTtsChunkWordLimit, splitScriptIntoChunks, uploadBufferToPrimaryBucket } from "@/lib/inngest/episode-shared";
@@ -57,8 +56,7 @@ export const generateUserNewsEpisode = inngest.createFunction(
 		id: "generate-user-news-episode-workflow",
 		name: "Generate User News Episode Workflow",
 		retries: 2,
-		onFailure: async ({ event }) => {
-			// TODO: Send email notifications alongside the in-app notifications
+		onFailure: async ({ event, step }) => {
 			const { userEpisodeId } = (event as unknown as { data: { event: { data: { userEpisodeId?: string } } } }).data.event.data;
 			if (!userEpisodeId) return;
 			await prisma.userEpisode.update({
@@ -73,7 +71,7 @@ export const generateUserNewsEpisode = inngest.createFunction(
 				if (!episode) return;
 				const user = await prisma.user.findUnique({
 					where: { user_id: episode.user_id },
-					select: { in_app_notifications: true, email: true, name: true },
+					select: { in_app_notifications: true },
 				});
 				if (user?.in_app_notifications) {
 					await prisma.notification.create({
@@ -84,14 +82,11 @@ export const generateUserNewsEpisode = inngest.createFunction(
 						},
 					});
 				}
-				// TODO: Send email notifications alongside the in-app notifications - not working - no issues with resend I checked
-				if (user?.email) {
-					const userFirstName = (user.name || "Podcast Member").trim().split(" ")[0] || "there";
-					await emailService.sendEpisodeFailedEmail(episode.user_id, user.email, {
-						userFirstName,
-						episodeTitle: episode.episode_title,
-					});
-				}
+				// Trigger email via separate function
+				await step.sendEvent("send-failed-email", {
+					name: "episode.failed.email",
+					data: { userEpisodeId },
+				});
 			} catch (err) {
 				console.error("[USER_NEWS_FAILED_NOTIFY]", err);
 			}
@@ -485,8 +480,8 @@ ${summaryContent}`,
 			return result;
 		});
 
-		// Notify user (in-app + email)
-		await step.run("notify-user", async () => {
+		// Notify user (in-app notification only)
+		await step.run("notify-user-in-app", async () => {
 			const episode = await prisma.userEpisode.findUnique({
 				where: { episode_id: userEpisodeId },
 				select: { episode_id: true, episode_title: true, user_id: true },
@@ -496,11 +491,7 @@ ${summaryContent}`,
 
 			const user = await prisma.user.findUnique({
 				where: { user_id: episode.user_id },
-				select: { email: true, name: true, in_app_notifications: true },
-			});
-			const profile = await prisma.userCurationProfile.findFirst({
-				where: { user_id: episode.user_id, is_active: true },
-				select: { name: true },
+				select: { in_app_notifications: true },
 			});
 
 			if (user?.in_app_notifications) {
@@ -512,20 +503,12 @@ ${summaryContent}`,
 					},
 				});
 			}
+		});
 
-			if (user?.email) {
-				const userFirstName = (user.name || "").trim().split(" ")[0] || "there";
-				const profileName = profile?.name ?? "Your personalized feed";
-				const baseUrl = process.env.EMAIL_LINK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || "";
-				const episodeUrl = `${baseUrl}/my-episodes/${encodeURIComponent(userEpisodeId)}`;
-
-				await emailService.sendEpisodeReadyEmail(episode.user_id, user.email, {
-					userFirstName,
-					episodeTitle: episode.episode_title,
-					episodeUrl,
-					profileName,
-				});
-			}
+		// Trigger email via separate function (runs in Next.js runtime)
+		await step.sendEvent("send-ready-email", {
+			name: "episode.ready.email",
+			data: { userEpisodeId },
 		});
 
 		return {

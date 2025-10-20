@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { extractUserEpisodeDuration } from "@/app/(protected)/admin/audio-duration/duration-extractor";
 import { aiConfig } from "@/config/ai";
-import emailService from "@/lib/email-service";
 import { combineAndUploadWavChunks, uploadBufferToPrimaryBucket } from "@/lib/inngest/episode-shared";
 import { generateTtsAudio, generateText as genText } from "@/lib/inngest/utils/genai";
 import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
@@ -43,7 +42,7 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		id: "generate-user-episode-multi-workflow",
 		name: "Generate User Episode Multi-Speaker Workflow",
 		retries: 2,
-		onFailure: async ({ event }) => {
+		onFailure: async ({ event, step }) => {
 			const { userEpisodeId } = (event as unknown as { data: { event: { data: { userEpisodeId: string } } } }).data.event.data;
 			if (!userEpisodeId) {
 				console.error("[USER_EPISODE_MULTI_FAILED] Missing userEpisodeId in failure event", event);
@@ -61,7 +60,7 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 				if (episode) {
 					const user = await prisma.user.findUnique({
 						where: { user_id: episode.user_id },
-						select: { in_app_notifications: true, email: true, name: true },
+						select: { in_app_notifications: true },
 					});
 					if (user?.in_app_notifications) {
 						await prisma.notification.create({
@@ -72,13 +71,11 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 							},
 						});
 					}
-					if (user?.email) {
-						const userFirstName = (user.name || "").trim().split(" ")[0] || "there";
-						await emailService.sendEpisodeFailedEmail(episode.user_id, user.email, {
-							userFirstName,
-							episodeTitle: episode.episode_title,
-						});
-					}
+					// Trigger email via separate function
+					await step.sendEvent("send-failed-email", {
+						name: "episode.failed.email",
+						data: { userEpisodeId },
+					});
 				}
 			} catch (notifyError) {
 				console.error("[USER_EPISODE_FAILED_NOTIFY]", notifyError);
@@ -245,22 +242,16 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 			return result;
 		});
 
-		await step.run("notify-user", async () => {
+		await step.run("notify-user-in-app", async () => {
 			const episode = await prisma.userEpisode.findUnique({
 				where: { episode_id: userEpisodeId },
 				select: { episode_id: true, episode_title: true, user_id: true },
 			});
 			if (!episode) return;
-			const [user, profile] = await Promise.all([
-				prisma.user.findUnique({
-					where: { user_id: episode.user_id },
-					select: { email: true, name: true, in_app_notifications: true },
-				}),
-				prisma.userCurationProfile.findFirst({
-					where: { user_id: episode.user_id, is_active: true },
-					select: { name: true },
-				}),
-			]);
+			const user = await prisma.user.findUnique({
+				where: { user_id: episode.user_id },
+				select: { in_app_notifications: true },
+			});
 			if (user?.in_app_notifications) {
 				await prisma.notification.create({
 					data: {
@@ -270,18 +261,12 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 					},
 				});
 			}
-			if (user?.email) {
-				const userFirstName = (user.name || "").trim().split(" ")[0] || "there";
-				const profileName = profile?.name ?? "Your personalized feed";
-				const baseUrl = process.env.EMAIL_LINK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || "";
-				const episodeUrl = `${baseUrl}/my-episodes/${encodeURIComponent(userEpisodeId)}`;
-				await emailService.sendEpisodeReadyEmail(episode.user_id, user.email, {
-					userFirstName,
-					episodeTitle: episode.episode_title,
-					episodeUrl,
-					profileName,
-				});
-			}
+		});
+
+		// Trigger email via separate function (runs in Next.js runtime)
+		await step.sendEvent("send-ready-email", {
+			name: "episode.ready.email",
+			data: { userEpisodeId },
 		});
 
 		return {

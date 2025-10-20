@@ -2,7 +2,7 @@ import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
 import type { EpisodeFailedEmailProps, EpisodeReadyEmailProps, SubscriptionExpiringEmailProps, TestEmailProps, TrialEndingEmailProps, WeeklyReminderEmailProps } from "@/src/emails";
 import { EMAIL_TEMPLATES } from "@/src/emails";
-import { renderEmailSync } from "@/src/emails/render";
+import { renderEmail } from "@/src/emails/render";
 import { getAppUrl } from "@/lib/env";
 
 export interface EmailNotification {
@@ -108,6 +108,38 @@ class EmailService {
 		}
 	}
 
+	private async sendTemplateViaProxy(templateId: string, to: string, props: any): Promise<boolean> {
+		try {
+			const baseUrl = process.env.EMAIL_LINK_BASE_URL || getAppUrl() || process.env.NEXT_PUBLIC_APP_URL || "";
+			const url = `${baseUrl.replace(/\/$/, "")}/api/internal/send-email`;
+			const secret = process.env.INTERNAL_API_SECRET;
+			if (!baseUrl || !secret) {
+				console.warn("Email proxy unavailable - missing NEXT_PUBLIC_APP_URL/getAppUrl or INTERNAL_API_SECRET");
+				return false;
+			}
+			const res = await fetch(url, {
+				method: "POST",
+				headers: {
+					"content-type": "application/json",
+					"x-internal-secret": secret,
+				},
+				body: JSON.stringify({
+					templateId,
+					to,
+					props,
+				}),
+			});
+			if (!res.ok) {
+				console.error("Email template proxy request failed:", res.status, await res.text());
+				return false;
+			}
+			return true;
+		} catch (err) {
+			console.error("Email template proxy error:", err);
+			return false;
+		}
+	}
+
 	async sendEmail(notification: EmailNotification): Promise<boolean> {
 		// Lazy initialize on first use
 		this.initializeClient();
@@ -160,16 +192,23 @@ class EmailService {
 			profileName: data.profileName,
 		};
 
-		const { html, text } = renderEmailSync(EMAIL_TEMPLATES.EPISODE_READY.component, emailProps);
+		// Try to render email - if this fails (e.g., in Inngest runtime), send template data to proxy
+		try {
+			const { html, text } = await renderEmail(EMAIL_TEMPLATES.EPISODE_READY.component, emailProps);
 
-		const notification: EmailNotification = {
-			to: userEmail,
-			subject: EMAIL_TEMPLATES.EPISODE_READY.getSubject(emailProps),
-			text,
-			html,
-		};
+			const notification: EmailNotification = {
+				to: userEmail,
+				subject: EMAIL_TEMPLATES.EPISODE_READY.getSubject(emailProps),
+				text,
+				html,
+			};
 
-		return await this.sendEmail(notification);
+			return await this.sendEmail(notification);
+		} catch (renderError) {
+			console.warn("Email rendering failed in current runtime, using proxy with template data:", renderError);
+			// Send raw template data to proxy for rendering
+			return await this.sendTemplateViaProxy("EPISODE_READY", userEmail, emailProps);
+		}
 	}
 
 	// Episode failed notification
@@ -184,16 +223,21 @@ class EmailService {
 			episodeTitle: data.episodeTitle,
 		};
 
-		const { html, text } = renderEmailSync(EMAIL_TEMPLATES.EPISODE_FAILED.component, emailProps);
+		try {
+			const { html, text } = await renderEmail(EMAIL_TEMPLATES.EPISODE_FAILED.component, emailProps);
 
-		const notification: EmailNotification = {
-			to: userEmail,
-			subject: EMAIL_TEMPLATES.EPISODE_FAILED.getSubject(emailProps),
-			text,
-			html,
-		};
+			const notification: EmailNotification = {
+				to: userEmail,
+				subject: EMAIL_TEMPLATES.EPISODE_FAILED.getSubject(emailProps),
+				text,
+				html,
+			};
 
-		return await this.sendEmail(notification);
+			return await this.sendEmail(notification);
+		} catch (renderError) {
+			console.warn("Email rendering failed, using proxy:", renderError);
+			return await this.sendTemplateViaProxy("EPISODE_FAILED", userEmail, emailProps);
+		}
 	}
 
 	// Trial ending notification
@@ -209,7 +253,7 @@ class EmailService {
 			upgradeUrl: data.upgradeUrl,
 		};
 
-		const { html, text } = renderEmailSync(EMAIL_TEMPLATES.TRIAL_ENDING.component, emailProps);
+		const { html, text } = await renderEmail(EMAIL_TEMPLATES.TRIAL_ENDING.component, emailProps);
 
 		const notification: EmailNotification = {
 			to: userEmail,
@@ -234,7 +278,7 @@ class EmailService {
 			renewUrl: data.renewUrl,
 		};
 
-		const { html, text } = renderEmailSync(EMAIL_TEMPLATES.SUBSCRIPTION_EXPIRING.component, emailProps);
+		const { html, text } = await renderEmail(EMAIL_TEMPLATES.SUBSCRIPTION_EXPIRING.component, emailProps);
 
 		const notification: EmailNotification = {
 			to: userEmail,
@@ -257,7 +301,7 @@ class EmailService {
 			userName,
 		};
 
-		const { html, text } = renderEmailSync(EMAIL_TEMPLATES.WEEKLY_REMINDER.component, emailProps);
+		const { html, text } = await renderEmail(EMAIL_TEMPLATES.WEEKLY_REMINDER.component, emailProps);
 
 		const notification: EmailNotification = {
 			to: userEmail,
@@ -275,7 +319,7 @@ class EmailService {
 			recipientEmail: to,
 		};
 
-		const { html, text } = renderEmailSync(EMAIL_TEMPLATES.TEST.component, emailProps);
+		const { html, text } = await renderEmail(EMAIL_TEMPLATES.TEST.component, emailProps);
 
 		const notification: EmailNotification = {
 			to,

@@ -5,7 +5,6 @@ import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
 // TODO: Consider switching to Google Cloud Text-to-Speech API for stable TTS
 
 import { extractUserEpisodeDuration } from "@/app/(protected)/admin/audio-duration/duration-extractor";
-import emailService from "@/lib/email-service";
 // aiConfig consumed indirectly via shared helpers
 // Shared helpers
 import { combineAndUploadWavChunks, generateSingleSpeakerTts, getTtsChunkWordLimit, splitScriptIntoChunks, uploadBufferToPrimaryBucket } from "@/lib/inngest/episode-shared";
@@ -28,7 +27,7 @@ export const generateUserEpisode = inngest.createFunction(
 		id: "generate-user-episode-workflow",
 		name: "Generate User Episode Workflow",
 		retries: 2,
-		onFailure: async ({ error: _error, event }) => {
+		onFailure: async ({ error: _error, event, step }) => {
 			const { userEpisodeId } = (event as unknown as { data: { event: { data: { userEpisodeId: string } } } }).data.event.data;
 			if (!userEpisodeId) {
 				console.error("[USER_EPISODE_FAILED] Missing userEpisodeId in failure event", event);
@@ -48,7 +47,7 @@ export const generateUserEpisode = inngest.createFunction(
 				if (episode) {
 					const user = await prisma.user.findUnique({
 						where: { user_id: episode.user_id },
-						select: { in_app_notifications: true, email: true, name: true },
+						select: { in_app_notifications: true },
 					});
 					if (user?.in_app_notifications) {
 						await prisma.notification.create({
@@ -59,13 +58,11 @@ export const generateUserEpisode = inngest.createFunction(
 							},
 						});
 					}
-					if (user?.email) {
-						const userFirstName = (user.name || "").trim().split(" ")[0] || "there";
-						await emailService.sendEpisodeFailedEmail(episode.user_id, user.email, {
-							userFirstName,
-							episodeTitle: episode.episode_title,
-						});
-					}
+					// Trigger email via separate function
+					await step.sendEvent("send-failed-email", {
+						name: "episode.failed.email",
+						data: { userEpisodeId },
+					});
 				}
 			} catch (notifyError) {
 				console.error("[USER_EPISODE_FAILED_NOTIFY]", notifyError);
@@ -243,8 +240,8 @@ export const generateUserEpisode = inngest.createFunction(
 		// Step 6: Episode Usage is now tracked by counting UserEpisode records
 		// No need to update subscription table - usage is calculated dynamically
 
-		// Step 7: Notify user (in-app + email)
-		await step.run("notify-user", async () => {
+		// Step 7: Notify user (in-app notification only)
+		await step.run("notify-user-in-app", async () => {
 			const episode = await prisma.userEpisode.findUnique({
 				where: { episode_id: userEpisodeId },
 				select: { episode_id: true, episode_title: true, user_id: true },
@@ -252,16 +249,10 @@ export const generateUserEpisode = inngest.createFunction(
 
 			if (!episode) return;
 
-			const [user, profile] = await Promise.all([
-				prisma.user.findUnique({
-					where: { user_id: episode.user_id },
-					select: { email: true, name: true, in_app_notifications: true },
-				}),
-				prisma.userCurationProfile.findFirst({
-					where: { user_id: episode.user_id, is_active: true },
-					select: { name: true },
-				}),
-			]);
+			const user = await prisma.user.findUnique({
+				where: { user_id: episode.user_id },
+				select: { in_app_notifications: true },
+			});
 
 			if (user?.in_app_notifications) {
 				await prisma.notification.create({
@@ -272,20 +263,12 @@ export const generateUserEpisode = inngest.createFunction(
 					},
 				});
 			}
+		});
 
-			if (user?.email) {
-				const userFirstName = (user.name || "").trim().split(" ")[0] || "there";
-				const profileName = profile?.name ?? "Your personalized feed";
-				const baseUrl = process.env.EMAIL_LINK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || "";
-				const episodeUrl = `${baseUrl}/my-episodes/${encodeURIComponent(userEpisodeId)}`;
-
-				await emailService.sendEpisodeReadyEmail(episode.user_id, user.email, {
-					userFirstName,
-					episodeTitle: episode.episode_title,
-					episodeUrl,
-					profileName,
-				});
-			}
+		// Step 8: Trigger email notification (runs in Next.js runtime)
+		await step.sendEvent("send-ready-email", {
+			name: "episode.ready.email",
+			data: { userEpisodeId },
 		});
 
 		return {
