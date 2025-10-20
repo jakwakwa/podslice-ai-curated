@@ -4,6 +4,7 @@ import { BundleFeedSection } from "@/components/dashboard/bundle-feed-section";
 import { DashboardClientWrapper } from "@/components/dashboard/dashboard-client-wrapper";
 import { BundleFeedSkeleton, RecentListSkeleton } from "@/components/dashboard/dashboard-skeleton";
 import { RecentEpisodesList } from "@/components/dashboard/recent-episodes-list";
+import { EpisodeStatusTable } from "@/components/dashboard/episode-status-table";
 import { PageHeader } from "@/components/ui/page-header";
 import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
 import { prisma } from "@/lib/prisma";
@@ -48,6 +49,9 @@ export default async function DashboardPage() {
 	return (
 		<div className="my-blur animated-background h-full min-h-[84vh] rounded-none px-0 mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:rounded-4xl md:mt-0 md:p-8 md:w-full md:episode-card-wrapper bg-bigcard">
 			<PageHeader title={dashboardCopy.header.title} description={dashboardCopy.header.description} />
+
+			{/* Episode Generation Status - Real-time updates */}
+			<EpisodeStatusTable defaultExpanded={true} />
 
 			{/* Bundle Feed Section */}
 			{hasBundle && userCurationProfile ? (

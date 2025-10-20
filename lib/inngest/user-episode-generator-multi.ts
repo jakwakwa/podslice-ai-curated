@@ -97,11 +97,19 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		await step.run("update-status-to-processing", async () => {
 			return await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
-				data: { status: "PROCESSING" },
+				data: { 
+					status: "PROCESSING",
+					progress_message: "Getting started—preparing your multi-speaker episode..."
+				},
 			});
 		});
 
 		const transcript = await step.run("get-transcript", async () => {
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: { progress_message: "Loading your video transcript..." },
+			});
+			
 			const episode = await prisma.userEpisode.findUnique({
 				where: { episode_id: userEpisodeId },
 			});
@@ -113,6 +121,11 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		const isShort = useShortEpisodesOverride ?? aiConfig.useShortEpisodes;
 
 		const summary = await step.run("generate-summary", async () => {
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: { progress_message: "Analyzing content and extracting key insights..." },
+			});
+			
 			const modelName = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
 			const text = await generateObjectiveSummary(transcript, { modelName });
 			await prisma.userEpisode.update({
@@ -122,8 +135,13 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 			return text;
 		});
 
-		const duetLines = await step.run("generate-duet-script", async () => {
-			const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
+	const duetLines = await step.run("generate-duet-script", async () => {
+		await prisma.userEpisode.update({
+			where: { episode_id: userEpisodeId },
+			data: { progress_message: "Crafting an engaging two-host conversation script..." },
+		});
+		
+		const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
 			const text = await genText(
 				modelName2,
 				`Task: Based on the SUMMARY below, write a two-host podcast conversation where Podslice hosts A and B explain the highlights to listeners. Alternate speakers naturally. Keep it ${isShort ? "short (~1 minute)" : "around 3-5 minutes)"}.\n\nIdentity & framing:\n- Hosts are from Podslice and are commenting on someone else's content.\n- They do NOT reenact or impersonate the original speakers.\n- They present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly, spoken by A):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken dialogue only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as “the video” or “the episode.”\n\nOutput ONLY valid JSON array of objects with fields: speaker ("A" or "B") and text (string). No markdown.\n\nSUMMARY:\n${summary}`
@@ -133,12 +151,24 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 
 		// TTS for all dialogue lines - Upload chunks to GCS immediately
 		const lineChunkUrls = await step.run("generate-and-upload-dialogue-audio", async () => {
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: { progress_message: "Converting dialogue to audio with your selected voices..." },
+			});
+			
 			const urls: string[] = [];
 			const tempPath = `user-episodes/${userEpisodeId}/temp-dialogue-chunks`;
 
 			for (let i = 0; i < duetLines.length; i++) {
 				const line = duetLines[i];
 				console.log(`[TTS] Generating and uploading line ${i + 1}/${duetLines.length} (Speaker ${line.speaker})`);
+				
+				// Update progress with current line
+				await prisma.userEpisode.update({
+					where: { episode_id: userEpisodeId },
+					data: { progress_message: `Generating dialogue audio (line ${i + 1} of ${duetLines.length})...` },
+				});
+				
 				const voice = line.speaker === "A" ? voiceA : voiceB;
 				const audio = await ttsWithVoice(line.text, voice);
 				// Upload immediately to GCS
@@ -152,6 +182,11 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		});
 
 		const { gcsAudioUrl, durationSeconds } = await step.run("download-combine-upload-multi-voice", async () => {
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: { progress_message: "Stitching dialogue segments into your final episode..." },
+			});
+			
 			// Download chunks from GCS, combine them, and upload final file
 			const { getStorageReader, parseGcsUri } = await import("@/lib/inngest/utils/gcs");
 			const storageReader = getStorageReader();
@@ -192,7 +227,12 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		await step.run("finalize-episode", async () => {
 			return await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
-				data: { gcs_audio_url: gcsAudioUrl, status: "COMPLETED", duration_seconds: durationSeconds },
+				data: { 
+					gcs_audio_url: gcsAudioUrl, 
+					status: "COMPLETED", 
+					duration_seconds: durationSeconds,
+					progress_message: null, // Clear progress message on completion
+				},
 			});
 		});
 

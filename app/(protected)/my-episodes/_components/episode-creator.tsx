@@ -257,7 +257,7 @@ export function EpisodeCreator() {
 				if (!res.ok) throw new Error(await res.text());
 				toast.message("We're processing your episode and will email you when it's ready.", { duration: Infinity, action: { label: "Dismiss", onClick: () => { } } });
 				resumeAfterSubmission();
-				router.push("/dashboard");
+				router.push("/dashboard?from=generate");
 				return;
 			}
 
@@ -302,7 +302,7 @@ export function EpisodeCreator() {
 			if (!res.ok) throw new Error(await res.text());
 			toast.message("We're processing your episode and will email you when it's ready.", { duration: Infinity, action: { label: "Dismiss", onClick: () => { } } });
 			resumeAfterSubmission();
-			router.push("/dashboard");
+			router.push("/dashboard?from=generate");
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Failed to start episode generation.");
 			toast.error((err instanceof Error ? err.message : "Failed to start episode generation.") || "", { duration: Infinity, action: { label: "Dismiss", onClick: () => { } } });

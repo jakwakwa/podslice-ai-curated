@@ -66,6 +66,7 @@ export function SharedBundleView({ bundle, bundleId }: SharedBundleViewProps) {
 				status: "COMPLETED",
 				duration_seconds: episode.duration_seconds,
 				news_sources: null,
+				progress_message: null,
 				news_topic: null,
 				is_public: false,
 				public_gcs_audio_url: null,

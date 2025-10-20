@@ -70,7 +70,7 @@ export function RecentEpisodesList({ episodes, showCurateControlButton = false }
 											<PlayButton
 												onClick={() => {
 													// Create a normalized episode for the audio player
-													const normalizedEpisode: UserEpisode = {
+														const normalizedEpisode: UserEpisode = {
 														episode_id: episode.episode_id,
 														episode_title: episode.episode_title,
 														gcs_audio_url: episode.signedAudioUrl,
@@ -81,6 +81,7 @@ export function RecentEpisodesList({ episodes, showCurateControlButton = false }
 														youtube_url: episode.youtube_url,
 														transcript: episode.transcript,
 														status: episode.status,
+															progress_message: episode.progress_message ?? null,
 														duration_seconds: episode.duration_seconds,
 														news_sources: episode.news_sources ?? null,
 														news_topic: episode.news_topic ?? null,
