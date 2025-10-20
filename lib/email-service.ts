@@ -82,7 +82,7 @@ class EmailService {
 
 	private async sendViaInternalProxy(notification: EmailNotification): Promise<boolean> {
 		try {
-			const baseUrl = getAppUrl() || process.env.NEXT_PUBLIC_APP_URL || "";
+			const baseUrl = process.env.EMAIL_LINK_BASE_URL || getAppUrl() || process.env.NEXT_PUBLIC_APP_URL || "";
 			const url = `${baseUrl.replace(/\/$/, "")}/api/internal/send-email`;
 			const secret = process.env.INTERNAL_API_SECRET;
 			if (!baseUrl || !secret) {
@@ -119,12 +119,19 @@ class EmailService {
 		}
 
 		try {
+			// Defensive: ensure primitives are strings for Resend API
+			const to = typeof notification.to === "string" ? notification.to : String(notification.to);
+			const subject =
+				typeof notification.subject === "string" ? notification.subject : String(notification.subject);
+			const text = typeof notification.text === "string" ? notification.text : String(notification.text);
+			const html = typeof notification.html === "string" ? notification.html : String(notification.html);
+
 			const result = await this.client.emails.send({
 				from: process.env.EMAIL_FROM,
-				to: notification.to,
-				subject: notification.subject,
-				text: notification.text,
-				html: notification.html,
+				to,
+				subject,
+				text,
+				html,
 			});
 			if ((result as { error?: unknown }).error) {
 				console.error("Resend send error:", (result as { error: unknown }).error);
