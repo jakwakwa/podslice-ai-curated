@@ -328,10 +328,10 @@
   --sidebar-shadow: oklch(0.48 0.27 273.8 / 0.48);
   --sidebar-menu: oklch(0.14 0 285.82 / 0);
   --primary: hsla(220.71 33.33% 16.47% / 0.91);
-  --primary-foreground: hsla(180 2.38% 83.53% / 0.9);
+  --primary-foreground: rgb(102 200 255 / 0.9);
   --secondary: hsla(206.8 98.1% 20.59% / 0.61);
-  --secondary-foreground: hsl(223.64 79.71% 86.47%);
-  --secondary-foreground-muted: hsla(212 68.18% 91.37% / 0.7);
+  --secondary-foreground: rgb(200 240 255 / 0.9);
+  --secondary-foreground-muted: rgb(171 224 244 / 65%);
   /* --muted: hsl(217.65 41.46% 24.12%); */
   --destructive: hsl(331.97 91.97% 48.82%);
   --destructive-foreground: hsl(334.69 51.61% 48.63%);
@@ -401,8 +401,8 @@
 .dark {
   --background: #1a223e;
 
-  --foreground: oklch(0.85 0.07 265.95 / 0.82);
-  --card: hsl(226.67 85.71% 91.76%);
+  --foreground: rgb(102 200 255 / 0.9);
+  --primary-foreground: rgb(102 200 255 / 0.9);
   --card-foreground: hsla(210.73 100% 91.96% / 0.92);
   --bundle-card: oklch(0.53 0.11 232.98 / 0.23);
   --bundle-card-foreground: oklch(0.85 0.07 262.96);
@@ -423,7 +423,7 @@
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: color(a98-rgb 0.86 0.15 0.33);
+  --chart-5: rgba(0.86 0.15 0.33);
   --sidebar: oklch(0.46 0.11 289.09 / 0.29);
   --sidebar-foreground: oklch(0.64 0.13 234.66 / 0.86);
   --sidebar-primary: oklch(0.8 0.1 275.86);
@@ -436,7 +436,7 @@
   --sidebar-shadow: oklch(0.48 0.27 273.8 / 0.48);
   --sidebar-menu: oklch(0.14 0 285.82 / 0);
   --primary: hsla(220.71 33.33% 16.47% / 0.91);
-  --primary-foreground: hsla(180 2.38% 83.53% / 0.9);
+
   --secondary: hsla(208.3 63.86% 16.27% / 0.87);
   --secondary-foreground: hsl(223.64 79.71% 86.47%);
   --secondary-foreground-muted: hsla(212 68.18% 91.37% / 0.7);
@@ -468,10 +468,10 @@
   --audio-sheet-foreground: rgba(27 69 77 / 0.66);
   --audio-sheet-border: #4d46cfc9;
   --audio-sheet-accent: hsl(184.71 70.71% 61.18%);
-  /* --container-gradient: linear-gradient(to bottom, oklab(0.56 -0.07 -0.07 / 0.36) -20%, #31315D70 150%); */
   --inset-gradient: linear-gradient(
     oklch(0.37 0.06 194.93 / 0.93) -40%,
-    oklch(0.3 0.09 283.58) 90%
+    oklch(0.3 0.09 283.58),
+    90%
   );
   --bigepisode-gradient: linear-gradient(
     0deg,
@@ -749,15 +749,6 @@
     opacity: 1;
     /* background-position: top; */
   }
-
-  .cl-rootBox {
-    /* background-color: #090B11BD !important; */
-    /* width: 60%; */
-  }
-
-  /* img.cl-logoImage {} */
-
-  /* .cl-card {} */
 
   h1.cl-headerTitle {
     display: none !important;
