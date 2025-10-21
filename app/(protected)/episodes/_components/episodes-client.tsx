@@ -129,7 +129,7 @@ export function EpisodesClient({
 
   return (
     <div className="border-1 border-border rounded-none overflow-hidden mb-0 p-0 mt-0 md:mt-4 md:m-0 md:p-0 outline-0 md:rounded-4xl md:shadow-xl">
-      <div className="text-left md:pt-8 rounded-none my-0 py-0 md:mb-5 md:pb-7 overflow-hidden md:rounded-4xl md:py-0 min-w-full min-h-full bg-primary/70">
+      <div className="text-left md:pt-8 rounded-none my-0 py-0 md:mb-5 md:pb-7 overflow-hidden md:rounded-4xl md:py-0 min-w-full min-h-full bg-episode-card-wrapper">
         {/* Header and Filter in Responsive Flex Container */}
         <div className="flex flex-col md:flex-row justify-between items-start w-full gap-2 px-6 xl:px-12 py-8 md:pt-8">
           {/* Section Header Content */}

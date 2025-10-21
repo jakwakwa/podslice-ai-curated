@@ -686,19 +686,7 @@
 		/* backdrop-filter: blur(8px) !important; */
 	}
 
-	.bg-bundle-card,
-	.bg-bundle {
-		padding-bottom: 16px !important;
-		border-radius: 18px;
-		background-color: var(--sidebar);
-		box-shadow: inset -5px -4px 59px 2px #0e0e10ea,
-			inset 0.5px 1px 0px 0px #4ce3db72,
-			3px 2px 3px 1px #000000cd,
-			0px 4px 10px 0px #00000062 !important;
-		/* outline-offset: 1px !important; */
-		/* backdrop-filter: blur(10px) !important; */
-		transition: all 0.2s ease-in-out;
-	}
+
 }
 
 

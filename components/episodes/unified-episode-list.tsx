@@ -97,14 +97,14 @@ export function UnifiedEpisodeList({
 		);
 	}
 
-	const layoutClasses = layout === "grid" 
+	const layoutClasses = layout === "grid"
 		? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
 		: "w-full inline-flex flex-col gap-1";
 
 	return (
 		<div className="border-[#ffffff0e] relative">
 			<div className="top-shadow"></div>
-			<div className="relative transition-all duration-200 text-card-foreground episode-card-wrapper-dark rounded-xl p-0 md:min-h-[420px] w-full h-fit">
+			<div className="relative transition-all duration-200 text-card-foreground  rounded-xl p-0 md:min-h-[420px] w-full h-fit">
 				<CardContent>
 					<ul className={layoutClasses}>
 						{filteredEpisodes.map((episode) => {

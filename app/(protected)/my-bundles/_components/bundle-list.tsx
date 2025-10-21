@@ -126,16 +126,16 @@ export function BundleList() {
 	}
 
 	return (
-		<Card className="episode-card-wrapper h-full min-h-[61vh]">
+		<div className="episode-card-wrapper h-full min-h-[61vh]">
 			<div>
 				{isLoading && (
-					<Card>
-						<CardContent className="episode-card-wrapper-dark space-y-2 flex-col flex w-full">
+					<div>
+						<div className="episode-card-wrapper-dark space-y-2 flex-col flex w-full">
 							<Skeleton className="bg-[#2f4383]/30 h-[120px] w-full animate-pulse" />
 							<Skeleton className="bg-[#2f4383]/30 h-[120px] w-full animate-pulse" />
 							<Skeleton className="bg-[#2f4383]/30 h-[120px] w-full animate-pulse" />
-						</CardContent>
-					</Card>
+						</div>
+					</div>
 				)}
 				{!isLoading && (!bundles || bundles.length === 0) ? (
 					<div className="text-center py-12">
@@ -198,6 +198,6 @@ export function BundleList() {
 					</div>
 				) : null}
 			</div>
-		</Card>
+		</div>
 	);
 }

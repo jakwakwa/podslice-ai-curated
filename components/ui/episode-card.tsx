@@ -39,19 +39,19 @@ export function EpisodeCard({ imageUrl, title, publishedAt, durationSeconds, act
 					// For bundle episodes, use the episode's image_url
 					if (imageUrl) {
 						return (
-							<div className="aspect-video w-full h-fit max-h-[90px] max-w-[150px]   xl:h-42 md:h-32 sm:max-h-[90px] sm:max-w-[140px] lg:h-auto lg:max-h-[90px] lg:hidden xl:flex shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#292e3eed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0ca4fc9e]   lg:min-w-[18%]">
-								<Image src={imageUrl} alt={title} className="h-full w-full inline-flex content-center object-cover mix-blend-screen  shadow-zinc-800  opacity-80 " width={200} height={80} />
+							<div className="aspect-video w-full h-fit max-h-[90px] max-w-[150px]   xl:h-42 md:h-32 sm:max-h-[80px] sm:max-w-[90px] lg:h-auto lg:max-h-[100px] lg:hidden xl:flex shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#292e3eed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0ca4fc9e]  object-cover lg:min-w-[18%]">
+								<Image src={imageUrl} alt={title} className="h-full w-full inline-flex content-center object-contain mix-blend-screen  shadow-zinc-800  opacity-80 " width={200} height={80} />
 							</div>
 						);
 					}
 					// For news episodes, use the generic news placeholder
 					if (isNewsEpisode) {
 						return (
-							<div className="aspect-video w-full h-fit max-h-[140px] max-w-[200px]   xl:h-42 md:h-32 sm:max-h-[90px] sm:max-w-[140px] lg:h-auto lg:max-h-[90px] lg:hidden xl:flex shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#292e3eed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0ca4fc9e]   lg:min-w-[18%]">
+							<div className="aspect-video w-full h-fit max-h-[110px] max-w-[150px]   xl:h-42 md:h-32 sm:max-h-[110px] sm:max-w-[140px] lg:h-auto lg:max-h-[90px] lg:hidden xl:flex shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#3626efc7] shadow-black/35 border-[#421b8bed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-3 outline-indigo-500   lg:min-w-[160px]">
 								<Image
 									src="/generic-news-placeholder.png"
 									alt={title}
-									className="h-full w-full inline-flex content-center object-fit   shadow-zinc-800  opacity-80 "
+									className="h-full w-full inline-flex content-center object-cover mix-blend-screen  shadow-zinc-800  opacity-80 "
 									width={200}
 									height={80}
 								/>
@@ -62,11 +62,11 @@ export function EpisodeCard({ imageUrl, title, publishedAt, durationSeconds, act
 					if (youtubeUrl) {
 						if (youtubeChannelImage) {
 							return (
-								<div className="aspect-video w-full h-fit max-h-[140px] max-w-[200px]   xl:h-42 md:h-32 sm:max-h-[90px] sm:max-w-[140px] lg:h-auto lg:max-h-[90px] lg:hidden xl:flex shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#25026692] shadow-black/35 border-[#292e3eed] rounded-md md:rounded-lg overflow-hidden border-4	 outline-2 outline-[#0ca4fc9e]   lg:min-w-[18%]">
+								<div className="aspect-video w-full h-fit max-h-[90px] max-w-[100px] xl:h-42 md:h-32 sm:max-h-[80px] sm:max-w-[90px] lg:h-auto lg:max-h-[100px] lg:hidden xl:flex bg-[var(--gray-a11)] shadow-md shadow-gray-900/90 border-black rounded-md md:rounded-lg mix-blend-color-multiply   overflow-hidden border-4	 outline-input-ring/70 outline-3  object-cover lg:min-w-[160]">
 									<Image
 										src={youtubeChannelImage}
 										alt={title}
-										className="h-full w-full inline-flex content-center object-cover   shadow-zinc-800  opacity-80 "
+										className="h-full w-full inline-flex content-center mix-blend-screen object-cover opacity-80  shadow-zinc-800"
 										width={300}
 										height={200}
 									/>

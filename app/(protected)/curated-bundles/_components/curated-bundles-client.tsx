@@ -312,10 +312,10 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 		return (
 			<div className="mb-8">
 				<div className="h-8 w-64 bg-[#2f4383]/30 animate-pulse rounded mb-4 px-2 md:px-12 xl:px-[40px]" />
-				<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 xl:grid-cols-3 xl:px-[40px] xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark lg:px-[40px] rounded-3xl border-1 border-[#a497cdfc] shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]">
-					<div className="bg-[#2f4383]/30 h-[500px] w-full animate-pulse rounded-lg" />
-					<div className="bg-[#2f4383]/30 h-[500px] w-full animate-pulse rounded-lg" />
-					<div className="bg-[#2f4383]/30 h-[500px] w-full animate-pulse rounded-lg" />
+				<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 xl:grid-cols-3 xl:px-[40px] xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark lg:p-[40px] rounded-3xl border-1 border-[#513f8bfc] shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]">
+					<div className="bg-[#2f4383]/40 h-[500px] w-full animate-pulse rounded-lg" />
+					<div className="bg-[#2f4383]/40 h-[500px] w-full animate-pulse rounded-lg" />
+					<div className="bg-[#2f4383]/40 h-[500px] w-full animate-pulse rounded-lg" />
 					<div className="bg-[#2f4383]/30 h-[500px] w-full animate-pulse rounded-lg" />
 				</div>
 			</div>
@@ -346,7 +346,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 					<H3 className="text-[1.2rem] text-primary-foreground font-bold font-sans mb-4 px-2 md:px-12 xl:px-[40px]">
 						🎯 Curated by Podslice
 					</H3>
-					<div className="relative transition-all duration-200 text-card-foreground gap-4 p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-3 xl:px-[40px] xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark lg:px-[40px] rounded-3xl shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]">
+					<div className="episode-card-wrapper-dark  relative transition-all duration-200 text-card-foreground gap-4 p-0 px-2 md:px-4 md:py-5 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-3 xl:p-[40px]   lg:px-8 xl:justify-around items-start lg:gap-5 xl:gap-12 h-fit xl:px-[40px] rounded-3xl shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]">
 						{curatedBundles.map(bundle => {
 							const planMeta = PLAN_GATE_META[bundle.min_plan]
 							const canInteract = bundle.canInteract
@@ -386,7 +386,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 													)}
 												</div>
 
-												<Badge className="font-normal bg-sidebar tracking-wide">
+												<Badge className="font-normal bg-sidebar/10 tracking-wide">
 													<Lock size={8} className="mr-2 text-[#fff]" />
 													<Typography className="text-xxs text-[#fff]">Podslice Bundle</Typography>
 												</Badge>
@@ -398,7 +398,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 												<Typography className="text-[0.7rem] text-[#f1e9e9b3] font-normal leading-tight mt-0 mb-0 line-clamp-3">
 													{isShared ? "Episodes in bundle:" : "Included in bundle:"}
 												</Typography>
-												<div className="bg-[#11122772]  p-2 mx-auto shadow-sm rounded-md w-full m-0 outline-1 outline-[#96a6ba63]">
+												<div className="bg-[#3bb8ce22]  p-2 mx-auto shadow-sm rounded-md w-full m-0 outline-1 outline-[#96a6ba63]">
 
 													{isShared ? (
 														<>
@@ -418,11 +418,11 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 															)}
 														</>
 													) : (
-														<div key={bundle.bundle_id} className="w-full flex flex-row flex-wrap gap-1">
+														<div key={bundle.bundle_id} className="w-fit flex flex-col  p-1 gap-1">
 															{bundle.podcasts.slice(0, 4).map((podcast: Podcast, index: number) => (
 
 
-																<span key={podcast.podcast_id} className=" leading-none text-[0.75rem]">
+																<span key={podcast.podcast_id} className="text-primary-foreground-muted leading-none font-light text-[0.75rem]">
 
 																	{podcast.name}{index < bundle.podcasts.length - 1 && "," + "  "}
 
@@ -462,7 +462,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 					<H3 className="text-[1.2rem] text-[#d1a7e7] font-bold font-sans mb-4 px-2 md:px-12 xl:px-[40px]">
 						🎁 Shared by Community
 					</H3>
-					<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-2 xl:px-[40px] xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark lg:px-[40px] rounded-3xl border-1 border-[#a497cdfc] shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]">
+					<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-2 xl:px-[40px] xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark  lg:px-[40px] rounded-3xl border-1 border-[#a497cdfc] shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]">
 						{sharedBundles.map(bundle => {
 							const planMeta = PLAN_GATE_META[bundle.min_plan]
 							const canInteract = bundle.canInteract
@@ -474,7 +474,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 									hoverable={canInteract}
 									selected={selectedBundle ? selectedBundle.bundle_id === bundle.bundle_id : false}
 									key={bundle.bundle_id}
-									className={`flex flex-row sm:flex-col px-5 rounded-4xl bundle-card border-3 border-bundle-card-border w-full transition-shadow duration-200 gap-3 bundle-card-hover xl:max-w-[500px]  xl:overflow-hidden 	 xl:h-[500px] ease-in-out text-shadow-sm shadow-[0_4px_4px_1px_#0506062c] ${canInteract ? "cursor-pointer hover:bg-bundle-card/20 hover:translate-y-1" : "cursor-pointer hover:bg-bundle-card/0 opacity-0"}`}
+
 									onClick={() => handleBundleClick(bundle)}>
 									<CardHeader className="w-full py-4 px-2">
 										<div className="w-full flex flex-col-reverse xl:flex-col-reverse gap-6">

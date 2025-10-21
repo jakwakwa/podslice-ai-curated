@@ -30,11 +30,11 @@ export const cardVariants = cva("", {
 	variants: {
 		variant: {
 			default: "bg-background border text-card-foreground px-4",
-			glass: "md:bg-background/80 md:backdrop-blur-[24px] border text-card-foreground px-4",
+			glass: "md:bg-background/80 md:backdrop-blur-[4px] border text-card-foreground px-4",
 			episode: "bg-linear-to-br from-card/20 via-accent/90 to-muted  hover:shadow-md hover:-translate-y-2 ",
 			transparent: "main-card",
 			bundle:
-				"bg-bundle-card border-2 border-bundle-card-border w-full transition-shadow duration-200 gap-3 bundle-card-hover xl:max-w-[500px]  xl:overflow-hidden rounded-xl 	 xl:h-[500px] ease-in-out text-shadow-sm shadow-[0_4px_4px_1px_#0506062c]",
+				"bg-bundle-card glass border-2 border-bundle-card-border w-full transition-shadow duration-200 gap-3 bundle-card-hover xl:max-w-[500px]  xl:overflow-hidden rounded-xl 	 xl:h-[500px] ease-in-out text-shadow-sm shadow-[0_4px_4px_1px_#0506062c]",
 		},
 		selected: {
 			true: "border-2",
