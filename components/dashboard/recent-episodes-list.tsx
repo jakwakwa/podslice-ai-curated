@@ -87,6 +87,7 @@ export function RecentEpisodesList({
 														episode_title: episode.episode_title,
 														gcs_audio_url: episode.signedAudioUrl,
 														summary: episode.summary,
+														summary_length: episode.summary_length,
 														created_at: episode.created_at,
 														updated_at: episode.updated_at,
 														user_id: episode.user_id,
