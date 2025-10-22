@@ -3,12 +3,10 @@
 import {
   ChevronDown,
   ChevronRight,
-  HammerIcon,
   MessageSquareWarning,
   PlayCircle,
-  SendHorizonal,
   SparklesIcon,
-  YoutubeIcon,
+  VideoIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -556,7 +554,7 @@ export function EpisodeCreator() {
                   {videoTitle && (
                     <div className="bg-black/30 space-y-1 md:col-span-2 py-3 px-2 rounded-xl outline-2 outline-teal-500 shadow-lg max-w-sm  ">
                       <p className=" font-bold text-secondary-foreground flex text-xs items-center gap-2">
-                        <YoutubeIcon width={18} height={18} color="#fecdd7b5" />
+                        <VideoIcon width={18} height={18} color="#fecdd7b5" />
                         Youtube Video
                       </p>
                       <p className="text-secondary-foreground font-semibold text-xs">
