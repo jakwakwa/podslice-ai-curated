@@ -148,9 +148,9 @@ export function NotificationBell() {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        className="w-[400px] max-h-[500px]  z-1000"
-        align="end"
-        sideOffset={8}
+        className="w-[400px] max-h-[500px] top-12  z-[9999999999999]"
+        align="center"
+        sideOffset={2}
       >
         <div className="flex justify-between items-center p-4 border-b  border-border">
           <Typography variant="h3" className="text-lg font-semibold m-0">
@@ -164,7 +164,7 @@ export function NotificationBell() {
                   size="xs"
                   onClick={handleMarkAllAsRead}
                   disabled={isLoading}
-                  className="text-xs px-2 py-1 h-auto text-foreground opacity-50"
+                  className="text-xs px-2 py-1 h-auto text-white"
                 >
                   <EyeIcon size={14} />
                   Mark all
@@ -174,7 +174,7 @@ export function NotificationBell() {
                 variant="outline"
                 size="xs"
                 onClick={handleClearAll}
-                className="text-xs px-2 py-1 h-auto text-foreground/80 "
+                className="text-xs px-2 py-1 h-auto text-primary-foreground "
               >
                 <XCircleIcon size={14} />
                 Clear all
@@ -186,11 +186,14 @@ export function NotificationBell() {
         <div className="max-h-96 overflow-y-auto p-2">
           {notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 px-4 text-center text-muted-foreground">
-              <Bell size={32} className="mb-3" />
-              <p className="mb-1 text-base font-medium text-foreground">
+              <Bell
+                size={32}
+                className="mb-3 text-primary-foreground-muted/40"
+              />
+              <p className="mb-1 text-base font-medium text-primary-foreground-muted/70">
                 No notifications yet
               </p>
-              <small className="text-xs text-foreground">
+              <small className="text-xs text-primary-foreground-muted/70">
                 We'll notify you when new episodes are ready
               </small>
             </div>
