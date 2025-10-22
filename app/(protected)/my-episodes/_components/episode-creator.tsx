@@ -35,6 +35,9 @@ import { PRICING_TIER } from "@/config/paddle-config";
 import { VOICE_OPTIONS } from "@/lib/constants/voices";
 import { getMaxDurationSeconds } from "@/lib/env";
 import { useNotificationStore } from "@/lib/stores";
+import { SummaryLengthSelector } from "@/components/features/episode-generation/summary-length-selector";
+import { LongEpisodeWarningDialog } from "@/components/features/episode-generation/long-episode-warning-dialog";
+import type { SummaryLengthOption } from "@/lib/types/summary-length";
 
 const EPISODE_LIMIT = PRICING_TIER[2].episodeLimit;
 const YT_MAX_DURATION_SECONDS = getMaxDurationSeconds();
@@ -124,6 +127,10 @@ export function EpisodeCreator() {
 
   // Tips visibility state
   const [showTips, setShowTips] = useState(false);
+
+  // Summary length state
+  const [summaryLength, setSummaryLength] = useState<SummaryLengthOption>("MEDIUM");
+  const [showLongWarning, setShowLongWarning] = useState(false);
 
   const isBusy = isCreating || isFetchingMetadata;
   const isAudioBusy = isPlaying !== null || isLoadingSample !== null;
@@ -330,6 +337,7 @@ export function EpisodeCreator() {
           generationMode,
           voiceA,
           voiceB,
+          summaryLength,
         };
         const res = await fetch("/api/user-episodes/create-news", {
           method: "POST",
@@ -394,6 +402,7 @@ export function EpisodeCreator() {
         generationMode,
         voiceA,
         voiceB,
+        summaryLength,
       };
       const res = await fetch("/api/user-episodes/create-from-metadata", {
         method: "POST",
@@ -891,6 +900,17 @@ export function EpisodeCreator() {
                   )}
                 </div>
               </div>
+
+              {/* Summary Length Selector */}
+              <div className="space-y-6 border-1 rounded-xl md:rounded-4xl w-full md:max-w-full shadow-md px-4 md:px-10 pt-8 pb-12 bg-[#110d1712] md:min-w-full mt-6">
+                <SummaryLengthSelector
+                  value={summaryLength}
+                  onChange={setSummaryLength}
+                  onLongOptionSelect={() => setShowLongWarning(true)}
+                  disabled={isBusy}
+                />
+              </div>
+
               <div className="flex  w-fit mt-6 bg-secondary flex-col px-0 md:px-4 border-1 border-border rounded-3xl  shadow-md p-0 md:p-8 gap-4">
                 <Button
                   type="submit"
@@ -907,6 +927,16 @@ export function EpisodeCreator() {
           </div>
         </div>
       </div>
+
+      <LongEpisodeWarningDialog
+        open={showLongWarning}
+        onOpenChange={setShowLongWarning}
+        remainingCredits={usage.limit - usage.count}
+        onConfirm={() => {
+          setSummaryLength("LONG");
+          setShowLongWarning(false);
+        }}
+      />
 
       <Dialog open={showRestrictionDialog} onOpenChange={() => {}} modal={true}>
         <DialogContent

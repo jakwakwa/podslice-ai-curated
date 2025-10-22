@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { ensureBucketName, getStorageReader } from "@/lib/inngest/utils/gcs";
 import { prisma } from "@/lib/prisma";
+import { calculateWeightedUsage } from "@/lib/types/summary-length";
 
 export async function GET(request: Request) {
 	try {
@@ -29,14 +30,22 @@ export async function GET(request: Request) {
 			const periodStart = sub?.current_period_start ?? defaultStart;
 			const periodEnd = sub?.current_period_end ?? now;
 
-			const completedCount = await prisma.userEpisode.count({
+			const completedEpisodes = await prisma.userEpisode.findMany({
 				where: {
 					user_id: userId,
 					status: "COMPLETED",
 					created_at: { gte: periodStart, lte: periodEnd },
 				},
+				select: { summary_length: true },
 			});
-			return NextResponse.json({ count: completedCount });
+
+			const weightedCount = calculateWeightedUsage(completedEpisodes);
+			const actualCount = completedEpisodes.length;
+
+			return NextResponse.json({ 
+				count: weightedCount,
+				actualCount,
+			});
 		}
 
 		// Return all episodes (for general listing)
@@ -51,6 +60,7 @@ export async function GET(request: Request) {
 				gcs_audio_url: true,
 				duration_seconds: true,
 				status: true,
+				summary_length: true,
 				created_at: true,
 				updated_at: true,
 				// Explicitly exclude: transcript, summary (too large)

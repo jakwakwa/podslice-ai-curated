@@ -7,6 +7,7 @@ import { ensureGoogleCredentialsForADC } from "@/lib/google-credentials";
 import { combineAndUploadWavChunks, generateSingleSpeakerTts, getTtsChunkWordLimit, splitScriptIntoChunks, uploadBufferToPrimaryBucket } from "@/lib/inngest/episode-shared";
 import { generateTtsAudio } from "@/lib/inngest/utils/genai";
 import { prisma } from "@/lib/prisma";
+import { getSummaryLengthConfig, type SummaryLengthOption } from "@/lib/types/summary-length";
 import { inngest } from "./client";
 
 const ALLOWED_SOURCES = ["guardian", "aljazeera", "worldbank", "un", "stocks"] as const;
@@ -19,6 +20,7 @@ const PayloadSchema = z.object({
 	generationMode: z.enum(["single", "multi"]).default("single"),
 	voiceA: z.string().optional(),
 	voiceB: z.string().optional(),
+	summaryLength: z.enum(["SHORT", "MEDIUM", "LONG"]).default("MEDIUM"),
 });
 
 // Use shared generateTtsAudio directly for multi-speaker; voice selection via param
@@ -94,7 +96,7 @@ export const generateUserNewsEpisode = inngest.createFunction(
 	},
 	{ event: "user.news.generate.requested" },
 	async ({ event, step }) => {
-		const { userEpisodeId, sources, topic, generationMode, voiceA, voiceB } = PayloadSchema.parse(event.data);
+		const { userEpisodeId, sources, topic, generationMode, voiceA, voiceB, summaryLength } = PayloadSchema.parse(event.data);
 
 		await step.run("mark-processing", async () => {
 			await prisma.userEpisode.update({
@@ -200,9 +202,10 @@ Research and analyze the latest news on "${topic}" from the specified sources. F
 			});
 		});
 
-		const targetMinutes = getEpisodeTargetMinutes();
-		const minWords = Math.floor(targetMinutes * 140);
-		const maxWords = Math.floor(targetMinutes * 180);
+		// Get word/minute targets based on selected length
+		const lengthConfig = getSummaryLengthConfig(summaryLength);
+		const [minWords, maxWords] = lengthConfig.words;
+		const [minMinutes, maxMinutes] = lengthConfig.minutes;
 
 		if (generationMode === "single") {
 			const script = await step.run("generate-single-script", async () => {
@@ -222,7 +225,7 @@ Research and analyze the latest news on "${topic}" from the specified sources. F
 
 				const { text } = await generateText({
 					model: vertex(modelId),
-					prompt: `Task: Based on the NEWS SUMMARY below, write a ${minWords}-${maxWords} word (about ${targetMinutes} minutes) single-narrator podcast segment where a Podslice host presents the news highlights to listeners.
+					prompt: `Task: Based on the NEWS SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) single-narrator podcast segment where a Podslice host presents the news highlights to listeners.
 
 Identity & framing:
 - The speaker is a Podslice host summarizing recent news.
@@ -363,7 +366,7 @@ ${summaryContent}`,
 
 				const { text } = await generateText({
 					model: vertex(modelId),
-					prompt: `Task: Based on the NEWS SUMMARY below, write a two-host podcast conversation where Podslice hosts A and B discuss the news highlights. Alternate speakers naturally. Keep it around ${targetMinutes} minutes (${minWords}-${maxWords} words).
+					prompt: `Task: Based on the NEWS SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) two-host podcast conversation where Podslice hosts A and B discuss the news highlights. Alternate speakers naturally.
 
 Identity & framing:
 - Hosts are from Podslice presenting recent news.

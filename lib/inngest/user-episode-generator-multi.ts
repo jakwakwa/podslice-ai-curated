@@ -5,6 +5,7 @@ import { combineAndUploadWavChunks, uploadBufferToPrimaryBucket } from "@/lib/in
 import { generateTtsAudio, generateText as genText } from "@/lib/inngest/utils/genai";
 import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
 import { prisma } from "@/lib/prisma";
+import { getSummaryLengthConfig, type SummaryLengthOption } from "@/lib/types/summary-length";
 import { inngest } from "./client";
 
 // Use shared generateTtsAudio directly for multi-speaker; voice selection via param
@@ -84,11 +85,12 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 	},
 	{ event: "user.episode.generate.multi.requested" },
 	async ({ event, step }) => {
-		const { userEpisodeId, voiceA, voiceB, useShortEpisodesOverride } = event.data as {
+		const { userEpisodeId, voiceA, voiceB, useShortEpisodesOverride, summaryLength = "MEDIUM" } = event.data as {
 			userEpisodeId: string;
 			voiceA: string;
 			voiceB: string;
 			useShortEpisodesOverride?: boolean;
+			summaryLength?: SummaryLengthOption;
 		};
 
 		await step.run("update-status-to-processing", async () => {
@@ -139,9 +141,15 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		});
 		
 		const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
+		
+		// Get word/minute targets based on selected length
+		const lengthConfig = getSummaryLengthConfig(summaryLength);
+		const [minWords, maxWords] = lengthConfig.words;
+		const [minMinutes, maxMinutes] = lengthConfig.minutes;
+		
 			const text = await genText(
 				modelName2,
-				`Task: Based on the SUMMARY below, write a two-host podcast conversation where Podslice hosts A and B explain the highlights to listeners. Alternate speakers naturally. Keep it ${isShort ? "short (~1 minute)" : "around 3-5 minutes)"}.\n\nIdentity & framing:\n- Hosts are from Podslice and are commenting on someone else's content.\n- They do NOT reenact or impersonate the original speakers.\n- They present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly, spoken by A):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken dialogue only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as “the video” or “the episode.”\n\nOutput ONLY valid JSON array of objects with fields: speaker ("A" or "B") and text (string). No markdown.\n\nSUMMARY:\n${summary}`
+				`Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) two-host podcast conversation where Podslice hosts A and B explain the highlights to listeners. Alternate speakers naturally.\n\nIdentity & framing:\n- Hosts are from Podslice and are commenting on someone else's content.\n- They do NOT reenact or impersonate the original speakers.\n- They present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly, spoken by A):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken dialogue only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as “the video” or “the episode.”\n\nOutput ONLY valid JSON array of objects with fields: speaker ("A" or "B") and text (string). No markdown.\n\nSUMMARY:\n${summary}`
 			);
 			return coerceJsonArray(text);
 		});

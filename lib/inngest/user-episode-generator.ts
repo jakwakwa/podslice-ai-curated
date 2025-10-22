@@ -1,6 +1,7 @@
 import { getEpisodeTargetMinutes } from "@/lib/env";
 import { generateText as genText } from "@/lib/inngest/utils/genai";
 import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
+import { getSummaryLengthConfig, type SummaryLengthOption } from "@/lib/types/summary-length";
 
 // TODO: Consider switching to Google Cloud Text-to-Speech API for stable TTS
 
@@ -73,7 +74,10 @@ export const generateUserEpisode = inngest.createFunction(
 		event: "user.episode.generate.requested",
 	},
 	async ({ event, step }) => {
-		const { userEpisodeId } = event.data as { userEpisodeId: string };
+		const { userEpisodeId, summaryLength = "MEDIUM" } = event.data as {
+			userEpisodeId: string;
+			summaryLength?: SummaryLengthOption;
+		};
 
 		await step.run("update-status-to-processing", async () => {
 			return await prisma.userEpisode.update({
@@ -126,12 +130,15 @@ export const generateUserEpisode = inngest.createFunction(
 		// Step 3: Generate Podslice-hosted script (commentary over summary)
 		const script = await step.run("generate-script", async () => {
 			const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
-			const targetMinutes = getEpisodeTargetMinutes();
-			const minWords = Math.floor(targetMinutes * 140);
-			const maxWords = Math.floor(targetMinutes * 180);
+			
+			// Get word/minute targets based on selected length
+			const lengthConfig = getSummaryLengthConfig(summaryLength);
+			const [minWords, maxWords] = lengthConfig.words;
+			const [minMinutes, maxMinutes] = lengthConfig.minutes;
+			
 			return genText(
 				modelName2,
-				`Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (about ${targetMinutes} minutes) single-narrator podcast segment where a Podslice host explains the highlights to listeners.\n\nIdentity & framing:\n- The speaker is a Podslice host summarizing someone else's content.\n- Do NOT reenact or impersonate the original speakers.\n- Present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken words only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as “the video” or “the episode.”\n\nStructure:\n- Hook that frames this as a Podslice summary.\n- Smooth transitions between highlight clusters.\n- Clear, concise wrap-up.\n\nSUMMARY:\n${summary}`
+				`Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) single-narrator podcast segment where a Podslice host explains the highlights to listeners.\n\nIdentity & framing:\n- The speaker is a Podslice host summarizing someone else's content.\n- Do NOT reenact or impersonate the original speakers.\n- Present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken words only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as “the video” or “the episode.”\n\nStructure:\n- Hook that frames this as a Podslice summary.\n- Smooth transitions between highlight clusters.\n- Clear, concise wrap-up.\n\nSUMMARY:\n${summary}`
 			);
 		});
 
