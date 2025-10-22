@@ -140,7 +140,7 @@ export function EpisodeStatusTable({
   }
 
   return (
-    <div className="mb-6 rounded-lg border border-border bg-card">
+    <div className="my-6 rounded-lg border border-border bg-card">
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
           <Button
