@@ -32,7 +32,7 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(
     const _isPathAllowed = allowedPaths.includes(pathname);
 
     return (
-      <div className="my-0 pt-12 mx-0  px-5 pb-9 md:pt-4 md:pb-4 md:px-8  h-fit lg:pt-6 lg:pb-12 shadow-sm bg-cyan-900 rounded-none  max-w-full outline-none w-screen md:bg-secondary  relative border-b-none  md:rounded-b-xl md:border-5 md:border-secondary/30  md:rounded-sm p-6 flex flex-col  shadow-slate-700/30 md:shadow-lg justify-between gap-2 md:w-full mb-0 md:mb-0 md:flex-row lg:rounded-2xl  sm:py-12   md:shadow-slate-900/20 md:items-center md:justify-between lg:mb-0 xl:py-4 ">
+      <div className="my-0 pt-12 mx-0  px-5 pb-9 md:pt-4 md:pb-4 md:px-8  h-fit lg:pt-6 lg:pb-12 shadow-sm bg-[#407596] rounded-none  max-w-full outline-none w-screen  relative border-b-none md:rounded-t-xl  md:rounded-b-xl md:border-5 md:border-[#dce0e850]  md:rounded-sm p-6 flex flex-col  shadow-slate-700/30 md:shadow-lg justify-between gap-2 md:w-full mb-0 md:mb-0 md:flex-row lg:rounded-t-2xl  sm:py-12   md:shadow-slate-900/20 md:items-center md:justify-between lg:mb-0 xl:py-4 ">
         <div className="flex flex-col justify-center w-full gap-3">
           <h2 className="flex flex-col w-full text-xl md:text-lg   lg:text-2xl font-bold px-0 md:px-0 pt-0 pb-0 md:py-0  text-white leading-normal lg:max-w-2xl lg:py-0 uppercase ">
             {title}

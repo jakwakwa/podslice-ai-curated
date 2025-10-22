@@ -12,6 +12,8 @@ const badgeVariants = cva(
           "border-primary font-light font-sans text-primary-foreground  shadow hover:bg-primary border-1 rounded-sm",
         secondary:
           "flex items-center   text-[0.6rem] shadow-md shadow-black/10  font-light border-1 border-foreground/60 bg-primary rounded",
+        status:
+          "border-blue-600  text-blue-400 shadow font-light border-1 rounded-sm bg-blue-800 animate-pulse",
         destructive:
           "border-destructive-foreground  text-destructive-foreground shadow hover:bg-amber/80 font-light border-1 rounded-sm",
         outline:

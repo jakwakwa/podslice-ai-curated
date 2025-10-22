@@ -196,7 +196,7 @@
   --primary-foreground: oklch(0.969 0.016 293.756);
   --secondary: oklch(0.967 0.001 286.375);
   --secondary-foreground: oklch(0.21 0.006 285.885);
-  --sidebar-shadow: oklch(0.37 0.08 293.756);
+  --sidebar-shadow: oklch(0.37 0.08 293.756 / 0.3);
   --sidebar-shadow-muted: oklch(0.37 0.08 293.756);
   --muted: oklch(0.87 0.06 285.09);
   --muted-foreground: oklch(0.552 0.016 285.938);
@@ -237,8 +237,8 @@
   --inset-gradient: linear-gradient(var(--violet-1) 0%, var(--violet-3) 110%);
   --bigepisode-gradient: linear-gradient(
     0deg,
-    var(--background) 20%,
-    var(--background) 150%
+    var(--gray-2) 20%,
+    var(--gray-3) 150%
   );
   --episode-gradient: linear-gradient(
     320deg,
@@ -275,9 +275,9 @@
 }
 
 .light {
-  --background: var(--violet-9);
-  --foreground: violet(--violet-11);
-  --muted: var(--violet-10);
+  --background: #b2aff9;
+  --foreground: violet(--violet-a1);
+  --muted: var(--violet-1);
   --muted-foreground: var(--violet-a4);
   --accent: var(--violet-3);
   --accent-foreground: var(--gray-1);
@@ -285,7 +285,7 @@
   --card: var(--violer-1);
   --card-foreground: var(--violet-12);
   --bundle-card: var(--violet-10);
-  --bundle-card-foreground: var(--violet-3);
+  --bundle-card-foreground: var(--gray-11);
   --bundle-card-border: var(--violet-a6);
   --bundle-card-shadow: var(--violet-a12);
   --popover: var(--violet-a11);
@@ -300,16 +300,16 @@
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: color(a98-rgb 0.86 0.15 0.33);
-  --sidebar: var(--violet-a8);
+  --sidebar: #605e9f;
   --sidebar-foreground: var(--violet-1);
-  --sidebar-foreground-muted: var(--gray-7);
+  --sidebar-foreground-muted: var(--gray-1);
   --sidebar-primary: var(--violet-1);
   --sidebar-primary-foreground: var(--violet-a8);
-  --sidebar-accent: var(--violet-a6);
-  --sidebar-accent-foreground: var(--violet-2);
+  --sidebar-accent: var(--violet-a7);
+  --sidebar-accent-foreground: var(--violet-8);
   --sidebar-avatar: var(--violet-12);
-  --sidebar-border: var(--violet-a2);
-  --sidebar-ring: var(--violet-2);
+  --sidebar-border: var(--violet-a1);
+  --sidebar-ring: var(--color-teal-100);
   --sidebar-menu: oklch(0.14 0 285.82 / 0);
   --primary: var(--violet-a4);
   --primary-foreground: var(--gray-11);
@@ -345,16 +345,16 @@
   --audio-sheet-border: #4d46cfc9;
   --audio-sheet-accent: hsl(184.71 70.71% 61.18%);
 
-  --inset-gradient: linear-gradient(var(--violet-5) 0%, var(--violet-7) 110%);
+  --inset-gradient: var(--background);
   --bigepisode-gradient: linear-gradient(
     0deg,
-    var(--gray-a3) 20%,
-    var(--gray-4) 150%
+    var(--violet-7) 0%,
+    var(--violet-5) 80%
   );
   --episode-gradient: linear-gradient(
     320deg,
     var(--gray-6) -20%,
-    var(--violet-7) 110%
+    var(--gray-1) 110%
   );
   --container-gradient: linear-gradient(
     to bottom,
@@ -364,7 +364,7 @@
   --container-dark: linear-gradient(
     to bottom,
     var(--gray-11) 0%,
-    var(--gray-a12) 100%
+    var(--gray-12) 100%
   );
   --episode-shell-gradient: linear-gradient(
     320deg,
@@ -376,7 +376,7 @@
     var(--violet-5) 0%,
     var(--violet-6) 180%
   );
-  --input-shadow: var(--gray-a6);
+  --input-shadow: #59549030;
   --container-dark-shadow: var(--violet-6);
   --input-placeholder: var(--gray-a11);
 }
@@ -414,7 +414,7 @@
   --gray-track: oklch(54% 0.1014 276.7);
 
   --background: var(--gray-a1);
-  --foreground: violet(--violet-1);
+  --foreground: violet(--violet-11);
   --muted: var(--violet-1);
   --muted-foreground: var(--violet-4);
   --accent: var(--violet-5);
@@ -430,7 +430,7 @@
   --popover-foreground: var(--teal-1);
   --header: var(--color-cyan-700);
 
-  --border: var(--gray-2);
+  --border: var(--gray-a5);
   --input: var(--gray-4);
   --ring: var(--gray-6);
   --chart-1: oklch(0.488 0.243 264.376);
@@ -440,7 +440,7 @@
   --chart-5: color(a98-rgb 0.86 0.15 0.33);
 
   --sidebar: var(--gray-5);
-  --sidebar-foreground: var(--teal-1);
+  --sidebar-foreground: var(--teal-2);
   --sidebar-primary: var(--gray-11);
   --sidebar-primary-foreground: var(--teal-a8);
   --sidebar-accent: var(--gray-a3);
@@ -490,8 +490,8 @@
   );
   --bigepisode-gradient: linear-gradient(
     0deg,
-    var(--gray-1) 20%,
-    var(--gray-a9) 180%
+    var(--gray-a3) 20%,
+    var(--gray-4) 150%
   );
   --episode-gradient: linear-gradient(
     320deg,
@@ -501,22 +501,22 @@
   --container-gradient: linear-gradient(
     to bottom,
     var(--teal-1) 0%,
-    var(--teal-1) 100%
+    var(--teal-4) 100%
   );
   --container-dark: linear-gradient(
     to bottom,
     var(--gray-3) 0%,
-    var(--gray-a1) 100%
+    var(--gray-a3) 100%
   );
   --episode-shell-gradient: linear-gradient(
     320deg,
-    var(--gray-a2) -10%,
+    var(--gray-a6) -10%,
     var(--gray-a5) 100%
   );
   --episode-card-wrapper-gradient: linear-gradient(
     to bottom,
     var(--gray-5) 0%,
-    var(--gray-9) 180%
+    var(--gray-4) 180%
   );
   --input-shadow: var(--teal-1);
   --container-dark-shadow: var(--gray-11);
@@ -792,7 +792,7 @@
   }
 
   .episode-card-wrapper-dark {
-    background-image: var(--container-dark);
+    background-color: #25252640 !important;
 
     padding: 15px 10px !important;
     border-radius: 15px !important;
@@ -1041,6 +1041,7 @@
     outline: 1px solid transparent !important;
     outline-offset: 1px !important;
     height: 45px !important;
+    background-color: var(--input) !important;
     /* max-height: 80px !important; */
     /* margin-top: 10px !important; */
     box-shadow: inset 0px 3px 9px 1px var(--input-shadow) !important;

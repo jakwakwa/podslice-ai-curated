@@ -140,93 +140,78 @@ export function EpisodeStatusTable({
   }
 
   return (
-    <div className="my-6 rounded-lg border border-border bg-card">
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <CollapsibleTrigger asChild>
-          <Button
-            variant="ghost"
-            className="flex w-full items-center justify-between p-4 hover:bg-accent"
-          >
-            <div className="flex items-center gap-3">
-              <div
-                className={cn(
-                  "h-2 w-2 rounded-full",
-                  isConnected ? "bg-green-500 animate-pulse" : "bg-gray-400",
-                )}
-              />
-              <h3 className="text-lg font-semibold">
-                Episode Generation Status
-              </h3>
-              <Badge variant="secondary" className="ml-2">
-                {episodeList.length > 0} in progress
-              </Badge>
-            </div>
-            <ChevronDown
-              className={cn(
-                "h-5 w-5 transition-transform duration-200",
-                isOpen && "rotate-180",
-              )}
-            />
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className="border-t border-border p-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[40%]">Episode</TableHead>
-                  <TableHead className="w-[20%]">Status</TableHead>
-                  <TableHead className="w-[40%]">Progress</TableHead>
+    <div className="mx-4 rounded-md md:rounded-xl bg-sidebar px-4 md:p-6">
+      <div>
+        <div className="flex items-center gap-3 h-20 md:h-12">
+          <div
+            className={cn(
+              "h-2 w-2 rounded-full",
+              isConnected
+                ? "bg-green-500 animate-pulse"
+                : "bg-blue-400 animate pulse",
+            )}
+          />
+          <h3 className="text-lg font-semibold">Episode Generation Status</h3>
+          <Badge variant="status" className="ml-2">
+            {episodeList.length > 0} in progress
+          </Badge>
+        </div>
+        <div className="border-t-[#fff]/10 border-t-0 show px-4">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[25%]">Episode</TableHead>
+                <TableHead className="w-[5%]">Status</TableHead>
+                <TableHead className="w-[70%]">Progress</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {episodeList.map((episode) => (
+                <TableRow
+                  key={episode.episodeId}
+                  className={cn(
+                    "transition-all duration-300 w-full",
+                    episode.status === "COMPLETED" && "bg-green-500/10",
+                    episode.status === "FAILED" && "bg-red-500/10",
+                  )}
+                >
+                  <TableCell className="font-medium ">
+                    <div className="flex flex-col gap-1">
+                      <span className="line-clamp-1">
+                        {episode.episodeTitle}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        Started{" "}
+                        {new Date(episode.timestamp).toLocaleTimeString()}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <StatusBadge status={episode.status} />
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    <div className="flex flex-col gap-1 ">
+                      <span
+                        className={` line-clamp-2 text-xs  ${cn(
+                          episode.status === "PROCESSING" &&
+                            "text-blue-400 font-medium",
+                          episode.status === "COMPLETED" &&
+                            "text-green-400 font-medium",
+                          episode.status === "FAILED" && "text-red-400",
+                          episode.status === "PENDING" &&
+                            "text-muted-foreground ",
+                        )}`}
+                      >
+                        {episode.message}
+                      </span>
+                    </div>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {episodeList.map((episode) => (
-                  <TableRow
-                    key={episode.episodeId}
-                    className={cn(
-                      "transition-all duration-300",
-                      episode.status === "COMPLETED" && "bg-green-500/10",
-                      episode.status === "FAILED" && "bg-red-500/10",
-                    )}
-                  >
-                    <TableCell className="font-medium">
-                      <div className="flex flex-col gap-1">
-                        <span className="line-clamp-1">
-                          {episode.episodeTitle}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          Started{" "}
-                          {new Date(episode.timestamp).toLocaleTimeString()}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <StatusBadge status={episode.status} />
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      <div className="flex flex-col gap-1">
-                        <span
-                          className={cn(
-                            episode.status === "PROCESSING" &&
-                              "text-blue-400 font-medium",
-                            episode.status === "COMPLETED" &&
-                              "text-green-400 font-medium",
-                            episode.status === "FAILED" && "text-red-400",
-                            episode.status === "PENDING" &&
-                              "text-muted-foreground",
-                          )}
-                        >
-                          {episode.message}
-                        </span>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
     </div>
   );
 }

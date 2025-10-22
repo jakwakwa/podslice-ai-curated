@@ -383,7 +383,7 @@ export function CuratedBundlesClient({
           <H3 className="text-[1.2rem] text-primary-foreground font-bold font-sans mb-4 px-2 md:px-12 xl:px-[40px]">
             🎯 Curated by Podslice
           </H3>
-          <div className="episode-card-wrapper-dark  relative transition-all duration-200 text-card-foreground gap-4 p-0 px-2 md:px-4 md:py-5 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-3 xl:p-[40px]   lg:px-8 xl:justify-around items-start lg:gap-5 xl:gap-12 h-fit xl:px-[40px] rounded-3xl shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]">
+          <div className="episode-card-wrapper-dark  relative transition-all duration-200 text-card-foreground gap-4 p-0 px-2 md:px-4 md:py-5 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-3 xl:p-[40px]   lg:px-8 xl:justify-evenly items-start lg:gap-5 xl:gap-6 h-fit xl:px-[40px] rounded-3xl shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]">
             {curatedBundles.map((bundle) => {
               const planMeta = PLAN_GATE_META[bundle.min_plan];
               const canInteract = bundle.canInteract;
@@ -391,7 +391,7 @@ export function CuratedBundlesClient({
 
               return (
                 <Card
-                  variant="bundle"
+                  variant="default"
                   hoverable={canInteract}
                   selected={
                     selectedBundle
@@ -402,7 +402,7 @@ export function CuratedBundlesClient({
                   onClick={() => handleBundleClick(bundle)}
                 >
                   <CardHeader className="w-full py-4 px-2">
-                    <div className="w-full flex flex-col-reverse xl:flex-col-reverse gap-6">
+                    <div className="w-full flex flex-col-reverse xl:flex-col-reverse gap-3">
                       <div className="flex items-start gap-3 text-sm font-normal tracking-wide flex-col w-full md:max-w-[240px]">
                         <H3 className="text-lg text-bundle-card-foreground font-black font-sans mt-2 text-shadow-sm tracking-tight uppercase leading-tight mb-0 truncate">
                           {bundle.name}
@@ -427,7 +427,8 @@ export function CuratedBundlesClient({
                           {canInteract ? (
                             <Badge
                               variant="outline"
-                              className="text-emerald-100 border-emerald-500/60 bg-emerald-500/0 text-[0.6rem] font-semibold px-2 py-0.5"
+                              className="text-secondary-foreground
+                             border-1  border-sidebar bg-emerald-500/0 text-[0.6rem] font-semibold px-2 py-0.5"
                             >
                               {planMeta.statusLabel}
                             </Badge>
@@ -441,9 +442,12 @@ export function CuratedBundlesClient({
                           )}
                         </div>
 
-                        <Badge className="font-normal bg-sidebar/10 tracking-wide">
-                          <Lock size={8} className="mr-2 text-[#fff]" />
-                          <Typography className="text-xxs text-[#fff]">
+                        <Badge
+                          variant="secondary"
+                          className="font-normal tracking-wide"
+                        >
+                          <Lock size={8} className="mr-2" />
+                          <Typography className="text-xxs">
                             Podslice Bundle
                           </Typography>
                         </Badge>
@@ -452,12 +456,12 @@ export function CuratedBundlesClient({
                             Shared by {bundle.owner.full_name}
                           </Typography>
                         )}
-                        <Typography className="text-[0.7rem] text-[#f1e9e9b3] font-normal leading-tight mt-0 mb-0 line-clamp-3">
+                        <Typography className="text-[0.7rem] text-primary-foreground font-normal leading-tight mt-0 mb-0 line-clamp-3">
                           {isShared
                             ? "Episodes in bundle:"
                             : "Included in bundle:"}
                         </Typography>
-                        <div className="bg-[#3bb8ce22]  p-2 mx-auto shadow-sm rounded-md w-full m-0 outline-1 outline-[#96a6ba63]">
+                        <div className="mx-auto w-full">
                           {isShared ? (
                             <>
                               {bundle.episodes?.slice(0, 4).map((episode) => (
@@ -466,48 +470,40 @@ export function CuratedBundlesClient({
                                   className=" leading-none"
                                 >
                                   <div className="w-full flex flex-col gap-0 ">
-                                    <p className="w-full text-[0.75rem] font-semibold leading-normal my-0 px-1 mx-0 text-left text-[#e9f0f1b3] tracking-wide line-clamp-1 truncate ">
+                                    <p className="w-full text-[0.75rem] font-semibold leading-normal my-0 px-1 mx-0 text-left text-primary-foreground tracking-wide line-clamp-1 truncate ">
                                       {episode.episode_title}
                                     </p>
                                   </div>
                                 </li>
                               ))}
-                              {(bundle.episode_count ?? 0) > 4 && (
-                                <span className="text-[0.8rem] text-[#89d3d7b3] font-bold leading-tight mt-0 mb-0 line-clamp-3 pl-1">
-                                  +{(bundle.episode_count ?? 0) - 4} more
-                                </span>
-                              )}
                             </>
                           ) : (
-                            <div
+                            <ul
                               key={bundle.bundle_id}
-                              className="w-fit flex flex-col  p-1 gap-1"
+                              className="bg-header/40 rounded-md w-fit flex flex-col  py-2 px-1 gap-1"
                             >
                               {bundle.podcasts
                                 .slice(0, 4)
                                 .map((podcast: Podcast, index: number) => (
-                                  <span
+                                  <li
                                     key={podcast.podcast_id}
-                                    className="text-primary-foreground-muted leading-none font-light text-[0.75rem]"
+                                    className="text-primary-foreground-muted leading-none font-light text-[0.75rem] truncate pl-1 line-clamp-1"
                                   >
                                     {podcast.name}
-                                    {index < bundle.podcasts.length - 1 &&
-                                      "," + "  "}
-                                  </span>
+                                  </li>
                                 ))}
                               {bundle.podcasts.length > 4 && (
-                                <span className="text-[0.8rem] text-[#89d3d7b3] font-bold leading-tight mt-0 mb-0 line-clamp-3 pl-1">
+                                <span className="text-[0.8rem] text-primary-foreground font-bold leading-tight mt-0 mb-0 ">
                                   and more
                                 </span>
                               )}
-                            </div>
+                            </ul>
                           )}
                         </div>
                       </div>
-
-                      <div className="flex items-start gap-2 text-sm font-normal tracking-wide w-full">
-                        <div className="relative my-2 rounded-lg outline-0 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
-                          {bundle.image_url && (
+                      {bundle.image_url && (
+                        <div className="flex items-start gap-2 text-sm font-normal tracking-wide w-full">
+                          <div className="relative my-2 rounded-lg outline-0 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
                             <Image
                               className="w-full object-cover"
                               src={bundle.image_url}
@@ -515,9 +511,9 @@ export function CuratedBundlesClient({
                               width={190}
                               height={110}
                             />
-                          )}
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </CardHeader>
                 </Card>
@@ -541,7 +537,7 @@ export function CuratedBundlesClient({
 
               return (
                 <Card
-                  variant="bundle"
+                  variant="default"
                   hoverable={canInteract}
                   selected={
                     selectedBundle
@@ -551,7 +547,7 @@ export function CuratedBundlesClient({
                   key={bundle.bundle_id}
                   onClick={() => handleBundleClick(bundle)}
                 >
-                  <CardHeader className="w-full py-4 px-2">
+                  <CardHeader className="w-full">
                     <div className="w-full flex flex-col-reverse xl:flex-col-reverse gap-6">
                       <div className="flex items-start gap-3 text-sm font-normal tracking-wide flex-col w-full md:max-w-[240px]">
                         <H3 className="text-[0.8rem] text-bundle-card-foreground font-black font-sans mt-2 text-shadow-sm tracking-tight uppercase leading-tight mb-0 truncate">
@@ -610,7 +606,7 @@ export function CuratedBundlesClient({
                             ? "Episodes in bundle:"
                             : "Included in bundle:"}
                         </Typography>
-                        <CardContent className="bg-[#9798dc35] mx-auto shadow-sm rounded-md w-full m-0 outline-1 outline-[#96a6ba63]">
+                        <CardContent className=" mx-auto shadow-sm rounded-md w-full m-0">
                           <ul className="list-none px-2 m-0 flex flex-col gap-0 py-1">
                             {isShared ? (
                               <>
@@ -627,7 +623,7 @@ export function CuratedBundlesClient({
                                   </li>
                                 ))}
                                 {(bundle.episode_count ?? 0) > 4 && (
-                                  <span className="text-[0.8rem] text-[#89d3d7b3] font-bold leading-tight mt-0 mb-0 line-clamp-3 pl-1">
+                                  <span className="text-[0.8rem] text-primary-foreground font-bold leading-tight mt-0 mb-0 line-clamp-3 pl-1">
                                     +{(bundle.episode_count ?? 0) - 4} more
                                   </span>
                                 )}
@@ -641,7 +637,7 @@ export function CuratedBundlesClient({
                                       key={podcast.podcast_id}
                                       className=" leading-none flex w-full justify-end gap-0 p-0"
                                     >
-                                      <div className="w-full flex flex-col gap-0 ">
+                                      <div className="w-full flex flex-col gap-0">
                                         <p className="w-full text-[0.7rem] font-semibold leading-normal my-0 px-1 mx-0 text-left text-[#e9f0f1b3] tracking-wide line-clamp-2">
                                           {podcast.name}
                                         </p>
@@ -649,7 +645,7 @@ export function CuratedBundlesClient({
                                     </li>
                                   ))}
                                 {bundle.podcasts.length > 4 && (
-                                  <span className="text-[0.8rem] text-[#89d3d7b3] font-bold leading-tight mt-0 mb-0 line-clamp-3 pl-1">
+                                  <span className="text-[0.8rem] text-primary-foreground font-bold leading-tight mt-0 mb-0 line-clamp-3 pl-1">
                                     and more
                                   </span>
                                 )}

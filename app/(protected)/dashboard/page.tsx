@@ -57,7 +57,7 @@ export default async function DashboardPage() {
     (subscription?.plan_type || "").toLowerCase() === "curate_control";
 
   return (
-    <div className="h-full rounded-none px-0 mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:rounded-4xl md:mt-0 md:p-8 md:w-full">
+    <div className="h-full rounded-none px-0 mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:rounded-4xl md:mt-0 md:p-8 md:w-full md:gap-y-4">
       <PageHeader
         title={dashboardCopy.header.title}
         description={dashboardCopy.header.description}
