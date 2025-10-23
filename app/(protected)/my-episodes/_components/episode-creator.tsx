@@ -852,7 +852,7 @@ export function EpisodeCreator() {
 								/>
 							</div>
 
-							<div className="flex  w-fit mt-6 bg-secondary flex-col px-0 md:px-4 border-1 border-border rounded-3xl  shadow-md p-0 md:p-8 gap-4">
+							<div className="flex  w-fit mt-6 flex-col px-0 md:px-4 border-1 border-cyan-300 rounded-3xl  shadow-md p-0 md:p-3 gap-4">
 								<Button
 									type="submit"
 									variant="secondary"

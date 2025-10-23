@@ -147,7 +147,7 @@
   --color-sidebar-accent: var(--sidebar-accent);
 
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-
+  --color-dialog-overlay: var(--dialog-overlay);
   --color-sidebar-border: var(--sidebar-border);
   --color-link: var(--link);
   --color-link-hover: var(--link-hover);
@@ -217,6 +217,7 @@
   --chart-5: oklch(0.769 0.188 70.08);
   --sidebar: oklch(0.985 0 0);
   --dialog-card:  oklch(0.92 0.004 286.32);
+  --dialog-overlay: oklch(0.92 0.004 286.32);
   --link: oklch(0.6 0.118 184.704);
   --link-hover: oklch(0.398 0.07 227.392);
   --inset-gradient: linear-gradient(var(--violet-1) 0%, var(--violet-3) 110%);
@@ -251,6 +252,7 @@
     var(--violet-6) 180%
   );
   --input-shadow: var(--gray-a8);
+  
 }
 
 
@@ -258,9 +260,8 @@
 .light {
 
 
-		 --dialog-card:  var(--swak-2);
-
-	
+		 --dialog-card:  var(--swak-9);
+			--dialog-overlay: var(--kwak-3);
    --background: var(--kwak-10);
    --foreground: var(--swak-7);
    --card: var(--kwak-10);
@@ -275,7 +276,7 @@
    --secondary: var(--beduk-9);
    --secondary-foreground:var(--beduk-6);
    --muted: var(--swak-7);
-   --muted-foreground: var(--beduk-1);
+   --muted-foreground: var(--beduk-10);
    --accent: var(--beduk-9);
    --accent-foreground: var(--kwak-7);
    --destructive: var(--wyn-5);
@@ -337,10 +338,10 @@
 
 
 		 --dialog-card:  var(--swak-2);
-
+		--dialog-overlay: var(--swak-3);
 	
    --background: var(--kwak-10);
-   --foreground: var(--swak-7);
+   --foreground: var(--swak-2);
    --card: var(--kwak-10);
    --card-foreground: var(--kwak-10);
    --popover: var(--color-cyan-950);
@@ -353,9 +354,9 @@
    --secondary: var(--beduk-9);
    --secondary-foreground:var(--beduk-6);
    --muted: var(--swak-7);
-   --muted-foreground: var(--beduk-1);
-   --accent: var(--beduk-9);
-   --accent-foreground: var(--kwak-7);
+   --muted-foreground: var(--beduk-9);
+   --accent:var(--color-cyan-800);
+   --accent-foreground: var(--primary-foreground);
    --destructive: var(--wyn-5);
    --border: var(--color-cyan-900);
    --input: var(--swak-5);
@@ -422,8 +423,29 @@
  .bg-dialog-card {
 	background-color:  var(--dialog-card) !important;
  }
-
-  .cl-formFieldInput {
+ 
+ .dialog-overlay {
+	background:  var(--dialog-overlay) !important;
+	opacity: 1 !important;
+ }
+ 
+ .bg-bigcard {
+	background-color:  var(--bigcard) !important;
+ }
+ 
+ .bg-o {
+	background-color:  var(--o) !important;
+ }
+ 
+ .bg-dialog-card {
+	background-color:  var(--dialog-card) !important;
+ }
+ 
+ .bg-dialog-card {
+	background-color:  var(--dialog-card) !important;
+ }
+ 
+ .cl-formFieldInput {
     padding: 27px !important;
     border-radius: 10px !important;
     color: var(--color-primary-foreground) !important;
