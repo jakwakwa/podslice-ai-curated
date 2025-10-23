@@ -175,22 +175,22 @@ export default async function Page({
                       cleanSummary = cleanSummary
                         .replace(/^```\s*/, "")
                         .replace(/\s*```$/, "");
-                    } else if (cleanSummary.includes("```json")) {
-                      // Extract JSON from within markdown blocks
-                      const jsonMatch = cleanSummary.match(
-                        /```json\s*(\{[\s\S]*?\})\s*```/,
-                      );
-                      if (jsonMatch) {
-                        cleanSummary = jsonMatch[1];
-                      }
-                    } else if (cleanSummary.includes("```")) {
-                      // Fallback: try to extract JSON from any markdown block
-                      const jsonMatch = cleanSummary.match(
-                        /```\s*(\{[\s\S]*?\})\s*```/,
-                      );
-                      if (jsonMatch) {
-                        cleanSummary = jsonMatch[1];
-                      }
+                  } else if (cleanSummary.includes("```json")) {
+                    // Extract JSON from within markdown blocks
+                    const jsonMatch = cleanSummary.match(
+                      /```json\s*(\{[\s\S]*?\})\s*```/,
+                    );
+                    if (jsonMatch?.[1]) {
+                      cleanSummary = jsonMatch[1];
+                    }
+                  } else if (cleanSummary.includes("```")) {
+                    // Fallback: try to extract JSON from any markdown block
+                    const jsonMatch = cleanSummary.match(
+                      /```\s*(\{[\s\S]*?\})\s*```/,
+                    );
+                    if (jsonMatch?.[1]) {
+                      cleanSummary = jsonMatch[1];
+                    }
                     }
 
                     // Trim any remaining whitespace
