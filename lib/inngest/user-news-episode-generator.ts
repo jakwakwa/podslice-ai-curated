@@ -218,13 +218,13 @@ Research and analyze the latest news on "${topic}" from the specified sources. F
 				// Extract JSON from within markdown blocks
 				const jsonMatch = cleanedText.match(/```json\s*(\{[\s\S]*?\})\s*```/);
 				if (jsonMatch) {
-					cleanedText = jsonMatch[1];
+					cleanedText = jsonMatch[1]!;
 				}
 			} else if (cleanedText.includes("```")) {
 				// Fallback: try to extract JSON from any markdown block
 				const jsonMatch = cleanedText.match(/```\s*(\{[\s\S]*?\})\s*```/);
 				if (jsonMatch) {
-					cleanedText = jsonMatch[1];
+					cleanedText = jsonMatch[1]!;
 				}
 			}
 
@@ -311,7 +311,7 @@ ${summaryContent}`,
 							progress_message: `Generating audio (part ${i + 1} of ${scriptParts.length})...`,
 						},
 					});
-					const buf = await generateSingleSpeakerTts(scriptParts[i]);
+					const buf = await generateSingleSpeakerTts(scriptParts[i]!);
 					const chunkFileName = `${tempPath}/chunk-${i}.wav`;
 					const gcsUrl = await uploadBufferToPrimaryBucket(buf, chunkFileName);
 					urls.push(gcsUrl);
@@ -459,9 +459,9 @@ ${summaryContent}`,
 					const tempPath = `user-episodes/${userEpisodeId}/temp-dialogue-chunks`;
 
 					for (let i = 0; i < duetLines.length; i++) {
-						const line = duetLines[i];
+						const line = duetLines[i]!;
 						console.log(
-							`[TTS] Generating and uploading line ${i + 1}/${duetLines.length} (Speaker ${line.speaker})`
+							`[TTS] Generating and uploading line ${i + 1}/${duetLines.length} (Speaker ${line.speaker!})`
 						);
 
 						await prisma.userEpisode.update({

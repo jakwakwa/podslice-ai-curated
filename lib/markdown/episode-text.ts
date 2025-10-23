@@ -15,7 +15,7 @@ export function extractKeyTakeaways(markdown?: string | null, max: number = 5): 
 		} else {
 			const boldMatch = trimmed.match(/^\*\*(.+?)\*\*:?\s*(.*)$/);
 			if (boldMatch) {
-				const title = boldMatch[1].trim();
+				const title = boldMatch[1]!.trim();
 				const rest = (boldMatch[2] || "").trim();
 				item = rest ? `${title}: ${rest}` : title;
 			}
@@ -71,13 +71,15 @@ export function extractNarrativeRecap(markdown?: string | null): string {
 	const normalized = normalizeSummaryMarkdown(markdown);
 	if (!normalized) return "";
 	const lines = normalized.split(/\r?\n/);
-	const summaryHeadingIndex = lines.findIndex(line => /^#{1,6}\s+Summary$/i.test(line.trim()));
+	const summaryHeadingIndex = lines.findIndex(line =>
+		/^#{1,6}\s+Summary$/i.test(line.trim())
+	);
 	const firstListIndex = lines.findIndex(line => isListLikeLine(line.trim()));
 	let startIndex = summaryHeadingIndex >= 0 ? summaryHeadingIndex + 1 : -1;
 	if (startIndex === -1 && firstListIndex >= 0) {
 		let lastListIndex = firstListIndex;
 		for (let i = firstListIndex + 1; i < lines.length; i++) {
-			const trimmed = lines[i].trim();
+			const trimmed = lines[i]?.trim() ?? "";
 			if (!trimmed) continue;
 			if (isListLikeLine(trimmed)) {
 				lastListIndex = i;
@@ -97,7 +99,7 @@ export function extractNarrativeRecap(markdown?: string | null): string {
 	if (startIndex === -1) {
 		startIndex = 0;
 	}
-	while (startIndex < lines.length && !lines[startIndex].trim()) {
+	while (startIndex < lines.length && !lines[startIndex]!.trim()) {
 		startIndex += 1;
 	}
 	const recapCandidates = lines.slice(startIndex);

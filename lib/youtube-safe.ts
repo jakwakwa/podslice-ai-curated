@@ -69,8 +69,10 @@ export function extractYouTubeVideoId(urlOrId: string): string | null {
 	// If already a plausible 11-char ID, return as-is
 	if (/^[\w-]{11}$/.test(urlOrId)) return urlOrId;
 
-	const urlMatch = urlOrId.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|shorts\/|watch\?v=|watch\?.*?&v=))([\w-]{11})/);
-	return urlMatch ? urlMatch[1] : null;
+	const urlMatch = urlOrId.match(
+		/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|shorts\/|watch\?v=|watch\?.*?&v=))([\w-]{11})/
+	);
+	return urlMatch ? (urlMatch[1] ?? null) : null;
 }
 
 export type YouTubeTranscriptItem = { text: string; duration: number; offset: number };
@@ -79,43 +81,50 @@ export type YouTubeTranscriptItem = { text: string; duration: number; offset: nu
  * Parse an ISO-8601 YouTube duration (e.g., PT1H2M30S) to total seconds
  */
 function parseISODurationToSeconds(iso: string): number {
-    const match = iso.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?$/);
-    if (!match) return 0;
-    const hours = match[1] ? parseInt(match[1], 10) : 0;
-    const minutes = match[2] ? parseInt(match[2], 10) : 0;
-    const seconds = match[3] ? parseFloat(match[3]) : 0;
-    return hours * 3600 + minutes * 60 + seconds;
+	const match = iso.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?$/);
+	if (!match) return 0;
+	const hours = match[1] ? parseInt(match[1], 10) : 0;
+	const minutes = match[2] ? parseInt(match[2], 10) : 0;
+	const seconds = match[3] ? parseFloat(match[3]) : 0;
+	return hours * 3600 + minutes * 60 + seconds;
 }
 
 /**
  * Fetch video duration via YouTube Data API v3 using contentDetails.duration
  * Returns duration in seconds, or null if unavailable/misconfigured.
  */
-export async function getYouTubeVideoDurationSeconds(urlOrId: string): Promise<number | null> {
-    const apiKey = process.env.YOUTUBE_API_KEY;
-    if (!apiKey) return null;
+export async function getYouTubeVideoDurationSeconds(
+	urlOrId: string
+): Promise<number | null> {
+	const apiKey = process.env.YOUTUBE_API_KEY;
+	if (!apiKey) return null;
 
-    const videoId = extractYouTubeVideoId(urlOrId);
-    if (!videoId) return null;
+	const videoId = extractYouTubeVideoId(urlOrId);
+	if (!videoId) return null;
 
-    const endpoint = new URL("https://www.googleapis.com/youtube/v3/videos");
-    endpoint.searchParams.set("part", "contentDetails");
-    endpoint.searchParams.set("id", videoId);
-    endpoint.searchParams.set("key", apiKey);
+	const endpoint = new URL("https://www.googleapis.com/youtube/v3/videos");
+	endpoint.searchParams.set("part", "contentDetails");
+	endpoint.searchParams.set("id", videoId);
+	endpoint.searchParams.set("key", apiKey);
 
-    const res = await fetch(endpoint.toString(), { next: { revalidate: 3600 } });
-    if (!res.ok) return null;
+	const res = await fetch(endpoint.toString(), { next: { revalidate: 3600 } });
+	if (!res.ok) return null;
 
-    const data = (await res.json()) as { items?: Array<{ contentDetails?: { duration?: string } }> };
-    const iso = data.items?.[0]?.contentDetails?.duration;
-    if (!iso) return null;
-    return parseISODurationToSeconds(iso);
+	const data = (await res.json()) as {
+		items?: Array<{ contentDetails?: { duration?: string } }>;
+	};
+	const iso = data.items?.[0]?.contentDetails?.duration;
+	if (!iso) return null;
+	return parseISODurationToSeconds(iso);
 }
 
 /**
  * Vercel-safe transcript extraction using YouTube's innertube API
  */
-export async function getYouTubeTranscriptSegments(videoUrlOrId: string, lang?: string): Promise<YouTubeTranscriptItem[]> {
+export async function getYouTubeTranscriptSegments(
+	videoUrlOrId: string,
+	lang?: string
+): Promise<YouTubeTranscriptItem[]> {
 	const videoId = extractYouTubeVideoId(videoUrlOrId);
 	if (!videoId) {
 		throw new Error("Invalid YouTube URL or video ID");
@@ -123,22 +132,25 @@ export async function getYouTubeTranscriptSegments(videoUrlOrId: string, lang?: 
 
 	try {
 		// Use YouTube's innertube API
-		const response = await fetch("https://www.youtube.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-			},
-			body: JSON.stringify({
-				context: {
-					client: {
-						clientName: "WEB",
-						clientVersion: "2.20240101.00.00",
-					},
+		const response = await fetch(
+			"https://www.youtube.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
 				},
-				videoId: videoId,
-			}),
-		});
+				body: JSON.stringify({
+					context: {
+						client: {
+							clientName: "WEB",
+							clientVersion: "2.20240101.00.00",
+						},
+					},
+					videoId: videoId,
+				}),
+			}
+		);
 
 		if (!response.ok) {
 			throw new Error(`YouTube API request failed: ${response.status}`);
@@ -158,9 +170,14 @@ export async function getYouTubeTranscriptSegments(videoUrlOrId: string, lang?: 
 		}
 
 		// Find best caption track
-		let selectedTrack = captionTracks.find((track: CaptionTrack) => track.languageCode === (lang || "en") && track.kind === "asr");
+		let selectedTrack = captionTracks.find(
+			(track: CaptionTrack) =>
+				track.languageCode === (lang || "en") && track.kind === "asr"
+		);
 		if (!selectedTrack) {
-			selectedTrack = captionTracks.find((track: CaptionTrack) => track.languageCode === (lang || "en"));
+			selectedTrack = captionTracks.find(
+				(track: CaptionTrack) => track.languageCode === (lang || "en")
+			);
 		}
 		if (!selectedTrack) {
 			selectedTrack = captionTracks.find((track: CaptionTrack) => track.kind === "asr");
@@ -187,11 +204,16 @@ export async function getYouTubeTranscriptSegments(videoUrlOrId: string, lang?: 
 		const xmlText = await transcriptResponse.text();
 		return parseTranscriptXML(xmlText);
 	} catch (error) {
-		throw new Error(`YouTube transcript extraction failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+		throw new Error(
+			`YouTube transcript extraction failed: ${error instanceof Error ? error.message : "Unknown error"}`
+		);
 	}
 }
 
-export async function getYouTubeTranscriptText(videoUrlOrId: string, lang?: string): Promise<string> {
+export async function getYouTubeTranscriptText(
+	videoUrlOrId: string,
+	lang?: string
+): Promise<string> {
 	const segments = await getYouTubeTranscriptSegments(videoUrlOrId, lang);
 	return segments.map(s => s.text).join(" ");
 }
@@ -203,7 +225,9 @@ async function parseTranscriptXML(xmlData: string): Promise<YouTubeTranscriptIte
 
 	try {
 		// Try to parse using regex first (more reliable for YouTube's format)
-		const textMatches = xmlData.match(/<text[^>]*start="([^"]*)"[^>]*dur="([^"]*)"[^>]*>([^<]*)<\/text>/g);
+		const textMatches = xmlData.match(
+			/<text[^>]*start="([^"]*)"[^>]*dur="([^"]*)"[^>]*>([^<]*)<\/text>/g
+		);
 		if (textMatches) {
 			return textMatches.map((match, _index) => {
 				const startMatch = match.match(/start="([^"]*)"/);
@@ -243,7 +267,9 @@ async function parseTranscriptXML(xmlData: string): Promise<YouTubeTranscriptIte
 			offset: typeof item === "object" && item.start ? parseFloat(item.start) : index,
 		}));
 	} catch (error) {
-		throw new Error(`Failed to parse caption XML: ${error instanceof Error ? error.message : "Unknown error"}`);
+		throw new Error(
+			`Failed to parse caption XML: ${error instanceof Error ? error.message : "Unknown error"}`
+		);
 	}
 }
 

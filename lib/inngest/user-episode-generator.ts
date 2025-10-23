@@ -1,14 +1,22 @@
-
 import { generateText as genText } from "@/lib/inngest/utils/genai";
 import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
-import { getSummaryLengthConfig, type SummaryLengthOption } from "@/lib/types/summary-length";
+import {
+	getSummaryLengthConfig,
+	type SummaryLengthOption,
+} from "@/lib/types/summary-length";
 
 // TODO: Consider switching to Google Cloud Text-to-Speech API for stable TTS
 
 import { extractUserEpisodeDuration } from "@/app/(protected)/admin/audio-duration/duration-extractor";
 // aiConfig consumed indirectly via shared helpers
 // Shared helpers
-import { combineAndUploadWavChunks, generateSingleSpeakerTts, getTtsChunkWordLimit, splitScriptIntoChunks, uploadBufferToPrimaryBucket } from "@/lib/inngest/episode-shared";
+import {
+	combineAndUploadWavChunks,
+	generateSingleSpeakerTts,
+	getTtsChunkWordLimit,
+	splitScriptIntoChunks,
+	uploadBufferToPrimaryBucket,
+} from "@/lib/inngest/episode-shared";
 // (No direct GCS import; handled in shared helpers)
 import { prisma } from "@/lib/prisma";
 import { inngest } from "./client";
@@ -29,9 +37,14 @@ export const generateUserEpisode = inngest.createFunction(
 		name: "Generate User Episode Workflow",
 		retries: 2,
 		onFailure: async ({ error: _error, event, step }) => {
-			const { userEpisodeId } = (event as unknown as { data: { event: { data: { userEpisodeId: string } } } }).data.event.data;
+			const { userEpisodeId } = (
+				event as unknown as { data: { event: { data: { userEpisodeId: string } } } }
+			).data.event.data;
 			if (!userEpisodeId) {
-				console.error("[USER_EPISODE_FAILED] Missing userEpisodeId in failure event", event);
+				console.error(
+					"[USER_EPISODE_FAILED] Missing userEpisodeId in failure event",
+					event
+				);
 				return;
 			}
 			await prisma.userEpisode.update({
@@ -82,9 +95,9 @@ export const generateUserEpisode = inngest.createFunction(
 		await step.run("update-status-to-processing", async () => {
 			return await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
-				data: { 
+				data: {
 					status: "PROCESSING",
-					progress_message: "Getting started—preparing your episode for processing..."
+					progress_message: "Getting started—preparing your episode for processing...",
 				},
 			});
 		});
@@ -95,7 +108,7 @@ export const generateUserEpisode = inngest.createFunction(
 				where: { episode_id: userEpisodeId },
 				data: { progress_message: "Loading your video transcript..." },
 			});
-			
+
 			const episode = await prisma.userEpisode.findUnique({
 				where: { episode_id: userEpisodeId },
 			});
@@ -117,7 +130,7 @@ export const generateUserEpisode = inngest.createFunction(
 				where: { episode_id: userEpisodeId },
 				data: { progress_message: "Analyzing content and extracting key insights..." },
 			});
-			
+
 			const modelName = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
 			const text = await generateObjectiveSummary(transcript, { modelName });
 			await prisma.userEpisode.update({
@@ -130,12 +143,12 @@ export const generateUserEpisode = inngest.createFunction(
 		// Step 3: Generate Podslice-hosted script (commentary over summary)
 		const script = await step.run("generate-script", async () => {
 			const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
-			
+
 			// Get word/minute targets based on selected length
 			const lengthConfig = getSummaryLengthConfig(summaryLength);
 			const [minWords, maxWords] = lengthConfig.words;
 			const [minMinutes, maxMinutes] = lengthConfig.minutes;
-			
+
 			return genText(
 				modelName2,
 				`Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) single-narrator podcast segment where a Podslice host explains the highlights to listeners.\n\nIdentity & framing:\n- The speaker is a Podslice host summarizing someone else's content.\n- Do NOT reenact or impersonate the original speakers.\n- Present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken words only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as “the video” or “the episode.”\n\nStructure:\n- Hook that frames this as a Podslice summary.\n- Smooth transitions between highlight clusters.\n- Clear, concise wrap-up.\n\nSUMMARY:\n${summary}`
@@ -146,24 +159,30 @@ export const generateUserEpisode = inngest.createFunction(
 		const chunkUrls = await step.run("generate-and-upload-tts-chunks", async () => {
 			await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
-				data: { progress_message: "Converting script to audio with your selected voice..." },
+				data: {
+					progress_message: "Converting script to audio with your selected voice...",
+				},
 			});
-			
+
 			const chunkWordLimit = getTtsChunkWordLimit();
 			const scriptParts = splitScriptIntoChunks(script, chunkWordLimit);
 			const urls: string[] = [];
 			const tempPath = `user-episodes/${userEpisodeId}/temp-chunks`;
 
 			for (let i = 0; i < scriptParts.length; i++) {
-				console.log(`[TTS] Generating and uploading chunk ${i + 1}/${scriptParts.length}`);
-				
+				console.log(
+					`[TTS] Generating and uploading chunk ${i + 1}/${scriptParts.length}`
+				);
+
 				// Update progress with current chunk
 				await prisma.userEpisode.update({
 					where: { episode_id: userEpisodeId },
-					data: { progress_message: `Generating audio (part ${i + 1} of ${scriptParts.length})...` },
+					data: {
+						progress_message: `Generating audio (part ${i + 1} of ${scriptParts.length})...`,
+					},
 				});
-				
-				const buf = await generateSingleSpeakerTts(scriptParts[i]);
+
+				const buf = await generateSingleSpeakerTts(scriptParts[i]!);
 				// Upload immediately to GCS, return only the URL
 				const chunkFileName = `${tempPath}/chunk-${i}.wav`;
 				const gcsUrl = await uploadBufferToPrimaryBucket(buf, chunkFileName);
@@ -174,53 +193,65 @@ export const generateUserEpisode = inngest.createFunction(
 			return urls; // Only return URLs (small), not base64 data
 		});
 
-		const { gcsAudioUrl, durationSeconds } = await step.run("download-combine-upload-audio", async () => {
-			await prisma.userEpisode.update({
-				where: { episode_id: userEpisodeId },
-				data: { progress_message: "Stitching audio segments together into your final episode..." },
-			});
-			
-			// Download chunks from GCS, combine them, and upload final file
-			const { getStorageReader, parseGcsUri } = await import("@/lib/inngest/utils/gcs");
-			const storageReader = getStorageReader();
+		const { gcsAudioUrl, durationSeconds } = await step.run(
+			"download-combine-upload-audio",
+			async () => {
+				await prisma.userEpisode.update({
+					where: { episode_id: userEpisodeId },
+					data: {
+						progress_message:
+							"Stitching audio segments together into your final episode...",
+					},
+				});
 
-			console.log(`[COMBINE] Downloading ${chunkUrls.length} chunks from GCS`);
-			const audioChunkBase64: string[] = [];
+				// Download chunks from GCS, combine them, and upload final file
+				const { getStorageReader, parseGcsUri } = await import("@/lib/inngest/utils/gcs");
+				const storageReader = getStorageReader();
 
-			for (const gcsUrl of chunkUrls) {
-				const parsed = parseGcsUri(gcsUrl);
-				if (!parsed) {
-					throw new Error(`Invalid GCS URI: ${gcsUrl}`);
-				}
-				const [buffer] = await storageReader.bucket(parsed.bucket).file(parsed.object).download();
-				audioChunkBase64.push(buffer.toString("base64"));
-			}
+				console.log(`[COMBINE] Downloading ${chunkUrls.length} chunks from GCS`);
+				const audioChunkBase64: string[] = [];
 
-			console.log(`[COMBINE] Downloaded ${audioChunkBase64.length} chunks, combining`);
-			const fileName = `user-episodes/${userEpisodeId}-${Date.now()}.wav`;
-			const { finalBuffer, durationSeconds } = combineAndUploadWavChunks(audioChunkBase64, fileName);
-			const gcsUrl = await uploadBufferToPrimaryBucket(finalBuffer, fileName);
-
-			// Clean up temporary chunk files
-			try {
-				const tempPath = `user-episodes/${userEpisodeId}/temp-chunks`;
-				console.log(`[CLEANUP] Deleting temp chunks at ${tempPath}`);
-				for (const chunkUrl of chunkUrls) {
-					const parsed = parseGcsUri(chunkUrl);
-					if (parsed) {
-						await storageReader
-							.bucket(parsed.bucket)
-							.file(parsed.object)
-							.delete()
-							.catch(() => {});
+				for (const gcsUrl of chunkUrls) {
+					const parsed = parseGcsUri(gcsUrl);
+					if (!parsed) {
+						throw new Error(`Invalid GCS URI: ${gcsUrl}`);
 					}
+					const [buffer] = await storageReader
+						.bucket(parsed.bucket)
+						.file(parsed.object)
+						.download();
+					audioChunkBase64.push(buffer.toString("base64"));
 				}
-			} catch (cleanupError) {
-				console.warn(`[CLEANUP] Failed to delete temp chunks:`, cleanupError);
-			}
 
-			return { gcsAudioUrl: gcsUrl, durationSeconds };
-		});
+				console.log(`[COMBINE] Downloaded ${audioChunkBase64.length} chunks, combining`);
+				const fileName = `user-episodes/${userEpisodeId}-${Date.now()}.wav`;
+				const { finalBuffer, durationSeconds } = combineAndUploadWavChunks(
+					audioChunkBase64,
+					fileName
+				);
+				const gcsUrl = await uploadBufferToPrimaryBucket(finalBuffer, fileName);
+
+				// Clean up temporary chunk files
+				try {
+					const tempPath = `user-episodes/${userEpisodeId}/temp-chunks`;
+					console.log(`[CLEANUP] Deleting temp chunks at ${tempPath}`);
+					for (const chunkUrl of chunkUrls) {
+						const parsed = parseGcsUri(chunkUrl);
+						if (parsed) {
+							await storageReader
+								.bucket(parsed.bucket)
+								.file(parsed.object)
+								.delete()
+								.catch(() => {});
+						}
+					}
+				} catch (cleanupError) {
+					console.warn(`[CLEANUP] Failed to delete temp chunks:`, cleanupError);
+				}
+
+				return { gcsAudioUrl: gcsUrl, durationSeconds };
+			}
+		);
 
 		// Step 4: Finalize Episode
 		await step.run("finalize-episode", async () => {
