@@ -49,9 +49,7 @@ export default function BundlesPanelClient({
 		load: loadPlanGates,
 	} = usePlanGatesStore();
 
-	const [optimistic, setOptimistic] = useState<
-		Record<string, OptimisticBundle>
-	>({});
+	const [optimistic, setOptimistic] = useState<Record<string, OptimisticBundle>>({});
 	const [isPending, startTransition] = useTransition();
 
 	// CREATE form state
@@ -79,7 +77,7 @@ export default function BundlesPanelClient({
 
 	// Helpers
 	const optimisticBundle = (
-		b: BundleWithPodcasts & { min_plan?: string },
+		b: BundleWithPodcasts & { min_plan?: string }
 	): BundleWithPodcasts & { min_plan?: string } => ({
 		...b,
 		...(optimistic[b.bundle_id] || {}),
@@ -87,10 +85,10 @@ export default function BundlesPanelClient({
 
 	// CREATE
 	const toggleCreatePodcastSelection = (id: string) => {
-		setCreateForm((prev) => ({
+		setCreateForm(prev => ({
 			...prev,
 			selectedPodcastIds: prev.selectedPodcastIds.includes(id)
-				? prev.selectedPodcastIds.filter((x) => x !== id)
+				? prev.selectedPodcastIds.filter(x => x !== id)
 				: [...prev.selectedPodcastIds, id],
 		}));
 	};
@@ -101,9 +99,7 @@ export default function BundlesPanelClient({
 		form.set("name", createForm.name.trim());
 		form.set("description", createForm.description.trim());
 		form.set("min_plan", createForm.min_plan);
-		createForm.selectedPodcastIds.forEach((id) =>
-			form.append("podcast_ids", id),
-		);
+		createForm.selectedPodcastIds.forEach(id => form.append("podcast_ids", id));
 		try {
 			setIsCreating(true);
 			await createBundleAction(form);
@@ -130,7 +126,7 @@ export default function BundlesPanelClient({
 			name: b.name || "",
 			description: b.description || "",
 			min_plan: (b.min_plan as string) || "NONE",
-			selectedPodcastIds: b.podcasts.map((p) => p.podcast_id),
+			selectedPodcastIds: b.podcasts.map(p => p.podcast_id),
 		});
 	};
 
@@ -145,10 +141,10 @@ export default function BundlesPanelClient({
 	};
 
 	const toggleEditPodcastSelection = (id: string) => {
-		setEditForm((prev) => ({
+		setEditForm(prev => ({
 			...prev,
 			selectedPodcastIds: prev.selectedPodcastIds.includes(id)
-				? prev.selectedPodcastIds.filter((x) => x !== id)
+				? prev.selectedPodcastIds.filter(x => x !== id)
 				: [...prev.selectedPodcastIds, id],
 		}));
 	};
@@ -159,14 +155,14 @@ export default function BundlesPanelClient({
 		const prevSnapshot = optimistic[id];
 		startTransition(async () => {
 			// Optimistic UI update
-			setOptimistic((prev) => ({
+			setOptimistic(prev => ({
 				...prev,
 				[id]: {
 					...(prev[id] || {}),
 					name: editForm.name,
 					description: editForm.description,
-					podcasts: availablePodcasts.filter((p) =>
-						editForm.selectedPodcastIds.includes(p.podcast_id),
+					podcasts: availablePodcasts.filter(p =>
+						editForm.selectedPodcastIds.includes(p.podcast_id)
 					),
 				},
 			}));
@@ -183,7 +179,7 @@ export default function BundlesPanelClient({
 			} catch (e) {
 				console.error(e);
 				// Revert on error
-				setOptimistic((prev) => {
+				setOptimistic(prev => {
 					if (prevSnapshot) return { ...prev, [id]: prevSnapshot };
 					const { [id]: _removed, ...rest } = prev;
 					return rest;
@@ -199,7 +195,7 @@ export default function BundlesPanelClient({
 		startTransition(async () => {
 			try {
 				await deleteBundleAction(b.bundle_id);
-				setOptimistic((prev) => ({
+				setOptimistic(prev => ({
 					...prev,
 					[b.bundle_id]: { name: `${b.name} (deleted)` },
 				}));
@@ -221,7 +217,7 @@ export default function BundlesPanelClient({
 				description="Create new bundles and manage existing ones"
 				actionButton={{
 					label: showCreateForm ? "Hide" : createButtonLabel,
-					onClick: () => setShowCreateForm((s) => !s),
+					onClick: () => setShowCreateForm(s => !s),
 				}}
 				secondaryButton={{
 					label: "Refresh",
@@ -238,9 +234,7 @@ export default function BundlesPanelClient({
 								<Input
 									id="bundleName"
 									value={createForm.name}
-									onChange={(e) =>
-										setCreateForm((s) => ({ ...s, name: e.target.value }))
-									}
+									onChange={e => setCreateForm(s => ({ ...s, name: e.target.value }))}
 									placeholder="e.g., Tech Weekly"
 								/>
 							</div>
@@ -251,8 +245,8 @@ export default function BundlesPanelClient({
 									id="bundleDescription"
 									className="h-full min-h-[100px] max-h-[100px] overflow-y-auto"
 									value={createForm.name}
-									onChange={(e) =>
-										setCreateForm((s) => ({
+									onChange={e =>
+										setCreateForm(s => ({
 											...s,
 											description: e.target.value,
 										}))
@@ -266,14 +260,13 @@ export default function BundlesPanelClient({
 									id="minPlan"
 									className="w-full text-sm border rounded h-9 px-2"
 									value={createForm.min_plan}
-									onChange={(e) =>
-										setCreateForm((s) => ({ ...s, min_plan: e.target.value }))
-									}
-								>
+									onChange={e =>
+										setCreateForm(s => ({ ...s, min_plan: e.target.value }))
+									}>
 									{(planGatesLoaded
 										? planGateOptions
 										: [{ value: "NONE", label: "Free (All users)" }]
-									).map((opt) => (
+									).map(opt => (
 										<option key={opt.value} value={opt.value}>
 											{opt.label}
 										</option>
@@ -285,26 +278,17 @@ export default function BundlesPanelClient({
 							<Label>Select Podcasts (optional)</Label>
 							<div
 								className="mt-2 border rounded-lg p-3"
-								style={{ maxHeight: "200px", overflowY: "auto" }}
-							>
-								{availablePodcasts.map((p) => (
-									<div
-										key={p.podcast_id}
-										className="flex items-center space-x-2 py-1"
-									>
+								style={{ maxHeight: "200px", overflowY: "auto" }}>
+								{availablePodcasts.map(p => (
+									<div key={p.podcast_id} className="flex items-center space-x-2 py-1">
 										<Checkbox
 											id={`create-pod-${p.podcast_id}`}
-											checked={createForm.selectedPodcastIds.includes(
-												p.podcast_id,
-											)}
-											onCheckedChange={() =>
-												toggleCreatePodcastSelection(p.podcast_id)
-											}
+											checked={createForm.selectedPodcastIds.includes(p.podcast_id)}
+											onCheckedChange={() => toggleCreatePodcastSelection(p.podcast_id)}
 										/>
 										<label
 											htmlFor={`create-pod-${p.podcast_id}`}
-											className="text-sm font-medium cursor-pointer"
-										>
+											className="text-sm font-medium cursor-pointer">
 											{p.name}
 										</label>
 									</div>
@@ -314,8 +298,7 @@ export default function BundlesPanelClient({
 						<Button
 							variant="default"
 							onClick={doCreate}
-							disabled={isCreating || !createForm.name.trim()}
-						>
+							disabled={isCreating || !createForm.name.trim()}>
 							{isCreating ? "Creating..." : "Create Bundle"}
 						</Button>
 					</div>
@@ -323,15 +306,14 @@ export default function BundlesPanelClient({
 
 				{/* EXISTING BUNDLES LIST */}
 				<div className="space-y-4 flex flex-col gap-5">
-					{bundles.map((bundleOriginal) => {
+					{bundles.map(bundleOriginal => {
 						const bundle = optimisticBundle(bundleOriginal);
 						const isEditing = editingBundleId === bundle.bundle_id;
 
 						return (
 							<div
 								key={bundle.bundle_id}
-								className={`episode-card-wrapper p-4 border rounded-lg ${bundleOriginal.canInteract === false ? "opacity-60" : ""}`}
-							>
+								className={`episode-card-wrapper p-4 border rounded-lg ${bundleOriginal.canInteract === false ? "opacity-60" : ""}`}>
 								{/* Header */}
 								<div className="flex items-start gap-2 justify-between mb-0 w-full">
 									<div className="flex-1">
@@ -340,12 +322,11 @@ export default function BundlesPanelClient({
 										</p>
 
 										<div className="flex flex-wrap flex-col items-star  text-left justify-start w-full t my-2 gap-2">
-											{bundle.podcasts.map((p) => (
+											{bundle.podcasts.map(p => (
 												<Badge
 													key={p.podcast_id}
 													variant="outline"
-													className="text-xxs text-foreground inline-flex items-center w-full text-left p-2 m-0"
-												>
+													className="text-xxs text-foreground inline-flex items-center w-full text-left p-2 m-0">
 													{p.name}
 												</Badge>
 											))}
@@ -364,8 +345,7 @@ export default function BundlesPanelClient({
 												className="my-4"
 												size="sm"
 												onClick={saveEdit}
-												disabled={isPending || !editForm.name.trim()}
-											>
+												disabled={isPending || !editForm.name.trim()}>
 												Save
 											</Button>
 										</>
@@ -374,18 +354,14 @@ export default function BundlesPanelClient({
 											<Button
 												variant="outline"
 												size="sm"
-												onClick={() => startEdit(bundle)}
-											>
+												onClick={() => startEdit(bundle)}>
 												Edit
 											</Button>
 											<Button
 												variant="outline"
 												size="sm"
-												onClick={() =>
-													deleteBundle(bundle as BundleWithPodcasts)
-												}
-												className="text-destructive"
-											>
+												onClick={() => deleteBundle(bundle as BundleWithPodcasts)}
+												className="text-destructive">
 												Delete
 											</Button>
 										</>
@@ -400,8 +376,8 @@ export default function BundlesPanelClient({
 												<Input
 													id="editName"
 													value={editForm.name}
-													onChange={(e) =>
-														setEditForm((s) => ({ ...s, name: e.target.value }))
+													onChange={e =>
+														setEditForm(s => ({ ...s, name: e.target.value }))
 													}
 												/>
 											</div>
@@ -412,8 +388,8 @@ export default function BundlesPanelClient({
 													className="h-full max-h-[180px]"
 													rows={2}
 													value={editForm.description}
-													onChange={(e) =>
-														setEditForm((s) => ({
+													onChange={e =>
+														setEditForm(s => ({
 															...s,
 															description: e.target.value,
 														}))
@@ -426,17 +402,16 @@ export default function BundlesPanelClient({
 													id="editMinPlan"
 													className="w-full border rounded h-9 px-2 bg-background"
 													value={editForm.min_plan}
-													onChange={(e) =>
-														setEditForm((s) => ({
+													onChange={e =>
+														setEditForm(s => ({
 															...s,
 															min_plan: e.target.value,
 														}))
-													}
-												>
+													}>
 													{(planGatesLoaded
 														? planGateOptions
 														: [{ value: "NONE", label: "Free (All users)" }]
-													).map((opt) => (
+													).map(opt => (
 														<option key={opt.value} value={opt.value}>
 															{opt.label}
 														</option>
@@ -448,26 +423,21 @@ export default function BundlesPanelClient({
 											<Label>Select Podcasts</Label>
 											<div
 												className="mt-2 border rounded-lg p-3"
-												style={{ maxHeight: "200px", overflowY: "auto" }}
-											>
-												{availablePodcasts.map((p) => (
+												style={{ maxHeight: "200px", overflowY: "auto" }}>
+												{availablePodcasts.map(p => (
 													<div
 														key={p.podcast_id}
-														className="flex items-center space-x-2 py-1"
-													>
+														className="flex items-center space-x-2 py-1">
 														<Checkbox
 															id={`edit-pod-${p.podcast_id}`}
-															checked={editForm.selectedPodcastIds.includes(
-																p.podcast_id,
-															)}
+															checked={editForm.selectedPodcastIds.includes(p.podcast_id)}
 															onCheckedChange={() =>
 																toggleEditPodcastSelection(p.podcast_id)
 															}
 														/>
 														<Label
 															htmlFor={`edit-pod-${p.podcast_id}`}
-															className="font-normal cursor-pointer"
-														>
+															className="font-normal cursor-pointer">
 															<p className="text-xs font-light ml-2 text-left">
 																{p.name}
 															</p>

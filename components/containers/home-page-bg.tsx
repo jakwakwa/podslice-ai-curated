@@ -2,10 +2,8 @@
 
 import type React from "react";
 
-type HomePageBackgroundProps = {}
-
 const HomePageBackground: React.FC = () => {
-  return <div className="bg-home" />;
+	return <div className="bg-none" />;
 };
 
 export default HomePageBackground;

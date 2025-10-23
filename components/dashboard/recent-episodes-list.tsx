@@ -29,11 +29,8 @@ export function RecentEpisodesList({
 
 	// Filter and sort episodes: only completed with audio, sorted by updated_at desc, take 3
 	const displayEpisodes = episodes
-		.filter((e) => e.status === "COMPLETED" && !!e.signedAudioUrl)
-		.sort(
-			(a, b) =>
-				new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
-		)
+		.filter(e => e.status === "COMPLETED" && !!e.signedAudioUrl)
+		.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
 		.slice(0, 3);
 
 	return (
@@ -42,7 +39,7 @@ export function RecentEpisodesList({
 				<p className="w-full mx-0 px-0 text-secondary-foreground md:px-0 text-base font-bold mb-4">
 					{sections.recentEpisodes.title}
 				</p>
-				<CardDescription className="w-full px-0 md:px-0 text-sm text-secondary-foreground-muted opacity-90">
+				<CardDescription className="w-full px-0 md:px-0 text-sm text-primary-foreground-muted  opacity-90">
 					{sections.recentEpisodes.description}
 				</CardDescription>
 				<div className="w-full flex flex-row md:flex-col gap-2">
@@ -67,7 +64,7 @@ export function RecentEpisodesList({
 					</p>
 				) : (
 					<ul className="episode-card-wrapper-dark p-2 md:px-2 rounded-xl flex flex-col w-full min-w-full overflow-hidden gap-2 lg:px-2">
-						{displayEpisodes.map((episode) => (
+						{displayEpisodes.map(episode => (
 							<li key={episode.episode_id} className="list-none w-full">
 								<EpisodeCard
 									imageUrl={null}
