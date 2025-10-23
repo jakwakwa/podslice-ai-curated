@@ -41,8 +41,8 @@ export async function POST(request: Request) {
 		// Calculate current weighted usage
 		const currentUsage = calculateWeightedUsage(completedEpisodes);
 
-		// Get episode limit from plan configuration
-		const EPISODE_LIMIT = PRICING_TIER[2].episodeLimit;
+	// Get episode limit from plan configuration
+	const EPISODE_LIMIT = PRICING_TIER[2]?.episodeLimit ?? 30;
 
 		// Check if user can create episode of requested length
 		const check = canCreateEpisode(currentUsage, summaryLength, EPISODE_LIMIT);
