@@ -39,7 +39,7 @@ import { SummaryLengthSelector } from "@/components/features/episode-generation/
 import { LongEpisodeWarningDialog } from "@/components/features/episode-generation/long-episode-warning-dialog";
 import type { SummaryLengthOption } from "@/lib/types/summary-length";
 
-const EPISODE_LIMIT = PRICING_TIER[2].episodeLimit;
+const EPISODE_LIMIT = PRICING_TIER[2]?.episodeLimit ?? 30;
 const YT_MAX_DURATION_SECONDS = getMaxDurationSeconds();
 
 console.log(
