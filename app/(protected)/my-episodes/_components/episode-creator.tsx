@@ -436,10 +436,10 @@ export function EpisodeCreator() {
   async function playSample(voiceName: string) {
     try {
       const cached = audioUrlCache[voiceName];
-      let url = cached;
+      let url: string;
 
       // If not cached, set loading state and fetch
-      if (!url) {
+      if (!cached) {
         setIsLoadingSample(voiceName);
         const res = await fetch(
           `/api/tts/voice-sample?voice=${encodeURIComponent(voiceName)}`,
@@ -448,9 +448,12 @@ export function EpisodeCreator() {
         // Get the array buffer and explicitly create a blob with audio/wav MIME type
         const arrayBuffer = await res.arrayBuffer();
         const blob = new Blob([arrayBuffer], { type: "audio/wav" });
-        url = URL.createObjectURL(blob);
-        setAudioUrlCache((prev) => ({ ...prev, [voiceName]: url }));
+        const newUrl = URL.createObjectURL(blob);
+        setAudioUrlCache((prev) => ({ ...prev, [voiceName]: newUrl }));
         setIsLoadingSample(null);
+        url = newUrl;
+      } else {
+        url = cached;
       }
 
       // Set playing state and play audio
