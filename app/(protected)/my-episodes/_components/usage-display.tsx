@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Body, H2 } from "@/components/ui/typography";
+import { H2 } from "@/components/ui/typography";
 import { PRICING_TIER } from "@/config/paddle-config";
 import { useUserEpisodesStore } from "@/lib/stores/user-episodes-store";
 

@@ -484,7 +484,7 @@ export function CuratedBundlesClient({
                             >
                               {bundle.podcasts
                                 .slice(0, 4)
-                                .map((podcast: Podcast, index: number) => (
+                                .map((podcast: Podcast, _index: number) => (
                                   <li
                                     key={podcast.podcast_id}
                                     className="text-primary-foreground-muted leading-none font-light text-[0.75rem] truncate pl-1 line-clamp-1"

@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		if (!process.env.RESEND_API_KEY || !process.env.EMAIL_FROM) {
+		if (!(process.env.RESEND_API_KEY && process.env.EMAIL_FROM)) {
 			return NextResponse.json(
 				{ error: "Email service not configured" },
 				{ status: 500 }

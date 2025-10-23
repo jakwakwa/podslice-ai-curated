@@ -3,17 +3,11 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
-  ChevronDown,
   Loader2,
   CheckCircle2,
   XCircle,
   Clock,
 } from "lucide-react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import {
   Table,
   TableBody,
@@ -22,7 +16,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -51,7 +44,7 @@ export function EpisodeStatusTable({
   const searchParams = useSearchParams();
   const fromGenerate = searchParams?.get("from") === "generate";
 
-  const [isOpen, setIsOpen] = useState(defaultExpanded || fromGenerate);
+  const [_isOpen, setIsOpen] = useState(defaultExpanded || fromGenerate);
   const [episodes, setEpisodes] = useState<Map<string, EpisodeStatusUpdate>>(
     new Map(),
   );

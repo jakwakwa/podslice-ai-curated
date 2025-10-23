@@ -85,7 +85,7 @@ class EmailService {
 			const baseUrl = process.env.EMAIL_LINK_BASE_URL || getAppUrl() || process.env.NEXT_PUBLIC_APP_URL || "";
 			const url = `${baseUrl.replace(/\/$/, "")}/api/internal/send-email`;
 			const secret = process.env.INTERNAL_API_SECRET;
-			if (!baseUrl || !secret) {
+			if (!(baseUrl && secret)) {
 				console.warn("Email proxy unavailable - missing NEXT_PUBLIC_APP_URL/getAppUrl or INTERNAL_API_SECRET");
 				return false;
 			}
@@ -113,7 +113,7 @@ class EmailService {
 			const baseUrl = process.env.EMAIL_LINK_BASE_URL || getAppUrl() || process.env.NEXT_PUBLIC_APP_URL || "";
 			const url = `${baseUrl.replace(/\/$/, "")}/api/internal/send-email`;
 			const secret = process.env.INTERNAL_API_SECRET;
-			if (!baseUrl || !secret) {
+			if (!(baseUrl && secret)) {
 				console.warn("Email proxy unavailable - missing NEXT_PUBLIC_APP_URL/getAppUrl or INTERNAL_API_SECRET");
 				return false;
 			}
@@ -144,7 +144,7 @@ class EmailService {
 		// Lazy initialize on first use
 		this.initializeClient();
 
-		if (!this.client || !process.env.EMAIL_FROM) {
+		if (!(this.client && process.env.EMAIL_FROM)) {
 			console.warn("Primary email transport unavailable; attempting proxy...");
 			const proxied = await this.sendViaInternalProxy(notification);
 			return proxied;

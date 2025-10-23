@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { PlayButton } from "@/components/episodes/play-button";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import EpisodeCard from "@/components/ui/episode-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEpisodePlayer } from "@/hooks/use-episode-player";

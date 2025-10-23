@@ -1,10 +1,8 @@
 "use client";
 
-import React from "react";
+import type React from "react";
 
-interface HomePageBackgroundProps {
-  // Add your props here
-}
+type HomePageBackgroundProps = {}
 
 const HomePageBackground: React.FC = () => {
   return <div className="bg-home" />;

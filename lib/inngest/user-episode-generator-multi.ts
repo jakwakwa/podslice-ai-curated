@@ -166,20 +166,24 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 
 			for (let i = 0; i < duetLines.length; i++) {
 				const line = duetLines[i];
-				console.log(`[TTS] Generating and uploading line ${i + 1}/${duetLines.length} (Speaker ${line.speaker})`);
+				console.log(`[TTS] Generating and uploading line ${i + 1}/${duetLines.length} (Speaker ${line?.speaker})`);
 				
 				// Update progress with current line
 				await prisma.userEpisode.update({
 					where: { episode_id: userEpisodeId },
 					data: { progress_message: `Generating dialogue audio (line ${i + 1} of ${duetLines.length})...` },
 				});
-				
+
+				if (!line) {
+					console.warn(`[TTS] Skipping undefined line at index ${i}`);
+					continue;
+				}
 				const voice = line.speaker === "A" ? voiceA : voiceB;
 				const audio = await ttsWithVoice(line.text, voice);
-				// Upload immediately to GCS
 				const chunkFileName = `${tempPath}/line-${i}.wav`;
 				const gcsUrl = await uploadBufferToPrimaryBucket(audio, chunkFileName);
 				urls.push(gcsUrl);
+
 			}
 
 			console.log(`[TTS] Uploaded ${urls.length} dialogue chunks to GCS`);

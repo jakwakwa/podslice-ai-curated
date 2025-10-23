@@ -1,5 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import { shadcn, neobrutalism, dark, shadesOfPurple } from "@clerk/themes";
+import { dark, shadesOfPurple } from "@clerk/themes";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";

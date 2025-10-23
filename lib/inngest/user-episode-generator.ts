@@ -1,4 +1,4 @@
-import { getEpisodeTargetMinutes } from "@/lib/env";
+
 import { generateText as genText } from "@/lib/inngest/utils/genai";
 import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
 import { getSummaryLengthConfig, type SummaryLengthOption } from "@/lib/types/summary-length";

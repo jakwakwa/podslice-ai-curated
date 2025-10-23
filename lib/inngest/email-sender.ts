@@ -38,7 +38,7 @@ export const sendEpisodeReadyEmail = inngest.createFunction(
 			}),
 		]);
 
-		if (!user?.email || !user.email_notifications) {
+		if (!(user?.email && user.email_notifications)) {
 			console.log(`[EMAIL] User ${episode.user_id} has email notifications disabled or no email`);
 			return;
 		}
@@ -89,7 +89,7 @@ export const sendEpisodeFailedEmail = inngest.createFunction(
 			select: { email: true, name: true, email_notifications: true },
 		});
 
-		if (!user?.email || !user.email_notifications) {
+		if (!(user?.email && user.email_notifications)) {
 			console.log(`[EMAIL] User ${episode.user_id} has email notifications disabled or no email`);
 			return;
 		}
