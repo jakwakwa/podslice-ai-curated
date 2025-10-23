@@ -843,7 +843,7 @@ export function EpisodeCreator() {
 							</div>
 
 							{/* Summary Length Selector */}
-							<div className="space-y-6 border-1 rounded-xl md:rounded-4xl w-full md:max-w-full shadow-md px-4 md:px-10 pt-8 pb-12 bg-[#110d1712] md:min-w-full mt-6">
+							<div className=" border-1 rounded-xl md:rounded-4xl w-full md:max-w-full shadow-md px-4 md:px-10 pt-8 pb-12 bg-[#110d1712] md:min-w-full mt-6">
 								<SummaryLengthSelector
 									value={summaryLength}
 									onChange={setSummaryLength}

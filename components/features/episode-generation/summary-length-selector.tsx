@@ -1,8 +1,10 @@
 "use client";
 
+import { InfoIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
 	SUMMARY_LENGTH_OPTIONS,
 	type SummaryLengthOption,
@@ -31,7 +33,7 @@ export function SummaryLengthSelector({
 	};
 
 	return (
-		<div className="space-y-1 p-0">
+		<div className=" p-0">
 			<Label className="text-base font-semibold">Episode Length</Label>
 			<RadioGroup value={value} onValueChange={handleChange} disabled={disabled}>
 				{(
@@ -42,7 +44,7 @@ export function SummaryLengthSelector({
 					<div
 						key={key}
 						className={cn(
-							"flex items-center justify-between w-full px-3 py-1 gap-3 rounded-lg bg-cyan-700/10 border transition-colors h-30 duration-300 ease-in-out",
+							"flex items-center justify-between p-6  gap-4 rounded-lg bg-cyan-700/10 border transition-color duration-300 ease-in-out",
 							value === key
 								? "bg-accent/10 border-2 border-cyan-300"
 								: "border-border hover:bg-accent/80",
@@ -62,10 +64,19 @@ export function SummaryLengthSelector({
 										2x Credits
 									</Badge>
 								)}
+								<Tooltip>
+									<TooltipTrigger>
+										<InfoIcon className="text-sm" />
+										<span className="hidden">Hover</span>
+									</TooltipTrigger>
+									<TooltipContent className="bg-white ">
+										<p className="text-sm text-muted cursor-default ">
+											~{config.minutes[0]}-{config.minutes[1]} minutes •{" "}
+											{config.description}
+										</p>
+									</TooltipContent>
+								</Tooltip>
 							</Label>
-							<p className="text-sm text-muted-foreground">
-								~{config.minutes[0]}-{config.minutes[1]} minutes • {config.description}
-							</p>
 						</div>
 					</div>
 				))}
