@@ -39,7 +39,7 @@ export function RecentEpisodesList({
 				<p className="w-full mx-0 px-0 text-secondary-foreground md:px-0 text-base font-bold mb-4">
 					{sections.recentEpisodes.title}
 				</p>
-				<CardDescription className="w-full px-0 md:px-0 text-sm text-primary-foreground-muted  opacity-90">
+				<CardDescription className="w-full px-0 md:px-0 text-sm text-primary-foreground/80  opacity-90">
 					{sections.recentEpisodes.description}
 				</CardDescription>
 				<div className="w-full flex flex-row md:flex-col gap-2">

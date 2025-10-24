@@ -7,7 +7,7 @@ import type React from "react";
 import { Toaster } from "sonner";
 import { GlobalAudioPlayerSheet } from "@/components/ui/global-audio-player-sheet";
 import { GlobalProgressBar } from "@/components/ui/global-progress-bar";
-import { ClientProviders } from "./client-providers";
+import { ClientProviders } from "../client-providers";
 
 import "./globals.css";
 
@@ -19,25 +19,18 @@ if (!clerkPublishableKey) {
 }
 
 export const metadata: Metadata = {
-	title: "PODSLICE | AI Podcast Summaries | Cut the Chatter, Keep the Insight.",
+	title: "PODSLICE | Terms of Service & Privacy Policy",
 	description:
 		"PODSLICE is a platform for creating and sharing AI-generated summaries of podcasts. It is a platform for creating and sharing AI-generated summaries of podcasts.",
-	keywords: ["PODSLICE", "AI Podcast Summaries", "Podcast Summaries", "Podcast Summarization", "Podcast Summarization AI", "Podcast Summarization Tool", "Podcast Summarization Service", "Podcast Summarization Platform", "Podcast Summarization Software", "Podcast Summarization App", "Podcast Summarization Tool", "Podcast Summarization Service", "Podcast Summarization Platform", "Podcast Summarization Software", "Podcast Summarization App", "Multi-source Up-to-date News Summaries", "Multi-source Up-to-date News Summarization", "Multi-source Up-to-date News Summarization AI", "Multi-source Up-to-date News Summarization Tool", "Multi-source Up-to-date News Summarization Service", "Multi-source Up-to-date News Summarization Platform", "Multi-source Up-to-date News Summarization Software", "Multi-source Up-to-date News Summarization App"],
+	keywords: ["PODSLICE", "Terms of Service", "Privacy Policy"],
 	openGraph: {
-		title: "PODSLICE | AI Podcast or Multi-source Up-to-date News Summaries | Cut the Chatter, Keep the Insight.",
+		title: "PODSLICE | Terms of Service & Privacy Policy",
 		description:
-			"Experience the future of listening. PODSLICE crafts weekly AI summaries of top podcasts with a stunningly realistic voice. Get your intelligence briefing in minutes",
-		url: "https://podslice.ai",
+			"PODSLICE is a platform for creating and sharing AI-generated summaries of podcasts. It is a platform for creating and sharing AI-generated summaries of podcasts.",
+		url: "https://podslice.ai/terms",
 		siteName: "PODSLICE AI",
 		images: [{ url: "/podslice-og.jpg" }],
-	},
-	icons: {
-		icon: "/assets/icon.svg",
-	},
-	twitter: {
-		card: "summary_large_image",
-	},
-
+	}
 };
 
 export default function RootLayout({

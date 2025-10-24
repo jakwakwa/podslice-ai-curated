@@ -170,14 +170,13 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 	const isNewsEpisode = episode.youtube_url === "news";
 	const sourceDisplay =
 		isNewsEpisode && episode.news_sources
-			? ` ${
-					episode.news_sources === "stocks"
-						? "PolyMarket, Traderview, Yahoo! Finance"
-						: episode.news_sources
-								?.split(", ")
-								.map(s => s.charAt(0).toUpperCase() + s.slice(1))
-								.join(", ")
-				}`
+			? ` ${episode.news_sources === "stocks"
+				? "PolyMarket, Traderview, Yahoo! Finance"
+				: episode.news_sources
+					?.split(", ")
+					.map(s => s.charAt(0).toUpperCase() + s.slice(1))
+					.join(", ")
+			}`
 			: null;
 
 	// For YouTube videos, extract key takeaways; for news, use summary as-is
@@ -201,10 +200,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 								isNewsEpisode
 									? undefined
 									: {
-											href: episode.youtube_url,
-											label: "Youtube Url",
-											external: true,
-										}
+										href: episode.youtube_url,
+										label: "Youtube Url",
+										external: true,
+									}
 							}
 						/>
 						<div className="flex items-center gap-2 mt-2 text-lg font-bold text-[#90b4f7]">
@@ -221,7 +220,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 								</div>
 							)}
 
-							<Separator className="my-8" />
+							<Separator className="my-8" style={{
+								borderColor: "#000 !important",
+								boxShadow: "0px -1px 0px 0px rgb(0 0 0,0.7) !important"
+							}} />
 							{isNewsEpisode ? (
 								episode.summary && (
 									<div className="prose prose-sm max-w-none dark:prose-invert">

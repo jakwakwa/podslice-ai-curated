@@ -10,11 +10,11 @@ export default function KeyTakeaways({
 	const list = items.length > 0 ? items.slice(1) : items;
 	if (list.length === 0) return null;
 	return (
-		<div className="mt-4 episode-card-wrapper px-4 py-4 rounded-lg">
-			<h3 className="md:text-lg font-semibold mx-2  md:mx-8 my-4 text-secondary-foreground pb-2">
+		<div className="mt-4 bg-bigcard px-4 py-4 rounded-lg">
+			<h3 className="md:text-lg font-semibold mx-2  md:mx-8 my-4 text-secondary-foreground-muted pb-2">
 				Key Episode Takeaways
 			</h3>
-			<ul className=" list-disc space-y-1 text-primary-foreground pr-0  mx-6 md:mx-12">
+			<ul className=" list-disc space-y-1 text-foreground pr-0  mx-6 md:mx-12">
 				{list.map((t, i) => (
 					<li className="my-4 font-medium text-sm md:text-base" key={i}>
 						{t}
