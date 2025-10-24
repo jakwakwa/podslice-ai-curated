@@ -15,7 +15,7 @@
 	body {
 		@apply text-foreground;
 		width: 100vw !important;
-		/*background: var(--bg-background);*/
+		background: var(--swak-1) !important;;
 		max-width: 100vw !important;
 		background-color: oklch(94.9% 0.0156 276.7);
 		margin: 0 !important;
