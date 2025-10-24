@@ -49,15 +49,17 @@
 	}
 
 	label {
-		opacity: 0.6 !important;
-		font-size: 0.95rem !important;
-		font-weight: 700 !important;
+		opacity: 0.8;
+		font-size: 0.85rem !important;
+		font-weight: 400 !important;
+		/*padding-bottom: 10px !important;*/
+		margin-bottom: 10px;
+		
 		padding-bottom: 10px !important;
-		margin-bottom: -10px;
-		padding-top: 0px;
-		color: var(--primary-foreground) !important;
+		color: var(--kwak-8) !important;
 		text-transform: initial !important;
 		letter-spacing: 0.3px;
+		text-transform: uppercase !important;
 	}
 
 	.main-layouts {
@@ -208,7 +210,7 @@
 	--border: oklch(0.985 0 0);
 	--input: oklch(0.985 0 0);
 	--input-border: oklch(0.39 0.2 291.42 / 0.37);
-	--input-ring: oklch(0.82 0.15 175.26 / 0.92);
+	--input-ring: oklch(0.82 0.15 175.26 / 0.32);
 	--ring: oklch(58.768% 0.19418 296.19 / 0.93);
 	--chart-1: oklch(0.646 0.222 41.116);
 	--chart-2: oklch(0.6 0.118 184.704);
@@ -218,7 +220,7 @@
 	--sidebar: oklch(0.985 0 0);
 	--dialog-card: oklch(0.92 0.004 286.32);
 	--dialog-overlay: oklch(0.92 0.004 286.32);
-	--link: oklch(0.6 0.118 184.704);
+	--link: oklch(0.66 0.180 190.704);
 	--link-hover: oklch(0.9 0.83 290);
 	--inset-gradient: linear-gradient(var(--violet-1) 0%, var(--violet-3) 110%);
 	--bigepisode-gradient: linear-gradient(0deg,
@@ -274,7 +276,7 @@
 	--destructive: var(--wyn-5);
 	--border: var(--color-slate-700);
 	--input: var(--swak-5);
-	--ring: var(--kwak-2);
+	--ring: var(--kwak-5);
 	--chart-1: var(--kwak-5);
 	--chart-2: var(--kwak-5);
 	--chart-3: var(--kwak-5);
@@ -592,6 +594,7 @@
 
 	.bg-episode-shell {
 		background: var(--episode-shell-gradient) !important;
+		min-height: 100vh;
 		/*box-shadow: 0px 3px 14px #48407b !important;*/
 	}
 

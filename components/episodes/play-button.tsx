@@ -58,7 +58,7 @@ export function PlayButton({
 			aria-label={ariaLabel}
 			aria-pressed={isPlaying}
 			className={cn(
-				"inline-flex p-0 border-1 border-amber-300 rounded-full items-start justify-center btn-playicon  shadow-sm shadow-azure-300",
+				"inline-flex p-0 border-1 border-amber-300 rounded-full items-start justify-center btn-playicon z-1  shadow-sm shadow-azure-300",
 				className
 			)}
 			icon={<PlayIcon size={iconSize} className="bg-[#1d1d4d71]/80" />}

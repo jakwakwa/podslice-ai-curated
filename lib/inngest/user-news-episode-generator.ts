@@ -15,10 +15,21 @@ import { prisma } from "@/lib/prisma";
 import { getSummaryLengthConfig } from "@/lib/types/summary-length";
 import { inngest } from "./client";
 
-const ALLOWED_SOURCES = ["guardian", "aljazeera", "worldbank", "un", "stocks"] as const;
+const ALLOWED_SOURCES = [
+	"guardian",
+	"aljazeera",
+	"worldbank",
+	"un",
+	"stocks",
+	"abc",
+	"npr",
+	"dailymaverick",
+	"teslaCrypto",
+] as const;
 const ALLOWED_TOPICS = [
 	"technology",
 	"business",
+	"bitcoin",
 	"politics",
 	"world",
 	"tesla",
@@ -43,10 +54,10 @@ async function ttsWithVoice(text: string, voiceName: string): Promise<Buffer> {
 	);
 }
 
-type DialogueLine = { speaker: "A" | "B"; text: string };
+type DialogueLine = { speaker: "HOST SLICE" | "PODSLICE GUEST"; text: string };
 
 const DialogueSchema = z.object({
-	speaker: z.enum(["A", "B"]),
+	speaker: z.enum(["HOST SLICE", "PODSLICE GUEST"]),
 	text: z.string().min(1),
 });
 
@@ -154,16 +165,39 @@ export const generateUserNewsEpisode = inngest.createFunction(
 		});
 
 		const allowedDomains = {
-			guardian: ["theguardian.com", "theguardian.com/europe"],
-			aljazeera: ["aljazeera.com"],
-			worldbank: ["worldbank.org"],
-			un: ["news.un.org"],
+			world: [
+				"theguardian.com",
+				"theguardian.com/europe",
+				"theguardian.com/world",
+				"aljazeera.com",
+				"reuters.com",
+			],
+			un: ["worldbank.org", "news.un.org"],
+			usNews: [
+				"abcnews.go.com",
+				"foxnews.com",
+				"cnn.com",
+				"nytimes.com",
+				"groundnews.com",
+				"npr.org",
+			],
+			dailymaverick: ["dailymaverick.co.za"],
+			teslaCrypto: [
+				"finance.yahoo.com",
+				"bloomberg.com",
+				"barrons.com",
+				"tradingview.com/news/",
+				"tesla.com",
+				"coincentral.com",
+				"coindesk.com/price/bitcoin/news",
+				"coindesk.com/latest-crypto-news",
+			],
 			stocks: [
 				"finance.yahoo.com",
 				"tradingview.com/news/",
-				"coindesk.com/",
-				"seekingalpha.com/market-news",
-				"perplexity.ai/finance",
+				"barrons.com",
+				"bloomberg.com",
+				"coindesk.com/latest-crypto-news",
 			],
 		} as const;
 
@@ -172,13 +206,13 @@ export const generateUserNewsEpisode = inngest.createFunction(
 
 		const constraintText = `You are a news researcher tasked with gathering the latest information on the topic "${topic}".
 
-Search for recent news articles ONLY from these domains: ${domainList}
+Search for recent news articles ONLY from these sources: ${domainList}
 
 You MUST respond with valid JSON that follows this exact structure:
 {
   "summary_title": "News Summary: [TOPIC]",
   "sources": [${sources.map(s => `"${s}"`).join(", ")}],
-  "top_headlines": "Comma-separated list of major headlines",
+  "top_headlines": "Comma-separated list of major headlines.",
   "topic": ["${topic}"],
   "sentiment": ["Your analysis of overall sentiment: Positive/Neutral/Negative"],
   "tags": ["Relevant tags based on content analysis"],
@@ -186,13 +220,13 @@ You MUST respond with valid JSON that follows this exact structure:
   "ai_summary": "Comprehensive 200-300 word summary of the key information, trends, and insights from the sources"
 }
 
-Research and analyze the latest news on "${topic}" from the specified sources. Fill in each field with appropriate content based on your research.`;
+Research and analyze the latest (current and last 3 days) news on "${topic}" from the specified sources. Fill in each field with appropriate content based on your research.`;
 
 		const summary = await step.run("generate-news-summary", async () => {
 			await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
 				data: {
-					progress_message: "Researching the latest news from your selected sources...",
+					progress_message: "Searching and Analysing sources...",
 				},
 			});
 
@@ -256,7 +290,7 @@ Research and analyze the latest news on "${topic}" from the specified sources. F
 					const summaryData = JSON.parse(summary);
 					summaryContent = summaryData.ai_summary || summary;
 				} catch (error) {
-					console.warn("Failed to parse structured summary, using raw text:", error);
+					console.warn("Failed to parse summary, using raw text:", error);
 				}
 
 				const { text } = await generateText({
@@ -435,7 +469,7 @@ Constraints:
 - Natural, engaging tone.
 - Avoid sensationalism; stick to facts.
 
-Output ONLY valid JSON array of objects with fields: speaker ("A" or "B") and text (string). No markdown.
+Output ONLY valid JSON array of objects with fields: speaker ("HOST SLICE" or "PODSLICE GUEST") and text (string). No markdown.
 
 NEWS SUMMARY:
 ${summaryContent}`,
@@ -470,7 +504,7 @@ ${summaryContent}`,
 								progress_message: `Generating dialogue (line ${i + 1} of ${duetLines.length})...`,
 							},
 						});
-						const voice = line.speaker === "A" ? finalVoiceA : finalVoiceB;
+						const voice = line.speaker === "HOST SLICE" ? finalVoiceA : finalVoiceB;
 						const audio = await ttsWithVoice(line.text, voice);
 						const chunkFileName = `${tempPath}/line-${i}.wav`;
 						const gcsUrl = await uploadBufferToPrimaryBucket(audio, chunkFileName);

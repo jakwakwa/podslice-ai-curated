@@ -44,23 +44,23 @@ export function SummaryLengthSelector({
 					<div
 						key={key}
 						className={cn(
-							"flex items-center justify-between p-6  gap-4 rounded-lg bg-cyan-700/10 border transition-color duration-300 ease-in-out",
+							"flex items-center justify-start content-center px-4 py-1  h-12 gap-4 rounded-lg bg-cyan-700/10 border transition-color duration-300 ease-in-out",
 							value === key
-								? "bg-accent/10 border-2 border-cyan-300"
+								? "bg-accent/10 outline-1 outline-violet-700"
 								: "border-border hover:bg-accent/80",
 							disabled && "opacity-50 bg-accent-10 cursor-not-allowed"
 						)}>
-						<RadioGroupItem value={key} id={key} disabled={disabled} className="mt-1" />
-						<div className="flex-1 space-y-1">
+						<RadioGroupItem value={key} id={key} disabled={disabled} className="mt-0" />
+						<div className=" items-center h-12 ">
 							<Label
 								htmlFor={key}
 								className={cn(
-									"cursor-pointer flex items-center gap-2",
+									"cursor-pointer flex content-center items-center h-12 gap-4",
 									disabled && "cursor-not-allowed"
 								)}>
-								<span className="font-bold">{config.label}</span>
+								<span className="font-bold h-3">{config.label}</span>
 								{key === "LONG" && (
-									<Badge variant="outline" className="text-xs">
+									<Badge variant="outline" className="text-xs h-4">
 										2x Credits
 									</Badge>
 								)}
