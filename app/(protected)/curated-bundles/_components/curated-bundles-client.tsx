@@ -440,17 +440,15 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 												</Typography>
 												<div className="mx-auto w-full">
 													{isShared ? (
-														<>
-															{bundle.episodes?.slice(0, 4).map(episode => (
-																<li key={episode.episode_id} className=" leading-none">
-																	<div className="w-full flex flex-col gap-0 ">
-																		<p className="w-full text-[0.75rem] font-semibold leading-normal my-0 px-1 mx-0 text-left text-primary-foreground/80 tracking-wide line-clamp-1 truncate ">
-																			{episode.episode_title}
-																		</p>
-																	</div>
-																</li>
-															))}
-														</>
+														bundle.episodes?.slice(0, 4).map(episode => (
+															<li key={episode.episode_id} className=" leading-none">
+																<div className="w-full flex flex-col gap-0 ">
+																	<p className="w-full text-[0.75rem] font-semibold leading-normal my-0 px-1 mx-0 text-left text-primary-foreground/80 tracking-wide line-clamp-1 truncate ">
+																		{episode.episode_title}
+																	</p>
+																</div>
+															</li>
+														))
 													) : (
 														<ul
 															key={bundle.bundle_id}
