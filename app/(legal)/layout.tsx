@@ -8,8 +8,9 @@ import { Toaster } from "sonner";
 import { GlobalAudioPlayerSheet } from "@/components/ui/global-audio-player-sheet";
 import { GlobalProgressBar } from "@/components/ui/global-progress-bar";
 import { ClientProviders } from "../client-providers";
+import "@/app/globals.css";
+// import "./globals.css";
 
-import "./globals.css";
 
 const InterSans = Inter({ subsets: ["latin"] });
 
