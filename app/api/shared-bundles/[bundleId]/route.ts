@@ -50,12 +50,12 @@ export async function PATCH(
 		const body = await request.json();
 		const validation = UpdateSharedBundleSchema.safeParse(body);
 
-		if (!validation.success) {
-			return NextResponse.json(
-				{ error: validation.error.errors[0].message },
-				{ status: 400 }
-			);
-		}
+	if (!validation.success) {
+		return NextResponse.json(
+			{ error: validation.error.errors[0]?.message ?? "Invalid request body" },
+			{ status: 400 }
+		);
+	}
 
 		const { name, description, is_active, episodeUpdates } = validation.data;
 

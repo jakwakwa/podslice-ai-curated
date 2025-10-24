@@ -3,7 +3,10 @@
 import type { Bundle, Podcast, UserCurationProfile } from "@prisma/client";
 
 // Type for bundle with podcasts array from API
-type BundleWithPodcasts = (Bundle & { podcasts: Podcast[] }) & { canInteract?: boolean; lockReason?: string | null };
+type BundleWithPodcasts = (Bundle & { podcasts: Podcast[] }) & {
+	canInteract?: boolean;
+	lockReason?: string | null;
+};
 
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
@@ -11,12 +14,24 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AppSpinner } from "@/components/ui/app-spinner";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUserCurationProfileStore } from "@/lib/stores";
 import { CuratedPodcastList } from "../data-components/selectable-podcast-list";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "../ui/select";
 import { Typography } from "../ui/typography";
 
 function UserFeedSelectorWizard() {
@@ -25,7 +40,9 @@ function UserFeedSelectorWizard() {
 	const [isBundleSelection, setIsBundleSelection] = useState(false);
 	const [selectedBundleId, setSelectedBundleId] = useState<string | undefined>(undefined);
 	const [selectedPodcasts, setSelectedPodcasts] = useState<Podcast[]>([]);
-	const [existingProfile, setExistingProfile] = useState<UserCurationProfile | null>(null);
+	const [existingProfile, setExistingProfile] = useState<UserCurationProfile | null>(
+		null
+	);
 	const [isCheckingProfile, setIsCheckingProfile] = useState(true);
 	const [bundles, setBundles] = useState<BundleWithPodcasts[]>([]);
 	const [isLoadingBundles, setIsLoadingBundles] = useState(false);
@@ -82,7 +99,12 @@ function UserFeedSelectorWizard() {
 			return;
 		}
 
-		let data: { name: string; isBundleSelection: boolean; selectedBundleId?: string; selectedPodcasts?: string[] };
+		let data: {
+			name: string;
+			isBundleSelection: boolean;
+			selectedBundleId?: string;
+			selectedPodcasts?: string[];
+		};
 
 		if (isBundleSelection) {
 			if (!selectedBundleId) {
@@ -96,7 +118,9 @@ function UserFeedSelectorWizard() {
 			};
 		} else {
 			if (selectedPodcasts.length === 0) {
-				toast.error("Please select at least one podcast for your custom Personalized Feed.");
+				toast.error(
+					"Please select at least one podcast for your custom Personalized Feed."
+				);
 				return;
 			}
 			data = {
@@ -139,12 +163,14 @@ function UserFeedSelectorWizard() {
 						</div>
 						<CardTitle className="text-2xl">You Already Have a Profile</CardTitle>
 						<CardDescription className="text-lg">
-							You already have an active Personalized Feed: <strong>{existingProfile.name}</strong>
+							You already have an active Personalized Feed:{" "}
+							<strong>{existingProfile.name}</strong>
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="text-center space-y-4">
 						<Typography variant="body" className="text-muted-foreground max-w-md mx-auto">
-							You can only have one active Personalized Feed at a time. You can edit your existing profile or deactivate it to create a new one.
+							You can only have one active Personalized Feed at a time. You can edit your
+							existing profile or deactivate it to create a new one.
 						</Typography>
 						<div className="flex flex-col sm:flex-row gap-3 justify-center">
 							<Link href="/dashboard">
@@ -164,10 +190,13 @@ function UserFeedSelectorWizard() {
 			{/* Step 1: Choose User Curation Profile Type */}
 			{step === 1 && (
 				<div className="w-full">
-					<div className="w-full" >
+					<div className="w-full">
 						<CardHeader>
 							<CardDescription>
-								<Typography className="text-primary-forefround w-full p-0 text-base" variant="body" as="span">
+								<Typography
+									className="text-primary-forefround w-full p-0 text-base"
+									variant="body"
+									as="span">
 									Choose from expertly curated bundles tailored to your subscription plan.
 								</Typography>
 							</CardDescription>
@@ -203,7 +232,9 @@ function UserFeedSelectorWizard() {
 			{step === 2 && (
 				<div className="w-full">
 					<Typography variant="body" className="mb-2">
-						{isBundleSelection ? "Select the bundle of pre-curated shows. Note: You only get to pick one at a time" : "Select the Podcasts shows for Your Custom Weekly Bundle Feed"}
+						{isBundleSelection
+							? "Select the bundle of pre-curated shows. Note: You only get to pick one at a time"
+							: "Select the Podcasts shows for Your Custom Weekly Bundle Feed"}
 					</Typography>
 					{isBundleSelection ? (
 						<div className="w-full max-w-md">
@@ -214,7 +245,9 @@ function UserFeedSelectorWizard() {
 							) : bundles.filter(b => b.canInteract).length === 0 ? (
 								<div className="text-center py-8">
 									<Typography variant="h4" className="mb-4 text-muted-foreground">
-										{bundles.length === 0 ? "No Bundles Available" : "No Access to Bundles"}
+										{bundles.length === 0
+											? "No Bundles Available"
+											: "No Access to Bundles"}
 									</Typography>
 									<Typography variant="body" className="mb-4 text-muted-foreground">
 										{bundles.length === 0
@@ -227,7 +260,9 @@ function UserFeedSelectorWizard() {
 									<div className="text-sm text-muted-foreground">
 										<Typography variant="body">
 											Need more details about bundles?{" "}
-											<Link href="/curated-bundles" className="text-teal-500 hover:underline">
+											<Link
+												href="/curated-bundles"
+												className="text-azure-500 hover:underline">
 												View bundle details here
 											</Link>
 										</Typography>
@@ -236,7 +271,9 @@ function UserFeedSelectorWizard() {
 							) : (
 								<>
 									<div className="mb-4">
-										<Label htmlFor="bundle-select" className="block text-sm font-medium mb-2">
+										<Label
+											htmlFor="bundle-select"
+											className="block text-sm font-medium mb-2">
 											Choose from a list of available bundles
 										</Label>
 										<Select
@@ -261,7 +298,9 @@ function UserFeedSelectorWizard() {
 									<div className="text-sm text-muted-foreground">
 										<Typography variant="body" className="mb-2 text-foreground/90">
 											Need more details about the bundles?{" "}
-											<Link href="/curated-bundles" className="text-teal-500 hover:underline font-medium">
+											<Link
+												href="/curated-bundles"
+												className="text-azure-500 hover:underline font-medium">
 												View bundle details here
 											</Link>
 										</Typography>
@@ -272,9 +311,13 @@ function UserFeedSelectorWizard() {
 					) : (
 						<CuratedPodcastList
 							onSelectPodcast={podcast => {
-								const isAlreadySelected = selectedPodcasts.some(p => p.podcast_id === podcast.podcast_id);
+								const isAlreadySelected = selectedPodcasts.some(
+									p => p.podcast_id === podcast.podcast_id
+								);
 								if (isAlreadySelected) {
-									setSelectedPodcasts(selectedPodcasts.filter(p => p.podcast_id !== podcast.podcast_id));
+									setSelectedPodcasts(
+										selectedPodcasts.filter(p => p.podcast_id !== podcast.podcast_id)
+									);
 								} else {
 									if (selectedPodcasts.length < 5) {
 										setSelectedPodcasts([...selectedPodcasts, podcast]);
@@ -287,10 +330,21 @@ function UserFeedSelectorWizard() {
 						/>
 					)}
 					<div className="flex justify-between mt-8 flex-col md:flex-row">
-						<Button variant="outline" className="p-4" size="md" onClick={() => setStep(1)}>
+						<Button
+							variant="outline"
+							className="p-4"
+							size="md"
+							onClick={() => setStep(1)}>
 							Back
 						</Button>
-						<Button variant="default" onClick={() => setStep(3)} disabled={isBundleSelection ? !selectedBundleId || bundles.filter(b => b.canInteract).length === 0 : selectedPodcasts.length === 0}>
+						<Button
+							variant="default"
+							onClick={() => setStep(3)}
+							disabled={
+								isBundleSelection
+									? !selectedBundleId || bundles.filter(b => b.canInteract).length === 0
+									: selectedPodcasts.length === 0
+							}>
 							Continue
 						</Button>
 					</div>
@@ -300,15 +354,17 @@ function UserFeedSelectorWizard() {
 			{/* Step 3: Review and Create */}
 			{step === 3 && (
 				<div className="w-full">
-					<Card className="w-full" >
+					<Card className="w-full">
 						<CardHeader>
 							<CardDescription className="text-base">
 								Review your Bundled Feed Details
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="flex flex-col gap-2">
-							<div className="border-2 bg-primary-card p-6 rounded-xl">
-								<Label htmlFor="userCurationProfileName" className="block text-sm font-medium mb-2">
+							<div className="border-2 p-6 rounded-xl">
+								<Label
+									htmlFor="userCurationProfileName"
+									className="block text-sm font-medium mb-2">
 									Personalized Feed Name
 								</Label>
 								<Input
@@ -319,12 +375,17 @@ function UserFeedSelectorWizard() {
 									placeholder="Enter your profile name (e.g., My Daily Tech News)"
 								/>
 
-								<div className="w-full max-w-[50%] p-3 rounded-lg border-2 bg-slate-900 border-teal-700 shadow-lg">
-									<Typography variant="h4" className="mb-1 text-foreground font-medium text-sm">
+								<div className="w-full max-w-[50%] p-3 rounded-lg border-2 bg-slate-900 border-azure-700 shadow-lg">
+									<Typography
+										variant="h4"
+										className="mb-1 text-foreground font-medium text-sm">
 										Selected Content:
 									</Typography>
 									{isBundleSelection && selectedBundleId ? (
-										<p className="text-teal-100 uppercase font-bold">{bundles.find(b => b.bundle_id === selectedBundleId)?.name || selectedBundleId}</p>
+										<p className="text-azure-100 uppercase font-bold">
+											{bundles.find(b => b.bundle_id === selectedBundleId)?.name ||
+												selectedBundleId}
+										</p>
 									) : (
 										<ul className="space-y-2">
 											{selectedPodcasts.map(p => (
@@ -337,11 +398,22 @@ function UserFeedSelectorWizard() {
 								</div>
 							</div>
 							<div className="flex flex-row gap-2 mt-4">
-								<Button variant="outline" className="p-4" size="md" onClick={() => setStep(2)}>
+								<Button
+									variant="outline"
+									className="p-4"
+									size="md"
+									onClick={() => setStep(2)}>
 									Back
 								</Button>
-								<Button variant="default" onClick={handleCreateUserCurationProfile} disabled={isLoading || userCurationProfileName.trim() === ""}>
-									{isLoading ? <AppSpinner size="sm" label="Creating..." /> : "Create Personalized Feed"}
+								<Button
+									variant="default"
+									onClick={handleCreateUserCurationProfile}
+									disabled={isLoading || userCurationProfileName.trim() === ""}>
+									{isLoading ? (
+										<AppSpinner size="sm" label="Creating..." />
+									) : (
+										"Create Personalized Feed"
+									)}
 								</Button>
 							</div>
 						</CardContent>

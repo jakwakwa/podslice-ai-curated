@@ -41,7 +41,7 @@
 	padding: 0rem 1.5rem;
 	overflow: hidden;
 
-	background-image: radial-gradient(120% 120% at 0% 0%,
+	/*background-image: radial-gradient(120% 120% at 0% 0%,
 			oklch(84.33% 0.11825 191.818 / 0.296) -20%,
 			oklch(0% 0 0 / 0.66) 40%,
 			oklab(17.716% 0.01665 -0.04693 / 0.749) 120%),
@@ -56,7 +56,7 @@
 		radial-gradient(120% 120% at 0% 100%,
 			oklch(64.779% 0.05987 198.689 / 0.932) 20%,
 			oklch(59.56% 0.08836 295.464 / 0.938) 40%,
-			oklab(59.4% -0.04816 -0.15124 / 0.56) 120%) !important;
+			oklab(59.4% -0.04816 -0.15124 / 0.56) 120%) !important;*/
 	text-align: center;
 	/* overflow: hidden; */
 	/* position: absolute; */
@@ -68,20 +68,20 @@
 	position: absolute;
 	/* overflow-y: hidden; */
 	/* height: auto; */
-	background: oklch(44.971% 0.0836 277.387 / 0.757) no-repeat;
+	/*background: oklch(44.971% 0.0836 277.387 / 0.757) no-repeat;*/
 	background-position: center;
 	background-attachment: fixed;
 	background-repeat: no-repeat;
 	background-size: cover;
 
-	background-blend-mode: normal !important;
+	/*background-blend-mode: normal !important;*/
 	background-size: 110% 110%, 100% 100%, 150% 150% !important;
 
 }
 
 
 .login-gradient-background {
-	background: oklch(0.31 0.1 301.27 / 0.76) no-repeat !important;
+	/*background: oklch(0.31 0.1 301.27 / 0.76) no-repeat !important;*/
 
 }
 
@@ -100,12 +100,12 @@
 	inset: 0;
 	border-radius: 16px 16px 0 0;
 	padding: 1px 1px 0;
-	background: linear-gradient(180deg, #414b4e 49.5%, rgba(65, 75, 78, 0) 100%);
-	-webkit-mask:
+	/*background: linear-gradient(180deg, #414b4e 49.5%, rgba(65, 75, 78, 0) 100%);*/
+	/*-webkit-mask:
 		linear-gradient(#fff 0 0) content-box,
 		linear-gradient(#fff 0 0);
-	-webkit-mask-composite: xor;
-	mask-composite: exclude;
+	-webkit-mask-composite: xor;*/
+	/*mask-composite: exclude;*/
 }
 
 .login-card-hard-blur::before {
@@ -116,7 +116,7 @@
 	left: 50%;
 	margin-left: -44px;
 	top: -2px;
-	background: #fff800;
+	/*background: #fff800;*/
 	opacity: 0.5;
 	filter: blur(12px);
 }
@@ -131,7 +131,7 @@
 	top: -140px;
 	border-radius: 280px;
 	opacity: 0.1;
-	background: #fff800;
+	/*background: #fff800;*/
 	filter: blur(48px);
 }
 
@@ -151,7 +151,7 @@
 	top: -19px;
 	border-radius: 384px;
 	opacity: 0.2;
-	background: #fff800;
+	/*background: #fff800;*/
 	filter: blur(32px);
 }
 
@@ -171,8 +171,8 @@
 	left: 50%;
 
 	position: absolute;
-	background: linear-gradient(90deg,
+	/*background: linear-gradient(90deg,
 			rgba(255, 255, 255, 0) 15%,
 			rgba(255, 248, 0, 0.9) 50%,
-			rgba(255, 255, 255, 0) 85%);
+			rgba(255, 255, 255, 0) 85%);*/
 }

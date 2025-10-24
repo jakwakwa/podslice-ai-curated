@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { extractUserEpisodeDuration } from "@/app/(protected)/admin/audio-duration/duration-extractor";
 import { aiConfig } from "@/config/ai";
-import emailService from "@/lib/email-service";
 import { combineAndUploadWavChunks, uploadBufferToPrimaryBucket } from "@/lib/inngest/episode-shared";
 import { generateTtsAudio, generateText as genText } from "@/lib/inngest/utils/genai";
 import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
 import { prisma } from "@/lib/prisma";
+import { getSummaryLengthConfig, type SummaryLengthOption } from "@/lib/types/summary-length";
 import { inngest } from "./client";
 
 // Use shared generateTtsAudio directly for multi-speaker; voice selection via param
@@ -43,7 +43,7 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		id: "generate-user-episode-multi-workflow",
 		name: "Generate User Episode Multi-Speaker Workflow",
 		retries: 2,
-		onFailure: async ({ event }) => {
+		onFailure: async ({ event, step }) => {
 			const { userEpisodeId } = (event as unknown as { data: { event: { data: { userEpisodeId: string } } } }).data.event.data;
 			if (!userEpisodeId) {
 				console.error("[USER_EPISODE_MULTI_FAILED] Missing userEpisodeId in failure event", event);
@@ -61,7 +61,7 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 				if (episode) {
 					const user = await prisma.user.findUnique({
 						where: { user_id: episode.user_id },
-						select: { in_app_notifications: true, email: true, name: true },
+						select: { in_app_notifications: true },
 					});
 					if (user?.in_app_notifications) {
 						await prisma.notification.create({
@@ -72,13 +72,11 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 							},
 						});
 					}
-					if (user?.email) {
-						const userFirstName = (user.name || "").trim().split(" ")[0] || "there";
-						await emailService.sendEpisodeFailedEmail(episode.user_id, user.email, {
-							userFirstName,
-							episodeTitle: episode.episode_title,
-						});
-					}
+					// Trigger email via separate function
+					await step.sendEvent("send-failed-email", {
+						name: "episode.failed.email",
+						data: { userEpisodeId },
+					});
 				}
 			} catch (notifyError) {
 				console.error("[USER_EPISODE_FAILED_NOTIFY]", notifyError);
@@ -87,21 +85,30 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 	},
 	{ event: "user.episode.generate.multi.requested" },
 	async ({ event, step }) => {
-		const { userEpisodeId, voiceA, voiceB, useShortEpisodesOverride } = event.data as {
+		const { userEpisodeId, voiceA, voiceB, useShortEpisodesOverride, summaryLength = "MEDIUM" } = event.data as {
 			userEpisodeId: string;
 			voiceA: string;
 			voiceB: string;
 			useShortEpisodesOverride?: boolean;
+			summaryLength?: SummaryLengthOption;
 		};
 
 		await step.run("update-status-to-processing", async () => {
 			return await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
-				data: { status: "PROCESSING" },
+				data: { 
+					status: "PROCESSING",
+					progress_message: "Getting started—preparing your multi-speaker episode..."
+				},
 			});
 		});
 
 		const transcript = await step.run("get-transcript", async () => {
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: { progress_message: "Loading your video transcript..." },
+			});
+			
 			const episode = await prisma.userEpisode.findUnique({
 				where: { episode_id: userEpisodeId },
 			});
@@ -113,6 +120,11 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		const isShort = useShortEpisodesOverride ?? aiConfig.useShortEpisodes;
 
 		const summary = await step.run("generate-summary", async () => {
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: { progress_message: "Analyzing content and extracting key insights..." },
+			});
+			
 			const modelName = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
 			const text = await generateObjectiveSummary(transcript, { modelName });
 			await prisma.userEpisode.update({
@@ -122,29 +134,56 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 			return text;
 		});
 
-		const duetLines = await step.run("generate-duet-script", async () => {
-			const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
+	const duetLines = await step.run("generate-duet-script", async () => {
+		await prisma.userEpisode.update({
+			where: { episode_id: userEpisodeId },
+			data: { progress_message: "Crafting an engaging two-host conversation script..." },
+		});
+		
+		const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
+		
+		// Get word/minute targets based on selected length
+		const lengthConfig = getSummaryLengthConfig(summaryLength);
+		const [minWords, maxWords] = lengthConfig.words;
+		const [minMinutes, maxMinutes] = lengthConfig.minutes;
+		
 			const text = await genText(
 				modelName2,
-				`Task: Based on the SUMMARY below, write a two-host podcast conversation where Podslice hosts A and B explain the highlights to listeners. Alternate speakers naturally. Keep it ${isShort ? "short (~1 minute)" : "around 3-5 minutes)"}.\n\nIdentity & framing:\n- Hosts are from Podslice and are commenting on someone else's content.\n- They do NOT reenact or impersonate the original speakers.\n- They present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly, spoken by A):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken dialogue only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as “the video” or “the episode.”\n\nOutput ONLY valid JSON array of objects with fields: speaker ("A" or "B") and text (string). No markdown.\n\nSUMMARY:\n${summary}`
+				`Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) two-host podcast conversation where Podslice hosts A and B explain the highlights to listeners. Alternate speakers naturally.\n\nIdentity & framing:\n- Hosts are from Podslice and are commenting on someone else's content.\n- They do NOT reenact or impersonate the original speakers.\n- They present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly, spoken by A):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken dialogue only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as “the video” or “the episode.”\n\nOutput ONLY valid JSON array of objects with fields: speaker ("A" or "B") and text (string). No markdown.\n\nSUMMARY:\n${summary}`
 			);
 			return coerceJsonArray(text);
 		});
 
 		// TTS for all dialogue lines - Upload chunks to GCS immediately
 		const lineChunkUrls = await step.run("generate-and-upload-dialogue-audio", async () => {
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: { progress_message: "Converting dialogue to audio with your selected voices..." },
+			});
+			
 			const urls: string[] = [];
 			const tempPath = `user-episodes/${userEpisodeId}/temp-dialogue-chunks`;
 
 			for (let i = 0; i < duetLines.length; i++) {
 				const line = duetLines[i];
-				console.log(`[TTS] Generating and uploading line ${i + 1}/${duetLines.length} (Speaker ${line.speaker})`);
+				console.log(`[TTS] Generating and uploading line ${i + 1}/${duetLines.length} (Speaker ${line?.speaker})`);
+				
+				// Update progress with current line
+				await prisma.userEpisode.update({
+					where: { episode_id: userEpisodeId },
+					data: { progress_message: `Generating dialogue audio (line ${i + 1} of ${duetLines.length})...` },
+				});
+
+				if (!line) {
+					console.warn(`[TTS] Skipping undefined line at index ${i}`);
+					continue;
+				}
 				const voice = line.speaker === "A" ? voiceA : voiceB;
 				const audio = await ttsWithVoice(line.text, voice);
-				// Upload immediately to GCS
 				const chunkFileName = `${tempPath}/line-${i}.wav`;
 				const gcsUrl = await uploadBufferToPrimaryBucket(audio, chunkFileName);
 				urls.push(gcsUrl);
+
 			}
 
 			console.log(`[TTS] Uploaded ${urls.length} dialogue chunks to GCS`);
@@ -152,6 +191,11 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		});
 
 		const { gcsAudioUrl, durationSeconds } = await step.run("download-combine-upload-multi-voice", async () => {
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: { progress_message: "Stitching dialogue segments into your final episode..." },
+			});
+			
 			// Download chunks from GCS, combine them, and upload final file
 			const { getStorageReader, parseGcsUri } = await import("@/lib/inngest/utils/gcs");
 			const storageReader = getStorageReader();
@@ -192,7 +236,12 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		await step.run("finalize-episode", async () => {
 			return await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
-				data: { gcs_audio_url: gcsAudioUrl, status: "COMPLETED", duration_seconds: durationSeconds },
+				data: { 
+					gcs_audio_url: gcsAudioUrl, 
+					status: "COMPLETED", 
+					duration_seconds: durationSeconds,
+					progress_message: null, // Clear progress message on completion
+				},
 			});
 		});
 
@@ -205,22 +254,16 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 			return result;
 		});
 
-		await step.run("notify-user", async () => {
+		await step.run("notify-user-in-app", async () => {
 			const episode = await prisma.userEpisode.findUnique({
 				where: { episode_id: userEpisodeId },
 				select: { episode_id: true, episode_title: true, user_id: true },
 			});
 			if (!episode) return;
-			const [user, profile] = await Promise.all([
-				prisma.user.findUnique({
-					where: { user_id: episode.user_id },
-					select: { email: true, name: true, in_app_notifications: true },
-				}),
-				prisma.userCurationProfile.findFirst({
-					where: { user_id: episode.user_id, is_active: true },
-					select: { name: true },
-				}),
-			]);
+			const user = await prisma.user.findUnique({
+				where: { user_id: episode.user_id },
+				select: { in_app_notifications: true },
+			});
 			if (user?.in_app_notifications) {
 				await prisma.notification.create({
 					data: {
@@ -230,18 +273,12 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 					},
 				});
 			}
-			if (user?.email) {
-				const userFirstName = (user.name || "").trim().split(" ")[0] || "there";
-				const profileName = profile?.name ?? "Your personalized feed";
-				const baseUrl = process.env.EMAIL_LINK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || "";
-				const episodeUrl = `${baseUrl}/my-episodes/${encodeURIComponent(userEpisodeId)}`;
-				await emailService.sendEpisodeReadyEmail(episode.user_id, user.email, {
-					userFirstName,
-					episodeTitle: episode.episode_title,
-					episodeUrl,
-					profileName,
-				});
-			}
+		});
+
+		// Trigger email via separate function (runs in Next.js runtime)
+		await step.sendEvent("send-ready-email", {
+			name: "episode.ready.email",
+			data: { userEpisodeId },
 		});
 
 		return {

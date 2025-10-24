@@ -1,51 +1,70 @@
-"use client"
+"use client";
 
-import { Lock, Sparkles } from "lucide-react"
-import Link from "next/link"
-import { useEffect, useState } from "react"
-import { toast } from "sonner"
-import { AppSpinner } from "@/components/ui/app-spinner"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { Bundle, Podcast } from "@/lib/types"
-import PanelHeader from "./PanelHeader"
-import Stepper from "./stepper"
+import { Lock, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { AppSpinner } from "@/components/ui/app-spinner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import type { Bundle, Podcast } from "@/lib/types";
+import PanelHeader from "./PanelHeader";
+import Stepper from "./stepper";
 
-type BundleWithPodcasts = (Bundle & { podcasts: Podcast[] }) & { canInteract?: boolean; lockReason?: string | null }
+type BundleWithPodcasts = (Bundle & { podcasts: Podcast[] }) & {
+	canInteract?: boolean;
+	lockReason?: string | null;
+};
 
-export default function EpisodeGenerationPanelClient({ bundles }: { bundles: BundleWithPodcasts[] }) {
-	const [selectedBundleId, setSelectedBundleId] = useState<string>("")
-	const [selectedPodcastId, setSelectedPodcastId] = useState<string>("")
-	const [youtubeUrl, setYoutubeUrl] = useState("")
-	const [isLoading, setIsLoading] = useState(false)
+export default function EpisodeGenerationPanelClient({
+	bundles,
+}: {
+	bundles: BundleWithPodcasts[];
+}) {
+	const [selectedBundleId, setSelectedBundleId] = useState<string>("");
+	const [selectedPodcastId, setSelectedPodcastId] = useState<string>("");
+	const [youtubeUrl, setYoutubeUrl] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
 
-	const selectedBundle = bundles.find(b => b.bundle_id === selectedBundleId)
-	const selectedPodcast = selectedBundle?.podcasts.find(p => p.podcast_id === selectedPodcastId)
+	const selectedBundle = bundles.find(b => b.bundle_id === selectedBundleId);
+	const selectedPodcast = selectedBundle?.podcasts.find(
+		p => p.podcast_id === selectedPodcastId
+	);
 
-	const hasBundles = bundles && bundles.length > 0
+	const hasBundles = bundles && bundles.length > 0;
 
-	const isYouTubeUrl = (url: string) => /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i.test(url.trim())
+	const isYouTubeUrl = (url: string) =>
+		/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i.test(url.trim());
 
 	useEffect(() => {
 		if (!selectedBundle) {
-			setSelectedPodcastId("")
-			return
+			setSelectedPodcastId("");
+			return;
 		}
-		const podcastIds = selectedBundle.podcasts.map(p => p.podcast_id)
+		const podcastIds = selectedBundle.podcasts.map(p => p.podcast_id);
 		if (!podcastIds.includes(selectedPodcastId)) {
-			setSelectedPodcastId(podcastIds[0] ?? "")
+			setSelectedPodcastId(podcastIds[0] ?? "");
 		}
-	}, [selectedPodcastId, selectedBundle])
+	}, [selectedPodcastId, selectedBundle]);
 
 	if (!hasBundles) {
 		return (
 			<div className="p-6">
 				<Card>
-					<PanelHeader title="No bundles found" description="Create a bundle before generating or uploading episodes." />
+					<PanelHeader
+						title="No bundles found"
+						description="Create a bundle before generating or uploading episodes."
+					/>
 					<CardContent>
 						<Button asChild variant="default">
 							<Link href="/admin/bundles">Create your first bundle</Link>
@@ -53,40 +72,44 @@ export default function EpisodeGenerationPanelClient({ bundles }: { bundles: Bun
 					</CardContent>
 				</Card>
 			</div>
-		)
+		);
 	}
 
 	const generateEpisode = async () => {
 		if (!(selectedBundleId && selectedPodcastId && youtubeUrl.trim())) {
-			toast.error("Bundle, podcast and YouTube URL are required")
-			return
+			toast.error("Bundle, podcast and YouTube URL are required");
+			return;
 		}
 		if (!isYouTubeUrl(youtubeUrl)) {
-			toast.error("Enter a valid YouTube URL")
-			return
+			toast.error("Enter a valid YouTube URL");
+			return;
 		}
-		setIsLoading(true)
+		setIsLoading(true);
 		try {
 			const resp = await fetch("/api/admin/generate-bundle-episode", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ bundleId: selectedBundleId, podcastId: selectedPodcastId, youtubeUrl: youtubeUrl.trim() }),
-			})
+				body: JSON.stringify({
+					bundleId: selectedBundleId,
+					podcastId: selectedPodcastId,
+					youtubeUrl: youtubeUrl.trim(),
+				}),
+			});
 			if (!resp.ok) {
-				const errorText = await resp.text()
-				throw new Error(errorText || "Failed to start generation")
+				const errorText = await resp.text();
+				throw new Error(errorText || "Failed to start generation");
 			}
-			toast.success("Episode generation started")
-			setSelectedBundleId("")
-			setSelectedPodcastId("")
-			setYoutubeUrl("")
+			toast.success("Episode generation started");
+			setSelectedBundleId("");
+			setSelectedPodcastId("");
+			setYoutubeUrl("");
 		} catch (error) {
-			console.error("Failed to generate episode:", error)
-			toast.error(error instanceof Error ? error.message : "Failed to start generation")
+			console.error("Failed to generate episode:", error);
+			toast.error(error instanceof Error ? error.message : "Failed to start generation");
 		} finally {
-			setIsLoading(false)
+			setIsLoading(false);
 		}
-	}
+	};
 
 	return (
 		<div className="flex flex-col gap-6 mt-6 space-y-6">
@@ -107,8 +130,12 @@ export default function EpisodeGenerationPanelClient({ bundles }: { bundles: Bun
 						</SelectTrigger>
 						<SelectContent>
 							{bundles.map(b => (
-								<SelectItem key={b.bundle_id} value={b.bundle_id} disabled={b.canInteract === false}>
-									{b.name} ({b.podcasts.length} shows){b.canInteract === false ? " – Locked" : ""}
+								<SelectItem
+									key={b.bundle_id}
+									value={b.bundle_id}
+									disabled={b.canInteract === false}>
+									{b.name} ({b.podcasts.length} shows)
+									{b.canInteract === false ? " – Locked" : ""}
 								</SelectItem>
 							))}
 						</SelectContent>
@@ -116,12 +143,14 @@ export default function EpisodeGenerationPanelClient({ bundles }: { bundles: Bun
 					{selectedBundle && selectedBundle.canInteract === false && (
 						<div className="mt-0 flex items-center gap-2 text-sm text-muted-foreground">
 							<Lock className="w-3 h-3" />
-							<span>{selectedBundle.lockReason || "This bundle requires a higher plan."}</span>
+							<span>
+								{selectedBundle.lockReason || "This bundle requires a higher plan."}
+							</span>
 						</div>
 					)}
 					{selectedBundle && (
 						<div className="flex bg-violet-900/30  border-3 border-ring/50 shadow-md flex-col gap-1 mt-0 p-4 rounded-lg">
-							<h4 className="font-semibold text-teal-400">{selectedBundle.name}</h4>
+							<h4 className="font-semibold text-azure-400">{selectedBundle.name}</h4>
 
 							<div className="flex flex-wrap gap-2 max-w-80 my-2">
 								{selectedBundle.podcasts.map(p => (
@@ -161,7 +190,7 @@ export default function EpisodeGenerationPanelClient({ bundles }: { bundles: Bun
 						</Select>
 						{selectedPodcast && (
 							<div className="my-2">
-								<div className="text-indigo-400 text-sm boder-indigo-300 border-3 bg-indigo-900 px-3 py-1 rounded-sm my-0" >
+								<div className="text-indigo-400 text-sm boder-indigo-300 border-3 bg-indigo-900 px-3 py-1 rounded-sm my-0">
 									Selected: {selectedPodcast.name}
 								</div>
 							</div>
@@ -187,20 +216,40 @@ export default function EpisodeGenerationPanelClient({ bundles }: { bundles: Bun
 					<CardContent className="p-4 space-y-4 flex flex-col gap-4">
 						<div>
 							<Label htmlFor="youtubeUrl">YouTube URL *</Label>
-							<Input id="youtubeUrl" value={youtubeUrl} onChange={e => setYoutubeUrl(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
+							<Input
+								id="youtubeUrl"
+								value={youtubeUrl}
+								onChange={e => setYoutubeUrl(e.target.value)}
+								placeholder="https://www.youtube.com/watch?v=..."
+							/>
 						</div>
 						<div className=" hidden">
-							<Button type="button" variant="outline" size="sm" disabled className="cursor-not-allowed opacity-50">
+							<Button
+								type="button"
+								variant="outline"
+								size="sm"
+								disabled
+								className="cursor-not-allowed opacity-50">
 								Upload MP3 (disabled)
 							</Button>
-							<Button type="button" variant="outline" size="sm" disabled className="cursor-not-allowed opacity-50">
+							<Button
+								type="button"
+								variant="outline"
+								size="sm"
+								disabled
+								className="cursor-not-allowed opacity-50">
 								Direct Link (disabled)
 							</Button>
 						</div>
 						<CardContent className="pt-2 p-0">
 							<Button
 								onClick={generateEpisode}
-								disabled={isLoading || !selectedBundleId || !selectedPodcastId || !youtubeUrl.trim()}
+								disabled={
+									isLoading ||
+									!selectedBundleId ||
+									!selectedPodcastId ||
+									!youtubeUrl.trim()
+								}
 								className="w-full"
 								size="lg"
 								variant="default">
@@ -221,5 +270,5 @@ export default function EpisodeGenerationPanelClient({ bundles }: { bundles: Bun
 				</Card>
 			)}
 		</div>
-	)
+	);
 }

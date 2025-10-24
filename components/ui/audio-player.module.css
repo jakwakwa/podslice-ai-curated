@@ -10,10 +10,10 @@
 	padding-right: 40px !important;
 	padding-top: 10px !important;
 	padding-bottom: 15px;
-	background: #29747777;
-	background-image: linear-gradient(45deg,oklch(0.31 0.05 219.51 / 0.89) 10%, #63056651 60%);
+	/*background: #29747777;*/
+	/*background-image: linear-gradient(45deg,oklch(0.31 0.05 219.51 / 0.89) 10%, #63056651 60%);*/
 	border-top: 1px solid #2A2626D4;
-	box-shadow:inset 0 -3px 40px 0px #000000C3, inset  0 -29px 70px 1px #000000C8;
+	/*box-shadow:inset 0 -3px 40px 0px #000000C3, inset  0 -29px 70px 1px #000000C8;*/
 	z-index: 999 !important;
 	display: flex;
 	padding-left: 300px ;
@@ -22,8 +22,8 @@
 	height: 180px;
 	gap: 1.5rem;
 	max-height: 120px;
-	background-blend-mode: multiply, multiply;
-	backdrop-filter: blur(8px) !important;
+	/*background-blend-mode: multiply, multiply;*/
+	/*backdrop-filter: blur(8px) !important;*/
 }
 .userAudioPlayer {
 	padding-left: 300px;
@@ -74,8 +74,9 @@
 	flex-shrink: 2;
 }
 
-.playPauseButton {
-	background: rgb(146 162 152);
+.playPauseButton {	
+	background-color: #000608;
+
 	color: rgb(45, 39, 39);
 	border: none;
 	border-radius: 99999rem !important;
@@ -135,7 +136,7 @@
 .progressBar {
 	width: 100%;
 	height: 8px;
-	background: #0b0b0bbd;
+	/*background: #0b0b0bbd;*/
 	border-radius: 3px;
 	cursor: pointer;
 	position: relative;
@@ -185,7 +186,7 @@
 
 button.volumeButton,
 button.playPauseButton {
-	background: #00000069;
+	/*background: #00000069;*/
 	border: 2px solid #1a172487 !important;
 	color: #e8e5ea8e;
 	cursor: pointer;
@@ -218,7 +219,7 @@ button.playPauseButton:hover {
 	appearance: none !important;
 	flex: 1;
 	height: 10px;
-	background: #02081f00;
+	/*background: #02081f00;*/
 	border: none !important;
 	border-radius: 5px;
 	outline: 1px solid transparent !important;
@@ -233,7 +234,7 @@ button.playPauseButton:hover {
 }
 
 .volumeSlider::-webkit-slider-runnable-track {
-	background: #cfc3ff8d !important;
+	/*background: #cfc3ff8d !important;*/
 	border-radius: 5px;
 	height: 9px !important;
 	opacity: 1;
@@ -296,11 +297,11 @@ button.playPauseButton:hover {
 	left: 0;
 	width: var(--seek-before-width);
 	height: 5px;
-	background-image: linear-gradient(
+	/*background-image: linear-gradient(
 		90deg,
 		#0e63b1ee 34%,
 		#2e72b1ee 66%
-	) !important;
+	) !important;*/
 	cursor: pointer;
 }
 
@@ -350,8 +351,8 @@ button.playPauseButton svg {
 }
 
 .closeButton:hover {
-	color: #ffffff31;
-	background: rgba(255, 255, 255, 0.1);
+	/*color: #ffffff31;*/
+	/*background: rgba(255, 255, 255, 0.1);*/
 }
 
 /* Responsive design */
@@ -434,7 +435,7 @@ button.playPauseButton svg {
 		padding-right: 40px !important;
 		padding-top: 0px !important;
 		padding-bottom: 5px;
-		background: linear-gradient(135deg, #13191e 0%, #233139c8 100%);
+		/*background: linear-gradient(135deg, #13191e 0%, #233139c8 100%);*/
 		border-top: 1px solid #333;
 		box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
 		z-index: 99999999 !important;
@@ -444,8 +445,8 @@ button.playPauseButton svg {
 		height: 180px;
 		gap: 1.5rem;
 		max-height: 120px;
-		background-blend-mode: color;
-		backdrop-filter: blur(20px);
+		/*background-blend-mode: color;*/
+		/*backdrop-filter: blur(20px);*/
 		/* max-height: 90px; */
 	}
 

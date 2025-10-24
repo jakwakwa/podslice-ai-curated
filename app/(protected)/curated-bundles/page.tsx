@@ -1,57 +1,74 @@
-import { auth } from "@clerk/nextjs/server"
-import { PlanGate, type Prisma } from "@prisma/client"
-import { unstable_noStore as noStore } from "next/cache"
-import { PageHeader } from "@/components/ui/page-header"
-import { prisma } from "@/lib/prisma"
-import type { Bundle, Podcast } from "@/lib/types"
-import { CuratedBundlesClient } from "./_components/curated-bundles-client"
-import { CuratedBundlesFilters } from "./_components/filters.client"
+import { auth } from "@clerk/nextjs/server";
+import { PlanGate, type Prisma } from "@prisma/client";
+import { unstable_noStore as noStore } from "next/cache";
+import { PageHeader } from "@/components/ui/page-header";
+import { prisma } from "@/lib/prisma";
+import type { Bundle, Podcast } from "@/lib/types";
+import { CuratedBundlesClient } from "./_components/curated-bundles-client";
+import { CuratedBundlesFilters } from "./_components/filters.client";
+import { curatedBundlesPageContent } from "./content";
 
 type BundleWithPodcasts = Bundle & {
-	podcasts: Podcast[]
-	bundleType?: "curated" | "shared"
-	shared_bundle_id?: string
+	podcasts: Podcast[];
+	bundleType?: "curated" | "shared";
+	shared_bundle_id?: string;
 	episodes?: Array<{
-		episode_id: string
-		episode_title: string
-		duration_seconds: number | null
-	}>
-	episode_count?: number
+		episode_id: string;
+		episode_title: string;
+		duration_seconds: number | null;
+	}>;
+	episode_count?: number;
 	owner?: {
-		user_id: string
-		full_name: string
-	}
-}
+		user_id: string;
+		full_name: string;
+	};
+};
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
-export default async function CuratedBundlesPage({ searchParams }: { searchParams?: Promise<{ q?: string; min_plan?: string }> }) {
-	noStore()
+export default async function CuratedBundlesPage({
+	searchParams,
+}: {
+	searchParams?: Promise<{ q?: string; min_plan?: string }>;
+}) {
+	noStore();
 
-	let allBundles: BundleWithPodcasts[] = []
-	let error: string | null = null
+	let allBundles: BundleWithPodcasts[] = [];
+	let error: string | null = null;
 
 	try {
-		const { userId } = await auth()
+		const { userId } = await auth();
 		if (!userId) {
-			throw new Error("Unauthorized")
+			throw new Error("Unauthorized");
 		}
 
-		const resolvedSearchParams = searchParams ? await searchParams : {}
-		const q = resolvedSearchParams?.q?.toString().trim()
-		const minPlanParam = resolvedSearchParams?.min_plan?.toString().trim()
-		const minPlanFilter = minPlanParam && (Object.values(PlanGate) as string[]).includes(minPlanParam) ? (minPlanParam as keyof typeof PlanGate) : undefined
+		const resolvedSearchParams = searchParams ? await searchParams : {};
+		const q = resolvedSearchParams?.q?.toString().trim();
+		const minPlanParam = resolvedSearchParams?.min_plan?.toString().trim();
+		const minPlanFilter =
+			minPlanParam && (Object.values(PlanGate) as string[]).includes(minPlanParam)
+				? (minPlanParam as keyof typeof PlanGate)
+				: undefined;
 
 		// Fetch curated bundles
 		const curatedWhere: Prisma.BundleWhereInput = {
 			is_active: true,
 			...(q
 				? {
-					OR: [{ name: { contains: q, mode: "insensitive" } }, { bundle_podcast: { some: { podcast: { name: { contains: q, mode: "insensitive" } } } } }],
-				}
+						OR: [
+							{ name: { contains: q, mode: "insensitive" } },
+							{
+								bundle_podcast: {
+									some: {
+										podcast: { name: { contains: q, mode: "insensitive" } },
+									},
+								},
+							},
+						],
+					}
 				: {}),
 			...(minPlanFilter ? { min_plan: PlanGate[minPlanFilter] } : {}),
-		}
+		};
 
 		const curatedBundles = await prisma.bundle.findMany({
 			where: curatedWhere,
@@ -62,9 +79,9 @@ export default async function CuratedBundlesPage({ searchParams }: { searchParam
 			cacheStrategy: {
 				swr: 60,
 				ttl: 360000,
-				tags: ["BundlePanel_in_Admin"]
-			}
-		})
+				tags: ["BundlePanel_in_Admin"],
+			},
+		});
 
 		// Fetch shared bundles
 		const sharedWhere: Prisma.SharedBundleWhereInput = {
@@ -73,13 +90,21 @@ export default async function CuratedBundlesPage({ searchParams }: { searchParam
 			owner_user_id: { not: userId },
 			...(q
 				? {
-					OR: [
-						{ name: { contains: q, mode: "insensitive" } },
-						{ episodes: { some: { userEpisode: { episode_title: { contains: q, mode: "insensitive" } } } } },
-					],
-				}
+						OR: [
+							{ name: { contains: q, mode: "insensitive" } },
+							{
+								episodes: {
+									some: {
+										userEpisode: {
+											episode_title: { contains: q, mode: "insensitive" },
+										},
+									},
+								},
+							},
+						],
+					}
 				: {}),
-		}
+		};
 
 		const sharedBundles = await prisma.sharedBundle.findMany({
 			where: sharedWhere,
@@ -105,14 +130,14 @@ export default async function CuratedBundlesPage({ searchParams }: { searchParam
 				},
 			},
 			orderBy: { created_at: "desc" },
-		})
+		});
 
 		// Transform curated bundles
 		const transformedCuratedBundles: BundleWithPodcasts[] = curatedBundles.map(b => ({
 			...(b as unknown as Bundle),
 			podcasts: b.bundle_podcast.map(bp => bp.podcast as unknown as Podcast),
 			bundleType: "curated" as const,
-		}))
+		}));
 
 		// Transform shared bundles to match Bundle interface
 		const transformedSharedBundles: BundleWithPodcasts[] = sharedBundles.map(sb => ({
@@ -140,24 +165,24 @@ export default async function CuratedBundlesPage({ searchParams }: { searchParam
 				user_id: sb.owner.user_id,
 				full_name: sb.owner.name || "Anonymous User",
 			},
-		}))
+		}));
 
 		// Combine both types of bundles
-		allBundles = [...transformedCuratedBundles, ...transformedSharedBundles]
+		allBundles = [...transformedCuratedBundles, ...transformedSharedBundles];
 	} catch (e) {
-		error = e instanceof Error ? e.message : "Failed to load PODSLICE Bundles."
+		error = e instanceof Error ? e.message : "Failed to load PODSLICE Bundles.";
 	}
 
 	return (
-		<div className="bg-episode-card-wrapper h-full min-h-[84vh]  rounded-none 	px-0  mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:rounded-4xl  md:mt-0 md:p-8 md:w-full  md:bg-episode-card-wrapper ">
+		<div className="h-full min-h-[84vh]  rounded-none 	px-0  mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:rounded-4xl  md:mt-0 md:p-8 md:w-full  md:bg-episode-card-wrapper ">
 			<PageHeader
-				title="Explore Bundles"
-				description="Choose from our pre-curated podcast bundles created by our AI or discover bundles shared by other users. Each bundle is linked to a group of podcast shows. Each week we generate a new bundle of freshly generated episodes from the previous week's curated selection of shows."
+				title={curatedBundlesPageContent.header.title}
+				description={curatedBundlesPageContent.header.description}
 			/>
 
 			<CuratedBundlesFilters />
 
 			<CuratedBundlesClient bundles={allBundles} error={error} />
 		</div>
-	)
+	);
 }

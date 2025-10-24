@@ -31,7 +31,10 @@ const UserEpisodeSchema = z.object({
 	is_public: z.boolean(),
 });
 
-type EpisodeWithPublicUrl = UserEpisode & { publicAudioUrl: string | null; is_public: boolean };
+type EpisodeWithPublicUrl = UserEpisode & {
+	publicAudioUrl: string | null;
+	is_public: boolean;
+};
 
 async function getPublicEpisode(id: string): Promise<EpisodeWithPublicUrl | null> {
 	const episode = await prisma.userEpisode.findUnique({
@@ -69,14 +72,19 @@ async function getPublicEpisode(id: string): Promise<EpisodeWithPublicUrl | null
 		}
 	}
 
-	const safe = UserEpisodeSchema.parse(episode) as UserEpisode & { is_public: boolean };
+	const safe = UserEpisodeSchema.parse(episode) as UserEpisode & {
+		is_public: boolean;
+	};
 	return { ...safe, publicAudioUrl, transcript: null };
 }
 
 /**
  * Extract clean description from summary (handles JSON summaries for news episodes)
  */
-function extractCleanDescription(summary: string | null | undefined, maxLength = 160): string | undefined {
+function extractCleanDescription(
+	summary: string | null | undefined,
+	maxLength = 160
+): string | undefined {
 	if (!summary) return undefined;
 
 	try {
@@ -90,12 +98,12 @@ function extractCleanDescription(summary: string | null | undefined, maxLength =
 			cleanSummary = cleanSummary.replace(/^```\s*/, "").replace(/\s*```$/, "");
 		} else if (cleanSummary.includes("```json")) {
 			const jsonMatch = cleanSummary.match(/```json\s*(\{[\s\S]*?\})\s*```/);
-			if (jsonMatch) {
+			if (jsonMatch?.[1]) {
 				cleanSummary = jsonMatch[1];
 			}
 		} else if (cleanSummary.includes("```")) {
 			const jsonMatch = cleanSummary.match(/```\s*(\{[\s\S]*?\})\s*```/);
-			if (jsonMatch) {
+			if (jsonMatch?.[1]) {
 				cleanSummary = jsonMatch[1];
 			}
 		}
@@ -124,7 +132,11 @@ function extractCleanDescription(summary: string | null | undefined, maxLength =
 	}
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+	params,
+}: {
+	params: Promise<{ id: string }>;
+}): Promise<Metadata> {
 	const { id } = await params;
 	const ep = await getPublicEpisode(id);
 	if (!ep) return { title: "Episode not found" };
@@ -179,8 +191,20 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 							title={episode.episode_title}
 							createdAt={episode.created_at}
 							durationSeconds={episode.duration_seconds ?? null}
-							metaBadges={<span className="inline-flex items-center gap-2 rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400">Public Episode</span>}
-							rightLink={isNewsEpisode ? undefined : { href: episode.youtube_url, label: "Youtube Url", external: true }}
+							metaBadges={
+								<span className="inline-flex items-center gap-2 rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400">
+									Public Episode
+								</span>
+							}
+							rightLink={
+								isNewsEpisode
+									? undefined
+									: {
+										href: episode.youtube_url,
+										label: "Youtube Url",
+										external: true,
+									}
+							}
 						/>
 						<div className="flex items-center gap-2 mt-2 text-lg font-bold text-[#90b4f7]">
 							{sourceDisplay && <NewspaperIcon color="#71D1E7" />}
@@ -196,7 +220,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 								</div>
 							)}
 
-							<Separator className="my-8" />
+							<Separator className="my-8" style={{
+								borderColor: "#000 !important",
+								boxShadow: "0px -1px 0px 0px rgb(0 0 0,0.7) !important"
+							}} />
 							{isNewsEpisode ? (
 								episode.summary && (
 									<div className="prose prose-sm max-w-none dark:prose-invert">
@@ -207,17 +234,25 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
 												// Try multiple approaches to extract clean JSON
 												if (cleanSummary.startsWith("```json")) {
-													cleanSummary = cleanSummary.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+													cleanSummary = cleanSummary
+														.replace(/^```json\s*/, "")
+														.replace(/\s*```$/, "");
 												} else if (cleanSummary.startsWith("```")) {
-													cleanSummary = cleanSummary.replace(/^```\s*/, "").replace(/\s*```$/, "");
+													cleanSummary = cleanSummary
+														.replace(/^```\s*/, "")
+														.replace(/\s*```$/, "");
 												} else if (cleanSummary.includes("```json")) {
-													const jsonMatch = cleanSummary.match(/```json\s*(\{[\s\S]*?\})\s*```/);
-													if (jsonMatch) {
+													const jsonMatch = cleanSummary.match(
+														/```json\s*(\{[\s\S]*?\})\s*```/
+													);
+													if (jsonMatch?.[1]) {
 														cleanSummary = jsonMatch[1];
 													}
 												} else if (cleanSummary.includes("```")) {
-													const jsonMatch = cleanSummary.match(/```\s*(\{[\s\S]*?\})\s*```/);
-													if (jsonMatch) {
+													const jsonMatch = cleanSummary.match(
+														/```\s*(\{[\s\S]*?\})\s*```/
+													);
+													if (jsonMatch?.[1]) {
 														cleanSummary = jsonMatch[1];
 													}
 												}
@@ -229,8 +264,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 													<div className="space-y-6">
 														{summaryData.top_headlines && (
 															<div className="text-[#87f4f2fe]">
-																<h4 className="mb-2 text-large font-bold text-[#ac91fc]">Top Headlines</h4>
-																<p className="text-[#ddd8ee] font-bold text-2xl">{summaryData.top_headlines}</p>
+																<h4 className="mb-2 text-large font-bold text-[#ac91fc]">
+																	Top Headlines
+																</h4>
+																<p className="text-[#ddd8ee] font-bold text-2xl">
+																	{summaryData.top_headlines}
+																</p>
 															</div>
 														)}
 														<hr />
@@ -241,7 +280,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 																		<h4 className="font-medium mb-2">Topic</h4>
 																		<div className="flex flex-wrap gap-2">
 																			{summaryData.topic.map((t: string, i: number) => (
-																				<span key={i} className="px-2 py-1 bg-pink-800 text-pink-300 rounded-md text-lg capitalize">
+																				<span
+																					key={i}
+																					className="px-2 py-1 bg-pink-800 text-pink-300 rounded-md text-lg capitalize">
 																					{t}
 																				</span>
 																			))}
@@ -251,16 +292,24 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
 																{summaryData.sentiment && (
 																	<div className="text-[#ac91fc]">
-																		<h4 className="font-medium mb-2 uppercase text-sm">Sentiment Analysis</h4>
+																		<h4 className="font-medium mb-2 uppercase text-sm">
+																			Sentiment Analysis
+																		</h4>
 																		<div className="flex flex-wrap gap-2">
 																			{Array.isArray(summaryData.sentiment) ? (
-																				summaryData.sentiment.map((s: string, i: number) => (
-																					<span key={i} className="px-2 py-1 bg-violet-800 text-pink-300 rounded-md text-lg capitalize">
-																						{s}
-																					</span>
-																				))
+																				summaryData.sentiment.map(
+																					(s: string, i: number) => (
+																						<span
+																							key={i}
+																							className="px-2 py-1 bg-violet-800 text-pink-300 rounded-md text-lg capitalize">
+																							{s}
+																						</span>
+																					)
+																				)
 																			) : (
-																				<span className="px-2 py-1 rounded-md text-lg bg-violet-800 text-slate-200">{summaryData.sentiment}</span>
+																				<span className="px-2 py-1 rounded-md text-lg bg-violet-800 text-slate-200">
+																					{summaryData.sentiment}
+																				</span>
 																			)}
 																		</div>
 																	</div>
@@ -268,10 +317,14 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 															</div>
 															{summaryData.tags && summaryData.tags.length > 0 && (
 																<div className="text-[#ac91fc]">
-																	<h4 className="font-medium mb-2 text-sm uppercase text-[#ac91fc]">Tags</h4>
+																	<h4 className="font-medium mb-2 text-sm uppercase text-[#ac91fc]">
+																		Tags
+																	</h4>
 																	<div className="flex flex-wrap gap-2">
 																		{summaryData.tags.map((tag: string, i: number) => (
-																			<span key={i} className="px-2 py-1 bg-slate-950 text-[#91affcbb] rounded-md text-sm">
+																			<span
+																				key={i}
+																				className="px-2 py-1 bg-slate-950 text-[#91affcbb] rounded-md text-sm">
 																				#{tag}
 																			</span>
 																		))}
@@ -281,8 +334,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
 															{summaryData.target_audience && (
 																<div className="text-[#ac91fc]">
-																	<h4 className="font-medium text-lg mb-3 uppercase">Target Audience</h4>
-																	<p className="text-[#7c98f6] text-base">{summaryData.target_audience}</p>
+																	<h4 className="font-medium text-lg mb-3 uppercase">
+																		Target Audience
+																	</h4>
+																	<p className="text-[#7c98f6] text-base">
+																		{summaryData.target_audience}
+																	</p>
 																</div>
 															)}
 														</div>
@@ -290,8 +347,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
 														{summaryData.ai_summary && (
 															<div className="text-[#9574fb]">
-																<h4 className="font-bold text-xl mt-8 mb-4">Ai Summary</h4>
-																<div className="whitespace-pre-wrap text-[#93A3F2]/80 leading	-[1.8] text-[17px]">{summaryData.ai_summary}</div>
+																<h4 className="font-bold text-xl mt-8 mb-4">
+																	Ai Summary
+																</h4>
+																<div className="whitespace-pre-wrap text-[#93A3F2]/80 leading	-[1.8] text-[17px]">
+																	{summaryData.ai_summary}
+																</div>
 															</div>
 														)}
 													</div>
@@ -300,8 +361,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 												console.error("Failed to parse news summary JSON:", error);
 												return (
 													<div>
-														<h3 className="text-lg font-semibold mb-4 text-[#ac91fc]">Summary</h3>
-														<div className="whitespace-pre-wrap text-[#F0BCFAD7]/90">{episode.summary}</div>
+														<h3 className="text-lg font-semibold mb-4 text-[#ac91fc]">
+															Summary
+														</h3>
+														<div className="whitespace-pre-wrap text-[#F0BCFAD7]/90">
+															{episode.summary}
+														</div>
 													</div>
 												);
 											}

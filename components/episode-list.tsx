@@ -101,10 +101,12 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, onPlayEpisod
 	};
 
 	return (
-		<div className="transition-all duration-200 text-card-foreground episode-card-wrapper-dark  rounded-2xl p-0  w-full">
-			<div>
-				{episodes.length > 0 ? (
-					<ul className="w-full inline-flex flex-col gap-1 p-0">
+		<>
+
+
+			{
+				episodes.length > 0 ? (
+					<ul className="relative text-card-foreground p-0 px-2 md:px-12 w-full z-1 flex flex-col xl:px-[40px] xl:justify-around items-start xl:gap-2 md:gap-4 h-fit  lg:p-[20px] rounded-3xl episode-card-wrapper-dark shadow-[0px_0px_5px_5px_#261c4b5b]">
 						{episodes.map(episode => {
 							// Determine details link depending on whether it's user-generated or bundle episode
 							const detailsHref = isUserGeneratedEpisode(episode) ? `/my-episodes/${episode.episode_id}` : `/episodes/${episode.episode_id}`;
@@ -118,7 +120,7 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, onPlayEpisod
 									durationSeconds={episode.duration_seconds ?? null}
 									detailsHref={detailsHref}
 									actions={
-										<div className="flex flex-col gap-2 md:gap-3 md:flex-row md:items-center hover:bg-none">
+										<div className="flex flex-col gap-2 md:gap-3 md:flex-row md:items-center">
 											{episode.audio_url && onPlayEpisode && (
 												<PlayButton
 													onClick={() => onPlayEpisode(episode)}
@@ -127,7 +129,7 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, onPlayEpisod
 													className={playingEpisodeId === episode.episode_id ? "outline-accent outline-1 w-32" : ""}
 												/>
 											)}
-											{hasTier3Access() && isUserGeneratedEpisode(episode) && episode.audio_url && (
+											{episode.podcast_id === null ?
 												<Button
 													onClick={() => handleDownloadEpisode(episode.episode_id, episode.title)}
 													variant="outline"
@@ -137,7 +139,7 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, onPlayEpisod
 													<Download className="w-4 h-4" />
 													{downloadingEpisodes.has(episode.episode_id) ? "Downloading..." : "Download"}
 												</Button>
-											)}
+												: null}
 										</div>
 									}
 								/>
@@ -149,8 +151,8 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, onPlayEpisod
 						<Music className="h-12 w-12 mx-auto mb-4 opacity-50" />
 						<p>No episodes available</p>
 					</div>
-				)}
-			</div>
-		</div>
+				)
+			}
+		</>
 	);
 };

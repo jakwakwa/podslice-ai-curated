@@ -51,7 +51,9 @@ export function useBreadcrumbs(): BreadcrumbItem[] {
 				return;
 			}
 
-			const label = routeLabels[segment] || segment.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+			const label =
+				routeLabels[segment] ||
+				segment.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
 			const isCurrentPage = index === segments.length - 1;
 
 			breadcrumbs.push({
@@ -63,7 +65,7 @@ export function useBreadcrumbs(): BreadcrumbItem[] {
 
 		// If we only have home, mark it as current page
 		if (breadcrumbs.length === 1) {
-			breadcrumbs[0].isCurrentPage = true;
+			breadcrumbs[0]!.isCurrentPage = true;
 		}
 
 		return breadcrumbs;

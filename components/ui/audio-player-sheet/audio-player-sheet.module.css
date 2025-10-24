@@ -37,7 +37,7 @@
 }
 
 .episodeSubtitle {
-  @apply text-[13.69px] font-black leading-[1.72857] mt-1 tracking-[0.05142em] uppercase text-[#a484da] text-center text-shadow-md text-shadow-black/20;
+  @apply text-[13.69px] text-primary-foreground-muted  leading-[1.72857] mt-1 tracking-[0.05142em] uppercase text-[#a484da] text-center text-shadow-md text-shadow-black/20;
 }
 
 .transcriptToggle {

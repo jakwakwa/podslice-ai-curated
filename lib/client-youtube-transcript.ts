@@ -58,14 +58,17 @@ function parseSrt(srtContent: string): TranscriptSegment[] {
 		const timeLine = lines[i++];
 		if (!timeLine) continue;
 
-		const [startTime, endTime] = timeLine.split(" --> ");
-		const start = timeToSeconds(startTime);
-		const end = timeToSeconds(endTime);
+		const timeSplit = timeLine.split(" --> ");
+		if (timeSplit.length < 2) continue;
+		const startTime = timeSplit[0];
+		const endTime = timeSplit[1];
+		const start = timeToSeconds(startTime!);
+		const end = timeToSeconds(endTime!);
 
 		// Text lines
 		let text = "";
-		while (i < lines.length && lines[i].trim() !== "") {
-			text += `${lines[i++]} `;
+		while (i < lines.length && lines[i]?.trim() !== "") {
+			text += `${lines[i++] ?? ""} `;
 		}
 
 		segments.push({
@@ -83,11 +86,11 @@ function parseSrt(srtContent: string): TranscriptSegment[] {
 
 function timeToSeconds(timeStr: string): number {
 	const parts = timeStr.split(":");
-	const secondsAndMs = parts[2].split(",");
-	const hours = parseInt(parts[0], 10);
-	const minutes = parseInt(parts[1], 10);
-	const seconds = parseInt(secondsAndMs[0], 10);
-	const milliseconds = parseInt(secondsAndMs[1], 10);
+	const secondsAndMs = parts[2]!.split(",");
+	const hours = parseInt(parts[0]!, 10);
+	const minutes = parseInt(parts[1]!, 10);
+	const seconds = parseInt(secondsAndMs[0]!, 10);
+	const milliseconds = parseInt(secondsAndMs[1]!, 10);
 	return hours * 3600 + minutes * 60 + seconds + milliseconds / 1000;
 }
 
@@ -109,8 +112,10 @@ export async function getYouTubeTranscript(url: string): Promise<TranscriptResul
 		}
 
 		// Prefer English, but take any available track
-		const track = tracks.find((t: youtube_v3.Schema$Caption) => t.snippet?.language === "en") || tracks[0];
-		const captionId = track.id;
+		const track =
+			tracks.find((t: youtube_v3.Schema$Caption) => t.snippet?.language === "en") ||
+			tracks[0];
+		const captionId = track!.id;
 		if (!captionId) {
 			return { success: false, error: "Could not find a valid caption track ID." };
 		}

@@ -5,6 +5,7 @@ import { PRICING_TIER } from "@/config/paddle-config";
 import { VOICE_NAMES } from "@/lib/constants/voices";
 import { inngest } from "@/lib/inngest/client";
 import { prisma } from "@/lib/prisma";
+import { calculateWeightedUsage, canCreateEpisode, getInsufficientCreditsMessage } from "@/lib/types/summary-length";
 
 const createEpisodeSchema = z.object({
 	youtubeUrl: z.string().url(),
@@ -14,6 +15,7 @@ const createEpisodeSchema = z.object({
 	voiceA: z.enum(VOICE_NAMES as unknown as [string, ...string[]]).optional(),
 	voiceB: z.enum(VOICE_NAMES as unknown as [string, ...string[]]).optional(),
 	useShortEpisodesOverride: z.boolean().optional(),
+	summaryLength: z.enum(["SHORT", "MEDIUM", "LONG"]).default("MEDIUM"),
 });
 
 export async function POST(request: Request) {
@@ -30,20 +32,28 @@ export async function POST(request: Request) {
 			return new NextResponse(parsed.error.message, { status: 400 });
 		}
 
-		const { youtubeUrl, episodeTitle, transcript, generationMode = "single", voiceA, voiceB, useShortEpisodesOverride } = parsed.data;
+		const { youtubeUrl, episodeTitle, transcript, generationMode = "single", voiceA, voiceB, useShortEpisodesOverride, summaryLength } = parsed.data;
 
-		// Count only completed user episodes for this user
-		const existingEpisodeCount = await prisma.userEpisode.count({
+		// Fetch completed episodes with their lengths
+		const completedEpisodes = await prisma.userEpisode.findMany({
 			where: {
 				user_id: userId,
 				status: "COMPLETED",
 			},
+			select: { summary_length: true },
 		});
 
+		// Calculate current weighted usage
+		const currentUsage = calculateWeightedUsage(completedEpisodes);
+
 		// Get episode limit from plan configuration
-		const EPISODE_LIMIT = PRICING_TIER[2].episodeLimit; // CURATE_CONTROL plan limit
-		if (existingEpisodeCount >= EPISODE_LIMIT) {
-			return new NextResponse("You have reached your monthly episode creation limit.", { status: 403 });
+		const EPISODE_LIMIT = PRICING_TIER[2]?.episodeLimit ?? 30; // CURATE_CONTROL plan limit
+
+		// Check if user can create episode of requested length
+		const check = canCreateEpisode(currentUsage, summaryLength, EPISODE_LIMIT);
+		if (!check.canCreate) {
+			const message = getInsufficientCreditsMessage(currentUsage, summaryLength, EPISODE_LIMIT);
+			return new NextResponse(message, { status: 403 });
 		}
 
 		const newEpisode = await prisma.userEpisode.create({
@@ -52,6 +62,7 @@ export async function POST(request: Request) {
 				youtube_url: youtubeUrl,
 				episode_title: episodeTitle,
 				transcript: transcript,
+				summary_length: summaryLength,
 				status: "PENDING",
 			},
 		});
@@ -64,6 +75,7 @@ export async function POST(request: Request) {
 				name: "user.episode.generate.multi.requested",
 				data: {
 					userEpisodeId: newEpisode.episode_id,
+					summaryLength,
 					voiceA,
 					voiceB,
 					useShortEpisodesOverride,
@@ -74,6 +86,7 @@ export async function POST(request: Request) {
 				name: "user.episode.generate.requested",
 				data: {
 					userEpisodeId: newEpisode.episode_id,
+					summaryLength,
 				},
 			});
 		}

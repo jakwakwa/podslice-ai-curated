@@ -43,7 +43,9 @@ export function BundleDetailsClient({ bundle: initialBundle }: BundleDetailsClie
 	const [isSaving, setIsSaving] = useState(false);
 	const [editedName, setEditedName] = useState(bundle.name);
 	const [editedDescription, setEditedDescription] = useState(bundle.description || "");
-	const [episodeStates, setEpisodeStates] = useState<Record<string, boolean>>(Object.fromEntries(bundle.episodes.map(ep => [ep.episode_id, ep.is_active])));
+	const [episodeStates, setEpisodeStates] = useState<Record<string, boolean>>(
+		Object.fromEntries(bundle.episodes.map(ep => [ep.episode_id, ep.is_active]))
+	);
 	const [copiedLink, setCopiedLink] = useState(false);
 	const router = useRouter();
 
@@ -92,7 +94,9 @@ export function BundleDetailsClient({ bundle: initialBundle }: BundleDetailsClie
 	const handleCancel = () => {
 		setEditedName(bundle.name);
 		setEditedDescription(bundle.description || "");
-		setEpisodeStates(Object.fromEntries(bundle.episodes.map(ep => [ep.episode_id, ep.is_active])));
+		setEpisodeStates(
+			Object.fromEntries(bundle.episodes.map(ep => [ep.episode_id, ep.is_active]))
+		);
 		setIsEditing(false);
 	};
 
@@ -122,11 +126,13 @@ export function BundleDetailsClient({ bundle: initialBundle }: BundleDetailsClie
 		<div className="flex episode-card-wrapper mt-0 flex-col md:flex-row justify-center min-w-full gap-4">
 			<div className=" min-w-[300px] flex flex-col">
 				<div className="flex w-full items-center flex-col gap-1 justify-start overflow-hidden rounded-3xl bg-[#4a2ea867] border-1 border-[#042f30e5] px-5 py-9 h-fit  shadow-[0_8px_14px_1px]  shadow-slate-950/30 ">
-					<div className="flex w-full flex-col items-start justify-start gap-1 rounded-2xl pb-8">		<Badge variant={bundle.is_active ? "default" : "secondary"}>{bundle.is_active ? "Active" : "Inactive"}</Badge>
-
+					<div className="flex w-full flex-col items-start justify-start gap-1 rounded-2xl pb-8">
+						{" "}
+						<Badge variant={bundle.is_active ? "default" : "secondary"}>
+							{bundle.is_active ? "Active" : "Inactive"}
+						</Badge>
 						<CardTitle className="py-4 flex">Bundle Details</CardTitle>
 						<div className="flex gap-4">
-
 							<Button variant="outline" size="sm" onClick={copyShareLink}>
 								{copiedLink ? (
 									<>
@@ -147,11 +153,19 @@ export function BundleDetailsClient({ bundle: initialBundle }: BundleDetailsClie
 								</Button>
 							) : (
 								<>
-									<Button variant="outline" onClick={handleCancel} size="sm" disabled={isSaving}>
+									<Button
+										variant="outline"
+										onClick={handleCancel}
+										size="sm"
+										disabled={isSaving}>
 										<X className="h-4 w-4 mr-0" />
 										Cancel
 									</Button>
-									<Button onClick={handleSave} size="sm" disabled={isSaving} variant={"link"}>
+									<Button
+										onClick={handleSave}
+										size="sm"
+										disabled={isSaving}
+										variant={"link"}>
 										<Save className="h-4 w-4 mr-0" />
 										{isSaving ? "..." : ""}
 									</Button>
@@ -165,18 +179,34 @@ export function BundleDetailsClient({ bundle: initialBundle }: BundleDetailsClie
 							Bundle Name
 						</Label>
 						{isEditing ? (
-							<Input id="bundle-name" value={editedName} onChange={e => setEditedName(e.target.value)} maxLength={100} className="mt-2" />
+							<Input
+								id="bundle-name"
+								value={editedName}
+								onChange={e => setEditedName(e.target.value)}
+								maxLength={100}
+								className="mt-2"
+							/>
 						) : (
 							<p className="mt-2 text-lg font-medium">{bundle.name}</p>
 						)}
 
 						<div className="text-xs">
 							{isEditing ? (
-								<Textarea id="bundle-description" value={editedDescription} onChange={e => setEditedDescription(e.target.value)} maxLength={500} rows={3} className="mt-2 w-full" />
+								<Textarea
+									id="bundle-description"
+									value={editedDescription}
+									onChange={e => setEditedDescription(e.target.value)}
+									maxLength={500}
+									rows={3}
+									className="mt-2 w-full"
+								/>
 							) : (
-								<p className="mt-2 text-sm text-muted-foreground w-full">{bundle.description || ""}</p>
+								<p className="mt-2 text-sm text-muted-foreground w-full">
+									{bundle.description || ""}
+								</p>
 							)}
-							{activeEpisodesCount} / {bundle.episodes.length} episodes active - Created {new Date(bundle.created_at).toLocaleDateString()}
+							{activeEpisodesCount} / {bundle.episodes.length} episodes active - Created{" "}
+							{new Date(bundle.created_at).toLocaleDateString()}
 						</div>
 					</div>
 				</div>
@@ -186,24 +216,44 @@ export function BundleDetailsClient({ bundle: initialBundle }: BundleDetailsClie
 				<CardContent className="p-2 md:p-8 flex flex-col">
 					<CardTitle>Episodes</CardTitle>
 					{bundle.episodes.length === 0 ? (
-						<p className="text-sm text-muted-foreground text-center py-8">No episodes in this bundle yet.</p>
+						<p className="text-sm text-muted-foreground text-center py-8">
+							No episodes in this bundle yet.
+						</p>
 					) : (
 						<div className="space-y-3">
 							{bundle.episodes.map((episode, index) => (
-								<div key={episode.episode_id} className="bg-card flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors">
+								<div
+									key={episode.episode_id}
+									className="bg-card flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors">
 									<div className="flex items-center gap-4 flex-1">
-										<div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold text-sm">{index + 1}</div>
+										<div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary font-semibold text-sm">
+											{index + 1}
+										</div>
 										<div className="flex flex-col items-start justify-center min-w-0 pr-6  gap-1">
-											<h4 className="font-medium max-w-100 text-sm text-cyan-200/80 w-full">{episode.userEpisode.episode_title}</h4>
+											<h4 className="font-medium max-w-100 text-sm text-cyan-200/80 w-full">
+												{episode.userEpisode.episode_title}
+											</h4>
 											<p className="text-xs text-muted-foreground">
 												{new Date(episode.userEpisode.created_at).toLocaleDateString()} •{" "}
-												{episode.userEpisode.duration_seconds ? `${Math.floor(episode.userEpisode.duration_seconds / 60)}m` : "Duration unknown"}
+												{episode.userEpisode.duration_seconds
+													? `${Math.floor(episode.userEpisode.duration_seconds / 60)}m`
+													: "Duration unknown"}
 											</p>
 										</div>
 									</div>
 									<div className="flex items-center gap-3">
-										<Badge variant={episodeStates[episode.episode_id] ? "default" : "secondary"}>{episodeStates[episode.episode_id] ? "Active" : "Inactive"}</Badge>
-										{isEditing && <Switch checked={episodeStates[episode.episode_id]} onCheckedChange={() => toggleEpisode(episode.episode_id)} />}
+										<Badge
+											variant={
+												episodeStates[episode.episode_id] ? "default" : "secondary"
+											}>
+											{episodeStates[episode.episode_id] ? "Active" : "Inactive"}
+										</Badge>
+										{isEditing && (
+											<Switch
+												checked={episodeStates[episode.episode_id]}
+												onCheckedChange={() => toggleEpisode(episode.episode_id)}
+											/>
+										)}
 									</div>
 								</div>
 							))}

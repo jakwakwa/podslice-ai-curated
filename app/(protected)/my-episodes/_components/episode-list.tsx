@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { PlayButton } from "@/components/episodes/play-button";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import EpisodeCard from "@/components/ui/episode-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEpisodePlayer } from "@/hooks/use-episode-player";
@@ -59,12 +58,14 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 						episode_title: ep.episode_title,
 						gcs_audio_url: ep.signedAudioUrl,
 						summary: ep.summary,
+						summary_length: ep.summary_length,
 						created_at: ep.created_at,
 						updated_at: ep.updated_at,
 						user_id: ep.user_id,
 						youtube_url: ep.youtube_url,
 						transcript: ep.transcript,
 						status: ep.status,
+						progress_message: ep.progress_message ?? null,
 						duration_seconds: ep.duration_seconds,
 						news_sources: ep.news_sources ?? null,
 						news_topic: ep.news_topic ?? null,
@@ -92,12 +93,14 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 			episode_title: match.episode_title,
 			gcs_audio_url: match.signedAudioUrl,
 			summary: match.summary,
+			summary_length: match.summary_length,
 			created_at: match.created_at,
 			updated_at: match.updated_at,
 			user_id: match.user_id,
 			youtube_url: match.youtube_url,
 			transcript: match.transcript,
 			status: match.status,
+			progress_message: match.progress_message ?? null,
 			duration_seconds: match.duration_seconds,
 			news_sources: match.news_sources ?? null,
 			news_topic: match.news_topic ?? null,
@@ -124,16 +127,17 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 	}
 
 	return (
-		<div className="px-2 mx-0 py-5 pb-28 mt-0	 md:px-8 md:py-8 bg-bigcard md:rounded-4xl h-full w-screen md:w-full md:mx-2 md:bg-bigcard md:p-12">
-			<div className="episode-card-wrapper-dark rounded-3xl flex flex-col gap-2">
+		<div className="px-2 mx-0 py-5 pb-28 mt-0	 md:px-8 md:py-8  md:rounded-4xl h-full w-screen md:w-full md:mx-2 md:p-12">
+			<div className="episode-card-wrapper-dark py-4 rounded-3xl flex flex-col gap-2">
 				{isLoading ? (
-					<Card variant="default">
-						<CardContent className=" space-y-2 flex-col flex w-full">
-							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
-							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
-							<Skeleton className="bg-[#2f4383]/30 h-[105px] w-full animate-pulse" />
-						</CardContent>
-					</Card>
+
+					<div>
+						<div className=" space-y-2 flex-col flex w-full">
+							<Skeleton className="bg-[#2f4383]/20 h-[105px] w-full animate-pulse" />
+							<Skeleton className="bg-[#2f4383]/20 h-[105px] w-full animate-pulse" />
+							<Skeleton className="bg-[#2f4383]/20 h-[105px] w-full animate-pulse" />
+						</div>
+					</div>
 				) : episodes.length === 0 ? (
 					<p className="text-primary m-4 text-sm">You haven't created any episodes yet.</p>
 				) : (
@@ -158,12 +162,14 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 														episode_title: episode.episode_title,
 														gcs_audio_url: episode.signedAudioUrl,
 														summary: episode.summary,
+														summary_length: episode.summary_length,
 														created_at: episode.created_at,
 														updated_at: episode.updated_at,
 														user_id: episode.user_id,
 														youtube_url: episode.youtube_url,
 														transcript: episode.transcript,
 														status: episode.status,
+														progress_message: episode.progress_message ?? null,
 														duration_seconds: episode.duration_seconds,
 														news_sources: episode.news_sources ?? null,
 														news_topic: episode.news_topic ?? null,
@@ -184,7 +190,7 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 								}
 							/>
 							{enableDebug && debugLogs && debugLogs[episode.episode_id] && (
-								<div className="mt-2 p-2 bg-gray-50 rounded border">
+								<div className="mt-2 p-2 bg-gray-50 rounded">
 									<pre className="text-[11px] whitespace-pre-wrap break-words">{JSON.stringify(debugLogs[episode.episode_id], null, 2)}</pre>
 								</div>
 							)}

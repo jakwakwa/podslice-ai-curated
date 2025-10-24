@@ -5,33 +5,15 @@ alwaysApply: false
 
 Goal: Fix the build error
 
-run a `pnpm build`  without any error.  Simply use `pnpm build`. You can safely assume you're in the correct directory. When you the build is successful, stage the changes, then commit the changes with an appropriate commit message. Push to the remote branch.
+run a `bun run build`  without any error.  Simply use `bun run build`. You can safely assume you're in the correct directory. When you the build is successful, stage the changes, then commit the changes with an appropriate commit message. Push to the remote branch.
 
 # Command Line Rules
 
 DO:
 ```bash
-pnpm build`
+bun run  build`
 ```
-
-DO: 
-```bash
-git add .
-git commit -m "Fix: Build error ...."
-git push
-```
-
-
-DON NOT!
-
-- Dont change directory.
-
-```
-cd /Users/jacobkotzee/Projects/v0-ai-curated-podcast-app && pnpm build
-```
-
-Only try to run `pnpm build` when you're confident that you can commit changes. If a build failed, fix the build error. Run `pnpm build` again until you see the successful build. 
 
 CRITICAL: 
-- Dont assume you made the fix. That's a big no go for me.
+- Dont assume you made the fix. That's a big no go for me, run a build again to make sure
 

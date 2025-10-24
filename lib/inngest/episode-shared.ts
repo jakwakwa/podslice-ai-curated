@@ -25,7 +25,10 @@ export interface WavConversionOptions {
 }
 
 // Upload a buffer to the primary bucket; returns a gs:// URI
-export async function uploadBufferToPrimaryBucket(data: Buffer, destinationFileName: string): Promise<string> {
+export async function uploadBufferToPrimaryBucket(
+	data: Buffer,
+	destinationFileName: string
+): Promise<string> {
 	const uploader = getStorageUploader();
 	const bucketName = ensureBucketName();
 	const [exists] = await uploader.bucket(bucketName).exists();
@@ -56,7 +59,11 @@ function createWavHeader(dataLength: number, options: WavConversionOptions) {
 }
 
 function isWav(buffer: Buffer): boolean {
-	return buffer.length >= 12 && buffer.toString("ascii", 0, 4) === "RIFF" && buffer.toString("ascii", 8, 12) === "WAVE";
+	return (
+		buffer.length >= 12 &&
+		buffer.toString("ascii", 0, 4) === "RIFF" &&
+		buffer.toString("ascii", 8, 12) === "WAVE"
+	);
 }
 
 function extractWavOptions(buffer: Buffer): WavConversionOptions {
@@ -72,7 +79,7 @@ function getPcmData(buffer: Buffer): Buffer {
 
 export function concatenateWavs(buffers: Buffer[]): Buffer {
 	if (buffers.length === 0) throw new Error("No buffers to concatenate");
-	const first = buffers[0];
+	const first = buffers[0]!;
 	if (!isWav(first)) throw new Error("First buffer is not a WAV file");
 	const options = extractWavOptions(first);
 	const pcmParts = buffers.map(buf => (isWav(buf) ? getPcmData(buf) : buf));
@@ -82,7 +89,10 @@ export function concatenateWavs(buffers: Buffer[]): Buffer {
 }
 
 export function splitScriptIntoChunks(text: string, approxWordsPerChunk = 130): string[] {
-	const safeChunkSize = Number.isFinite(approxWordsPerChunk) && approxWordsPerChunk > 0 ? Math.floor(approxWordsPerChunk) : DEFAULT_TTS_CHUNK_WORDS;
+	const safeChunkSize =
+		Number.isFinite(approxWordsPerChunk) && approxWordsPerChunk > 0
+			? Math.floor(approxWordsPerChunk)
+			: DEFAULT_TTS_CHUNK_WORDS;
 	const words = text.split(/\s+/).filter(Boolean);
 	const chunks: string[] = [];
 	let current: string[] = [];
@@ -97,7 +107,10 @@ export function splitScriptIntoChunks(text: string, approxWordsPerChunk = 130): 
 	return chunks;
 }
 
-export function combineAndUploadWavChunks(base64Chunks: string[], destinationFileName: string): { finalBuffer: Buffer; durationSeconds: number; destinationFileName: string } {
+export function combineAndUploadWavChunks(
+	base64Chunks: string[],
+	destinationFileName: string
+): { finalBuffer: Buffer; durationSeconds: number; destinationFileName: string } {
 	// If first chunk already looks like a WAV (after decoding), assume all are WAV fragments.
 	// Otherwise treat them as raw Linear PCM (Gemini TTS returns raw audio bytes w/out RIFF header).
 	if (base64Chunks.length === 0) throw new Error("No audio chunks provided");
@@ -105,11 +118,14 @@ export function combineAndUploadWavChunks(base64Chunks: string[], destinationFil
 
 	let finalWav: Buffer;
 	let durationSeconds = 0;
-	const first = buffers[0];
+	const first = buffers[0]!;
 	if (isWav(first)) {
 		finalWav = concatenateWavs(buffers);
 		const durationSecondsRaw = extractAudioDuration(finalWav, "audio/wav");
-		durationSeconds = typeof durationSecondsRaw === "number" && !Number.isNaN(durationSecondsRaw) ? durationSecondsRaw : 0;
+		durationSeconds =
+			typeof durationSecondsRaw === "number" && !Number.isNaN(durationSecondsRaw)
+				? durationSecondsRaw
+				: 0;
 		return { finalBuffer: finalWav, durationSeconds, destinationFileName };
 	}
 
@@ -118,7 +134,7 @@ export function combineAndUploadWavChunks(base64Chunks: string[], destinationFil
 	const { sampleRate, bitsPerSample } = (() => {
 		try {
 			const [type, ...params] = rawMime.split(";").map(s => s.trim());
-			const [, fmt] = type.split("/");
+			const [, fmt] = type!.split("/");
 			let sr: number | undefined;
 			let bps: number | undefined;
 			if (fmt?.startsWith("L")) {
@@ -128,7 +144,7 @@ export function combineAndUploadWavChunks(base64Chunks: string[], destinationFil
 			for (const p of params) {
 				const [k, v] = p.split("=").map(s => s.trim());
 				if (k === "rate") {
-					const parsed = parseInt(v, 10);
+					const parsed = parseInt(v!, 10);
 					if (!Number.isNaN(parsed)) sr = parsed;
 				}
 			}
@@ -139,7 +155,11 @@ export function combineAndUploadWavChunks(base64Chunks: string[], destinationFil
 	})();
 	const numChannels = 1;
 	const totalPcmLength = buffers.reduce((acc, b) => acc + b.length, 0);
-	const header = createWavHeader(totalPcmLength, { numChannels, sampleRate, bitsPerSample });
+	const header = createWavHeader(totalPcmLength, {
+		numChannels,
+		sampleRate,
+		bitsPerSample,
+	});
 	finalWav = Buffer.concat([header, ...buffers]);
 	const bytesPerSample = bitsPerSample / 8;
 	const totalSamples = totalPcmLength / (bytesPerSample * numChannels);
@@ -152,7 +172,9 @@ export async function generateSingleSpeakerTts(script: string): Promise<Buffer> 
 	const maxLength = aiConfig.useShortEpisodes ? 1000 : 4000;
 	const episodeType = aiConfig.useShortEpisodes ? "1-minute" : "3-minute";
 	if (script.length > maxLength) {
-		console.log(`⚠️ Script too long for ${episodeType} episode (${script.length} chars), truncating to ${maxLength} chars`);
+		console.log(
+			`⚠️ Script too long for ${episodeType} episode (${script.length} chars), truncating to ${maxLength} chars`
+		);
 		script = `${script.substring(0, maxLength)}...`;
 	}
 	return generateTtsAudio(
@@ -162,7 +184,12 @@ export async function generateSingleSpeakerTts(script: string): Promise<Buffer> 
 
 export type JsonBuffer = { type: "Buffer"; data: number[] };
 export function isJsonBuffer(value: unknown): value is JsonBuffer {
-	return typeof value === "object" && value !== null && (value as { type?: unknown }).type === "Buffer" && Array.isArray((value as { data?: unknown }).data);
+	return (
+		typeof value === "object" &&
+		value !== null &&
+		(value as { type?: unknown }).type === "Buffer" &&
+		Array.isArray((value as { data?: unknown }).data)
+	);
 }
 export function ensureNodeBuffer(value: unknown): Buffer {
 	if (Buffer.isBuffer(value)) return value;

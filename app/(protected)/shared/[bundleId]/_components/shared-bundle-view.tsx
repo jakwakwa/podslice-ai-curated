@@ -58,6 +58,7 @@ export function SharedBundleView({ bundle, bundleId }: SharedBundleViewProps) {
 				episode_title: episode.episode_title,
 				gcs_audio_url: signedUrl,
 				summary: null,
+				summary_length: "MEDIUM", // Default value for shared bundles
 				created_at: new Date(episode.created_at),
 				updated_at: new Date(episode.created_at),
 				user_id: "", // Not needed for playback
@@ -66,6 +67,7 @@ export function SharedBundleView({ bundle, bundleId }: SharedBundleViewProps) {
 				status: "COMPLETED",
 				duration_seconds: episode.duration_seconds,
 				news_sources: null,
+				progress_message: null,
 				news_topic: null,
 				is_public: false,
 				public_gcs_audio_url: null,

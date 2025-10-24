@@ -53,11 +53,17 @@ function scoreEpisodeMatch(ep: ListenNotesEpisode, query: EpisodeSearchInput): n
 	return score;
 }
 
-export async function searchEpisodeAudioViaListenNotes(query: EpisodeSearchInput): Promise<EpisodeSearchResult | null> {
+export async function searchEpisodeAudioViaListenNotes(
+	query: EpisodeSearchInput
+): Promise<EpisodeSearchResult | null> {
 	const apiKey = process.env.LISTEN_NOTES_API_KEY;
 	if (!apiKey) return null;
 
-	const schema = z.object({ title: z.string().min(2), podcastName: z.string().optional(), publishedAt: z.string().optional() });
+	const schema = z.object({
+		title: z.string().min(2),
+		podcastName: z.string().optional(),
+		publishedAt: z.string().optional(),
+	});
 	const parsed = schema.safeParse(query);
 	if (!parsed.success) return null;
 
@@ -72,7 +78,9 @@ export async function searchEpisodeAudioViaListenNotes(query: EpisodeSearchInput
 	endpoint.searchParams.set("len_min", "0");
 	endpoint.searchParams.set("len_max", "36000");
 
-	const res = await fetch(endpoint.toString(), { headers: { "X-ListenAPI-Key": apiKey } });
+	const res = await fetch(endpoint.toString(), {
+		headers: { "X-ListenAPI-Key": apiKey },
+	});
 	if (!res.ok) return null;
 	const data = (await res.json()) as ListenNotesSearchResponse;
 	const results = Array.isArray(data.results) ? data.results : [];
@@ -89,7 +97,11 @@ export async function searchEpisodeAudioViaListenNotes(query: EpisodeSearchInput
 	}
 	if (!(best && isDirectAudioUrl(best.audio))) return null;
 
-	return { audioUrl: best.audio!, source: "listen-notes", meta: { id: best.id, listennotes_url: best.listennotes_url } };
+	return {
+		audioUrl: best.audio!,
+		source: "listen-notes",
+		meta: { id: best.id, listennotes_url: best.listennotes_url },
+	};
 }
 
 // Apple / iTunes Search API resolver
@@ -109,7 +121,11 @@ async function tryFetch(url: string): Promise<Response | null> {
 	}
 }
 
-async function fetchItunesSearch(term: string, entity: string, limit = 25): Promise<ITunesResult[]> {
+async function fetchItunesSearch(
+	term: string,
+	entity: string,
+	limit = 25
+): Promise<ITunesResult[]> {
 	const endpoint = new URL("https://itunes.apple.com/search");
 	endpoint.searchParams.set("term", term);
 	endpoint.searchParams.set("entity", entity);
@@ -133,7 +149,9 @@ function titleSimilarity(a: string, b: string): number {
 	return union ? inter / union : 0;
 }
 
-export async function searchEpisodeAudioViaApple(query: EpisodeSearchInput): Promise<EpisodeSearchResult | null> {
+export async function searchEpisodeAudioViaApple(
+	query: EpisodeSearchInput
+): Promise<EpisodeSearchResult | null> {
 	// 1) Find podcast feed from show name
 	const term = [query.podcastName || "", query.title].filter(Boolean).join(" ");
 	const podcasts = await fetchItunesSearch(term, "podcast", 10);
@@ -161,11 +179,11 @@ export async function searchEpisodeAudioViaApple(query: EpisodeSearchInput): Pro
 				const pubDateMatch = raw.match(/<pubDate>([\s\S]*?)<\/pubDate>/i);
 				const audio = enclosureMatch ? enclosureMatch[1] : null;
 				if (!(audio && isDirectAudioUrl(audio))) continue;
-				const title = titleMatch ? titleMatch[1] : "";
+				const title = titleMatch ? (titleMatch[1] ?? "") : "";
 				const scoreTitle = titleSimilarity(title, query.title);
 				let scoreDate = 0;
 				if (targetTs && pubDateMatch) {
-					const ts = Date.parse(pubDateMatch[1]);
+					const ts = Date.parse(pubDateMatch[1]!);
 					if (!Number.isNaN(ts)) {
 						const days = Math.abs(ts - targetTs) / (1000 * 60 * 60 * 24);
 						scoreDate = days <= buffersDays ? 0.2 : 0;
@@ -177,7 +195,12 @@ export async function searchEpisodeAudioViaApple(query: EpisodeSearchInput): Pro
 					bestAudio = audio;
 				}
 			}
-			if (bestAudio) return { audioUrl: bestAudio, source: "listen-notes", meta: { via: "apple", feedUrl } };
+			if (bestAudio)
+				return {
+					audioUrl: bestAudio,
+					source: "listen-notes",
+					meta: { via: "apple", feedUrl },
+				};
 		} catch {}
 	}
 	return null;

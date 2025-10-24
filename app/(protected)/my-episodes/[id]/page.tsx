@@ -9,7 +9,10 @@ import PlayAndShare from "@/components/features/episodes/play-and-share";
 import PublicToggleButton from "@/components/features/episodes/public-toggle-button";
 import { Separator } from "@/components/ui/separator";
 import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
-import { extractKeyTakeaways, extractNarrativeRecap } from "@/lib/markdown/episode-text";
+import {
+	extractKeyTakeaways,
+	extractNarrativeRecap,
+} from "@/lib/markdown/episode-text";
 import { prisma } from "@/lib/prisma";
 import type { UserEpisode } from "@/lib/types";
 
@@ -34,10 +37,18 @@ const UserEpisodeSchema = z.object({
 	updated_at: z.date(),
 });
 
-type EpisodeWithSigned = UserEpisode & { signedAudioUrl: string | null; is_public: boolean };
+type EpisodeWithSigned = UserEpisode & {
+	signedAudioUrl: string | null;
+	is_public: boolean;
+};
 
-async function getEpisodeWithSignedUrl(id: string, currentUserId: string): Promise<EpisodeWithSigned | null> {
-	const episode = await prisma.userEpisode.findUnique({ where: { episode_id: id } });
+async function getEpisodeWithSignedUrl(
+	id: string,
+	currentUserId: string,
+): Promise<EpisodeWithSigned | null> {
+	const episode = await prisma.userEpisode.findUnique({
+		where: { episode_id: id },
+	});
 	if (!episode || episode.user_id !== currentUserId) return null;
 
 	let signedAudioUrl: string | null = null;
@@ -53,13 +64,19 @@ async function getEpisodeWithSignedUrl(id: string, currentUserId: string): Promi
 		}
 	}
 
-	const safe = UserEpisodeSchema.parse(episode) as UserEpisode & { is_public: boolean };
+	const safe = UserEpisodeSchema.parse(episode) as UserEpisode & {
+		is_public: boolean;
+	};
 	return { ...safe, signedAudioUrl };
 }
 
 // (Local markdown utilities removed in favor of shared helpers)
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+	params,
+}: {
+	params: Promise<{ id: string }>;
+}): Promise<Metadata> {
 	const { id } = await params;
 	const { userId } = await auth();
 	if (!userId) return { title: "User Episode" };
@@ -68,7 +85,11 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 	return { title: ep.episode_title, description: ep.summary ?? undefined };
 }
 
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+export default async function Page({
+	params,
+}: {
+	params: Promise<{ id: string }>;
+}) {
 	const { id } = await params;
 	const { userId } = await auth();
 	if (!userId) notFound();
@@ -84,7 +105,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 				? "PolyMarket, Traderview, Yahoo! Finance"
 				: episode.news_sources
 					?.split(", ")
-					.map(s => s.charAt(0).toUpperCase() + s.slice(1))
+					.map((s) => s.charAt(0).toUpperCase() + s.slice(1))
 					.join(", ")
 			}`
 			: null;
@@ -106,13 +127,33 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 							<span className="sr-only">status</span>
 						</span>
 					}
-					rightLink={isNewsEpisode ? undefined : { href: episode.youtube_url, label: "Youtube Url", external: true }}
+					rightLink={
+						isNewsEpisode
+							? undefined
+							: {
+								href: episode.youtube_url,
+								label: "Youtube Url",
+								external: true,
+							}
+					}
 				/>
-				{sourceDisplay && <div className="mt-2 text-lg font-bold text-primary-foreground">{sourceDisplay}</div>}
+				{sourceDisplay && (
+					<div className="mt-2 text-lg font-bold text-primary-foreground">
+						{sourceDisplay}
+					</div>
+				)}
 				<div className="mt-4 my-8">
 					<div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-						<PlayAndShare kind="user" episode={episode} signedAudioUrl={episode.signedAudioUrl} isPublic={episode.is_public} />
-						<PublicToggleButton episodeId={episode.episode_id} initialIsPublic={episode.is_public} />
+						<PlayAndShare
+							kind="user"
+							episode={episode}
+							signedAudioUrl={episode.signedAudioUrl}
+							isPublic={episode.is_public}
+						/>
+						<PublicToggleButton
+							episodeId={episode.episode_id}
+							initialIsPublic={episode.is_public}
+						/>
 					</div>
 
 					<Separator className="my-8" />
@@ -123,74 +164,93 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 									try {
 										// Clean the summary string first
 										let cleanSummary = episode.summary.trim();
-
 										// Try multiple approaches to extract clean JSON
 										if (cleanSummary.startsWith("```json")) {
-											cleanSummary = cleanSummary.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+											cleanSummary = cleanSummary
+												.replace(/^```json\s*/, "")
+												.replace(/\s*```$/, "");
 										} else if (cleanSummary.startsWith("```")) {
-											cleanSummary = cleanSummary.replace(/^```\s*/, "").replace(/\s*```$/, "");
+											cleanSummary = cleanSummary
+												.replace(/^```\s*/, "")
+												.replace(/\s*```$/, "");
 										} else if (cleanSummary.includes("```json")) {
 											// Extract JSON from within markdown blocks
-											const jsonMatch = cleanSummary.match(/```json\s*(\{[\s\S]*?\})\s*```/);
-											if (jsonMatch) {
+											const jsonMatch = cleanSummary.match(
+												/```json\s*(\{[\s\S]*?\})\s*```/,
+											);
+											if (jsonMatch?.[1]) {
 												cleanSummary = jsonMatch[1];
 											}
 										} else if (cleanSummary.includes("```")) {
 											// Fallback: try to extract JSON from any markdown block
-											const jsonMatch = cleanSummary.match(/```\s*(\{[\s\S]*?\})\s*```/);
-											if (jsonMatch) {
+											const jsonMatch = cleanSummary.match(
+												/```\s*(\{[\s\S]*?\})\s*```/,
+											);
+											if (jsonMatch?.[1]) {
 												cleanSummary = jsonMatch[1];
 											}
 										}
-
 										// Trim any remaining whitespace
 										cleanSummary = cleanSummary.trim();
-
-										console.log("Raw summary:", episode.summary);
-										console.log("Clean summary:", cleanSummary);
-
+										// parse the summary data
 										const summaryData = JSON.parse(cleanSummary);
 										return (
-											<div className="space-y-6 " >
+											<div className="space-y-6 ">
 												{summaryData.top_headlines && (
 													<div className="text-primary-foreground">
-														<h4 className="font-bold text-xl mt-8 mb-4">Top Headlines</h4>
-														<p className="text-secondary-foreground font-bold	 text-2xl">{summaryData.top_headlines}</p>
+														<h4 className="font-bold text-xl mt-8 mb-4">
+															Top Headlines
+														</h4>
+														<p className="text-secondary-foreground font-bold	 text-2xl">
+															{summaryData.top_headlines}
+														</p>
 													</div>
 												)}
 												<hr />
 												<div className="flex flex-col flex-wrap gap-6 md:gap-8">
-
-
-
 													<div className="flex flex-row gap-4 min-w-[20%]">
-														{summaryData.topic && summaryData.topic.length > 0 && (
-															<div className="text-primary-foreground">
-																<h4 className="font-bold text-xl mt-2 mb-4">Topic</h4>
-																<div className="flex flex-wrap gap-2">
-																	{summaryData.topic.map((t: string, i: number) => (
-																		<span key={i} className="px-2 py-1 bg-pink-800 text-pink-300 rounded-md text-lg capitalize">
-																			{t}
-																		</span>
-																	))}
+														{summaryData.topic &&
+															summaryData.topic.length > 0 && (
+																<div className="text-primary-foreground">
+																	<h4 className="font-bold text-xl mt-2 mb-4">
+																		Topic
+																	</h4>
+																	<div className="flex flex-wrap gap-2">
+																		{summaryData.topic.map(
+																			(t: string, i: number) => (
+																				<span
+																					key={i}
+																					className="px-2 py-1 bg-pink-800 text-pink-300 rounded-md text-lg capitalize"
+																				>
+																					{t}
+																				</span>
+																			),
+																		)}
+																	</div>
 																</div>
-															</div>
-														)}
-
-
+															)}
 
 														{summaryData.sentiment && (
 															<div className="text-primary-foreground">
-																<h4 className="font-bold text-xl mt-2 mb-4">Sentiment Analysis</h4>
+																<h4 className="font-bold text-xl mt-2 mb-4">
+																	Sentiment Analysis
+																</h4>
 																<div className="flex flex-wrap gap-2 ">
 																	{Array.isArray(summaryData.sentiment) ? (
-																		summaryData.sentiment.map((s: string, i: number) => (
-																			<span key={i} className="px-2 py-1 bg-violet-800 text-pink-300 rounded-md text-lg capitalize">
-																				{s}
-																			</span>
-																		))
+																		summaryData.sentiment.map(
+																			(s: string, i: number) => (
+																				<span
+																					key={i}
+																					className="px-2 py-1 bg-violet-800 text-pink-300 rounded-md text-lg capitalize"
+																				>
+																					{s}
+																				</span>
+																			),
+																		)
 																	) : (
-																		<span className="px-2 py-1 rounded-md text-lg  bg-violet-800 text-slate-200">{summaryData.sentiment}</span>
+																		<span className="px-2 py-1 rounded-md text-lg  bg-violet-800 text-slate-200">
+																			{summaryData.sentiment}
+																		</span>
 																	)}
 																</div>
 															</div>
@@ -198,21 +258,32 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 													</div>
 													{summaryData.tags && summaryData.tags.length > 0 && (
 														<div className="text-primary-foreground">
-															<h4 className="font-bold text-xl mt-2 mb-4">Tags</h4>
+															<h4 className="font-bold text-xl mt-2 mb-4">
+																Tags
+															</h4>
 															<div className="flex flex-wrap gap-2">
-																{summaryData.tags.map((tag: string, i: number) => (
-																	<span key={i} className="px-2 py-1 bg-slate-950 text-purple-400/80 rounded-md text-sm">
-																		#{tag}
-																	</span>
-																))}
+																{summaryData.tags.map(
+																	(tag: string, i: number) => (
+																		<span
+																			key={i}
+																			className="px-2 py-1 bg-primary text-secondary rounded-md text-sm"
+																		>
+																			#{tag}
+																		</span>
+																	),
+																)}
 															</div>
 														</div>
 													)}
 
 													{summaryData.target_audience && (
 														<div className="text-primary-foreground">
-															<h4 className="font-bold text-xl mt-2 mb-4">Target Audience</h4>
-															<p className=" text-primary-foreground text-base">{summaryData.target_audience}</p>
+															<h4 className="font-bold text-xl mt-2 mb-4">
+																Target Audience
+															</h4>
+															<p className=" text-secondary-foreground text-base">
+																{summaryData.target_audience}
+															</p>
 														</div>
 													)}
 												</div>
@@ -220,8 +291,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
 												{summaryData.ai_summary && (
 													<div className="text-primary-foreground">
-														<h4 className="font-bold text-xl mt-2 mb-4">Ai Summary</h4>
-														<div className="whitespace-pre-wrap text-secondary-foreground leading-[1.8] text-[17px]" >{summaryData.ai_summary}</div>
+														<h4 className="font-bold text-xl mt-2 mb-4">
+															Ai Summary
+														</h4>
+														<div className="whitespace-pre-wrap text-secondary-foreground leading-[1.8] text-[17px]">
+															{summaryData.ai_summary}
+														</div>
 													</div>
 												)}
 											</div>
@@ -229,11 +304,18 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 									} catch (error) {
 										// Fallback to raw text display if JSON parsing fails
 										console.error("Failed to parse news summary JSON:", error);
-										console.log("Raw summary that failed to parse:", episode.summary);
+										console.log(
+											"Raw summary that failed to parse:",
+											episode.summary,
+										);
 										return (
 											<div>
-												<h3 className="text-lg font-semibold mb-4 text-[#ac91fc]">Summary</h3>
-												<div className="whitespace-pre-wrap text-[#F0BCFAD7]/90">{episode.summary}</div>
+												<h3 className="text-lg font-semibold mb-4 text-[#ac91fc]">
+													Summary
+												</h3>
+												<div className="whitespace-pre-wrap text-[#F0BCFAD7]/90">
+													{episode.summary}
+												</div>
 											</div>
 										);
 									}

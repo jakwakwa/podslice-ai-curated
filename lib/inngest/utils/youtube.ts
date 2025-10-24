@@ -69,13 +69,19 @@ export async function getYouTubeVideoDetails(url: string): Promise<VideoDetails 
 	}
 
 	try {
-		console.log("[DEBUG] getYouTubeVideoDetails: Calling YouTube API for videoId:", videoId);
+		console.log(
+			"[DEBUG] getYouTubeVideoDetails: Calling YouTube API for videoId:",
+			videoId
+		);
 		const response = await youtubeClient.videos.list({
 			part: ["snippet", "contentDetails"],
 			id: [videoId],
 		});
 
-		console.log("[DEBUG] getYouTubeVideoDetails: YouTube API response received, items count:", response.data.items?.length);
+		console.log(
+			"[DEBUG] getYouTubeVideoDetails: YouTube API response received, items count:",
+			response.data.items?.length
+		);
 
 		const item = response.data.items?.[0];
 		if (!(item?.snippet && item.contentDetails)) {
@@ -87,7 +93,12 @@ export async function getYouTubeVideoDetails(url: string): Promise<VideoDetails 
 		const isoDuration = contentDetails.duration || "PT0S";
 		const durationInSeconds = parseISO8601Duration(isoDuration);
 
-		console.log("[DEBUG] getYouTubeVideoDetails: Parsed duration:", durationInSeconds, "seconds from ISO:", isoDuration);
+		console.log(
+			"[DEBUG] getYouTubeVideoDetails: Parsed duration:",
+			durationInSeconds,
+			"seconds from ISO:",
+			isoDuration
+		);
 
 		const result = {
 			title: snippet.title || "Untitled",
@@ -100,7 +111,10 @@ export async function getYouTubeVideoDetails(url: string): Promise<VideoDetails 
 		console.log("[DEBUG] getYouTubeVideoDetails: Returning result:", result);
 		return result;
 	} catch (error) {
-		console.error(`[YOUTUBE_API_ERROR] Failed to fetch details for video ${videoId}:`, error);
+		console.error(
+			`[YOUTUBE_API_ERROR] Failed to fetch details for video ${videoId}:`,
+			error
+		);
 		return null;
 	}
 }
@@ -115,15 +129,19 @@ export function extractYouTubeVideoId(urlOrId: string): string | null {
 	if (/^[\w-]{11}$/.test(urlOrId)) return urlOrId;
 
 	// Regex for various YouTube URL formats
-	const urlMatch = urlOrId.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|shorts\/|watch\?v=|watch\?.*?&v=))([\w-]{11})/);
-	return urlMatch ? urlMatch[1] : null;
+	const urlMatch = urlOrId.match(
+		/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|shorts\/|watch\?v=|watch\?.*?&v=))([\w-]{11})/
+	);
+	return urlMatch ? (urlMatch[1] ?? null) : null;
 }
 
 // Transcripts removed: Use Gemini-based transcription pipeline instead.
 export type YouTubeTranscriptItem = never;
 
 export async function getYouTubeTranscriptText(): Promise<string> {
-	throw new Error("TRANSCRIPTS_DISABLED: Server-side caption scraping removed. Use Gemini transcription pipeline.");
+	throw new Error(
+		"TRANSCRIPTS_DISABLED: Server-side caption scraping removed. Use Gemini transcription pipeline."
+	);
 }
 
 export async function getYouTubeTranscriptSegments(): Promise<YouTubeTranscriptItem[]> {

@@ -3,7 +3,14 @@
 import { Loader2 } from "lucide-react";
 import { type ChangeEvent, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Typography } from "@/components/ui/typography";
@@ -11,12 +18,12 @@ import type { Bundle, Podcast } from "@/lib/types";
 
 type DialogBundle =
 	| (Bundle & {
-		podcasts: Podcast[];
-		canInteract?: boolean;
-		lockReason?: string | null;
-		bundleType?: "curated" | "shared";
-		shared_bundle_id?: string;
-	})
+			podcasts: Podcast[];
+			canInteract?: boolean;
+			lockReason?: string | null;
+			bundleType?: "curated" | "shared";
+			shared_bundle_id?: string;
+	  })
 	| null;
 
 // Simple function to sanitize text for safe display
@@ -87,11 +94,17 @@ export function BundleSelectionDialog({
 	const isSharedBundle = selectedBundle?.bundleType === "shared";
 
 	// Get the appropriate current bundle name based on type being selected
-	const currentBundleName = isSharedBundle ? currentSharedBundleName : currentCuratedBundleName;
+	const currentBundleName = isSharedBundle
+		? currentSharedBundleName
+		: currentCuratedBundleName;
 	const currentBundleId = isSharedBundle ? currentSharedBundleId : currentCuratedBundleId;
 
-	const sanitizedCurrentBundleName = currentBundleName ? sanitizeText(currentBundleName) : "";
-	const sanitizedSelectedBundleName = selectedBundle ? sanitizeText(selectedBundle.name) : "";
+	const sanitizedCurrentBundleName = currentBundleName
+		? sanitizeText(currentBundleName)
+		: "";
+	const sanitizedSelectedBundleName = selectedBundle
+		? sanitizeText(selectedBundle.name)
+		: "";
 
 	const handleConfirm = async () => {
 		if (isLocked) {
@@ -126,8 +139,13 @@ export function BundleSelectionDialog({
 	};
 
 	// Check if user already has this bundle selected (only relevant in selection mode)
-	const isAlreadySelected = isLocked ? false : selectedBundle ? currentBundleId === selectedBundle.bundle_id : false;
-	const showSwitchWarning = !isLocked && Boolean(sanitizedCurrentBundleName) && !isAlreadySelected;
+	const isAlreadySelected = isLocked
+		? false
+		: selectedBundle
+			? currentBundleId === selectedBundle.bundle_id
+			: false;
+	const showSwitchWarning =
+		!isLocked && Boolean(sanitizedCurrentBundleName) && !isAlreadySelected;
 
 	// Pre-populate profile name when dialog opens for first-time selection
 	const handleProfileNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -163,7 +181,8 @@ export function BundleSelectionDialog({
 	}
 
 	const requiredPlanText = requiredPlanLabel ?? "a higher";
-	const requiredPlanDescriptionText = requiredPlanDescription ?? "Upgrade your plan to continue.";
+	const requiredPlanDescriptionText =
+		requiredPlanDescription ?? "Upgrade your plan to continue.";
 	let shouldShowSwitchWarning = false;
 	if (!isLocked) {
 		if (!isAlreadySelected) {
@@ -221,7 +240,10 @@ export function BundleSelectionDialog({
 							if (isAlreadySelected) {
 								return (
 									<span>
-										<strong className="font-bold text-cyan-950/90">{sanitizeText(selectedBundle.name)} Bundle </strong> is already active in your profile
+										<strong className="font-bold text-cyan-500">
+											{sanitizeText(selectedBundle.name)} Bundle{" "}
+										</strong>{" "}
+										is already active in your profile
 									</span>
 								);
 							}
@@ -237,16 +259,27 @@ export function BundleSelectionDialog({
 								if (isSharedBundle) {
 									return (
 										<span>
-											You're about to change your shared bundle from {sanitizedCurrentBundleName} to {sanitizeText(selectedBundle.name)}{" "}
+											You're about to change your shared bundle from{" "}
+											{sanitizedCurrentBundleName} to {sanitizeText(
+												selectedBundle.name
+											)}{" "}
 										</span>
 									);
 								}
 								return (
 									<span className="leading-8">
 										You're about to change your curated bundle:
-										<br /> <span className="uppercase text-xs italic font-bold text-foreground/50">From </span>
-										<strong className="font-bold italic text-foreground">{sanitizedCurrentBundleName}</strong> →{" "}
-										<strong className="font-bold italic text-foreground">{sanitizeText(selectedBundle.name)}</strong>{" "}
+										<br />{" "}
+										<span className="uppercase text-xs italic font-bold text-foreground/50">
+											From{" "}
+										</span>
+										<strong className="font-bold italic text-amber-500">
+											{sanitizedCurrentBundleName}
+										</strong>{" "}
+										→{" "}
+										<strong className="font-bold italic text-cyan-500">
+											{sanitizeText(selectedBundle.name)}
+										</strong>{" "}
 									</span>
 								);
 							}
@@ -260,7 +293,10 @@ export function BundleSelectionDialog({
 							<div className="space-y-4 min-w-full">
 								{/* Warning Message */}
 								<div className="px-3 py-2 bg-amber-600/50 outline outline-amber-600/30 dark:border-amber-800 rounded-sm inline-block">
-									<Typography variant="body" as="span" className="text-amber-200  text-sm">
+									<Typography
+										variant="body"
+										as="span"
+										className="text-amber-200  text-sm">
 										{isSharedBundle
 											? `You'll lose access to episodes from '${sanitizedCurrentBundleName}' after switching`
 											: `You won't have access to '${sanitizedCurrentBundleName}' episodes after changing`}
@@ -272,7 +308,14 @@ export function BundleSelectionDialog({
 						{shouldShowNameInput && (
 							<div className=" space-y-2 min-w-full">
 								<Label htmlFor="bundle-profile-name">Bundle name</Label>
-								<Input id="bundle-profile-name" value={profileName} onChange={handleProfileNameChange} placeholder="e.g. My Weekly Slice" autoComplete="off" disabled={isConfirming || isLoading} />
+								<Input
+									id="bundle-profile-name"
+									value={profileName}
+									onChange={handleProfileNameChange}
+									placeholder="e.g. My Weekly Slice"
+									autoComplete="off"
+									disabled={isConfirming || isLoading}
+								/>
 								{nameError && (
 									<Typography variant="body" as="span" className="text-xs text-red-400">
 										{nameError}
@@ -283,7 +326,10 @@ export function BundleSelectionDialog({
 
 						{isLocked && requiredPlanDescriptionText && (
 							<div className=" min-w-full">
-								<Typography variant="body" as="span" className="text-sm text-muted-foreground">
+								<Typography
+									variant="body"
+									as="span"
+									className="text-sm text-muted-foreground">
 									{requiredPlanDescriptionText}
 								</Typography>
 							</div>
@@ -303,10 +349,20 @@ export function BundleSelectionDialog({
 							</Button>
 						) : (
 							<>
-								<Button type="button" variant="outline" className="w-full px-0 mx-0" onClick={onClose} disabled={isConfirming}>
+								<Button
+									type="button"
+									variant="outline"
+									className="w-full px-0 mx-0"
+									onClick={onClose}
+									disabled={isConfirming}>
 									Cancel
 								</Button>
-								<Button type="button" variant="default" onClick={handleConfirm} disabled={isConfirming || isLoading} className="min-w-[120px]">
+								<Button
+									type="button"
+									variant="default"
+									onClick={handleConfirm}
+									disabled={isConfirming || isLoading}
+									className="min-w-[120px]">
 									{isConfirming ? (
 										<div className="flex items-center">
 											<Loader2 className="w-4 h-4 mr-2 animate-spin" />

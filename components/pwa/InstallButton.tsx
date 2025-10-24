@@ -3,7 +3,13 @@ import { Download } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 
 type InstallPromptEvent = Event & {
 	prompt: () => Promise<void>;
@@ -26,7 +32,10 @@ export default function InstallButton(): React.ReactElement | null {
 
 	useEffect(() => {
 		// Check if already running as installed PWA
-		const checkStandalone = window.matchMedia("(display-mode: standalone)").matches || (window.navigator as NavigatorWithStandalone).standalone || document.referrer.includes("android-app://");
+		const checkStandalone =
+			window.matchMedia("(display-mode: standalone)").matches ||
+			(window.navigator as NavigatorWithStandalone).standalone ||
+			document.referrer.includes("android-app://");
 
 		setIsStandalone(checkStandalone);
 
@@ -108,11 +117,17 @@ export default function InstallButton(): React.ReactElement | null {
 		return null;
 	}
 
-	const hasNativePrompt = !!deferredPrompt || !!(window as WindowWithPWA).deferredPwaPrompt;
+	const hasNativePrompt =
+		!!deferredPrompt || !!(window as WindowWithPWA).deferredPwaPrompt;
 
 	return (
 		<>
-			<Button onClick={handleButtonClick} size="icon" variant="ghost" className="h-8 w-8" aria-label="Install Podslice app">
+			<Button
+				onClick={handleButtonClick}
+				size="icon"
+				variant="ghost"
+				className="h-8 w-8"
+				aria-label="Install Podslice app">
 				<Download className="h-4 w-4" />
 				<span className="sr-only">Install App</span>
 			</Button>
@@ -124,7 +139,9 @@ export default function InstallButton(): React.ReactElement | null {
 						<DialogDescription className="pt-4 space-y-4">
 							{/* Benefits section */}
 							<div className="space-y-2">
-								<p className="text-base font-semibold text-foreground">Get the best experience:</p>
+								<p className="text-base font-semibold text-foreground">
+									Get the best experience:
+								</p>
 								<ul className="space-y-1.5 text-sm">
 									<li className="flex items-start gap-2">
 										<span className="text-green-500 mt-0.5">✓</span>
@@ -148,14 +165,22 @@ export default function InstallButton(): React.ReactElement | null {
 							{/* Install button or manual instructions */}
 							{hasNativePrompt ? (
 								<div className="pt-2">
-									<Button onClick={handleInstallConfirm} variant="default" size="lg" className="w-full bg-primary hover:bg-primary/90">
+									<Button
+										onClick={handleInstallConfirm}
+										variant="default"
+										size="lg"
+										className="w-full bg-background/20  hover:bg-primary/90">
 										Install Now
 									</Button>
-									<p className="text-xs text-muted-foreground text-center mt-2">You'll see your browser's install prompt</p>
+									<p className="text-xs text-muted-foreground text-center mt-2">
+										You'll see your browser's install prompt
+									</p>
 								</div>
 							) : (
 								<div className="space-y-3 pt-2">
-									<p className="text-sm font-semibold text-foreground">Manual Installation:</p>
+									<p className="text-sm font-semibold text-foreground">
+										Manual Installation:
+									</p>
 
 									<div className="space-y-3 text-sm bg-muted/50 p-4 rounded-lg">
 										<div>
