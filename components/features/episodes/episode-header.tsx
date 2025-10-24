@@ -21,7 +21,7 @@ export default function EpisodeHeader({
 	const durationMin = durationSeconds ? Math.round(durationSeconds / 60) : null;
 	return (
 		<div className="pt-12 flex flex-col gap-2">
-			<div className="text-primary-foreground text-xl font-bold text-shadow-sm text-shadow-slate-900/10 lg:text-shadow-slate-50 lg:text-shadow-2xs md:text-5xl capitalize">
+			<div className="text-primary-foreground-muted text-xl font-bold text-shadow-sm text-shadow-slate-900/10 lg:text-shadow-slate-50 lg:text-shadow-2xs md:text-5xl capitalize">
 				{title}
 			</div>
 			<div className="text-sm text-[#8A97A5D4]/80 episode-p pr-[10%] mb-1">

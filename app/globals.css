@@ -219,7 +219,7 @@
 	--dialog-card: oklch(0.92 0.004 286.32);
 	--dialog-overlay: oklch(0.92 0.004 286.32);
 	--link: oklch(0.6 0.118 184.704);
-	--link-hover: oklch(0.398 0.07 227.392);
+	--link-hover: oklch(0.9 0.83 290);
 	--inset-gradient: linear-gradient(var(--violet-1) 0%, var(--violet-3) 110%);
 	--bigepisode-gradient: linear-gradient(0deg,
 			var(--kwak-2) 20%,
@@ -248,94 +248,29 @@
 .light {
 
 
-	--dialog-card: var(--swak-9);
-	--dialog-overlay: var(--kwak-3);
-	--background: var(--kwak-10);
-	--foreground: var(--swak-7);
-	--card: var(--kwak-10);
-	--card-foreground: var(--kwak-10);
-	--popover: var(--color-cyan-950);
-	--popover-foreground: var(--swak-10);
-	--primary: var(--kwak-10);
-	--primary-foreground: var(--beduk-1);
-	--header: var(--swak-2);
-	--header-foreground: var(--beduk-8);
-	--primary-foreground-muted: var(--beduk-8);
-	--secondary: var(--beduk-9);
-	--secondary-foreground: var(--beduk-8);
-	--muted: var(--swak-7);
-	--muted-foreground: var(--beduk-3);
-	--accent: var(--beduk-9);
-	--accent-foreground: var(--kwak-2);
-	--destructive: var(--wyn-5);
-	--border: var(--color-cyan-900);
-	--input: var(--swak-5);
-	--ring: var(--kwak-2);
-	--chart-1: var(--kwak-5);
-	--chart-2: var(--kwak-5);
-	--chart-3: var(--kwak-5);
-	--chart-4: var(--kwak-5);
-	--chart-5: var(--kwak-5);
-	--sidebar: var(--swak-1);
-	--sidebar-foreground: var(--kwak-5);
-	--sidebar-primary: var(--beduk-5);
-	--sidebar-primary-foreground: var(--kwak-5);
-	--sidebar-accent: var(--kwak-8);
-	--sidebar-accent-foreground: var(--beduk-5);
-	--sidebar-border: var(--kwak-9);
-	--sidebar-ring: var(--kwak-6);
-	--inset-gradient: linear-gradient(var(--swak-1) 0%, var(--swak-2) 110%);
-	--bigepisode-gradient: linear-gradient(0deg,
-			var(--swak-1) 20%,
-			var(--swak-2) 110%);
-	--episode-gradient: linear-gradient(320deg,
-			var(--swak-1) -10%,
-			var(--kwak-9) 180%);
-	--container-gradient: linear-gradient(to bottom,
-			var(--swak-1) 0%,
-			var(--swak-3) 100%);
-	--container-dark: linear-gradient(to bottom,
-			var(--swak-1) 0%,
-			var(--swak-2) 100%);
-
-	--episode-card-wrapper-gradient: linear-gradient(to bottom,
-			var(--beduk-2) -100%,
-			var(--swak-1) 80%);
-	--input-shadow: var(--swak-2);
-}
-
-
-
-
-.dark {
-	/* --dialog-card: var(--swak-9);
-	--dialog-overlay: var(--kwak-3); */
-	/* --background: var(--kwak-10); */
 	--foreground: var(--swak-7);
 	--card: var(--kwak-10);
 	--card-foreground: var(--kwak-10);
 
 	--dialog-card: var(--beduk-7);
-	--dialog-overlay: oklch(0.01 0.424 250.32 / 0.42);
+	--dialog-overlay: var(--swak-4);
 
-	-dialog-card: var(--swak-9);
-	--dialog-overlay: var(--kwak-3);
-	--background: var(--kwak-10);
+	--background: var(--swak-2);
 	--foreground: var(--swak-7);
 	--popover: var(--color-cyan-950);
 	--popover-foreground: var(--swak-10);
 	--primary: var(--swak-3);
 
-	--primary-foreground: var(--beduk-4);
-	--header: var(--swak-2);
+	--primary-foreground: var(--kwak-9);
+	--header: var(--kwak-1);
 	--header-foreground: var(--beduk-4);
-	--primary-foreground-muted: var(--beduk-3);
+	--primary-foreground-muted: var(--kwak-3);
 	--secondary: var(--kwak-3);
-	--secondary-foreground: var(--swak-8);
+	--secondary-foreground: var(--swak-10);
 	--muted: var(--swak-7);
 	--muted-foreground: var(--swak-4);
 	--accent: var(--beduk-9);
-	--accent-foreground: var(--kwak-2);
+	--accent-foreground: var(--kwak-5);
 	--destructive: var(--wyn-5);
 	--border: var(--color-slate-700);
 	--input: var(--swak-5);
@@ -347,7 +282,7 @@
 	--chart-5: var(--kwak-5);
 	--sidebar: var(--swak-1);
 	--sidebar-foreground: var(--kwak-5);
-	--sidebar-primary: var(--beduk-5);
+	--sidebar-primary: var(--beduk-2);
 	--sidebar-primary-foreground: var(--kwak-5);
 	--sidebar-accent: var(--swak-1);
 	--sidebar-accent-foreground: var(--beduk-5);
@@ -359,7 +294,7 @@
 			var(--swak-2) 110%);
 	--episode-gradient: linear-gradient(320deg,
 			var(--swak-1) -10%,
-			var(--kwak-9) 180%);
+			var(--beduk-8) 180%);
 	--container-gradient: linear-gradient(to bottom,
 			var(--swak-1) 0%,
 			var(--swak-3) 100%);
@@ -371,8 +306,76 @@
 
 			var(--swak-2) 20%);
 	--episode-card-wrapper-gradient: linear-gradient(to bottom,
-			var(--beduk-2) -100%,
-			var(--swak-1) 80%);
+			var(--swak-3) 10%,
+			var(--swak-1) 280%);
+	--input-shadow: var(--swak-2);
+}
+
+
+
+
+.dark {
+
+	--foreground: var(--swak-7);
+	--card: var(--kwak-10);
+	--card-foreground: var(--kwak-10);
+
+	--dialog-card: var(--beduk-7);
+	--dialog-overlay: var(--swak-4);
+
+	--background: var(--swak-2);
+	--foreground: var(--swak-7);
+	--popover: var(--color-cyan-950);
+	--popover-foreground: var(--swak-10);
+	--primary: var(--swak-3);
+
+	--primary-foreground: var(--kwak-9);
+	--header: var(--kwak-1);
+	--header-foreground: var(--beduk-4);
+	--primary-foreground-muted: var(--kwak-3);
+	--secondary: var(--kwak-3);
+	--secondary-foreground: var(--swak-10);
+	--muted: var(--swak-7);
+	--muted-foreground: var(--swak-4);
+	--accent: var(--beduk-9);
+	--accent-foreground: var(--kwak-5);
+	--destructive: var(--wyn-5);
+	--border: var(--color-slate-700);
+	--input: var(--swak-5);
+	--ring: var(--kwak-8);
+	--chart-1: var(--kwak-5);
+	--chart-2: var(--kwak-5);
+	--chart-3: var(--kwak-5);
+	--chart-4: var(--kwak-5);
+	--chart-5: var(--kwak-5);
+	--sidebar: var(--swak-1);
+	--sidebar-foreground: var(--kwak-5);
+	--sidebar-primary: var(--beduk-2);
+	--sidebar-primary-foreground: var(--kwak-5);
+	--sidebar-accent: var(--swak-1);
+	--sidebar-accent-foreground: var(--beduk-5);
+	--sidebar-border: var(--swak-4);
+	--sidebar-ring: var(--kwak-6);
+	--inset-gradient: linear-gradient(var(--swak-1) 0%, var(--swak-2) 110%);
+	--bigepisode-gradient: linear-gradient(0deg,
+			var(--swak-1) 20%,
+			var(--swak-2) 110%);
+	--episode-gradient: linear-gradient(320deg,
+			var(--swak-1) -10%,
+			var(--beduk-8) 180%);
+	--container-gradient: linear-gradient(to bottom,
+			var(--swak-1) 0%,
+			var(--swak-3) 100%);
+	--container-dark: linear-gradient(to bottom,
+			var(--swak-1) 0%,
+			var(--swak-2) 100%);
+	--episode-shell-gradient: linear-gradient(180deg,
+			var(--kwak-1) -40%,
+
+			var(--swak-2) 20%);
+	--episode-card-wrapper-gradient: linear-gradient(to bottom,
+			var(--swak-3) 10%,
+			var(--swak-1) 280%);
 	--input-shadow: var(--swak-2);
 }
 
@@ -392,8 +395,9 @@
 	}
 
 	.dialog-overlay {
-		background: var(--dialog-overlay) !important;
-		opacity: 1 !important;
+		background-color: oklch(8.768% 0.19418 199.19 / 0.63) !important;
+		
+		/*opacity: 0.2 !important;*/
 	}
 
 	.bg-bigcard {

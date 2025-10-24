@@ -374,7 +374,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 					<H3 className="text-[1.2rem] text-primary-foreground font-bold font-sans mb-4 px-2 md:px-12 xl:px-[40px]">
 						🎯 Curated by Podslice
 					</H3>
-					<div className="episode-card-wrapper-dark relative transition-all duration-200 text-card-foreground gap-4 p-0 px-2 md:px-4 md:py-5 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-3 xl:p-[40px]   lg:px-8 xl:justify-evenly items-start lg:gap-5 xl:gap-6 h-fit xl:px-[40px] rounded-3xl  backdrop-blur-[3px]">
+					<div className="episode-card-wrapper-dark relative transition-all duration-200 text-card-foreground gap-4 p-0 px-2 md:px-4 md:py-5 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-4 xl:p-[40px]   lg:px-8 xl:justify-evenly items-start lg:gap-5 xl:gap-6 h-fit xl:px-[40px] rounded-3xl  backdrop-blur-[3px]">
 						{curatedBundles.map(bundle => {
 							const planMeta = PLAN_GATE_META[bundle.min_plan];
 							const canInteract = bundle.canInteract;
@@ -392,7 +392,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 									<CardHeader className="w-full py-4 px-2">
 										<div className="w-full flex flex-col-reverse xl:flex-col-reverse gap-3">
 											<div className="flex items-start gap-3 text-sm font-normal tracking-wide flex-col w-full md:max-w-[240px]">
-												<H3 className="text-lg text-primary-foreground-muted  font-foreground-muted font-sans mt-2  tracking-tight uppercase leading-tight mb-0 truncate">
+												<H3 className="text-lg text-primary-foreground  font-foreground-muted font-sans mt-2  tracking-tight uppercase leading-tight mb-0 truncate">
 													{bundle.name}
 												</H3>
 
@@ -435,8 +435,8 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 														Shared by {bundle.owner.full_name}
 													</Typography>
 												)}
-												<Typography className="text-[0.7rem] text-primary-foreground font-normal leading-tight mt-0 mb-0 line-clamp-3">
-													{isShared ? "Episodes in bundle:" : "Included in bundle:"}
+												<Typography className="text-[0.8rem] text-primary-foreground font-bold leading-tight mt-0 mb-0 line-clamp-3">
+													{isShared ? "Episodes in bundle:" : "featuring:"}
 												</Typography>
 												<div className="mx-auto w-full">
 													{isShared ? (
@@ -444,7 +444,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 															{bundle.episodes?.slice(0, 4).map(episode => (
 																<li key={episode.episode_id} className=" leading-none">
 																	<div className="w-full flex flex-col gap-0 ">
-																		<p className="w-full text-[0.75rem] font-semibold leading-normal my-0 px-1 mx-0 text-left text-primary-foreground tracking-wide line-clamp-1 truncate ">
+																		<p className="w-full text-[0.75rem] font-semibold leading-normal my-0 px-1 mx-0 text-left text-primary-foreground/80 tracking-wide line-clamp-1 truncate ">
 																			{episode.episode_title}
 																		</p>
 																	</div>
@@ -454,13 +454,13 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 													) : (
 														<ul
 															key={bundle.bundle_id}
-															className="bg-header/40 rounded-md w-fit flex flex-col  py-2 px-1 gap-1">
+															className="bg-header/40 rounded-md w-full flex flex-col  py-2 px-1 gap-2 capitalize">
 															{bundle.podcasts
 																.slice(0, 4)
 																.map((podcast: Podcast, _index: number) => (
 																	<li
 																		key={podcast.podcast_id}
-																		className="text-primary-foreground-muted leading-none font-light text-[0.75rem] truncate pl-1 line-clamp-1">
+																		className="text-foreground leading-none font-medium text-[0.85rem] truncate pl-1 line-clamp-1">
 																		{podcast.name}
 																	</li>
 																))}
