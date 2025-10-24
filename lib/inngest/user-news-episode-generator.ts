@@ -165,22 +165,19 @@ export const generateUserNewsEpisode = inngest.createFunction(
 		});
 
 		const allowedDomains = {
-			world: [
-				"theguardian.com",
-				"theguardian.com/europe",
-				"theguardian.com/world",
-				"aljazeera.com",
-				"reuters.com",
+			guardian: ["theguardian.com", "theguardian.com/europe", "theguardian.com/world"],
+			aljazeera: ["aljazeera.com"],
+			worldbank: ["worldbank.org"],
+			un: ["news.un.org"],
+			stocks: [
+				"finance.yahoo.com",
+				"tradingview.com/news/",
+				"barrons.com",
+				"bloomberg.com",
+				"coindesk.com/latest-crypto-news",
 			],
-			un: ["worldbank.org", "news.un.org"],
-			usNews: [
-				"abcnews.go.com",
-				"foxnews.com",
-				"cnn.com",
-				"nytimes.com",
-				"groundnews.com",
-				"npr.org",
-			],
+			abc: ["abcnews.go.com"],
+			npr: ["npr.org"],
 			dailymaverick: ["dailymaverick.co.za"],
 			teslaCrypto: [
 				"finance.yahoo.com",
@@ -190,13 +187,6 @@ export const generateUserNewsEpisode = inngest.createFunction(
 				"tesla.com",
 				"coincentral.com",
 				"coindesk.com/price/bitcoin/news",
-				"coindesk.com/latest-crypto-news",
-			],
-			stocks: [
-				"finance.yahoo.com",
-				"tradingview.com/news/",
-				"barrons.com",
-				"bloomberg.com",
 				"coindesk.com/latest-crypto-news",
 			],
 		} as const;
