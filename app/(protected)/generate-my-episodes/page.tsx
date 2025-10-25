@@ -1,23 +1,29 @@
-import type { Metadata } from "next"
-import { EpisodeCreator } from "../my-episodes/_components/episode-creator"
-import { UsageDisplay } from "../my-episodes/_components/usage-display"
+import type { Metadata } from "next";
+import CommonSectionWithChildren from "@/components/shared/section-common";
+import { EpisodeCreator } from "../my-episodes/_components/episode-creator";
+import { UsageDisplay } from "../my-episodes/_components/usage-display";
 
-export const revalidate = 3600
+export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
-	return { title: "Generate My Episodes", description: "Create new episodes from YouTube links." }
+  return { title: "Generate My Episodes", description: "Create new episodes from YouTube links." };
 }
 
 export default async function GenerateMyEpisodesPage() {
-	return (
-		<div className="h-full min-h-[84vh]  rounded-none 	px-0  mx-0 md:mx-0 flex flex-col lg:rounded-3xl md:rounded-4xl  md:mt-0 md:p-0 md:w-full  md:bg-episode-card-wrapper ">
-			<div className=" h-full mdLmin-h-[84vh] overflow-hidden md:episode-card-wrapper lg:bg-bigcard  flex-col-reverse px-0 mx-0 md:mx-3 flex lg:flex-row-reverse rounded-sm lg:rounded-3xl border-1 border-[#69a8cf32] shadow-lg md:mt-0 md:w-full gap-4 md:gap-0">
+  const content = {
+    title: "Generate Episodes",
+    description:
+      "Use your YouTube links to create AI-generated episodes. Track your usage and generate new content quickly.",
+  } as const;
 
-				<UsageDisplay />
-				<EpisodeCreator />
-			</div>
-		</div>
-	)
+  return (
+    <CommonSectionWithChildren title={content.title} description={content.description}>
+      <div className="flex flex-col-reverse lg:flex-row-reverse gap-4 md:gap-6 px-0 mx-0 md:mx-3">
+        <UsageDisplay />
+        <EpisodeCreator />
+      </div>
+    </CommonSectionWithChildren>
+  );
 }
 
 
