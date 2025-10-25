@@ -94,14 +94,13 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 	const isNewsEpisode = episode.youtube_url === "news";
 	const sourceDisplay =
 		isNewsEpisode && episode.news_sources
-			? `Source/s: ${
-					episode.news_sources === "stocks"
-						? "PolyMarket, Traderview, Yahoo! Finance, CoinDesk, CoinGecko, Uphold"
-						: episode.news_sources
-								?.split(", ")
-								.map(s => s.charAt(0).toUpperCase() + s.slice(1))
-								.join(", ")
-				}`
+			? `Source/s: ${episode.news_sources === "stocks"
+				? "PolyMarket, Traderview, Yahoo! Finance, CoinDesk, CoinGecko, Uphold"
+				: episode.news_sources
+					?.split(", ")
+					.map(s => s.charAt(0).toUpperCase() + s.slice(1))
+					.join(", ")
+			}`
 			: null;
 
 	// For YouTube videos, extract key takeaways; for news, use summary as-is
@@ -125,10 +124,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 						isNewsEpisode
 							? undefined
 							: {
-									href: episode.youtube_url,
-									label: "Youtube Url",
-									external: true,
-								}
+								href: episode.youtube_url,
+								label: "Youtube Url",
+								external: true,
+							}
 					}
 				/>
 				{sourceDisplay && (
@@ -136,7 +135,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 						{sourceDisplay}
 					</div>
 				)}
-				<div className="mt-4 my-8">
+				<div className="">
 					<div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
 						<PlayAndShare
 							kind="user"
@@ -191,7 +190,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 												{summaryData.top_headlines && (
 													<div className="text-primary-foreground">
 														<h4 className="font-bold text-xl mt-8 mb-4">Top Headlines</h4>
-														<p className="text-secondary-foreground font-bold	 text-2xl">
+														<p className="text-secondary-foreground text-base font-medium">
 															{summaryData.top_headlines}
 														</p>
 													</div>
@@ -268,7 +267,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 												{summaryData.ai_summary && (
 													<div className="text-primary-foreground">
 														<h4 className="font-bold text-xl mt-2 mb-4">Ai Summary</h4>
-														<div className="whitespace-pre-wrap text-secondary-foreground leading-[1.8] text-[17px]">
+														<div className="whitespace-pre-wrap  text-sm text-secondary-foreground leading-[1.8] md:text-base">
 															{summaryData.ai_summary}
 														</div>
 													</div>

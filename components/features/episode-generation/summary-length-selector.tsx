@@ -34,8 +34,8 @@ export function SummaryLengthSelector({
 
 	return (
 		<div className=" p-0">
-			<Label className="text-base font-semibold">Episode Length</Label>
-			<RadioGroup value={value} onValueChange={handleChange} disabled={disabled}>
+			<Label className="text-base font-semibold">Audio Summary Duration</Label>
+			<RadioGroup value={value} onValueChange={handleChange} disabled={disabled} >
 				{(
 					Object.entries(SUMMARY_LENGTH_OPTIONS) as Array<
 						[SummaryLengthOption, (typeof SUMMARY_LENGTH_OPTIONS)[SummaryLengthOption]]
@@ -44,7 +44,7 @@ export function SummaryLengthSelector({
 					<div
 						key={key}
 						className={cn(
-							"flex items-center justify-start content-center px-4 py-1  h-12 gap-4 rounded-lg bg-cyan-700/10 border transition-color duration-300 ease-in-out",
+							"m-0  flex  flex-row items-center justify-start px-4 py-0 h-18  md:h-11 gap-3 rounded-lg bg-cyan-700/10 border transition-color duration-300 ease-in-out relative",
 							value === key
 								? "bg-accent/10 outline-1 outline-violet-700"
 								: "border-border hover:bg-accent/80",
@@ -55,18 +55,14 @@ export function SummaryLengthSelector({
 							<Label
 								htmlFor={key}
 								className={cn(
-									"cursor-pointer flex content-center items-center h-12 gap-4",
+									"cursor-pointer flex items-around w-full justify-end items-center h-12 gap-4",
 									disabled && "cursor-not-allowed"
 								)}>
-								<span className="font-bold h-3">{config.label}</span>
-								{key === "LONG" && (
-									<Badge variant="outline" className="text-xs h-4">
-										2x Credits
-									</Badge>
-								)}
+								<span className="font-bold h-2 text-[0.8rem] capitalize w-full">{config.label}</span>
+
 								<Tooltip>
 									<TooltipTrigger>
-										<InfoIcon className="text-sm" />
+										<InfoIcon className="text-xs absolute top-7 right-4" size={16} />
 										<span className="hidden">Hover</span>
 									</TooltipTrigger>
 									<TooltipContent className="bg-white ">

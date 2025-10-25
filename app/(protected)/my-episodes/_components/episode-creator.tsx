@@ -108,7 +108,7 @@ export function EpisodeCreator() {
 
 	// Generation options
 	const [generationMode, setGenerationMode] = useState<"single" | "multi">("single");
-	const [voiceA, setVoiceA] = useState<string>("Zephyr");
+	const [voiceA, setVoiceA] = useState<string>("Enceladus");
 	const [voiceB, setVoiceB] = useState<string>("Kore");
 	const [isPlaying, setIsPlaying] = useState<string | null>(null);
 	const [isLoadingSample, setIsLoadingSample] = useState<string | null>(null);
@@ -335,7 +335,7 @@ export function EpisodeCreator() {
 					"We're processing your episode and will email you when it's ready.",
 					{
 						duration: Infinity,
-						action: { label: "Dismiss", onClick: () => {} },
+						action: { label: "Dismiss", onClick: () => { } },
 					}
 				);
 				resumeAfterSubmission();
@@ -387,7 +387,7 @@ export function EpisodeCreator() {
 			if (!res.ok) throw new Error(await res.text());
 			toast.message("We're processing your episode and will email you when it's ready.", {
 				duration: Infinity,
-				action: { label: "Dismiss", onClick: () => {} },
+				action: { label: "Dismiss", onClick: () => { } },
 			});
 			resumeAfterSubmission();
 			router.push("/dashboard?from=generate");
@@ -397,8 +397,8 @@ export function EpisodeCreator() {
 			);
 			toast.error(
 				(err instanceof Error ? err.message : "Failed to start episode generation.") ||
-					"",
-				{ duration: Infinity, action: { label: "Dismiss", onClick: () => {} } }
+				"",
+				{ duration: Infinity, action: { label: "Dismiss", onClick: () => { } } }
 			);
 		} finally {
 			setIsCreating(false);
@@ -746,8 +746,11 @@ export function EpisodeCreator() {
 									)}
 
 									{generationMode === "multi" && (
-										<div className="flex flex-row justify-start md:max-w-full md:grid-cols-2 gap-12">
+										<div className="flex flex-col md:flex-row justify-start md:max-w-full md:grid-cols-2 gap-12">
+											{/* voice a */}
 											<div>
+
+
 												<div className="py-2 pl-2 uppercase font-bold text-secondary-foreground text-xs">
 													Voice A
 												</div>
@@ -792,6 +795,7 @@ export function EpisodeCreator() {
 													</Button>
 												</div>
 											</div>
+											{/* voice b */}
 											<div>
 												<div className="py-2 pl-2 uppercase font-bold text-primary-foreground text-xs">
 													Voice B
@@ -806,7 +810,6 @@ export function EpisodeCreator() {
 																<div className="flex items-center justify-between w/full gap-3">
 																	<div className="flex flex-col">
 																		<span>{v.label}</span>
-																		{/* <span className="text-xs opacity-75">{v.sample}</span> */}
 																	</div>
 																	<button
 																		type="button"
@@ -879,7 +882,7 @@ export function EpisodeCreator() {
 				}}
 			/>
 
-			<Dialog open={showRestrictionDialog} onOpenChange={() => {}} modal={true}>
+			<Dialog open={showRestrictionDialog} onOpenChange={() => { }} modal={true}>
 				<DialogContent
 					className="sm:max-w-md"
 					onInteractOutside={e => e.preventDefault()}

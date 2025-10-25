@@ -71,7 +71,7 @@ export default function PlayAndShare({
 
 	return (
 		<>
-			<div className="flex items-center gap-4">
+			<div className="flex flex-col md:flex-row my-4 items-center gap-4">
 				<Button
 					type="button"
 					variant="play"
