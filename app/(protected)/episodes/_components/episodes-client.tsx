@@ -28,7 +28,7 @@ export function EpisodesClient({
   const { setEpisode } = useAudioPlayerStore();
 
   const key = useMemo(() => `/api/episodes?bundleType=${bundleType}`, [bundleType]);
-  const { data, error, isLoading, mutate } = useSWR<Episode[]>(key, undefined, {
+  const { data, error, isLoading, mutate } = useSWR<Episode[]>(key, {
     // Episodes can change, but not frequently; allow 1 hour stale
     dedupingInterval: ONE_HOUR,
     revalidateOnFocus: false,

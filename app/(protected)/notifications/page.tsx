@@ -17,7 +17,6 @@ import { ONE_HOUR } from "@/lib/swr";
 export default function NotificationsPage() {
   const { data, isLoading, mutate } = useSWR<Notification[]>(
     "/api/notifications",
-    undefined,
     { dedupingInterval: ONE_HOUR, revalidateOnFocus: false }
   );
   const notifications = data ?? [];

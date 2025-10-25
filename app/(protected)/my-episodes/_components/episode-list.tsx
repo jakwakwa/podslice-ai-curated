@@ -20,7 +20,6 @@ type EpisodeListProps = {
 export function EpisodeList({ completedOnly = false, initialEpisodeId }: EpisodeListProps) {
 	const { data, error, isLoading, mutate } = useSWR<UserEpisodeWithSignedUrl[]>(
 		"/api/user-episodes/list",
-		undefined,
 		{ dedupingInterval: ONE_MINUTE * 5, revalidateOnFocus: false, keepPreviousData: true }
 	);
 	const episodes = (data ?? []).filter(e => (completedOnly ? e.status === "COMPLETED" : true));

@@ -127,7 +127,6 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
   // SWR: Curated + shared bundles, 7-day client cache window
   const { data: swrBundles, isLoading: isFetchingBundles, mutate: mutateBundles } = useSWR<BundleWithAccess[]>(
     "/api/curated-bundles",
-    undefined,
     {
       dedupingInterval: SEVEN_DAYS,
       revalidateOnFocus: false,
@@ -138,7 +137,6 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
   // SWR: User profile, 1-hour cache window
   const { data: userProfile, mutate: mutateProfile } = useSWR<UserCurationProfile | null>(
     "/api/user-curation-profiles",
-    undefined,
     {
       dedupingInterval: ONE_HOUR,
       revalidateOnFocus: false,
