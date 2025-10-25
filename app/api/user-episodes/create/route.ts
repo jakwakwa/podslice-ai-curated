@@ -5,7 +5,11 @@ import { PRICING_TIER } from "@/config/paddle-config";
 import { VOICE_NAMES } from "@/lib/constants/voices";
 import { inngest } from "@/lib/inngest/client";
 import { prisma } from "@/lib/prisma";
-import { calculateWeightedUsage, canCreateEpisode, getInsufficientCreditsMessage } from "@/lib/types/summary-length";
+import {
+	calculateWeightedUsage,
+	canCreateEpisode,
+	getInsufficientCreditsMessage,
+} from "@/lib/types/summary-length";
 
 const createEpisodeSchema = z.object({
 	youtubeUrl: z.string().url(),
@@ -32,7 +36,16 @@ export async function POST(request: Request) {
 			return new NextResponse(parsed.error.message, { status: 400 });
 		}
 
-		const { youtubeUrl, episodeTitle, transcript, generationMode = "single", voiceA, voiceB, useShortEpisodesOverride, summaryLength } = parsed.data;
+		const {
+			youtubeUrl,
+			episodeTitle,
+			transcript,
+			generationMode = "single",
+			voiceA,
+			voiceB,
+			useShortEpisodesOverride,
+			summaryLength,
+		} = parsed.data;
 
 		// Fetch completed episodes with their lengths
 		const completedEpisodes = await prisma.userEpisode.findMany({
@@ -47,12 +60,16 @@ export async function POST(request: Request) {
 		const currentUsage = calculateWeightedUsage(completedEpisodes);
 
 		// Get episode limit from plan configuration
-		const EPISODE_LIMIT = PRICING_TIER[2]?.episodeLimit ?? 30; // CURATE_CONTROL plan limit
+		const EPISODE_LIMIT = PRICING_TIER[2]?.episodeLimit ?? 0;
 
 		// Check if user can create episode of requested length
 		const check = canCreateEpisode(currentUsage, summaryLength, EPISODE_LIMIT);
 		if (!check.canCreate) {
-			const message = getInsufficientCreditsMessage(currentUsage, summaryLength, EPISODE_LIMIT);
+			const message = getInsufficientCreditsMessage(
+				currentUsage,
+				summaryLength,
+				EPISODE_LIMIT
+			);
 			return new NextResponse(message, { status: 403 });
 		}
 
@@ -69,7 +86,9 @@ export async function POST(request: Request) {
 
 		if (generationMode === "multi") {
 			if (!(voiceA && voiceB)) {
-				return new NextResponse("Two voices are required for multi-speaker generation.", { status: 400 });
+				return new NextResponse("Two voices are required for multi-speaker generation.", {
+					status: 400,
+				});
 			}
 			await inngest.send({
 				name: "user.episode.generate.multi.requested",
