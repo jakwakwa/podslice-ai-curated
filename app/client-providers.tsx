@@ -3,6 +3,8 @@ import { ThemeProvider as NextThemesProvider, type ThemeProviderProps } from "ne
 // @ts-ignore
 import type React from "react";
 import { useEffect } from "react";
+import { SWRConfig } from "swr";
+import { defaultSWRConfig } from "@/lib/swr";
 
 export function ClientProviders({ children, ...props }: { children: React.ReactNode }) {
 	useEffect(() => {
@@ -37,7 +39,13 @@ export function ClientProviders({ children, ...props }: { children: React.ReactN
 		};
 	}, []);
 
-	return <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange {...props}>{children}</ThemeProvider>;
+	return (
+		<SWRConfig value={defaultSWRConfig}>
+			<ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange {...props}>
+				{children}
+			</ThemeProvider>
+		</SWRConfig>
+	);
 }
 
 function ThemeProvider({ children, ...props }: ThemeProviderProps) {

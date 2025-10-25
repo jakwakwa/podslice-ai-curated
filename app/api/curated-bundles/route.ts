@@ -47,7 +47,7 @@ export async function GET(_request: NextRequest) {
 		const allowedGates = resolveAllowedGates(plan)
 
 		// Get all active admin-curated bundles (return locked ones too)
-		const adminBundles: BundleWithPodcasts[] = await prisma.bundle.findMany({
+        const adminBundles: BundleWithPodcasts[] = await prisma.bundle.findMany({
 			where: { is_active: true },
 			include: {
 				bundle_podcast: {
@@ -57,10 +57,16 @@ export async function GET(_request: NextRequest) {
 				},
 			},
 			orderBy: { created_at: "desc" },
+            cacheStrategy: {
+                // Weekly cache; allow background revalidation
+                swr: 3600, // 1 hour SWR window for background refreshes
+                ttl: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
+                tags: ["curated_bundles"],
+            },
 		})
 
 		// Get all active shared bundles
-		const sharedBundles = await prisma.sharedBundle.findMany({
+        const sharedBundles = await prisma.sharedBundle.findMany({
 			where: { is_active: true },
 			include: {
 				owner: {
@@ -85,6 +91,11 @@ export async function GET(_request: NextRequest) {
 				},
 			},
 			orderBy: { created_at: "desc" },
+            cacheStrategy: {
+                swr: 3600, // refresh in background hourly
+                ttl: 7 * 24 * 60 * 60 * 1000, // 7 days
+                tags: ["shared_bundles"],
+            },
 		})
 
 		const bundles = adminBundles
