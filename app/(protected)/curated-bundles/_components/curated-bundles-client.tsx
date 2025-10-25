@@ -4,7 +4,8 @@ import { AlertCircle, Lock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import useSWR from "swr";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { H3, Typography } from "@/components/ui/typography";
 import type { Bundle, Podcast } from "@/lib/types";
+import { ONE_HOUR, SEVEN_DAYS } from "@/lib/swr";
 import { BundleSelectionDialog } from "./bundle-selection-dialog";
 
 type BundleWithAccess = Bundle & {
@@ -116,71 +118,44 @@ interface BundleSelectionRequestBody {
 
 export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientProps) {
 	const router = useRouter();
-	const [bundleList, setBundleList] = useState<NormalizedBundle[]>(() =>
-		bundles.map(normalizeBundle)
-	);
+  const [bundleList, setBundleList] = useState<NormalizedBundle[]>(() => bundles.map(normalizeBundle));
 	const [selectedBundle, setSelectedBundle] = useState<NormalizedBundle | null>(null);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [dialogMode, setDialogMode] = useState<"select" | "locked">("select");
-	const [isLoading, setIsLoading] = useState(false);
-	const [isFetchingBundles, setIsFetchingBundles] = useState(true);
-	const [userProfile, setUserProfile] = useState<UserCurationProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-	// Fetch current user profile on mount
-	useEffect(() => {
-		const fetchUserProfile = async () => {
-			try {
-				const response = await fetch("/api/user-curation-profiles");
-				if (response.ok) {
-					const profile = await response.json();
-					setUserProfile(profile);
-				}
-			} catch (error) {
-				console.error("Failed to fetch user profile:", error);
-			}
-		};
+  // SWR: Curated + shared bundles, 7-day client cache window
+  const { data: swrBundles, isLoading: isFetchingBundles, mutate: mutateBundles } = useSWR<BundleWithAccess[]>(
+    "/api/curated-bundles",
+    undefined,
+    {
+      dedupingInterval: SEVEN_DAYS,
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+    }
+  );
 
-		fetchUserProfile();
-	}, []);
+  // SWR: User profile, 1-hour cache window
+  const { data: userProfile, mutate: mutateProfile } = useSWR<UserCurationProfile | null>(
+    "/api/user-curation-profiles",
+    undefined,
+    {
+      dedupingInterval: ONE_HOUR,
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+    }
+  );
 
-	useEffect(() => {
-		setBundleList(bundles.map(normalizeBundle));
-	}, [bundles]);
+  // Seed from server-rendered bundles first, then update from SWR when available
+  useEffect(() => {
+    setBundleList(bundles.map(normalizeBundle));
+  }, [bundles]);
 
-	useEffect(() => {
-		let isMounted = true;
-
-		const fetchBundlesWithAccess = async () => {
-			try {
-				setIsFetchingBundles(true);
-				const response = await fetch("/api/curated-bundles");
-				if (!response.ok) {
-					return;
-				}
-
-				const data = (await response.json()) as unknown;
-				if (!Array.isArray(data)) {
-					return;
-				}
-
-				if (isMounted) {
-					setBundleList((data as BundleWithAccess[]).map(normalizeBundle));
-				}
-			} catch (err) {
-				console.error("Failed to refresh curated bundles:", err);
-			} finally {
-				if (isMounted) {
-					setIsFetchingBundles(false);
-				}
-			}
-		};
-
-		fetchBundlesWithAccess();
-
-		return () => {
-			isMounted = false;
-		};
-	}, []);
+  useEffect(() => {
+    if (Array.isArray(swrBundles)) {
+      setBundleList(swrBundles.map(normalizeBundle));
+    }
+  }, [swrBundles]);
 
 	const handleBundleClick = (bundle: NormalizedBundle) => {
 		setSelectedBundle(bundle);
@@ -210,7 +185,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 			: bundleId;
 
 		setIsLoading(true);
-		try {
+    try {
 			if (!userProfile) {
 				const trimmedProfileName = profileName?.trim();
 				if (!trimmedProfileName) {
@@ -229,7 +204,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 					requestBody.selected_bundle_id = actualBundleId;
 				}
 
-				const response = await fetch("/api/user-curation-profiles", {
+        const response = await fetch("/api/user-curation-profiles", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
@@ -242,8 +217,8 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 					throw new Error(errorData.error || "Failed to create bundle profile");
 				}
 
-				const createdProfile: UserCurationProfile = await response.json();
-				setUserProfile(createdProfile);
+        const createdProfile: UserCurationProfile = await response.json();
+        await mutateProfile(createdProfile, { revalidate: false });
 				toast.success(
 					isSelectingSharedBundle
 						? "Shared bundle selected successfully!"
@@ -261,7 +236,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 				requestBody.selected_bundle_id = actualBundleId;
 			}
 
-			const response = await fetch(
+      const response = await fetch(
 				`/api/user-curation-profiles/${userProfile.profile_id}`,
 				{
 					method: "PATCH",
@@ -277,25 +252,29 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 				throw new Error(errorData.error || "Failed to update bundle selection");
 			}
 
-			setUserProfile(prev =>
-				prev
-					? {
-							...prev,
-							...(isSelectingSharedBundle
-								? { selected_shared_bundle_id: actualBundleId }
-								: { selected_bundle_id: actualBundleId }),
-							selectedBundle: {
-								name: selectedBundle?.name || "",
-							},
-						}
-					: null
-			);
+      await mutateProfile(
+        prev =>
+          prev
+            ? {
+                ...prev,
+                ...(isSelectingSharedBundle
+                  ? { selected_shared_bundle_id: actualBundleId }
+                  : { selected_bundle_id: actualBundleId }),
+                selectedBundle: {
+                  name: selectedBundle?.name || "",
+                },
+              }
+            : null,
+        { revalidate: false }
+      );
 
 			toast.success(
 				isSelectingSharedBundle
 					? "Shared bundle selected successfully!"
 					: "Bundle selection updated successfully!"
 			);
+      // Refresh bundles view opportunistically
+      void mutateBundles();
 			router.push("/dashboard");
 		} catch (error) {
 			console.error("Failed to update bundle selection:", error);

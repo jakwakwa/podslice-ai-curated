@@ -1,13 +1,15 @@
 "use client";
 
 import { AlertCircle, RefreshCw } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import useSWR from "swr";
+import { useCallback, useMemo, useState } from "react";
 import { EpisodeList } from "@/components/episode-list";
 import { EpisodesPageSkeleton } from "@/components/shared/skeletons/episodes-skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import type { Episode } from "@/lib/types";
 import { useAudioPlayerStore } from "@/store/audioPlayerStore";
+import { ONE_HOUR } from "@/lib/swr";
 import { EpisodesFilterBar } from "./episodes-filter-bar";
 import { episodesPageContent } from "../content";
 
@@ -22,45 +24,18 @@ export function EpisodesClient({
   initialEpisodes,
   initialBundleType = "all",
 }: EpisodesClientProps) {
-  const [episodes, setEpisodes] = useState<Episode[]>(initialEpisodes);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [bundleType, setBundleType] = useState<BundleType>(initialBundleType);
   const { setEpisode } = useAudioPlayerStore();
 
-  const fetchEpisodes = useCallback(async (type: BundleType) => {
-    try {
-      setIsLoading(true);
-      setError(null);
+  const key = useMemo(() => `/api/episodes?bundleType=${bundleType}`, [bundleType]);
+  const { data, error, isLoading, mutate } = useSWR<Episode[]>(key, undefined, {
+    // Episodes can change, but not frequently; allow 1 hour stale
+    dedupingInterval: ONE_HOUR,
+    revalidateOnFocus: false,
+    keepPreviousData: true,
+  });
 
-      const response = await fetch(
-        `/api/episodes?bundleType=${type}&ts=${Date.now()}`,
-        { cache: "no-store" },
-      );
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to load episodes. Server responded with status ${response.status}.`,
-        );
-      }
-
-      const episodesData = await response.json();
-      setEpisodes(episodesData);
-    } catch (error) {
-      console.error("Error fetching episodes:", error);
-      setError(
-        error instanceof Error
-          ? error.message
-          : "An unexpected error occurred while loading episodes.",
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchEpisodes(bundleType);
-  }, [bundleType, fetchEpisodes]);
+  const episodes = data ?? initialEpisodes;
 
   const handleBundleTypeChange = (value: BundleType) => {
     setBundleType(value);
@@ -98,10 +73,10 @@ export function EpisodesClient({
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>{episodesPageContent.states.error.title}</AlertTitle>
-          <AlertDescription className="mt-2">{error}</AlertDescription>
+          <AlertDescription className="mt-2">{error.message}</AlertDescription>
         </Alert>
         <div className="mt-6 text-center">
-          <Button onClick={() => fetchEpisodes(bundleType)} variant="outline">
+          <Button onClick={() => mutate()} variant="outline">
             <RefreshCw className="h-4 w-4 mr-2" />
             {episodesPageContent.states.error.button}
           </Button>

@@ -3,7 +3,8 @@
 import { formatDistanceToNow } from "date-fns";
 import { Bell, Calendar, Check, Clock, Podcast, Trash2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import useSWR from "swr";
+import { useCallback, useMemo } from "react";
 import { toast } from "sonner";
 import { AppSpinner } from "@/components/ui/app-spinner";
 import { Button } from "@/components/ui/button";
@@ -11,30 +12,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import type { Notification } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { ONE_HOUR } from "@/lib/swr";
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const fetchNotifications = useCallback(async () => {
-    try {
-      const response = await fetch("/api/notifications");
-      if (!response.ok) {
-        throw new Error("Failed to fetch notifications");
-      }
-      const data = await response.json();
-      setNotifications(data);
-    } catch (error) {
-      console.error("Error fetching notifications:", error);
-      toast.error("Failed to load notifications");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchNotifications();
-  }, [fetchNotifications]);
+  const { data, isLoading, mutate } = useSWR<Notification[]>(
+    "/api/notifications",
+    undefined,
+    { dedupingInterval: ONE_HOUR, revalidateOnFocus: false }
+  );
+  const notifications = data ?? [];
 
   const _router = useRouter();
 
@@ -50,12 +36,12 @@ export default function NotificationsPage() {
       if (!response.ok) {
         throw new Error("Failed to mark notification as read");
       }
-      setNotifications((prev) =>
-        prev.map((notif) =>
-          notif.notification_id === notificationId
-            ? { ...notif, is_read: true }
-            : notif,
-        ),
+      await mutate(
+        prev =>
+          (prev ?? []).map(n =>
+            n.notification_id === notificationId ? { ...n, is_read: true } : n
+          ),
+        { revalidate: false }
       );
       toast.success("Notification marked as read");
     } catch (error) {
@@ -66,17 +52,13 @@ export default function NotificationsPage() {
 
   const handleMarkAllAsRead = async () => {
     try {
-      const unreadNotifications = notifications.filter((n) => !n.is_read);
+      const unreadNotifications = notifications.filter(n => !n.is_read);
       await Promise.all(
-        unreadNotifications.map((notif) =>
-          fetch(`/api/notifications/${notif.notification_id}/read`, {
-            method: "PATCH",
-          }),
-        ),
+        unreadNotifications.map(notif =>
+          fetch(`/api/notifications/${notif.notification_id}/read`, { method: "PATCH" })
+        )
       );
-      setNotifications((prev) =>
-        prev.map((notif) => ({ ...notif, is_read: true })),
-      );
+      await mutate(prev => (prev ?? []).map(n => ({ ...n, is_read: true })), { revalidate: false });
       toast.success("All notifications marked as read");
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
@@ -92,8 +74,9 @@ export default function NotificationsPage() {
       if (!response.ok) {
         throw new Error("Failed to delete notification");
       }
-      setNotifications((prev) =>
-        prev.filter((notif) => notif.notification_id !== notificationId),
+      await mutate(
+        prev => (prev ?? []).filter(n => n.notification_id !== notificationId),
+        { revalidate: false }
       );
       toast.success("Notification deleted");
     } catch (error) {
@@ -105,13 +88,9 @@ export default function NotificationsPage() {
   const handleClearAll = async () => {
     try {
       await Promise.all(
-        notifications.map((notif) =>
-          fetch(`/api/notifications/${notif.notification_id}`, {
-            method: "DELETE",
-          }),
-        ),
+        notifications.map(notif => fetch(`/api/notifications/${notif.notification_id}`, { method: "DELETE" }))
       );
-      setNotifications([]);
+      await mutate([], { revalidate: false });
       toast.success("All notifications cleared");
     } catch (error) {
       console.error("Error clearing all notifications:", error);
@@ -145,7 +124,7 @@ export default function NotificationsPage() {
     }
   };
 
-  const unreadCount = notifications.filter((n) => !n.is_read).length;
+  const unreadCount = notifications.filter(n => !n.is_read).length;
 
   if (isLoading) {
     return (
