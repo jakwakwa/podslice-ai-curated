@@ -29,6 +29,13 @@ const LegalPageLayout = ({
             <footer className="w-screen hidden md:block fixed text-right right-4 bottom-4 z-40">
                 <div className="w-screen flex items-center justify-end space-x-2 text-muted-foreground pr-4">
                     <Link
+                        href="/about"
+                        className="hover:text-foreground transition-colors"
+                    >
+                        <span className="text-muted-foreground text-xs">About</span>
+                    </Link>
+                    <span className="text-xs">|</span>
+                    <Link
                         href="/terms"
                         className="hover:text-foreground transition-colors"
                     >

@@ -15,7 +15,8 @@
 	body {
 		@apply text-foreground;
 		width: 100vw !important;
-		background: var(--swak-1) !important;;
+		background: var(--swak-1) !important;
+		;
 		max-width: 100vw !important;
 		background-color: oklch(94.9% 0.0156 276.7);
 		margin: 0 !important;
@@ -54,7 +55,7 @@
 		font-weight: 400 !important;
 		/*padding-bottom: 10px !important;*/
 		margin-bottom: 10px;
-		
+
 		padding-bottom: 10px !important;
 		color: var(--kwak-8) !important;
 		text-transform: initial !important;
@@ -318,50 +319,50 @@
 
 .dark {
 
-	--foreground: var(--swak-7);
+	-foreground: var(--swak-7);
 	--card: var(--kwak-10);
 	--card-foreground: var(--kwak-10);
 
 	--dialog-card: var(--beduk-7);
 	--dialog-overlay: var(--swak-4);
 
-	--background: var(--swak-2);
+	--background: var(--swak-1);
 	--foreground: var(--swak-7);
 	--popover: var(--color-cyan-950);
 	--popover-foreground: var(--swak-10);
 	--primary: var(--swak-3);
 
 	--primary-foreground: var(--kwak-9);
-	--header: var(--kwak-1);
-	--header-foreground: var(--beduk-4);
-	--primary-foreground-muted: var(--kwak-3);
+	--header: var(--kwak-3);
+	--header-foreground: var(--beduk-9);
+	--primary-foreground-muted: var(--kwak-6);
 	--secondary: var(--kwak-3);
 	--secondary-foreground: var(--swak-10);
 	--muted: var(--swak-7);
-	--muted-foreground: var(--swak-4);
+	--muted-foreground: var(--kwak-5);
 	--accent: var(--beduk-9);
 	--accent-foreground: var(--kwak-5);
 	--destructive: var(--wyn-5);
 	--border: var(--color-slate-700);
 	--input: var(--swak-5);
-	--ring: var(--kwak-8);
-	--chart-1: var(--kwak-5);
-	--chart-2: var(--kwak-5);
+	--ring: var(--kwak-5);
+	--chart-1: var(--kwak-3);
+	--chart-2: var(--kwak-2);
 	--chart-3: var(--kwak-5);
 	--chart-4: var(--kwak-5);
 	--chart-5: var(--kwak-5);
 	--sidebar: var(--swak-1);
 	--sidebar-foreground: var(--kwak-5);
-	--sidebar-primary: var(--beduk-2);
+	--sidebar-primary: var(--beduk-8);
 	--sidebar-primary-foreground: var(--kwak-5);
 	--sidebar-accent: var(--swak-1);
 	--sidebar-accent-foreground: var(--beduk-5);
 	--sidebar-border: var(--swak-4);
 	--sidebar-ring: var(--kwak-6);
-	--inset-gradient: linear-gradient(var(--swak-1) 0%, var(--swak-2) 110%);
+	--inset-gradient: linear-gradient(var(--swak-1) 0%, var(--beduk-3) 110%);
 	--bigepisode-gradient: linear-gradient(0deg,
-			var(--swak-1) 20%,
-			var(--swak-2) 110%);
+			var(--swak-1) -20%,
+			var(--beduk-1) 90%);
 	--episode-gradient: linear-gradient(320deg,
 			var(--kwak-1) -10%,
 			var(--swak-5) 180%);
@@ -398,7 +399,7 @@
 
 	.dialog-overlay {
 		background-color: oklch(8.768% 0.19418 199.19 / 0.63) !important;
-		
+
 		/*opacity: 0.2 !important;*/
 	}
 
