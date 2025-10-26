@@ -46,7 +46,7 @@ export function EpisodeCard({
 			variant="default"
 			className="bg-card relative w-full h-[230px] sm:h-[150px] md:h-[200px] lg:h-[130px]  gap-2">
 			<CardAction>{actions}</CardAction>
-			<div className="w-full h-fit flex flex-col-reverse sm:flex-row gap-8 justify-between px-0  md:flex-col-reverse lg:flex-row sm:gap-5 lg:gap-8 items-evenly   py-0 lg:py-1 lg:px-0 lg:justify-betwen lg:items-between relative ">
+			<div className="w-full h-fit flex flex-col-reverse sm:flex-row gap-3 justify-between px-0  md:flex-col-reverse lg:flex-row sm:gap-5 lg:gap-8 items-evenly   py-0 lg:py-1 lg:px-0 lg:justify-betwen lg:items-between relative ">
 				{(() => {
 					// For bundle episodes, use the episode's image_url
 					if (imageUrl) {
