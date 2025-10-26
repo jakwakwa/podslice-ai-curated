@@ -48,3 +48,4 @@ next-env.d.ts
 *uploader*.json
 *reader*.json
 *-player-script.js
+.cursor/.mcp
