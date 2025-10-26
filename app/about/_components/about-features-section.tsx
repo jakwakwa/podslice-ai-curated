@@ -1,14 +1,14 @@
 "use client";
 
-import AboutFeatureCard from "./about-feature-card";
 import {
-	Volume2,
-	FileText,
 	CheckCircle2,
+	FileText,
 	Newspaper,
-	Sparkles,
 	Radio,
+	Sparkles,
+	Volume2,
 } from "lucide-react";
+import AboutFeatureCard from "./about-feature-card";
 
 export default function AboutFeaturesSection() {
 	const mainFeatures = [
@@ -51,7 +51,7 @@ export default function AboutFeaturesSection() {
 	];
 
 	return (
-		<div className="max-w-6xl bg-bigcard mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+		<div className="max-w-6xl p-8 rounded-3xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 			{mainFeatures.map((feature, index) => (
 				<AboutFeatureCard
 					key={index}
@@ -63,4 +63,3 @@ export default function AboutFeaturesSection() {
 		</div>
 	);
 }
-

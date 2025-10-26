@@ -1,5 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import { dark, shadesOfPurple } from "@clerk/themes";
+import { dark, shadcn } from "@clerk/themes";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -22,9 +22,34 @@ export const metadata: Metadata = {
 	title: "PODSLICE | AI Podcast Summaries | Cut the Chatter, Keep the Insight.",
 	description:
 		"PODSLICE is a platform for creating and sharing AI-generated summaries of podcasts. It is a platform for creating and sharing AI-generated summaries of podcasts.",
-	keywords: ["PODSLICE", "AI Podcast Summaries", "Podcast Summaries", "Podcast Summarization", "Podcast Summarization AI", "Podcast Summarization Tool", "Podcast Summarization Service", "Podcast Summarization Platform", "Podcast Summarization Software", "Podcast Summarization App", "Podcast Summarization Tool", "Podcast Summarization Service", "Podcast Summarization Platform", "Podcast Summarization Software", "Podcast Summarization App", "Multi-source Up-to-date News Summaries", "Multi-source Up-to-date News Summarization", "Multi-source Up-to-date News Summarization AI", "Multi-source Up-to-date News Summarization Tool", "Multi-source Up-to-date News Summarization Service", "Multi-source Up-to-date News Summarization Platform", "Multi-source Up-to-date News Summarization Software", "Multi-source Up-to-date News Summarization App"],
+	keywords: [
+		"PODSLICE",
+		"AI Podcast Summaries",
+		"Podcast Summaries",
+		"Podcast Summarization",
+		"Podcast Summarization AI",
+		"Podcast Summarization Tool",
+		"Podcast Summarization Service",
+		"Podcast Summarization Platform",
+		"Podcast Summarization Software",
+		"Podcast Summarization App",
+		"Podcast Summarization Tool",
+		"Podcast Summarization Service",
+		"Podcast Summarization Platform",
+		"Podcast Summarization Software",
+		"Podcast Summarization App",
+		"Multi-source Up-to-date News Summaries",
+		"Multi-source Up-to-date News Summarization",
+		"Multi-source Up-to-date News Summarization AI",
+		"Multi-source Up-to-date News Summarization Tool",
+		"Multi-source Up-to-date News Summarization Service",
+		"Multi-source Up-to-date News Summarization Platform",
+		"Multi-source Up-to-date News Summarization Software",
+		"Multi-source Up-to-date News Summarization App",
+	],
 	openGraph: {
-		title: "PODSLICE | AI Podcast or Multi-source Up-to-date News Summaries | Cut the Chatter, Keep the Insight.",
+		title:
+			"PODSLICE | AI Podcast or Multi-source Up-to-date News Summaries | Cut the Chatter, Keep the Insight.",
 		description:
 			"Experience the future of listening. PODSLICE crafts weekly AI summaries of top podcasts with a stunningly realistic voice. Get your intelligence briefing in minutes",
 		url: "https://podslice.ai",
@@ -37,7 +62,6 @@ export const metadata: Metadata = {
 	twitter: {
 		card: "summary_large_image",
 	},
-
 };
 
 export default function RootLayout({
@@ -54,11 +78,7 @@ export default function RootLayout({
 
 				<link rel="manifest" href="/manifest.json" />
 				<link rel="preconnect" href="https://fonts.googleapis.com" />
-				<link
-					rel="preconnect"
-					href="https://fonts.gstatic.com"
-					crossOrigin=""
-				/>
+				<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 				<link
 					href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Vend+Sans:wght@500&display=swap"
 					rel="stylesheet"
@@ -69,18 +89,17 @@ export default function RootLayout({
 				<ClerkProvider
 					publishableKey={clerkPublishableKey || ""}
 					appearance={{
-						baseTheme: [dark, shadesOfPurple],
+						baseTheme: [dark, shadcn],
 						variables: { colorPrimary: "aqua" },
 						signIn: {
-							baseTheme: [shadesOfPurple],
+							baseTheme: [shadcn],
 							variables: { colorPrimary: "lightseagreen" },
 						},
 						signUp: {
-							baseTheme: [shadesOfPurple],
+							baseTheme: [shadcn],
 							variables: { colorPrimary: "lightseagreen" },
 						},
-					}}
-				>
+					}}>
 					<ClientProviders>
 						{children}
 						<Toaster closeButton />

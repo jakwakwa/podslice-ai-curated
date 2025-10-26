@@ -20,14 +20,12 @@ export default function AboutFeatureCard({
 			whileInView={{ opacity: 1, y: 0 }}
 			viewport={{ once: true }}
 			transition={{ duration: 0.5 }}
-			className="p-6 rounded-xl bg-card border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg group"
-		>
+			className="p-6 rounded-xl bg-card border border-border hover:border-primary transition-all duration-300 hover:shadow-sm shadow-slate-950 group">
 			<div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-				<Icon className="w-6 h-6 text-primary" />
+				<Icon className="w-6 h-6 text-cyan-500" />
 			</div>
-			<h3 className="text-xl font-bold text-foreground mb-3">{title}</h3>
+			<h3 className="text-xl  font-bold text-foreground mb-3">{title}</h3>
 			<p className="text-foreground/70 leading-relaxed">{description}</p>
 		</motion.div>
 	);
 }
-

@@ -13,7 +13,7 @@
 	}
 
 	body {
-		@apply text-foreground;
+		@apply text-foreground bg-background;
 		width: 100vw !important;
 		background: var(--swak-1) !important;
 		;
@@ -27,10 +27,7 @@
 		text-align: left;
 		height: auto;
 	}
-
-
-
-
+	
 	::selection {
 		color: hsla(255.87 73.46% 58.63% / 0.9) !important;
 		background-color: oklch(17.17% 0.10343 276.516 / 5%) !important;
