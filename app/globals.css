@@ -339,7 +339,7 @@
 	--accent: var(--beduk-9);
 	--accent-foreground: var(--kwak-5);
 	--destructive: var(--wyn-5);
-	--border: var(--color-slate-700);
+	--border:var(--color-gray-800);
 	--input: var(--swak-5);
 	--ring: var(--kwak-5);
 	--chart-1: var(--kwak-3);
@@ -686,7 +686,8 @@
 	}
 
 	input::placeholder {
-		color: var(--input-placeholder) !important;
+		/*color: var(--input-placeholder) !important;*/
+		opacity: 0.75;
 	}
 
 	textarea:focus,
@@ -799,3 +800,16 @@
 /* ============================================= */
 /* MEDIA QUERIES                 */
 /* ============================================= */
+@media screen and (min-width: 0px) and (max-width: 340px) {
+	/* Add your media query styles here */
+
+
+	.bg-episode-card-wrapper,
+	.episode-card-wrapper
+ {
+
+		border-radius: 0px !important;
+
+	}
+
+}

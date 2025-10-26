@@ -350,7 +350,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 		<>
 			{/* Curated Bundles Section */}
 			{curatedBundles.length > 0 && (
-				<div className="episode-card-wrapper  mb-8 px-4">
+				<div className=" mb-8 px-4">
 					<H3 className="text-[1.2rem] text-primary-foreground font-bold font-sans mb-4 px-2 md:px-12 xl:px-[40px]">
 						🎯 Curated by Podslice
 					</H3>

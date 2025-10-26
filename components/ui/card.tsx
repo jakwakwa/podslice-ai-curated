@@ -60,7 +60,7 @@ const CardAction = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
 		<div
 			ref={ref}
 			className={cn(
-				"relative bottom-18 sm:top-0 md:top-0 cursor-pointer flex justify-center rounded-full col-start-2 row-span-2 row-start-1 self-start justify-self-end p-2 w-10 lg:w-12 z-100 transition-all duration-200",
+				"relative top-14 right-0 sm:top-0 md:top-0 cursor-pointer flex justify-center rounded-full col-start-2 row-span-2 row-start-1 self-start justify-self-end p-2 w-10 lg:w-12 z-100 transition-all duration-200",
 				className
 			)}
 			{...props}

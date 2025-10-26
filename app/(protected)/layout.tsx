@@ -1,11 +1,10 @@
 "use client";
 
 import { useAuth, useUser } from "@clerk/nextjs";
-import { Menu, MoonIcon, SunIcon } from "lucide-react";
+import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { AppSidebar, navItems } from "@/components/app-sidebar";
@@ -43,32 +42,13 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 	useSubscriptionInit();
 
-	function ModeToggle() {
-		const { setTheme, theme } = useTheme();
-
-		return (
-			<Button
-				onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-				variant="icon">
-				<div className="flex flex-col md:flex-row items-center gap-2">
-					{theme === "light" ? (
-						<SunIcon className="w-4 h-4 text-amber-300" />
-					) : (
-						<MoonIcon className="w-4 h-4 text-indigo-300" />
-					)}{" "}
-					<span className="text-[0.5rem] uppercase"> theme</span>
-				</div>
-			</Button>
-		);
-	}
-
 	return (
 		<>
 			<AppSidebar />
 
 			<SidebarInset>
 				<header
-					className={`fixed flex ${isMobile ? "h-18" : "h-20"} bg-header/90   backdrop-blur-[13px]   shadow-[0_1px_5px_3px_rgba(0,0.2,100,0.12)] overflow-hidden shrink-0 items-center border-none gap-4 transition-[width,height]  group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 mt-0 max-w-screen justify-between px-4  py-0 overflow-y-scrol  duration-700 ease-in-out ${state === "expanded" ? "" : "collapsed"}`}>
+					className={`fixed flex ${isMobile ? "h-18" : "h-16"} bg-header/90   backdrop-blur-[13px]   shadow-[0_1px_5px_3px_rgba(0,0.2,100,0.12)] overflow-hidden shrink-0 items-center border-none gap-4 transition-[width,height]  group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 mt-0 max-w-screen justify-between px-4  py-0 overflow-y-scrol  duration-700 ease-in-out ${state === "expanded" ? "" : "collapsed"}`}>
 					<div
 						className={`flex items-center ${isMobile ? "h-18" : "h-14"} justify-start  ${state === "expanded" ? "md:px-4 w-[240px]" : "md:px-0 w-[80px] "}`}>
 						<Link
@@ -126,7 +106,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 						{!isMobile && typeof window !== "undefined" && <NotificationBell />}
 
 						{isMobile && <UserNavMobile user={userData} />}
-						<ModeToggle />
+						{/*<ModeToggle />*/}
 					</div>
 				</header>
 

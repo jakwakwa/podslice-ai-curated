@@ -179,10 +179,11 @@ export default async function CuratedBundlesPage({
 				title={curatedBundlesPageContent.header.title}
 				description={curatedBundlesPageContent.header.description}
 			/>
+			<div className="bg-[var(--beduk-1)] md:rounded-3xl p-4 mt-6">
+				<CuratedBundlesFilters />
 
-			<CuratedBundlesFilters />
-
-			<CuratedBundlesClient bundles={allBundles} error={error} />
+				<CuratedBundlesClient bundles={allBundles} error={error} />
+			</div>
 		</div>
 	);
 }
