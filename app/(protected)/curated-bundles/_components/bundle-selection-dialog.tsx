@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { ArrowRightCircle, Loader2 } from "lucide-react";
 import { type ChangeEvent, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -220,10 +220,10 @@ export function BundleSelectionDialog({
 								: isFirstSelection
 									? isSharedBundle
 										? "Select Shared Bundle"
-										: "Activate Curated Bundle"
+										: "Activate your active bundle"
 									: isSharedBundle
 										? "Switching Shared Bundle..."
-										: "Switching Curated Bundle..."}
+										: "Switching your active bundle..."}
 					</DialogTitle>
 					<DialogDescription className=" min-w-full gap-6 flex flex-col text-base ">
 						{(() => {
@@ -267,20 +267,24 @@ export function BundleSelectionDialog({
 									);
 								}
 								return (
-									<span className="leading-8">
-										You're about to change your curated bundle:
+									<div className="mt-2">
+										<div className="m-0">
+											You're about to change your active feed bundle:
+										</div>
 										<br />{" "}
-										<span className="uppercase text-xs italic font-bold text-foreground/50">
-											From{" "}
+										<span className="flex items-center gap-1 mt-4 font-light text-sm text-foreground">
+											<span className="font-semibold text-indigo-400 mx-1">
+												{" "}
+												{sanitizedCurrentBundleName}
+											</span>
+
+											<ArrowRightCircle size={20} />
+
+											<span className="font-bold mx-1 text-teal-300">
+												{sanitizeText(selectedBundle.name)}
+											</span>
 										</span>
-										<strong className="font-bold italic text-amber-500">
-											{sanitizedCurrentBundleName}
-										</strong>{" "}
-										→{" "}
-										<strong className="font-bold italic text-cyan-500">
-											{sanitizeText(selectedBundle.name)}
-										</strong>{" "}
-									</span>
+									</div>
 								);
 							}
 
@@ -290,19 +294,14 @@ export function BundleSelectionDialog({
 							return `You're about to select '${sanitizeText(selectedBundle.name)}' as your curated podcast bundle. This will update your podcast feed.`;
 						})()}
 						{shouldShowSwitchWarning && (
-							<div className="space-y-4 min-w-full">
+							<>
 								{/* Warning Message */}
-								<div className="px-3 py-2 bg-amber-600/50 outline outline-amber-600/30 dark:border-amber-800 rounded-sm inline-block">
-									<Typography
-										variant="body"
-										as="span"
-										className="text-amber-200  text-sm">
-										{isSharedBundle
-											? `You'll lose access to episodes from '${sanitizedCurrentBundleName}' after switching`
-											: `You won't have access to '${sanitizedCurrentBundleName}' episodes after changing`}
-									</Typography>
+								<div className="px-1 py-[1px] w-fit max-w-[90%]  bg-yellow-500/10 outline-[0.5px] outline-amber-600/70 border-amber-500 rounded-xs text-[0.65rem] text-amber-200/70">
+									{isSharedBundle
+										? `You'll lose access to episodes from "${sanitizedCurrentBundleName}" after switching`
+										: `Access to "${sanitizedCurrentBundleName}" summaries will be lost`}
 								</div>
-							</div>
+							</>
 						)}
 
 						{shouldShowNameInput && (
@@ -338,9 +337,14 @@ export function BundleSelectionDialog({
 				</DialogHeader>
 
 				<DialogFooter>
-					<div className="w-full p-0 m-0 max-w-full flex flex-row items-center justify-between">
+					<div className="w-full p-0 m-0 flex flex-row md:flex-row items-center justify-between">
 						{isLocked ? (
-							<Button type="button" variant="default" onClick={onClose} className="">
+							<Button
+								type="button"
+								variant="secondary"
+								size="sm"
+								onClick={onClose}
+								className="max-w-[200px]">
 								Back
 							</Button>
 						) : isAlreadySelected ? (
@@ -352,7 +356,6 @@ export function BundleSelectionDialog({
 								<Button
 									type="button"
 									variant="outline"
-									className="w-full px-0 mx-0"
 									onClick={onClose}
 									disabled={isConfirming}>
 									Cancel

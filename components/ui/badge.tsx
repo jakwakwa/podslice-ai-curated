@@ -9,13 +9,13 @@ const badgeVariants = cva(
 		variants: {
 			variant: {
 				default:
-					"border-primary font-light font-sans text-primary-foreground  shadow hover:bg-background/20  border-none rounded-xs",
+					"border-primary font-light font-sans text-primary-foreground/70  shadow hover:bg-background/20 text-[0.7rem]  outline-1 outline-slate-500/50 rounded-sm",
 				secondary:
-					"flex items-center   text-[0.6rem] shadow-md shadow-black/10  font-light outline-1 outline-indigo-500 bg-indigo-950/30  rounded-xs",
+					"flex items-center   text-[0.6rem] shadow-md shadow-black/10  font-light outline-1 outline-indigo-500 bg-indigo-950/30  rounded-sm",
 				status:
-					"outline-1 outline-blue-700 bg-blue-950/70 text-left overflow-hidden   text-blue-100 font-light outline-1 rounded-xs animate-pulse shadow-md min-h-6",
+					"outline-1 outline-blue-700 bg-blue-950/70 text-left overflow-hidden   text-blue-100 font-light outline-1 rounded-sm animate-pulse shadow-md min-h-6",
 				destructive:
-					"border-destructive-foreground  text-destructive-foreground shadow hover:bg-amber/80 font-light outline-1 rounded-xs min-h-6",
+					"border-destructive-foreground  text-destructive-foreground shadow hover:bg-amber/80 font-light outline-1 rounded-sm min-h-6",
 				outline:
 					"text-xs flex  outline-1 outline-cyan-700 bg-cyan-950/30  font-sans items-center  min-h-5 shadow-md  px-2 py-1 text-left overflow-hidden rounded-xs",
 			},

@@ -8,7 +8,12 @@ import { PRICING_TIER } from "@/config/paddle-config";
 import { useSubscriptionStore } from "@/lib/stores/subscription-store-paddlejs";
 
 export function SubscriptionView() {
-	const { subscription, setSubscription } = useSubscriptionStore(useShallow(state => ({ subscription: state.subscription, setSubscription: state.setSubscription })));
+	const { subscription, setSubscription } = useSubscriptionStore(
+		useShallow(state => ({
+			subscription: state.subscription,
+			setSubscription: state.setSubscription,
+		}))
+	);
 	const [_isSubmitting, _setIsSubmitting] = useState(false);
 	const [_isSyncing, setIsSyncing] = useState(false);
 	// Removed swap/cancel and manual force-sync local states
@@ -27,7 +32,7 @@ export function SubscriptionView() {
 
 				const data = await res.json();
 				setSubscription(data);
-			} catch { }
+			} catch {}
 		};
 		fetchSubscription();
 	}, [setSubscription]);
@@ -50,7 +55,11 @@ export function SubscriptionView() {
 			// Then fetch the updated subscription data
 			const res = await fetch("/api/account/subscription", { cache: "no-store" });
 			if (!res.ok) {
-				console.error("Failed to fetch subscription after sync:", res.status, res.statusText);
+				console.error(
+					"Failed to fetch subscription after sync:",
+					res.status,
+					res.statusText
+				);
 				return;
 			}
 
@@ -76,7 +85,10 @@ export function SubscriptionView() {
 	// Format helpers for display-only dates
 	const formatDateTime = (value: unknown): string => {
 		if (!value) return "—";
-		const date = typeof value === "string" || typeof value === "number" ? new Date(value) : (value as Date);
+		const date =
+			typeof value === "string" || typeof value === "number"
+				? new Date(value)
+				: (value as Date);
 		if (Number.isNaN(date.getTime())) return "—";
 		return date.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
 	};
@@ -91,12 +103,16 @@ export function SubscriptionView() {
 			}
 			const data = await res.json();
 			setSubscription(data);
-		} catch { }
+		} catch {}
 	}, [setSubscription]);
 
 	const pollingTimerRef = useRef<number | null>(null);
 	const pollingUntilRef = useRef<number | null>(null);
-	const initialSnapshotRef = useRef<{ priceId: string | null; status: string | null; cancelAtPeriodEnd: boolean } | null>(null);
+	const initialSnapshotRef = useRef<{
+		priceId: string | null;
+		status: string | null;
+		cancelAtPeriodEnd: boolean;
+	} | null>(null);
 	const syncTriggeredRef = useRef<boolean>(false);
 	const lastSyncAtRef = useRef<number>(0);
 	const pollingStopTimerRef = useRef<number | null>(null);
@@ -111,7 +127,11 @@ export function SubscriptionView() {
 		setIsPolling(false);
 	}, []);
 
-	const takeSnapshot = (): { priceId: string | null; status: string | null; cancelAtPeriodEnd: boolean } => ({
+	const takeSnapshot = (): {
+		priceId: string | null;
+		status: string | null;
+		cancelAtPeriodEnd: boolean;
+	} => ({
 		priceId: subscription?.paddle_price_id ?? null,
 		status: (subscription?.status as string | null) ?? null,
 		cancelAtPeriodEnd: Boolean(subscription?.cancel_at_period_end),
@@ -136,14 +156,17 @@ export function SubscriptionView() {
 				try {
 					await fetch("/api/account/subscription/sync-paddle", { method: "POST" });
 					lastSyncAtRef.current = now;
-				} catch { }
+				} catch {}
 				syncTriggeredRef.current = true;
 			}
 			try {
 				await refreshSubscription();
 				const current = takeSnapshot();
 				const initial = initialSnapshotRef.current;
-				const changed = current.priceId !== initial?.priceId || current.status !== initial?.status || current.cancelAtPeriodEnd !== initial?.cancelAtPeriodEnd;
+				const changed =
+					current.priceId !== initial?.priceId ||
+					current.status !== initial?.status ||
+					current.cancelAtPeriodEnd !== initial?.cancelAtPeriodEnd;
 				if (changed) {
 					stopPortalPolling();
 					return;
@@ -152,7 +175,7 @@ export function SubscriptionView() {
 					stopPortalPolling();
 					return;
 				}
-			} catch { }
+			} catch {}
 		};
 		void tick();
 		pollingTimerRef.current = window.setInterval(() => {
@@ -177,7 +200,7 @@ export function SubscriptionView() {
 				window.open(overviewUrl, "_blank");
 				startPortalPolling();
 			}
-		} catch { }
+		} catch {}
 	};
 
 	useEffect(() => {
@@ -192,20 +215,37 @@ export function SubscriptionView() {
 	}, [refreshSubscription, stopPortalPolling]);
 
 	return (
-		<div className={"episode-card-wrapper rounded-xl mt-8"}>
-			{isPolling && <span className="ml-2 text-xs text-muted-foreground">(syncing changes…)</span>}
+		<div
+			className={
+				" rounded-xs bg-primary p-8 shadow-xl shadow-slate-4xl lg:rounded-xl mt-8"
+			}
+			style={{
+				borderRadius: "12px !important",
+			}}>
+			{isPolling && (
+				<span className="ml-2 text-xs text-primary-foreground-muted ">
+					(syncing changes…)
+				</span>
+			)}
 			<div className="p-0 space-y-0">
 				<div className="flex justify-start items-center pb-2">
 					<div className="text-base leading-6 text-secondary-foreground mr-4">
-						Subscription:<span className="text-primary-foreground-muted ml-2 font-bold">{currentPlan?.productTitle ?? "Free Slice"}</span>{" "}
+						Subscription:
+						<span className="text-primary-foreground-muted ml-2 font-bold">
+							{currentPlan?.productTitle ?? "Free Slice"}
+						</span>{" "}
 					</div>
-					{subscription?.status && <Badge variant="secondary">{subscription.status}</Badge>}
+					{subscription?.status && (
+						<Badge variant="secondary">{subscription.status}</Badge>
+					)}
 				</div>
 			</div>
 			<div className={"p-0 my-4"}>
 				<div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between my-8">
 					<div className="flex flex-col gap-2">
-						<span className="text-sm">Change Subscriptions, View Invoices, Update Payment methods:</span>
+						<span className="text-sm">
+							Change Subscriptions, View Invoices, Update Payment methods:
+						</span>
 
 						<div className="flex gap-1 w-full md:w-fit">
 							<Button variant="outline" size="sm" onClick={openPortal}>
@@ -218,30 +258,46 @@ export function SubscriptionView() {
 				{subscription && (
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
 						<div className="flex items-center justify-between border rounded-md px-3 py-2">
-							<span className="text-muted-foreground text-sm">Status</span>
+							<span className="text-primary-foreground-muted text-sm">Status</span>
 							<span className="text-sm">{subscription.status}</span>
 						</div>
 						<div className="flex text-sm items-center justify-between border rounded-md px-3 py-2">
-							<span className="text-muted-foreground text-sm">Plan price ID</span>
-							<span className="truncate max-w-[180px] text-sm" title={subscription.paddle_price_id ?? undefined}>
+							<span className="text-primary-foreground-muted  text-sm">
+								Plan price ID
+							</span>
+							<span
+								className="truncate max-w-[180px] text-sm"
+								title={subscription.paddle_price_id ?? undefined}>
 								{subscription.paddle_price_id ?? "—"}
 							</span>
 						</div>
 						<div className="flex text-sm items-center justify-between border rounded-md px-3 py-2">
-							<span className="text-muted-foreground text-sm">Current period start</span>
-							<span className="text-sm">{formatDateTime(subscription.current_period_start)}</span>
+							<span className="text-primary-foreground-muted  text-sm">
+								Current period start
+							</span>
+							<span className="text-sm">
+								{formatDateTime(subscription.current_period_start)}
+							</span>
 						</div>
 						<div className="flex  text-sm items-center justify-between border rounded-md px-3 py-2">
-							<span className="text-muted-foreground text-sm">Current period end (next bill)</span>
-							<span className="text-sm">{formatDateTime(subscription.current_period_end)}</span>
+							<span className="text-primary-foreground-muted  text-sm">
+								Current period end (next bill)
+							</span>
+							<span className="text-sm">
+								{formatDateTime(subscription.current_period_end)}
+							</span>
 						</div>
 						<div className="flex items-center justify-between border rounded-md px-3 py-2">
-							<span className="text-muted-foreground text-sm">Trial end</span>
+							<span className="text-primary-foreground-muted  text-sm">Trial end</span>
 							<span className="text-sm">{formatDateTime(subscription.trial_end)}</span>
 						</div>
 						<div className="flex items-center justify-between border rounded-md px-3 py-2">
-							<span className="text-muted-foreground text-sm">Cancel at period end</span>
-							<span className="text-sm">{subscription.cancel_at_period_end ? "Yes" : "No"}</span>
+							<span className="text-primary-foreground-muted  text-sm">
+								Cancel at period end
+							</span>
+							<span className="text-sm">
+								{subscription.cancel_at_period_end ? "Yes" : "No"}
+							</span>
 						</div>
 					</div>
 				)}

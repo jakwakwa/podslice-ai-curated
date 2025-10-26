@@ -270,7 +270,7 @@
 	--secondary: var(--kwak-3);
 	--secondary-foreground: var(--swak-10);
 	--muted: var(--swak-7);
-	--muted-foreground: var(--swak-4);
+	--muted-foreground: var(--kwak-5);
 	--accent: var(--beduk-9);
 	--accent-foreground: var(--kwak-5);
 	--destructive: var(--wyn-5);
@@ -363,8 +363,8 @@
 			var(--swak-1) 20%,
 			var(--swak-2) 110%);
 	--episode-gradient: linear-gradient(320deg,
-			var(--swak-1) -10%,
-			var(--beduk-8) 180%);
+			var(--kwak-1) -10%,
+			var(--swak-5) 180%);
 	--container-gradient: linear-gradient(to bottom,
 			var(--swak-1) 0%,
 			var(--swak-3) 100%);
@@ -569,10 +569,10 @@
 		background-color: oklch(0.19 0.02 290.52 / 0.07);
 		background-image: var(--episode-gradient);
 		box-shadow: inset 0.5px 1px 0px 0px #7591d330,
-			inset -1px -1px 1px 2px #49498650,
-			0px 4px 4px 1px oklch(0.15 0 17.35 / 0.1),
-			0px 2px 3px 1px oklch(0.23 0.03 283.65 / 0.15);
-		border-radius: 10px;
+			inset 0px -5px 10px 2px #00000050,
+			0px 4px 4px 1px oklch(0.15 0 17.35 / 0.3),
+			0px 2px 3px 1px oklch(0.23 0.03 283.65 / 0.45);
+		border-radius: 25spx;
 		margin: 0px auto;
 		border: none;
 		margin-bottom: 5px;
@@ -629,8 +629,8 @@
 	}
 
 	a:hover {
-		color: var(--link-hover) !important;
-		opacity: 0.8;
+		/*color: var(--link-hover) !important;*/
+		opacity: 0.6;
 		text-decoration: none !important;
 		text-decoration: underline;
 	}

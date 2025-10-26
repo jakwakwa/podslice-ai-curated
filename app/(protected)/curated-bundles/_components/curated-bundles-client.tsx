@@ -4,16 +4,16 @@ import { AlertCircle, Lock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import useSWR from "swr";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import useSWR from "swr";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { H3, Typography } from "@/components/ui/typography";
-import type { Bundle, Podcast } from "@/lib/types";
 import { ONE_HOUR, SEVEN_DAYS } from "@/lib/swr";
+import type { Bundle, Podcast } from "@/lib/types";
 import { BundleSelectionDialog } from "./bundle-selection-dialog";
 
 type BundleWithAccess = Bundle & {
@@ -118,42 +118,45 @@ interface BundleSelectionRequestBody {
 
 export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientProps) {
 	const router = useRouter();
-  const [bundleList, setBundleList] = useState<NormalizedBundle[]>(() => bundles.map(normalizeBundle));
+	const [bundleList, setBundleList] = useState<NormalizedBundle[]>(() =>
+		bundles.map(normalizeBundle)
+	);
 	const [selectedBundle, setSelectedBundle] = useState<NormalizedBundle | null>(null);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [dialogMode, setDialogMode] = useState<"select" | "locked">("select");
-  const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
-  // SWR: Curated + shared bundles, 7-day client cache window
-  const { data: swrBundles, isLoading: isFetchingBundles, mutate: mutateBundles } = useSWR<BundleWithAccess[]>(
-    "/api/curated-bundles",
-    {
-      dedupingInterval: SEVEN_DAYS,
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-    }
-  );
+	// SWR: Curated + shared bundles, 7-day client cache window
+	const {
+		data: swrBundles,
+		isLoading: isFetchingBundles,
+		mutate: mutateBundles,
+	} = useSWR<BundleWithAccess[]>("/api/curated-bundles", {
+		dedupingInterval: SEVEN_DAYS,
+		revalidateOnFocus: false,
+		revalidateIfStale: false,
+	});
 
-  // SWR: User profile, 1-hour cache window
-  const { data: userProfile, mutate: mutateProfile } = useSWR<UserCurationProfile | null>(
-    "/api/user-curation-profiles",
-    {
-      dedupingInterval: ONE_HOUR,
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-    }
-  );
+	// SWR: User profile, 1-hour cache window
+	const { data: userProfile, mutate: mutateProfile } = useSWR<UserCurationProfile | null>(
+		"/api/user-curation-profiles",
+		{
+			dedupingInterval: ONE_HOUR,
+			revalidateOnFocus: false,
+			revalidateIfStale: false,
+		}
+	);
 
-  // Seed from server-rendered bundles first, then update from SWR when available
-  useEffect(() => {
-    setBundleList(bundles.map(normalizeBundle));
-  }, [bundles]);
+	// Seed from server-rendered bundles first, then update from SWR when available
+	useEffect(() => {
+		setBundleList(bundles.map(normalizeBundle));
+	}, [bundles]);
 
-  useEffect(() => {
-    if (Array.isArray(swrBundles)) {
-      setBundleList(swrBundles.map(normalizeBundle));
-    }
-  }, [swrBundles]);
+	useEffect(() => {
+		if (Array.isArray(swrBundles)) {
+			setBundleList(swrBundles.map(normalizeBundle));
+		}
+	}, [swrBundles]);
 
 	const handleBundleClick = (bundle: NormalizedBundle) => {
 		setSelectedBundle(bundle);
@@ -183,7 +186,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 			: bundleId;
 
 		setIsLoading(true);
-    try {
+		try {
 			if (!userProfile) {
 				const trimmedProfileName = profileName?.trim();
 				if (!trimmedProfileName) {
@@ -202,7 +205,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 					requestBody.selected_bundle_id = actualBundleId;
 				}
 
-        const response = await fetch("/api/user-curation-profiles", {
+				const response = await fetch("/api/user-curation-profiles", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
@@ -215,8 +218,8 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 					throw new Error(errorData.error || "Failed to create bundle profile");
 				}
 
-        const createdProfile: UserCurationProfile = await response.json();
-        await mutateProfile(createdProfile, { revalidate: false });
+				const createdProfile: UserCurationProfile = await response.json();
+				await mutateProfile(createdProfile, { revalidate: false });
 				toast.success(
 					isSelectingSharedBundle
 						? "Shared bundle selected successfully!"
@@ -234,7 +237,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 				requestBody.selected_bundle_id = actualBundleId;
 			}
 
-      const response = await fetch(
+			const response = await fetch(
 				`/api/user-curation-profiles/${userProfile.profile_id}`,
 				{
 					method: "PATCH",
@@ -250,29 +253,29 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 				throw new Error(errorData.error || "Failed to update bundle selection");
 			}
 
-      await mutateProfile(
-        prev =>
-          prev
-            ? {
-                ...prev,
-                ...(isSelectingSharedBundle
-                  ? { selected_shared_bundle_id: actualBundleId }
-                  : { selected_bundle_id: actualBundleId }),
-                selectedBundle: {
-                  name: selectedBundle?.name || "",
-                },
-              }
-            : null,
-        { revalidate: false }
-      );
+			await mutateProfile(
+				prev =>
+					prev
+						? {
+								...prev,
+								...(isSelectingSharedBundle
+									? { selected_shared_bundle_id: actualBundleId }
+									: { selected_bundle_id: actualBundleId }),
+								selectedBundle: {
+									name: selectedBundle?.name || "",
+								},
+							}
+						: null,
+				{ revalidate: false }
+			);
 
 			toast.success(
 				isSelectingSharedBundle
 					? "Shared bundle selected successfully!"
 					: "Bundle selection updated successfully!"
 			);
-      // Refresh bundles view opportunistically
-      void mutateBundles();
+			// Refresh bundles view opportunistically
+			void mutateBundles();
 			router.push("/dashboard");
 		} catch (error) {
 			console.error("Failed to update bundle selection:", error);
@@ -351,7 +354,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 					<H3 className="text-[1.2rem] text-primary-foreground font-bold font-sans mb-4 px-2 md:px-12 xl:px-[40px]">
 						🎯 Curated by Podslice
 					</H3>
-					<div className="episode-card-wrapper-dark relative transition-all duration-200 text-card-foreground gap-4 p-0 px-2 md:px-4 md:py-5 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-4 xl:p-[40px]   lg:px-8 xl:justify-evenly items-start lg:gap-5 xl:gap-6 h-fit xl:px-[40px] rounded-3xl  backdrop-blur-[3px]">
+					<div className="episode-card-wrapper-dark relative transition-all duration-200 text-card-foreground gap-4 p-0 px-2 md:px-4 md:py-5 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-3 xl:p-[40px]   lg:px-8 xl:justify-evenly items-start lg:gap-5 xl:gap-6 h-fit xl:px-[40px] rounded-3xl  backdrop-blur-[3px]">
 						{curatedBundles.map(bundle => {
 							const planMeta = PLAN_GATE_META[bundle.min_plan];
 							const canInteract = bundle.canInteract;

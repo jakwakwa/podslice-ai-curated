@@ -106,9 +106,15 @@ export function EpisodeCard({
 				<div className="flex w-[90%] flex-col justify-between h-fit items-start content-start py-0 md:px-3 z-10 md:flex-col  md:pl-0  md:gap-0 md:justify-between md:min-h-fit lg:pl-2 lg:pt-2">
 					{detailsHref ? (
 						<Link
-							className="text-[0.9rem] font-semibold md:w-full md:text-[0.65]  leading-tight line-clamp-2 h-auto max-h-14 lg:max-w-[85%] lg:text-base mb-5 lg:pb-0 text-primary-foreground text-shadow-2xs hover:text-cyan-200 hover:decoration-azure-800 hover:opacity-90 transition-all duration-300 text-left capitalize"
+							className="text-[1.1rem] font-semibold md:w-full md:text-[0.65]  leading-tight line-clamp-2 h-auto max-h-14 lg:max-w-[85%] lg:text-base mb-5 lg:pb-0 text-primary-foreground text-shadow-2xs hover:text-cyan-200 hover:decoration-azure-800 hover:opacity-90 transition-all duration-300 text-left capitalize"
 							href={detailsHref}>
-							{title}
+							<div>
+								{title}
+								<br />
+								<span className="text-[0.6rem] tracking-wider font-light uppercase pr-1">
+									view details
+								</span>
+							</div>
 						</Link>
 					) : null}
 
