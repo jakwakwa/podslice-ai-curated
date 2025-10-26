@@ -356,7 +356,7 @@ async function main() {
 			},
 		})
 	}
-	console.log("✓ User-generated episodes seeded")
+	console.log("✓ User-generated summaries seeded")
 
 	console.log("🌱 Demo data installed successfully. Happy slicing! 🎧")
 }
@@ -369,5 +369,3 @@ main()
 	.finally(async () => {
 		await prisma.$disconnect()
 	})
-
-

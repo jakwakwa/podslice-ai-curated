@@ -35,7 +35,7 @@ model User {
 }
 
 /// ───────────────────────────────────
-/// USER-GENERATED EPISODES
+/// USER-generated summaries
 /// ───────────────────────────────────
 model UserEpisode {
   episode_id           String                @id @default(uuid()) @map("episode_id")

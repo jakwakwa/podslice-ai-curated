@@ -7,7 +7,7 @@ export const curatedBundlesPageContent = {
 	header: {
 		title: "Explore Bundles",
 		description:
-			"Choose from our pre-curated podcast bundles created by our AI or discover bundles shared by other users. Each bundle is linked to a group of podcast shows. Each week we generate a new bundle of freshly generated episodes from the previous week's curated selection of shows.",
+			"Choose from our pre-curated podcast bundles created by our AI or discover bundles shared by other users. Each bundle is linked to a group of podcast shows. Each week we generate a new bundle of freshly generated summaries from the previous week's curated selection of shows.",
 	},
 	filters: {
 		searchPlaceholder: "Search bundles or podcasts...",
@@ -45,7 +45,8 @@ export const curatedBundlesPageContent = {
 		},
 		empty: {
 			title: "No Bundles Found",
-			description: "No bundles match your current filters. Try adjusting your search or filter criteria.",
+			description:
+				"No bundles match your current filters. Try adjusting your search or filter criteria.",
 		},
 		loading: {
 			message: "Loading bundles...",
@@ -54,7 +55,8 @@ export const curatedBundlesPageContent = {
 	dialog: {
 		select: {
 			title: "Select Bundle",
-			description: "Are you sure you want to select this bundle? This will become your active weekly feed.",
+			description:
+				"Are you sure you want to select this bundle? This will become your active weekly feed.",
 			confirmButton: "Confirm Selection",
 			cancelButton: "Cancel",
 		},

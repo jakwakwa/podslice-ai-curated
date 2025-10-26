@@ -6,24 +6,25 @@ import { UsageDisplay } from "../my-episodes/_components/usage-display";
 export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
-  return { title: "Generate My Episodes", description: "Create new episodes from YouTube links." };
+	return {
+		title: "Generate My Episodes",
+		description: "Create new episodes from YouTube links.",
+	};
 }
 
 export default async function GenerateMyEpisodesPage() {
-  const content = {
-    title: "Generate Episodes",
-    description:
-      "Use your YouTube links to create AI-generated episodes. Track your usage and generate new content quickly.",
-  } as const;
+	const content = {
+		title: "Generate Episodes",
+		description:
+			"Use your YouTube links to create AI-generated summaries. Track your usage and generate new content quickly.",
+	} as const;
 
-  return (
-    <CommonSectionWithChildren title={content.title} description={content.description}>
-      <div className="flex flex-col-reverse lg:flex-row-reverse gap-4 md:gap-6 px-0 mx-0 md:mx-3">
-        <UsageDisplay />
-        <EpisodeCreator />
-      </div>
-    </CommonSectionWithChildren>
-  );
+	return (
+		<CommonSectionWithChildren title={content.title} description={content.description}>
+			<div className="flex flex-col-reverse lg:flex-row-reverse gap-4 md:gap-6 px-0 mx-0 md:mx-3">
+				<UsageDisplay />
+				<EpisodeCreator />
+			</div>
+		</CommonSectionWithChildren>
+	);
 }
-
-

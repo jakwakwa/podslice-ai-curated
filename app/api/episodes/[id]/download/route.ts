@@ -9,12 +9,26 @@ function resolveAllowedGates(plan: string | null | undefined): PlanGate[] {
 
 	// Implement hierarchical access model
 	if (normalized === "curate_control" || normalized === "curate control") {
-		return [PlanGate.NONE, PlanGate.FREE_SLICE, PlanGate.CASUAL_LISTENER, PlanGate.CURATE_CONTROL];
+		return [
+			PlanGate.NONE,
+			PlanGate.FREE_SLICE,
+			PlanGate.CASUAL_LISTENER,
+			PlanGate.CURATE_CONTROL,
+		];
 	}
-	if (normalized === "casual_listener" || normalized === "casual listener" || normalized === "casual") {
+	if (
+		normalized === "casual_listener" ||
+		normalized === "casual listener" ||
+		normalized === "casual"
+	) {
 		return [PlanGate.NONE, PlanGate.FREE_SLICE, PlanGate.CASUAL_LISTENER];
 	}
-	if (normalized === "free_slice" || normalized === "free slice" || normalized === "free" || normalized === "freeslice") {
+	if (
+		normalized === "free_slice" ||
+		normalized === "free slice" ||
+		normalized === "free" ||
+		normalized === "freeslice"
+	) {
 		return [PlanGate.NONE, PlanGate.FREE_SLICE];
 	}
 	// Default: NONE plan or no plan
@@ -57,7 +71,10 @@ export async function GET(_request: Request, { params }: RouteParams) {
 		const canDownload = allowedGates.includes(PlanGate.CURATE_CONTROL);
 
 		if (!canDownload) {
-			return NextResponse.json({ error: "Download feature requires Curate Control subscription tier" }, { status: 403 });
+			return NextResponse.json(
+				{ error: "Download feature requires Curate Control subscription tier" },
+				{ status: 403 }
+			);
 		}
 
 		// Get the episode and verify it's user-generated (has profile_id)
@@ -78,7 +95,10 @@ export async function GET(_request: Request, { params }: RouteParams) {
 
 		// Check if episode is user-generated and belongs to the requesting user
 		if (!episode.profile_id || episode.userProfile?.user_id !== userId) {
-			return NextResponse.json({ error: "Download is only available for your own user-generated episodes" }, { status: 403 });
+			return NextResponse.json(
+				{ error: "Download is only available for your own user-generated summaries" },
+				{ status: 403 }
+			);
 		}
 
 		// Return the audio URL for download
@@ -92,4 +112,3 @@ export async function GET(_request: Request, { params }: RouteParams) {
 		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
-

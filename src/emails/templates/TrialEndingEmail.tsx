@@ -23,8 +23,7 @@ export function TrialEndingEmail({
 	return (
 		<EmailLayout
 			title="Trial Ending Soon"
-			previewText={`Your PODSLICE trial ends in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}!`}
-		>
+			previewText={`Your PODSLICE trial ends in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}!`}>
 			{/* Greeting */}
 			<Text
 				style={{
@@ -34,8 +33,7 @@ export function TrialEndingEmail({
 					fontWeight,
 					textAlign: "center",
 					margin: "0 0 16px 0",
-				}}
-			>
+				}}>
 				Hi {userFirstName}
 			</Text>
 
@@ -47,8 +45,7 @@ export function TrialEndingEmail({
 						color: EMAIL_CONSTANTS.COLORS.error,
 						fontSize: "28px",
 						margin: 0,
-					}}
-				>
+					}}>
 					⏰ Trial Ending Soon
 				</Heading>
 			</Section>
@@ -60,16 +57,14 @@ export function TrialEndingEmail({
 					padding: "24px",
 					borderRadius: "8px",
 					marginBottom: "24px",
-				}}
-			>
+				}}>
 				<Text
 					style={{
 						color: EMAIL_CONSTANTS.COLORS.error,
 						margin: 0,
 						fontWeight: 500,
 						textAlign: "center",
-					}}
-				>
+					}}>
 					Your trial ends in {daysRemaining} day{daysRemaining !== 1 ? "s" : ""}
 				</Text>
 			</Section>
@@ -80,9 +75,9 @@ export function TrialEndingEmail({
 					fontSize: "16px",
 					lineHeight: 1.5,
 					marginBottom: "24px",
-				}}
-			>
-				Don't lose access to your personalized podcast feeds! Your PODSLICE trial is ending soon.
+				}}>
+				Don't lose access to your personalized podcast feeds! Your PODSLICE trial is
+				ending soon.
 			</Text>
 
 			<Section style={{ textAlign: "center", marginBottom: "32px" }}>
@@ -97,8 +92,7 @@ export function TrialEndingEmail({
 						borderRadius: "6px",
 						fontWeight: 500,
 						fontSize: "16px",
-					}}
-				>
+					}}>
 					Upgrade Now
 				</Button>
 			</Section>
@@ -108,16 +102,14 @@ export function TrialEndingEmail({
 					backgroundColor: EMAIL_CONSTANTS.COLORS.background.gray,
 					padding: "20px",
 					borderRadius: "8px",
-				}}
-			>
+				}}>
 				<Heading
 					as="h3"
 					style={{
 						color: EMAIL_CONSTANTS.COLORS.text.secondary,
 						fontSize: "18px",
 						margin: "0 0 12px 0",
-					}}
-				>
+					}}>
 					Continue enjoying:
 				</Heading>
 				<ul
@@ -125,10 +117,9 @@ export function TrialEndingEmail({
 						color: EMAIL_CONSTANTS.COLORS.text.muted,
 						margin: 0,
 						paddingLeft: "20px",
-					}}
-				>
+					}}>
 					<li>Unlimited personalized feeds</li>
-					<li>Weekly AI-generated episodes</li>
+					<li>Weekly AI-generated summaries</li>
 					<li>Advanced curation features</li>
 					<li>Priority support</li>
 				</ul>
@@ -142,8 +133,7 @@ export function TrialEndingEmail({
 						color: EMAIL_CONSTANTS.COLORS.text.light,
 						fontSize: "12px",
 						margin: 0,
-					}}
-				>
+					}}>
 					Questions? Reply to this email or contact our support team.
 					<br />
 					The PODSLICE Team

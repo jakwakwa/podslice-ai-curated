@@ -94,13 +94,14 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 	const isNewsEpisode = episode.youtube_url === "news";
 	const sourceDisplay =
 		isNewsEpisode && episode.news_sources
-			? `Source/s: ${episode.news_sources === "stocks"
-				? "PolyMarket, Traderview, Yahoo! Finance, CoinDesk, CoinGecko, Uphold"
-				: episode.news_sources
-					?.split(", ")
-					.map(s => s.charAt(0).toUpperCase() + s.slice(1))
-					.join(", ")
-			}`
+			? `Source/s: ${
+					episode.news_sources === "stocks"
+						? "PolyMarket, Traderview, Yahoo! Finance, CoinDesk, CoinGecko, Uphold"
+						: episode.news_sources
+								?.split(", ")
+								.map(s => s.charAt(0).toUpperCase() + s.slice(1))
+								.join(", ")
+				}`
 			: null;
 
 	// For YouTube videos, extract key takeaways; for news, use summary as-is
@@ -124,10 +125,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 						isNewsEpisode
 							? undefined
 							: {
-								href: episode.youtube_url,
-								label: "Youtube Url",
-								external: true,
-							}
+									href: episode.youtube_url,
+									label: "Youtube Url",
+									external: true,
+								}
 					}
 				/>
 				{sourceDisplay && (
@@ -188,7 +189,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 										return (
 											<div className="space-y-6 ">
 												{summaryData.top_headlines && (
-													<div className="text-primary-foreground">
+													<div className="text-violet-300">
 														<h4 className="font-bold text-xl mt-8 mb-4">Top Headlines</h4>
 														<p className="text-secondary-foreground text-base font-medium">
 															{summaryData.top_headlines}
@@ -199,13 +200,13 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 												<div className="flex flex-col flex-wrap gap-6 md:gap-8">
 													<div className="flex flex-row gap-4 min-w-[20%]">
 														{summaryData.topic && summaryData.topic.length > 0 && (
-															<div className="text-primary-foreground">
+															<div className="text-violet-300">
 																<h4 className="font-bold text-xl mt-2 mb-4">Topic</h4>
 																<div className="flex flex-wrap gap-2">
 																	{summaryData.topic.map((t: string, i: number) => (
 																		<span
 																			key={i}
-																			className="px-2 py-1 bg-pink-800 text-pink-300 rounded-md text-lg capitalize">
+																			className="px-2 py-1 bg-pink-800 text-pink-300 rounded-md text-sm capitalize">
 																			{t}
 																		</span>
 																	))}
@@ -214,7 +215,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 														)}
 
 														{summaryData.sentiment && (
-															<div className="text-primary-foreground">
+															<div className="text-violet-300">
 																<h4 className="font-bold text-xl mt-2 mb-4">
 																	Sentiment Analysis
 																</h4>
@@ -223,12 +224,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 																		summaryData.sentiment.map((s: string, i: number) => (
 																			<span
 																				key={i}
-																				className="px-2 py-1 bg-violet-800 text-pink-300 rounded-md text-lg capitalize">
+																				className="px-2 py-1 bg-violet-800 text-pink-300 rounded-md text-sm capitalize">
 																				{s}
 																			</span>
 																		))
 																	) : (
-																		<span className="px-2 py-1 rounded-md text-lg  bg-violet-800 text-slate-200">
+																		<span className="px-2 py-1 rounded-md text-sm  bg-violet-800 text-slate-200">
 																			{summaryData.sentiment}
 																		</span>
 																	)}
@@ -237,13 +238,13 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 														)}
 													</div>
 													{summaryData.tags && summaryData.tags.length > 0 && (
-														<div className="text-primary-foreground">
+														<div className="text-violet-300">
 															<h4 className="font-bold text-xl mt-2 mb-4">Tags</h4>
 															<div className="flex flex-wrap gap-2">
 																{summaryData.tags.map((tag: string, i: number) => (
 																	<span
 																		key={i}
-																		className="px-2 py-1 bg-primary text-secondary rounded-md text-sm">
+																		className="px-2 py-1 bg-primary text-foreground rounded-md text-sm shadow-md">
 																		#{tag}
 																	</span>
 																))}
@@ -252,7 +253,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 													)}
 
 													{summaryData.target_audience && (
-														<div className="text-primary-foreground">
+														<div className="text-violet-300">
 															<h4 className="font-bold text-xl mt-2 mb-4">
 																Target Audience
 															</h4>
@@ -265,7 +266,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 												<hr />
 
 												{summaryData.ai_summary && (
-													<div className="text-primary-foreground">
+													<div className="text-violet-300">
 														<h4 className="font-bold text-xl mt-2 mb-4">Ai Summary</h4>
 														<div className="whitespace-pre-wrap  text-sm text-secondary-foreground leading-[1.8] md:text-base">
 															{summaryData.ai_summary}
