@@ -262,6 +262,45 @@ Research and analyze the latest (current and last 3 days) news on "${topic}" fro
 			});
 		});
 
+		// Generate a concise, useful title for news episodes (≤72 chars)
+		await step.run("generate-news-title", async () => {
+			try {
+				// Prefer the parsed ai_summary if the structured JSON is available
+				let summaryContent = summary;
+				try {
+					const parsed = JSON.parse(summary);
+					summaryContent = parsed.ai_summary || summary;
+				} catch {}
+
+				const titlePrompt = `Write ONE concise, compelling podcast episode title.\n\nConstraints:\n- Max 72 characters\n- No dates or times\n- No quotes, backticks, hashtags, or emojis\n- Not clickbait; be clear and informative\n- Use proper casing (sentence or title case)\n\nTopic: ${topic || ""}\nSummary:\n${summaryContent}`;
+
+				const { text } = await generateText({
+					model: vertex(modelId),
+					prompt: titlePrompt,
+				});
+
+				const raw = (text || "").trim();
+				const cleaned = raw
+					.replace(/^[`"'\s]+|[`"'\s]+$/g, "")
+					.replace(/[\r\n]+/g, " ")
+					.replace(/\s{2,}/g, " ");
+
+				const limit = 72;
+				const finalTitle = cleaned.length <= limit
+					? cleaned
+					: (cleaned.slice(0, limit + 1).split(" ").slice(0, -1).join(" ") || cleaned.slice(0, limit)).trim();
+
+				if (finalTitle) {
+					await prisma.userEpisode.update({
+						where: { episode_id: userEpisodeId },
+						data: { episode_title: finalTitle },
+					});
+				}
+			} catch (err) {
+				console.warn("[NEWS_TITLE] Failed to generate title; continuing workflow", err);
+			}
+		});
+
 		// Get word/minute targets based on selected length
 		const lengthConfig = getSummaryLengthConfig(summaryLength);
 		const [minWords, maxWords] = lengthConfig.words;
