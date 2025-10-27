@@ -77,7 +77,7 @@ export default async function CuratedBundlesPage({
 			},
 			orderBy: { created_at: "desc" },
 			cacheStrategy: {
-				swr: 90,
+				swr: 60,
 				ttl: 180,
 				tags: ["BundlePanel_in_Admin"],
 			},

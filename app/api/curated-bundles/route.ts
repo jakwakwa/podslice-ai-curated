@@ -59,8 +59,8 @@ export async function GET(_request: NextRequest) {
 			orderBy: { created_at: "desc" },
             cacheStrategy: {
                 // Weekly cache; allow background revalidation
-                swr: 60, // 1 hour SWR window for background refreshes
-                ttl: 120, // 7 days in ms
+                swr: 60, // 1 hour SWR window for background refreshes  ttl: 7 * 24 * 60 * 60 * 1000
+                ttl: 86400, // 7 days in ms
                 tags: ["curated_bundles"],
             },
 		})

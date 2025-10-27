@@ -14,11 +14,6 @@ export default async function BundlesPanel() {
 						include: { podcast: true }
 					}
 				}, orderBy: { created_at: "desc" },
-				cacheStrategy: {
-					swr: 90,
-					ttl: 180,
-					tags: ["BundlePanel_in_Admin"]
-				}
 			}
 		),
 		prisma.podcast.findMany(
@@ -26,7 +21,7 @@ export default async function BundlesPanel() {
 				where: { is_active: true },
 				orderBy: { name: "asc" },
 				cacheStrategy: {
-					swr: 90,
+					swr: 60,
 					ttl: 180,
 					tags: ["Podcast_List_in_Bundles_Panel_in_Admin"]
 				}

@@ -66,8 +66,8 @@ export async function GET(request: Request) {
                     },
                     orderBy: { created_at: "desc" },
                     cacheStrategy: {
-                        swr: 30,
-                        ttl: 120, // 1 hour
+                        swr: 60,
+                        ttl: 200,
                         tags: [
                           `user_profile_${userId}`,
                           "curated_episodes",
@@ -96,8 +96,8 @@ export async function GET(request: Request) {
                     },
                     orderBy: { created_at: "desc" },
                     cacheStrategy: {
-                        swr: 30,
-                        ttl: 120, // 1 hour
+                        swr: 60,
+                        ttl: 300,
                         tags: [
                           `user_episodes_${userId}`,
                           "shared_episodes",
