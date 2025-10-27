@@ -9,10 +9,10 @@ export const runtime = "nodejs";
  */
 export async function GET(
 	_request: Request,
-	{ params }: { params: { bundleId: string } }
+	{ params }: { params: Promise<{ bundleId: string }> }
 ): Promise<Response> {
 	try {
-		const { bundleId } = params;
+		const { bundleId } = await params;
 
 		if (!bundleId) {
 			return new NextResponse("Bundle ID is required", { status: 400 });

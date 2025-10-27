@@ -27,7 +27,7 @@
 		text-align: left;
 		height: auto;
 	}
-	
+
 	::selection {
 		color: hsla(255.87 73.46% 58.63% / 0.9) !important;
 		background-color: oklch(17.17% 0.10343 276.516 / 5%) !important;
@@ -248,75 +248,6 @@
 .light {
 
 	--card: var(--kwak-10);
-		--card-foreground: var(--kwak-10);
-
-		--dialog-card: var(--beduk-7);
-		--dialog-overlay: var(--swak-4);
-
-		--background: var(--swak-1);
-		--foreground: var(--swak-7);
-		--popover: var(--color-cyan-950);
-		--popover-foreground: var(--swak-10);
-		--primary: var(--swak-3);
-
-		--primary-foreground: var(--kwak-9);
-		--header: var(--kwak-3);
-		--header-foreground: var(--beduk-9);
-		--primary-foreground-muted: var(--kwak-6);
-		--secondary: var(--kwak-3);
-		--secondary-foreground: var(--swak-10);
-		--muted: var(--swak-7);
-		--muted-foreground: var(--kwak-5);
-		--accent: var(--beduk-9);
-		--accent-foreground: var(--kwak-5);
-		--destructive: var(--wyn-5);
-		--border: var(--color-slate-700);
-		--input: var(--swak-5);
-		--ring: var(--kwak-5);
-		--chart-1: var(--kwak-3);
-		--chart-2: var(--kwak-2);
-		--chart-3: var(--kwak-5);
-		--chart-4: var(--kwak-5);
-		--chart-5: var(--kwak-5);
-		--sidebar: var(--swak-1);
-		--sidebar-foreground: var(--kwak-5);
-		--sidebar-primary: var(--beduk-8);
-		--sidebar-primary-foreground: var(--kwak-5);
-		--sidebar-accent: var(--swak-1);
-		--sidebar-accent-foreground: var(--beduk-5);
-		--sidebar-border: var(--swak-4);
-		--sidebar-ring: var(--kwak-6);
-		--inset-gradient: linear-gradient(var(--swak-1) 0%, var(--beduk-3) 110%);
-		--bigepisode-gradient: linear-gradient(0deg,
-				var(--swak-1) -20%,
-				var(--beduk-1) 90%);
-		--episode-gradient: linear-gradient(320deg,
-				var(--kwak-1) -10%,
-				var(--swak-5) 180%);
-		--container-gradient: linear-gradient(to bottom,
-				var(--swak-1) 0%,
-				var(--swak-3) 100%);
-		--container-dark: linear-gradient(to bottom,
-				var(--swak-1) 0%,
-				var(--swak-2) 100%);
-		--episode-shell-gradient: linear-gradient(180deg,
-				var(--kwak-1) 0%,
-					var(--kwak-2) 10%,
-				var(--beduk-2) 35%,
-				var(--beduk-1) 50%);
-				
-		--episode-card-wrapper-gradient: linear-gradient(to bottom,
-				var(--swak-3) 10%,
-				var(--swak-1) 280%);
-}
-
-
-
-
-.dark {
-
-	
-	--card: var(--kwak-10);
 	--card-foreground: var(--kwak-10);
 
 	--dialog-card: var(--beduk-7);
@@ -339,7 +270,7 @@
 	--accent: var(--beduk-9);
 	--accent-foreground: var(--kwak-5);
 	--destructive: var(--wyn-5);
-	--border:var(--color-gray-800);
+	--border: var(--color-slate-700);
 	--input: var(--swak-5);
 	--ring: var(--kwak-5);
 	--chart-1: var(--kwak-3);
@@ -370,10 +301,79 @@
 			var(--swak-2) 100%);
 	--episode-shell-gradient: linear-gradient(180deg,
 			var(--kwak-1) 0%,
-				var(--kwak-2) 10%,
+			var(--kwak-2) 10%,
 			var(--beduk-2) 35%,
 			var(--beduk-1) 50%);
-			
+
+	--episode-card-wrapper-gradient: linear-gradient(to bottom,
+			var(--swak-3) 10%,
+			var(--swak-1) 280%);
+}
+
+
+
+
+.dark {
+
+
+	--card: var(--kwak-10);
+	--card-foreground: var(--kwak-10);
+
+	--dialog-card: var(--beduk-7);
+	--dialog-overlay: var(--swak-4);
+
+	--background: var(--swak-1);
+	--foreground: var(--swak-7);
+	--popover: var(--color-cyan-950);
+	--popover-foreground: var(--swak-10);
+	--primary: var(--swak-3);
+
+	--primary-foreground: var(--kwak-9);
+	--header: var(--kwak-3);
+	--header-foreground: var(--beduk-9);
+	--primary-foreground-muted: var(--kwak-6);
+	--secondary: var(--kwak-3);
+	--secondary-foreground: var(--swak-10);
+	--muted: var(--swak-7);
+	--muted-foreground: var(--kwak-5);
+	--accent: var(--beduk-9);
+	--accent-foreground: var(--kwak-5);
+	--destructive: var(--wyn-5);
+	--border: var(--color-gray-800);
+	--input: var(--swak-5);
+	--ring: var(--kwak-5);
+	--chart-1: var(--kwak-3);
+	--chart-2: var(--kwak-2);
+	--chart-3: var(--kwak-5);
+	--chart-4: var(--kwak-5);
+	--chart-5: var(--kwak-5);
+	--sidebar: var(--swak-1);
+	--sidebar-foreground: var(--kwak-5);
+	--sidebar-primary: var(--beduk-8);
+	--sidebar-primary-foreground: var(--kwak-5);
+	--sidebar-accent: var(--swak-1);
+	--sidebar-accent-foreground: var(--beduk-5);
+	--sidebar-border: var(--swak-4);
+	--sidebar-ring: var(--kwak-6);
+	--inset-gradient: linear-gradient(var(--swak-1) 0%, var(--beduk-3) 110%);
+	--bigepisode-gradient: linear-gradient(0deg,
+			var(--swak-1) -20%,
+			var(--beduk-1) 90%);
+	--episode-gradient: linear-gradient(320deg,
+			var(--kwak-1) -10%,
+			var(--swak-5) 180%);
+	--container-gradient: linear-gradient(to bottom,
+			var(--swak-1) 0%,
+			var(--swak-3) 100%);
+	--container-dark: linear-gradient(to bottom,
+			var(--swak-1) 0%,
+			var(--swak-2) 100%);
+	--episode-shell-gradient: linear-gradient(180deg,
+			var(--kwak-1) 0%,
+			var(--kwak-2) 10%,
+			var(--beduk-2) 35%,
+			var(--beduk-1) 50%);
+
 	--episode-card-wrapper-gradient: linear-gradient(to bottom,
 			var(--swak-3) 10%,
 			var(--swak-1) 280%);
@@ -565,17 +565,26 @@
 /* ============================================= */
 @layer utilities {
 	.bg-card {
-		background-color: oklch(0.19 0.02 290.52 / 0.07);
+		/* background-color: oklch(0.19 0.02 290.52 / 0.07); */
 		background-image: var(--episode-gradient);
 		box-shadow: inset 0.5px 1px 0px 0px #7591d330,
 			inset 0px -5px 10px 2px #00000050,
 			0px 4px 4px 1px oklch(0.15 0 17.35 / 0.3),
 			0px 2px 3px 1px oklch(0.23 0.03 283.65 / 0.45);
-		border-radius: 25spx;
-		margin: 0px auto;
-		border: none;
-		margin-bottom: 5px;
-		width: 99%;
+
+		/*mix-blend-mode: normal, multiply;*/
+
+	}
+
+	.bg-dunk {
+		background-color: var(--kwak-3);
+		/* background-image: var(--episode-gradient); */
+		box-shadow: inset 0.5px 1px 0px 0px #7591d330,
+			inset 0px -5px 10px 2px #00000050,
+			0px 4px 4px 1px oklch(0.15 0 17.35 / 0.3),
+			0px 2px 3px 1px oklch(0.23 0.03 283.65 / 0.45);
+		padding: 20px;
+		min-width: 40vw !important;
 		/*mix-blend-mode: normal, multiply;*/
 
 	}
@@ -644,13 +653,13 @@
 		font-size: 0.9rem !important;
 		line-height: 0rem;
 		font-weight: 400;
-		height: 100% !important;
+		/* height: 100% !important; */
 		/* min-height: 12px !important; */
 		/* max-height: 43px !important; */
 
 		letter-spacing: 0.0015em;
 		color: var(--primary-foreground) !important;
-		background-color: #272b31a3 !important;
+		background-color: var(--input) !important;
 		outline: 1px solid #aeb2bd73 !important;
 		border-radius: 10px !important;
 		box-shadow: inset 0.5px 2px 3.5px 1px #00000067 !important;
@@ -659,9 +668,12 @@
 		border: var(--ring) !important;
 		padding: 15px !important;
 		letter-spacing: 0.3px;
-		margin-bottom: 50px !important;
-		height: auto;
-		min-height: 90px !important;
+		margin-bottom: 10px !important;
+		/* margin-bottom: 50px !important; */
+		/* height: auto; */
+		/* height: auto; */
+		/* min-height: 40px; */
+		height: 80px;
 	}
 
 
@@ -677,10 +689,11 @@
 		/*box-shadow: 0px 3px 14px #48407b !important;*/
 	}
 
+	textarea,
 	input {
 		outline: 1px solid transparent !important;
 		outline-offset: 1px !important;
-		height: 45px !important;
+
 		background-color: var(--input) !important;
 		box-shadow: inset 0px 3px 9px 1px var(--input-shadow) !important;
 	}
@@ -708,6 +721,7 @@
 	textarea:active,
 	textarea:hover,
 	textarea:focus,
+	input:hover,
 	input:active,
 	input:focus {
 		color: var(--color-primary-foreground) !important;
@@ -805,8 +819,7 @@
 
 
 	.bg-episode-card-wrapper,
-	.episode-card-wrapper
- {
+	.episode-card-wrapper {
 
 		border-radius: 0px !important;
 

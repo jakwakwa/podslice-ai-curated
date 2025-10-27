@@ -2,6 +2,7 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { PlanGate } from "@prisma/client";
+import { revalidateTag } from "next/cache";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 
@@ -66,6 +67,10 @@ export async function createBundleAction(formData: FormData) {
 		});
 	}
 
+	// Revalidate relevant caches
+	revalidateTag("curated_bundles");
+	revalidateTag("BundlePanel_in_Admin");
+
 	const bundle = await prisma.bundle.findUnique({
 		where: { bundle_id: created.bundle_id },
 		include: {
@@ -90,6 +95,11 @@ export async function updateBundleVisibilityAction(
 		where: { bundle_id: bundleId },
 		data: { min_plan: minPlan },
 	});
+
+	// Revalidate relevant caches
+	revalidateTag("curated_bundles");
+	revalidateTag("BundlePanel_in_Admin");
+
 	return { success: true, bundle: updated };
 }
 
@@ -113,6 +123,10 @@ export async function replaceBundleMembershipAction(
 				]
 			: []),
 	]);
+
+	// Revalidate relevant caches
+	revalidateTag("curated_bundles");
+	revalidateTag("BundlePanel_in_Admin");
 
 	const updated = await prisma.bundle.findUnique({
 		where: { bundle_id: bundleId },
@@ -173,6 +187,10 @@ export async function updateBundleAction(
 		await replaceBundleMembershipAction(bundleId, podcastIds);
 	}
 
+	// Revalidate relevant caches
+	revalidateTag("curated_bundles");
+	revalidateTag("BundlePanel_in_Admin");
+
 	const refreshed = await prisma.bundle.findUnique({
 		where: { bundle_id: bundleId },
 		include: {
@@ -200,6 +218,10 @@ export async function deleteBundleAction(bundleId: string) {
 	await prisma.bundlePodcast.deleteMany({ where: { bundle_id: bundleId } });
 	await prisma.episode.deleteMany({ where: { bundle_id: bundleId } });
 	await prisma.bundle.delete({ where: { bundle_id: bundleId } });
+
+	// Revalidate relevant caches
+	revalidateTag("curated_bundles");
+	revalidateTag("BundlePanel_in_Admin");
 
 	return { success: true };
 }

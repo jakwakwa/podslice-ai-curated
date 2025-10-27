@@ -1,5 +1,6 @@
 // Shared Gemini client + helpers (migrated to @google/genai)
 import { GoogleGenAI } from "@google/genai";
+import { templateLiteral } from "zod/v4";
 
 let _client: GoogleGenAI | null = null;
 
@@ -36,10 +37,12 @@ export interface AudioGenerateOptions {
 export async function generateTtsAudio(text: string, opts?: AudioGenerateOptions): Promise<Buffer> {
 	const client = getClient();
 	const model = opts?.model || process.env.GEMINI_TTS_MODEL || "gemini-2.5-flash-preview-tts";
-	const voiceName = opts?.voiceName || process.env.GEMINI_TTS_VOICE || "Sadachbia";
+	const voiceName = opts?.voiceName || process.env.GEMINI_TTS_VOICE || "Sulafat";
+
 	const response = await client.models.generateContentStream({
 		model,
-		config: { responseModalities: ["audio"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName } } } },
+		
+		config: { temperature: 1.15, responseModalities: ["audio"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName } } } },
 		contents: [{ role: "user", parts: [{ text }] }],
 	});
 	let audio: Buffer | null = null;
