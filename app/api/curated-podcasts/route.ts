@@ -20,8 +20,8 @@ export async function GET(
 			},
 			orderBy: { name: "asc" },
 			cacheStrategy: {
-				swr: 60,
-				ttl: 60000,
+				swr: 90,
+				ttl: 180,
 			},
 		});
 

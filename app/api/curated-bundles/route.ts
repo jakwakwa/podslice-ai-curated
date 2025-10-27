@@ -22,7 +22,7 @@ function resolveAllowedGates(plan: string | null | undefined): PlanGateEnum[] {
 		return [PlanGateEnum.NONE, PlanGateEnum.FREE_SLICE]
 	}
 	// Default: NONE plan or no plan
-	return [PlanGateEnum.NONE]
+	return [PlanGateEnum.FREE_SLICE || PlanGateEnum.NONE]
 }
 
 export async function GET(_request: NextRequest) {
@@ -59,8 +59,8 @@ export async function GET(_request: NextRequest) {
 			orderBy: { created_at: "desc" },
             cacheStrategy: {
                 // Weekly cache; allow background revalidation
-                swr: 3600, // 1 hour SWR window for background refreshes
-                ttl: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
+                swr: 60, // 1 hour SWR window for background refreshes
+                ttl: 120, // 7 days in ms
                 tags: ["curated_bundles"],
             },
 		})
@@ -98,7 +98,11 @@ export async function GET(_request: NextRequest) {
             },
 		})
 
-		const bundles = adminBundles
+        const bundles = adminBundles.map(b => {
+ 
+            const { image_data: _imgData, image_type: _imgType, ...rest } = b as unknown as Record<string, unknown>
+            return rest as BundleWithPodcasts
+        })
 
 		// Transform admin bundles with gating info
 		const transformedAdminBundles = bundles.map(bundle => {
@@ -107,8 +111,8 @@ export async function GET(_request: NextRequest) {
 			const canInteract = allowedGates.some(allowedGate => allowedGate === gate)
 			const lockReason = canInteract ? null : "This bundle requires a higher plan."
 
-			return {
-				...bundle,
+            return {
+                ...bundle,
 				podcasts: bundle.bundle_podcast.map(bp => bp.podcast),
 				canInteract,
 				lockReason,

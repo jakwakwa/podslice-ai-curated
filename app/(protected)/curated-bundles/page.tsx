@@ -77,8 +77,8 @@ export default async function CuratedBundlesPage({
 			},
 			orderBy: { created_at: "desc" },
 			cacheStrategy: {
-				swr: 60,
-				ttl: 120,
+				swr: 90,
+				ttl: 180,
 				tags: ["BundlePanel_in_Admin"],
 			},
 		});
@@ -140,6 +140,7 @@ export default async function CuratedBundlesPage({
 		}));
 
 		// Transform shared bundles to match Bundle interface
+		// @ts-ignore
 		const transformedSharedBundles: BundleWithPodcasts[] = sharedBundles.map(sb => ({
 			// Map shared bundle fields to Bundle interface
 			bundle_id: sb.shared_bundle_id, // Use shared_bundle_id as bundle_id for display
