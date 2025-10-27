@@ -100,18 +100,44 @@ async function fetchUserCurationProfile(
         const profile = await prisma.userCurationProfile.findFirst({
             where: { user_id: userId },
             include: {
+                // We need bundle -> podcasts, but must not pass binary fields to the client
                 selectedBundle: {
                     include: {
-                        bundle_podcast: {
-                            include: { podcast: true }
-                        }
+                        bundle_podcast: { include: { podcast: true } },
                     },
                 },
                 episodes: true,
             },
         });
 
-        return profile as UserCurationProfileWithRelations | null;
+        if (!profile) return null;
+
+        // Shape selectedBundle to exclude binary fields and expose a simple podcasts[] array
+        const rawSelected = (profile as unknown as Record<string, unknown>)
+            .selectedBundle as unknown as (Record<string, unknown> & {
+                bundle_podcast?: Array<{ podcast: unknown }>
+                image_data?: unknown
+                image_type?: unknown
+            }) | null;
+
+        if (!rawSelected) {
+            return profile as unknown as UserCurationProfileWithRelations;
+        }
+
+        const { image_data: _imgData, image_type: _imgType, bundle_podcast, ...rest } = rawSelected;
+        const podcasts = Array.isArray(bundle_podcast)
+            ? bundle_podcast.map(bp => bp.podcast as unknown)
+            : [];
+
+        const shapedSelectedBundle = {
+            ...rest,
+            podcasts,
+        } as unknown;
+
+        return {
+            ...(profile as unknown as UserCurationProfileWithRelations),
+            selectedBundle: shapedSelectedBundle as unknown as UserCurationProfileWithRelations["selectedBundle"],
+        };
     } catch (error) {
         console.error("Failed to fetch user curation profile:", error);
         return null;
@@ -160,6 +186,7 @@ async function fetchUserEpisodes(userId: string): Promise<UserEpisodeWithSignedU
         // Fetch episodes from Prisma
         const episodes = await prisma.userEpisode.findMany({
             where: { user_id: userId },
+            // Only include fields that are needed by RecentEpisodesList and audio player
             select: {
                 episode_id: true,
                 user_id: true,
@@ -168,6 +195,8 @@ async function fetchUserEpisodes(userId: string): Promise<UserEpisodeWithSignedU
                 gcs_audio_url: true,
                 duration_seconds: true,
                 status: true,
+                summary: true,
+                summary_length: true,
                 news_sources: true,
                 news_topic: true,
                 created_at: true,
