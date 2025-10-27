@@ -8,16 +8,16 @@ export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
 	return {
-		title: "Generate My Episodes",
+		title: "Create Your Summary",
 		description: "Create new episodes from YouTube links.",
 	};
 }
 
 export default async function GenerateMyEpisodesPage() {
 	const content = {
-		title: "Generate Episodes",
+		title: "Create Your Summary",
 		description:
-			"Use your YouTube links to create AI-generated summaries. Track your usage and generate new content quickly.",
+			"This is where the real power lies. Found a 2-hour interview or lecture on YouTube? Just paste the link into Podslice. Want to catch up on the latest news? Select your desired sources and topics. Our AI will get to work and create a custom summary (both audio and text) just for you.",
 	} as const;
 
 	return (
