@@ -12,25 +12,26 @@ import {
 } from "@/lib/types/summary-length";
 
 const ALLOWED_SOURCES = [
-	"guardian",
-	"aljazeera",
-	"worldbank",
-	"un",
-	"stocks",
-	"abc",
-	"npr",
-	"dailymaverick",
-	"teslaCrypto",
+	"global",
+	"crypto",
+	"geo",
+	"finance",
+	"us"
+
 ] as const;
 const ALLOWED_TOPICS = [
 	"technology",
 	"business",
-	"bitcoin",
+	"bitcoin and crypto",
 	"politics",
-	"world",
+	"us politics",
+	"world news",
+	"geo-political",
 	"tesla",
-	"finance",
+	"finance"
 ] as const;
+
+
 
 const CreateNewsSchema = z.object({
 	title: z.string().min(2).optional(),

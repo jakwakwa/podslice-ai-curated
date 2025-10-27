@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { extractUserEpisodeDuration } from "@/app/(protected)/admin/audio-duration/duration-extractor";
 import { aiConfig } from "@/config/ai";
-import { combineAndUploadWavChunks, uploadBufferToPrimaryBucket } from "@/lib/inngest/episode-shared";
+import { combineAndUploadWavChunks, uploadBufferToPrimaryBucket, sanitizeSpeakerLabels } from "@/lib/inngest/episode-shared";
 import { generateTtsAudio, generateText as genText } from "@/lib/inngest/utils/genai";
 import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
 import { prisma } from "@/lib/prisma";
@@ -149,7 +149,7 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		
 			const text = await genText(
 				modelName2,
-				`Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) two-host podcast conversation where Podslice hosts A and B explain the highlights to listeners. Alternate speakers naturally.\n\nIdentity & framing:\n- Hosts are from Podslice and are commenting on someone else's content.\n- They do NOT reenact or impersonate the original speakers.\n- They present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly, spoken by A):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken dialogue only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as “the video” or “the episode.”\n\nOutput ONLY valid JSON array of objects with fields: speaker ("A" or "B") and text (string). No markdown.\n\nSUMMARY:\n${summary}`
+				`Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) two-host podcast conversation where Podslice hosts A and B explain the highlights to listeners. Alternate speakers naturally.\n\nIdentity & framing:\n- Hosts are from Podslice and are commenting on someone else's content.\n- They do NOT reenact or impersonate the original speakers.\n- They present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly, spoken by A):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken dialogue only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as “the video” or “the episode.”\n\nOutput ONLY valid JSON array of objects with fields: speaker ("A" or "B") and text (string). The text MUST NOT include any speaker names or labels; only the spoken words. No markdown.\n\nSUMMARY:\n${summary}`
 			);
 			return coerceJsonArray(text);
 		});
@@ -179,7 +179,8 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 					continue;
 				}
 				const voice = line.speaker === "A" ? voiceA : voiceB;
-				const audio = await ttsWithVoice(line.text, voice);
+				const sanitizedText = sanitizeSpeakerLabels(line.text);
+				const audio = await ttsWithVoice(sanitizedText, voice);
 				const chunkFileName = `${tempPath}/line-${i}.wav`;
 				const gcsUrl = await uploadBufferToPrimaryBucket(audio, chunkFileName);
 				urls.push(gcsUrl);
@@ -240,6 +241,7 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 					gcs_audio_url: gcsAudioUrl, 
 					status: "COMPLETED", 
 					duration_seconds: durationSeconds,
+					transcript: duetLines.map(line => sanitizeSpeakerLabels(line.text)).join(' '),
 					progress_message: null, // Clear progress message on completion
 				},
 			});

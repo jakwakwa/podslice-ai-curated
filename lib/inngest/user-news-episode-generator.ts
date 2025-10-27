@@ -9,6 +9,7 @@ import {
 	getTtsChunkWordLimit,
 	splitScriptIntoChunks,
 	uploadBufferToPrimaryBucket,
+	sanitizeSpeakerLabels,
 } from "@/lib/inngest/episode-shared";
 import { generateTtsAudio } from "@/lib/inngest/utils/genai";
 import { prisma } from "@/lib/prisma";
@@ -16,24 +17,22 @@ import { getSummaryLengthConfig } from "@/lib/types/summary-length";
 import { inngest } from "./client";
 
 const ALLOWED_SOURCES = [
-	"guardian",
-	"aljazeera",
-	"worldbank",
-	"un",
-	"stocks",
-	"abc",
-	"npr",
-	"dailymaverick",
-	"teslaCrypto",
+	"global",
+	"crypto",
+		"geo",
+	"finance",
+	"us",
 ] as const;
 const ALLOWED_TOPICS = [
 	"technology",
 	"business",
-	"bitcoin",
+	"bitcoin and crypto",
 	"politics",
-	"world",
+	"us politics",
+	"world news",
+	"geo-political",
 	"tesla",
-	"finance",
+	"finance"
 ] as const;
 
 const PayloadSchema = z.object({
@@ -165,52 +164,109 @@ export const generateUserNewsEpisode = inngest.createFunction(
 		});
 
 		const allowedDomains = {
-			guardian: ["theguardian.com", "theguardian.com/europe", "theguardian.com/world"],
-			aljazeera: ["aljazeera.com"],
-			worldbank: ["worldbank.org"],
-			un: ["news.un.org"],
-			stocks: [
-				"finance.yahoo.com",
-				"tradingview.com/news/",
-				"barrons.com",
-				"bloomberg.com",
+			global: [ "theguardian.com/world","abcnews.go.com", "npr.org", "aljazeera.com", "theguardian.com", "reuters", "bbc.com"],
+			crypto: [
 				"coindesk.com/latest-crypto-news",
-			],
-			abc: ["abcnews.go.com"],
-			npr: ["npr.org"],
-			dailymaverick: ["dailymaverick.co.za"],
-			teslaCrypto: [
-				"finance.yahoo.com",
-				"bloomberg.com",
-				"barrons.com",
-				"tradingview.com/news/",
-				"tesla.com",
 				"coincentral.com",
 				"coindesk.com/price/bitcoin/news",
+				"tradingview.com/news/","finance.yahoo.com",],
+			geo: ["news.un.org", "worldbank.org"],
+			stocks: [
+				"finance.yahoo.com",
+				"aljazeera.com",
+				"abcnews.go.com",
+				"tradingview.com/news/",
+				"barrons.com",
+				"bloomberg.com",
 				"coindesk.com/latest-crypto-news",
+				"coincentral.com",
+				"coindesk.com/price/bitcoin/news"
 			],
+			us: ["theguardian.com/us","abcnews.go.com", "npr.org", "aljazeera.com", "theguardian.com", "reuters"],
+	
 		} as const;
 
 		// Build domain constraints string
 		const domainList = sources.flatMap(src => allowedDomains[src]).join(", ");
 
-		const constraintText = `You are a news researcher tasked with gathering the latest information on the topic "${topic}".
+		// Adaptive research configuration
+		const MIN_REQUIRED = 2; // minimum articles required to proceed without broadening
+		const PRIMARY_LOOKBACK_HOURS = 72; // 3 days preferred
+		const FALLBACK_LOOKBACK_HOURS = 168; // up to 7 days if needed
 
-Search for recent news articles ONLY from these sources: ${domainList}
+		const constraintText = `You are a news researcher. Use the google_search tool.
 
-You MUST respond with valid JSON that follows this exact structure:
+Topic: ${topic}
+Time window: Prefer last ${PRIMARY_LOOKBACK_HOURS} hours. If fewer than ${MIN_REQUIRED} quality articles are found in total, extend up to ${FALLBACK_LOOKBACK_HOURS} hours.
+
+Source policy:
+- PRIORITIZE these sources in this order: ${domainList}
+- If total high-quality coverage from prioritized sources is below ${MIN_REQUIRED}, BROADEN to other reputable outlets (e.g., Reuters, AP, BBC, FT, WSJ, CNBC, The Verge, TechCrunch, Wired, Bloomberg, The Guardian). Keep results topical and recent.
+- When broadening, prefer outlets thematically aligned to the topic, and still include any prioritized-source items found.
+
+Output ONLY valid JSON with this exact shape:
 {
-  "summary_title": "News Summary: [TOPIC]",
-  "sources": [${sources.map(s => `"${s}"`).join(", ")}],
-  "top_headlines": "Comma-separated list of major headlines.",
-  "topic": ["${topic}"],
-  "sentiment": ["Your analysis of overall sentiment: Positive/Neutral/Negative"],
-  "tags": ["Relevant tags based on content analysis"],
-  "target_audience": "Description of likely interested audience segments",
-  "ai_summary": "Comprehensive 200-300 word summary of the key information, trends, and insights from the sources"
+  "summary_title": string,
+  "topic": [string],
+  "top_headlines": string,
+  "sentiment": ["Positive"|"Neutral"|"Negative"],
+  "tags": [string],
+  "target_audience": string,
+  "ai_summary": string,
+  "articles": [
+    { "title": string, "url": string, "domain": string, "published_at": string, "from_priority_source": boolean, "priority_rank": number|null, "relevance": number }
+  ],
+  "source_strategy": {
+    "min_required": ${MIN_REQUIRED},
+    "used_alternative_sources": boolean,
+    "deviation_note": string,
+    "time_window_hours": ${PRIMARY_LOOKBACK_HOURS},
+    "final_time_window_hours": number,
+    "prioritized_sources": [string],
+    "sources_used": [string]
+  }
 }
 
-Research and analyze the latest (current and last 3 days) news on "${topic}" from the specified sources. Fill in each field with appropriate content based on your research.`;
+Instructions:
+- Start with queries against prioritized sources. Use synonyms and related entities for the topic.
+- If not enough, broaden per policy and fill the JSON. Always provide at least ${MIN_REQUIRED} articles if reasonably available on the broader web within the lookback.
+- Do not output markdown fences or commentary.`;
+
+		const fallbackConstraintText = `You are a news researcher. Use the google_search tool.
+
+Topic: ${topic}
+Time window: Prefer last ${PRIMARY_LOOKBACK_HOURS} hours; if needed, extend up to ${FALLBACK_LOOKBACK_HOURS} hours.
+
+Source policy:
+- IGNORE the previously provided source restrictions. Use reputable outlets across the web.
+- Prefer outlets thematically aligned to the topic.
+
+Output ONLY valid JSON with this exact shape:
+{
+  "summary_title": string,
+  "topic": [string],
+  "top_headlines": string,
+  "sentiment": ["Positive"|"Neutral"|"Negative"],
+  "tags": [string],
+  "target_audience": string,
+  "ai_summary": string,
+  "articles": [
+    { "title": string, "url": string, "domain": string, "published_at": string, "from_priority_source": false, "priority_rank": null, "relevance": number }
+  ],
+  "source_strategy": {
+    "min_required": ${MIN_REQUIRED},
+    "used_alternative_sources": true,
+    "deviation_note": "Broadened beyond selected sources due to limited recent coverage.",
+    "time_window_hours": ${PRIMARY_LOOKBACK_HOURS},
+    "final_time_window_hours": number,
+    "prioritized_sources": [${sources.map(s => `"${s}"`).join(", ")}],
+    "sources_used": [string]
+  }
+}
+
+Instructions:
+- Provide at least ${MIN_REQUIRED} relevant articles if reasonably available.
+- Do not output markdown fences or commentary.`;
 
 		const summary = await step.run("generate-news-summary", async () => {
 			await prisma.userEpisode.update({
@@ -251,6 +307,35 @@ Research and analyze the latest (current and last 3 days) news on "${topic}" fro
 					cleanedText = jsonMatch[1]!;
 				}
 			}
+
+			// If too few articles, rerun with broader policy
+			try {
+				const parsed = JSON.parse(cleanedText) as any;
+				const count = Array.isArray(parsed?.articles) ? parsed.articles.length : 0;
+				if (count < MIN_REQUIRED) {
+					const rerun = await generateText({
+						model: vertex(modelId),
+						tools: { google_search: vertex.tools.googleSearch({}) },
+						providerOptions: {
+							google: { thinkingConfig: { includeThoughts: true } },
+						},
+						prompt: fallbackConstraintText,
+					});
+					let rerunText = rerun.text.trim();
+					if (rerunText.startsWith("```json")) {
+						rerunText = rerunText.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+					} else if (rerunText.startsWith("```") ) {
+						rerunText = rerunText.replace(/^```\s*/, "").replace(/\s*```$/, "");
+					} else if (rerunText.includes("```json")) {
+						const m = rerunText.match(/```json\s*(\{[\s\S]*?\})\s*```/);
+						if (m) rerunText = m[1]!;
+					} else if (rerunText.includes("```") ) {
+						const m = rerunText.match(/```\s*(\{[\s\S]*?\})\s*```/);
+						if (m) rerunText = m[1]!;
+					}
+					cleanedText = rerunText;
+				}
+			} catch {}
 
 			return cleanedText;
 		});
@@ -306,6 +391,33 @@ Research and analyze the latest (current and last 3 days) news on "${topic}" fro
 		const [minWords, maxWords] = lengthConfig.words;
 		const [minMinutes, maxMinutes] = lengthConfig.minutes;
 
+		// Guard: avoid TTS if insufficient content after fallback
+		let parsedSummary: any = null;
+		try {
+			parsedSummary = JSON.parse(summary);
+		} catch {}
+		const parsedArticleCount = Array.isArray(parsedSummary?.articles)
+			? parsedSummary.articles.length
+			: 0;
+		const parsedSummaryWordCount = (parsedSummary?.ai_summary || "")
+			.toString()
+			.split(/\s+/)
+			.filter(Boolean).length;
+		if (parsedArticleCount === 0 || parsedSummaryWordCount < 60) {
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: {
+					status: "FAILED",
+					progress_message:
+						"We couldn’t find enough recent coverage. Please try broader sources or another topic.",
+				},
+			});
+			return {
+				message: "Insufficient content; stopped before TTS",
+				userEpisodeId,
+			};
+		}
+
 		if (generationMode === "single") {
 			const script = await step.run("generate-single-script", async () => {
 				await prisma.userEpisode.update({
@@ -322,6 +434,11 @@ Research and analyze the latest (current and last 3 days) news on "${topic}" fro
 					console.warn("Failed to parse summary, using raw text:", error);
 				}
 
+				const disclosureLine = parsedSummary?.source_strategy?.used_alternative_sources
+					? (parsedSummary?.source_strategy?.deviation_note ||
+							"Note: We broadened beyond your selected sources due to limited recent coverage.")
+					: "";
+
 				const { text } = await generateText({
 					model: vertex(modelId),
 					prompt: `Task: Based on the NEWS SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) single-narrator podcast segment where a Podslice host presents the news highlights to listeners.
@@ -333,6 +450,9 @@ Identity & framing:
 
 Brand opener (must be the first line, exactly):
 "Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."
+
+If DISCLOSURE is non-empty, include this exact sentence immediately after the opener:
+DISCLOSURE: ${disclosureLine}
 
 Constraints:
 - No stage directions, no timestamps, no sound effects.
@@ -480,6 +600,11 @@ ${summaryContent}`,
 					console.warn("Failed to parse structured summary, using raw text:", error);
 				}
 
+				const disclosureLine = parsedSummary?.source_strategy?.used_alternative_sources
+					? (parsedSummary?.source_strategy?.deviation_note ||
+							"Note: We broadened beyond your selected sources due to limited recent coverage.")
+					: "";
+
 				const { text } = await generateText({
 					model: vertex(modelId),
 					prompt: `Task: Based on the NEWS SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) two-host podcast conversation where Podslice hosts A and B discuss the news highlights. Alternate speakers naturally.
@@ -492,13 +617,16 @@ Identity & framing:
 Brand opener (must be the first line, exactly, spoken by A):
 "Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."
 
+If DISCLOSURE is non-empty, include this exact one-sentence disclosure as the next line spoken by A:
+DISCLOSURE: ${disclosureLine}
+
 Constraints:
 - No stage directions, no timestamps, no sound effects.
 - Spoken dialogue only.
 - Natural, engaging tone.
 - Avoid sensationalism; stick to facts.
 
-Output ONLY valid JSON array of objects with fields: speaker ("HOST SLICE" or "PODSLICE GUEST") and text (string). No markdown.
+Output ONLY valid JSON array of objects with fields: speaker ("HOST SLICE" or "PODSLICE GUEST") and text (string). The text MUST NOT include any speaker names or labels; only the spoken words. No markdown.
 
 NEWS SUMMARY:
 ${summaryContent}`,
@@ -534,7 +662,8 @@ ${summaryContent}`,
 							},
 						});
 						const voice = line.speaker === "HOST SLICE" ? finalVoiceA : finalVoiceB;
-						const audio = await ttsWithVoice(line.text, voice);
+						const sanitizedText = sanitizeSpeakerLabels(line.text);
+						const audio = await ttsWithVoice(sanitizedText, voice);
 						const chunkFileName = `${tempPath}/line-${i}.wav`;
 						const gcsUrl = await uploadBufferToPrimaryBucket(audio, chunkFileName);
 						urls.push(gcsUrl);
@@ -609,6 +738,7 @@ ${summaryContent}`,
 						gcs_audio_url: gcsAudioUrl,
 						status: "COMPLETED",
 						duration_seconds: durationSeconds,
+						transcript: duetLines.map(line => sanitizeSpeakerLabels(line.text)).join(' '),
 						progress_message: null,
 					},
 				});

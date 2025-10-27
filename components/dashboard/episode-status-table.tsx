@@ -124,7 +124,7 @@ export function EpisodeStatusTable({ defaultExpanded = false }: EpisodeStatusTab
 	}
 
 	return (
-		<div className="mx-4 rounded-md md:rounded-xl bg-sidebar px-4 md:p-6">
+		<div className="mx-2 md:mx-0 border-1 outline-1 outline-ring border-border rounded-md md:rounded-xl bg-bigcard px-4 md:p-6">
 			<div>
 				<div className="flex items-center gap-3 h-20 md:h-12">
 					<div

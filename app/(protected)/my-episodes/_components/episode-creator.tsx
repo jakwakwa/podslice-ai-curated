@@ -87,19 +87,21 @@ export function EpisodeCreator() {
 	// News input state
 	const NEWS_SOURCES = [
 		{ id: "global", label: "Guardian, BBC, Reuters, Al Jazeera" },
-		{ id: "aljazeera", label: "Al Jazeera" },
-		{ id: "teslaCrypto", label: "Tesla / BTC" },
-		{ id: "usa", label: "US News" },
-		{ id: "stocks", label: "Bloomberg, Yahoo!, Coindesk, Barrons, TradingView" },
-		{ id: "un", label: "UN, World Bank" },
+		{ id: "crypto", label: "Coindesk, Coinbase, Bloomberg, Yahoo" },
+		{ id: "us", label: "US News" },
+		{ id: "finance", label: "Bloomberg, Yahoo!, Barrons, Coindesk,TradingView" },
+		{ id: "geo", label: "United Nations, World Bank" },
 	] as const;
 	const TOPICS = [
-		"finance",
-		"tesla",
 		"technology",
 		"business",
+		"bitcoin and crypto",
 		"politics",
-		"world",
+		"us politics",
+		"world news",
+		"geo-political",
+		"tesla",
+		"finance"
 	] as const;
 
 	const [selectedSources, setSelectedSources] = useState<string[]>([]);
