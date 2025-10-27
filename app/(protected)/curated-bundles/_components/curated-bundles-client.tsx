@@ -57,17 +57,17 @@ const PLAN_GATE_META = {
 	NONE: {
 		badgeLabel: "All plans",
 		description: "Available on every Podslice plan.",
-		statusLabel: "Included in your plan",
+		statusLabel: "All plans",
 	},
 	FREE_SLICE: {
 		badgeLabel: "Free Slice+",
 		description: "Requires Free Slice plan or higher.",
-		statusLabel: "Included in Free Slice and above",
+		statusLabel: "Free Slice +",
 	},
 	CASUAL_LISTENER: {
 		badgeLabel: "Casual Listener+",
 		description: "Requires Casual Listener plan or higher.",
-		statusLabel: "Included in Casual Listener and Curate Control",
+		statusLabel: "Casual Listener & Curate Control",
 	},
 	CURATE_CONTROL: {
 		badgeLabel: "Curate Control",
