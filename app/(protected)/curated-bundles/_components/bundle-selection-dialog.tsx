@@ -268,9 +268,9 @@ export function BundleSelectionDialog({
 								}
 								return (
 									<div className="mt-2">
-										<div className="m-0">
+										<span className="m-0">
 											You're about to change your active feed bundle:
-										</div>
+										</span>
 										<br />{" "}
 										<span className="flex items-center gap-1 mt-4 font-light text-sm text-foreground">
 											<span className="font-semibold text-indigo-400 mx-1">

@@ -18,7 +18,7 @@ export { UserRole };
 
 // Custom types that combine Prisma types with relations
 export type UserCurationProfileWithRelations = UserCurationProfile & {
-	selectedBundle?: (Bundle & { podcasts: Podcast[]; episodes: Episode[] }) | null;
+	selectedBundle?: (Bundle & { podcasts: Podcast[] }) | null;
 	episodes: Episode[];
 };
 
