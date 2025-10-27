@@ -198,6 +198,8 @@ export function ensureNodeBuffer(value: unknown): Buffer {
 }
 
 export function sanitizeSpeakerLabels(input: string): string {
-  const re = /^\s*(?:HOST\s*SLICE|PODSLICE\s*GUEST|HOST|GUEST|A|B)\s*[:\-–]\s*/i;
-  return input.replace(re, "").trim();
+  let cleaned = input.replace(/^\s*(?:HOST\s*SLICE|PODSLICE\s*GUEST|HOST|GUEST|A|B)\s*[:\-–]\s*/i, "").trim();
+  // Remove inline references like "A.", "B.", etc.
+  cleaned = cleaned.replace(/\b(?:HOST\s*SLICE|PODSLICE\s*GUEST|HOST|GUEST|A|B)\.(?=\s|$)/gi, "").trim();
+  return cleaned;
 }

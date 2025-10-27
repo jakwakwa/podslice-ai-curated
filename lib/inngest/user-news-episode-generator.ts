@@ -607,27 +607,28 @@ ${summaryContent}`,
 
 				const { text } = await generateText({
 					model: vertex(modelId),
-					prompt: `Task: Based on the NEWS SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) two-host podcast conversation where Podslice hosts A and B discuss the news highlights. Alternate speakers naturally.
-
+					prompt: `Task: Based on the NEWS SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) two-host podcast conversation where Podslice hosts discuss the news highlights. Alternate speakers naturally.
+	
 Identity & framing:
 - Hosts are from Podslice presenting recent news.
 - They discuss and provide context on key stories.
 - Maintain journalistic objectivity while being conversational.
-
-Brand opener (must be the first line, exactly, spoken by A):
+	
+Brand opener (must be the first line, exactly, spoken by HOST SLICE):
 "Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."
-
-If DISCLOSURE is non-empty, include this exact one-sentence disclosure as the next line spoken by A:
+	
+If DISCLOSURE is non-empty, include this exact one-sentence disclosure as the next line spoken by HOST SLICE:
 DISCLOSURE: ${disclosureLine}
-
+	
 Constraints:
 - No stage directions, no timestamps, no sound effects.
 - Spoken dialogue only.
 - Natural, engaging tone.
 - Avoid sensationalism; stick to facts.
-
+- Do not include any speaker names, labels, or direct addresses in the text (e.g., no 'HOST SLICE', 'PODSLICE GUEST', 'A', 'B', 'Hey Host'). The hosts should discuss the content without referencing each other by name or label.
+	
 Output ONLY valid JSON array of objects with fields: speaker ("HOST SLICE" or "PODSLICE GUEST") and text (string). The text MUST NOT include any speaker names or labels; only the spoken words. No markdown.
-
+	
 NEWS SUMMARY:
 ${summaryContent}`,
 				});
