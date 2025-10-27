@@ -79,6 +79,59 @@ function coerceJsonArray(input: string): DialogueLine[] {
 	throw new Error("Failed to parse dialogue script");
 }
 
+function buildConciseDisclosure(topic: string, parsedSummary: any): string {
+	try {
+		const usedFallback = Boolean(
+			parsedSummary?.source_strategy?.used_alternative_sources
+		);
+		if (!usedFallback) return "";
+
+		const articleList: Array<any> = Array.isArray(parsedSummary?.articles)
+			? parsedSummary.articles
+			: [];
+
+		const skipHosts = new Set([
+			"vertexaisearch.cloud.google.com",
+			"google.com",
+			"news.google.com",
+		]);
+
+		function normalizeHost(host?: string): string | undefined {
+			if (!host) return undefined;
+			let h = host.toLowerCase();
+			if (h.startsWith("www.")) h = h.slice(4);
+			if (skipHosts.has(h)) return undefined;
+			return h;
+		}
+
+		const fallbackDomains: string[] = [];
+		for (const art of articleList) {
+			if (fallbackDomains.length >= 3) break;
+			if (art?.from_priority_source === false) {
+				let domain: string | undefined = normalizeHost(art?.domain);
+				if (!domain && typeof art?.url === "string") {
+					try {
+						const u = new URL(art.url);
+						domain = normalizeHost(u.hostname);
+					} catch {}
+				}
+				if (domain && !fallbackDomains.includes(domain)) {
+					fallbackDomains.push(domain);
+				}
+			}
+		}
+
+		const topicText = (topic || "").toString();
+		const listText =
+			fallbackDomains.length > 0
+				? ` like ${fallbackDomains.join(", ")}`
+				: "";
+		return `No recent news articles about '${topicText}' were found from the specified sources; fallback sources were used${listText}.`;
+	} catch {
+		return "";
+	}
+}
+
 export const generateUserNewsEpisode = inngest.createFunction(
 	{
 		id: "generate-user-news-episode-workflow",
@@ -171,7 +224,7 @@ export const generateUserNewsEpisode = inngest.createFunction(
 				"coindesk.com/price/bitcoin/news",
 				"tradingview.com/news/","finance.yahoo.com",],
 			geo: ["news.un.org", "worldbank.org"],
-			stocks: [
+			finance: [
 				"finance.yahoo.com",
 				"aljazeera.com",
 				"abcnews.go.com",
@@ -183,7 +236,7 @@ export const generateUserNewsEpisode = inngest.createFunction(
 				"coindesk.com/price/bitcoin/news"
 			],
 			us: ["theguardian.com/us","abcnews.go.com", "npr.org", "aljazeera.com", "theguardian.com", "reuters"],
-	
+		
 		} as const;
 
 		// Build domain constraints string
@@ -434,10 +487,7 @@ Instructions:
 					console.warn("Failed to parse summary, using raw text:", error);
 				}
 
-				const disclosureLine = parsedSummary?.source_strategy?.used_alternative_sources
-					? (parsedSummary?.source_strategy?.deviation_note ||
-							"Note: We broadened beyond your selected sources due to limited recent coverage.")
-					: "";
+				const disclosureLine = buildConciseDisclosure(topic, parsedSummary);
 
 				const { text } = await generateText({
 					model: vertex(modelId),
@@ -452,7 +502,7 @@ Brand opener (must be the first line, exactly):
 "Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."
 
 If DISCLOSURE is non-empty, include this exact sentence immediately after the opener:
-DISCLOSURE: ${disclosureLine}
+${disclosureLine}
 
 Constraints:
 - No stage directions, no timestamps, no sound effects.
@@ -600,10 +650,7 @@ ${summaryContent}`,
 					console.warn("Failed to parse structured summary, using raw text:", error);
 				}
 
-				const disclosureLine = parsedSummary?.source_strategy?.used_alternative_sources
-					? (parsedSummary?.source_strategy?.deviation_note ||
-							"Note: We broadened beyond your selected sources due to limited recent coverage.")
-					: "";
+				const disclosureLine = buildConciseDisclosure(topic, parsedSummary);
 
 				const { text } = await generateText({
 					model: vertex(modelId),
@@ -618,7 +665,7 @@ Brand opener (must be the first line, exactly, spoken by HOST SLICE):
 "Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."
 	
 If DISCLOSURE is non-empty, include this exact one-sentence disclosure as the next line spoken by HOST SLICE:
-DISCLOSURE: ${disclosureLine}
+${disclosureLine}
 	
 Constraints:
 - No stage directions, no timestamps, no sound effects.
