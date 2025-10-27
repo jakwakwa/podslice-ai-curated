@@ -42,7 +42,7 @@ export async function generateTtsAudio(text: string, opts?: AudioGenerateOptions
 	const response = await client.models.generateContentStream({
 		model,
 		
-		config: { temperature: 1.02, responseModalities: ["audio"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName } } } },
+		config: { temperature: 1.1, responseModalities: ["audio"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName } } } },
 		contents: [{ role: "user", parts: [{ text }] }],
 	});
 	let audio: Buffer | null = null;

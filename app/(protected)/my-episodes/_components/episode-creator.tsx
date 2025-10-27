@@ -109,8 +109,8 @@ export function EpisodeCreator() {
 
 	// Generation options
 	const [generationMode, setGenerationMode] = useState<"single" | "multi">("single");
-	const [voiceA, setVoiceA] = useState<string>("Enceladus");
-	const [voiceB, setVoiceB] = useState<string>("Kore");
+	const [voiceA, setVoiceA] = useState<string>("Rasalgethi");
+	const [voiceB, setVoiceB] = useState<string>("Sulafat");
 	const [isPlaying, setIsPlaying] = useState<string | null>(null);
 	const [isLoadingSample, setIsLoadingSample] = useState<string | null>(null);
 	const [audioUrlCache, setAudioUrlCache] = useState<Record<string, string>>({});
