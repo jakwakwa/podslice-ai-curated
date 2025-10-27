@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PageHeader } from "@/components/ui/page-header";
 import {
 	Select,
 	SelectContent,
@@ -452,11 +451,7 @@ export function EpisodeCreator() {
 	return (
 		<div className="w-full  bg-bigcard h-auto mb-0 px-0 py-0 md:px-8 md:py-8 lg:px-10 lg:py-6  rounded-lg  shadow-lg">
 			<div className="w-full flex flex-col gap-3 md:gap-8 md:w-full md:min-w-full md:max-w-full">
-				<PageHeader
-					title="Create Episode"
-					className="pt-0"
-					description="Generate a summary (text and podcast styled audio overview) of any podcast show's episode using a YouTube video link OR choose a news topic and source and we will generate the audio and summary for you."
-				/>
+
 
 				<div className="w-full py-8 px-4 md:p-0 ">
 					{/* <ComponentSpinner isLabel={false} /> */}
