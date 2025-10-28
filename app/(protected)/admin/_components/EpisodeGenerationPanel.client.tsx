@@ -60,7 +60,7 @@ export default function EpisodeGenerationPanelClient({
 	if (!hasBundles) {
 		return (
 			<div className="p-6">
-				<Card>
+				<Card variant="dunk">
 					<PanelHeader
 						title="No bundles found"
 						description="Create a bundle before generating or uploading episodes."
@@ -114,7 +114,7 @@ export default function EpisodeGenerationPanelClient({
 	return (
 		<div className="flex flex-col gap-6 mt-6 space-y-6">
 			{/* Step 1: Select bundle (always visible) */}
-			<Card>
+			<Card variant="dunk">
 				<PanelHeader
 					title={
 						<div className="flex items-center gap-2 my-4">
@@ -152,7 +152,7 @@ export default function EpisodeGenerationPanelClient({
 						<div className="flex bg-violet-900/30  border-3 border-ring/50 shadow-md flex-col gap-1 mt-0 p-4 rounded-lg">
 							<h4 className="font-semibold text-azure-400">{selectedBundle.name}</h4>
 
-							<div className="flex flex-wrap gap-2 max-w-80 my-2">
+							<div className="flex flex-wrap gap-2  my-2">
 								{selectedBundle.podcasts.map(p => (
 									<Badge key={p.podcast_id} variant="secondary">
 										{p.name}
@@ -166,7 +166,7 @@ export default function EpisodeGenerationPanelClient({
 
 			{/* Step 1.5: Select podcast (only when a bundle is selected) */}
 			{selectedBundleId && selectedBundle && (
-				<Card>
+				<Card variant="dunk">
 					<PanelHeader
 						title={
 							<div className="flex items-center gap-2">
@@ -204,7 +204,7 @@ export default function EpisodeGenerationPanelClient({
 
 			{/* Step 3: Method + contextual fields (only when a bundle is selected) */}
 			{selectedBundleId && (
-				<Card>
+				<Card variant="dunk">
 					<PanelHeader
 						title={
 							<div className="flex items-center gap-2">

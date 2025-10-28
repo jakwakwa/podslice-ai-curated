@@ -61,6 +61,8 @@ export default function BundlesPanelClient({
 		selectedPodcastIds: [] as string[],
 	});
 	const [isCreating, setIsCreating] = useState(false);
+	const [_createImageFile, setCreateImageFile] = useState<File | null>(null);
+	const [createImagePreview, setCreateImagePreview] = useState<string | null>(null);
 
 	// EDIT form state - now inline instead of modal
 	const [editingBundleId, setEditingBundleId] = useState<string | null>(null);
@@ -70,10 +72,18 @@ export default function BundlesPanelClient({
 		min_plan: "NONE",
 		selectedPodcastIds: [] as string[],
 	});
+	const [editImageFile, setEditImageFile] = useState<File | null>(null);
+	const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
+	const [failedBundleImages, setFailedBundleImages] = useState<Set<string>>(new Set());
 
 	useEffect(() => {
 		loadPlanGates();
 	}, [loadPlanGates]);
+
+	// Handle image loading errors
+	const handleImageError = (bundleId: string) => {
+		setFailedBundleImages(prev => new Set(prev).add(bundleId));
+	};
 
 	// Helpers
 	const optimisticBundle = (
@@ -93,22 +103,90 @@ export default function BundlesPanelClient({
 		}));
 	};
 
+	// Handle image selection for create form
+	const handleCreateImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (file) {
+			setCreateImageFile(file);
+			const reader = new FileReader();
+			reader.onloadend = () => {
+				setCreateImagePreview(reader.result as string);
+			};
+			reader.readAsDataURL(file);
+		}
+	};
+
+	// Handle image selection for edit form
+	const handleEditImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (file) {
+			setEditImageFile(file);
+			const reader = new FileReader();
+			reader.onloadend = () => {
+				setEditImagePreview(reader.result as string);
+			};
+			reader.readAsDataURL(file);
+		}
+	};
+
+	// Upload image to database
+	const uploadImage = async (
+		file: File,
+		bundleId?: string
+	): Promise<{ imageData: string; imageType: string; url: string } | null> => {
+		try {
+			const formData = new FormData();
+			formData.append("file", file);
+			if (bundleId) {
+				formData.append("bundleId", bundleId);
+			}
+
+			const response = await fetch("/api/admin/upload-bundle-image", {
+				method: "POST",
+				body: formData,
+			});
+
+			if (!response.ok) {
+				const error = await response.json();
+				throw new Error(error.message || "Failed to upload image");
+			}
+
+			const result = await response.json();
+			return {
+				imageData: result.imageData || result.dataUrl,
+				imageType: result.imageType,
+				url: result.url || result.dataUrl,
+			};
+		} catch (error) {
+			console.error("Image upload error:", error);
+			toast.error("Failed to upload image");
+			return null;
+		}
+	};
+
 	const doCreate = async () => {
 		if (!createForm.name.trim()) return;
-		const form = new FormData();
-		form.set("name", createForm.name.trim());
-		form.set("description", createForm.description.trim());
-		form.set("min_plan", createForm.min_plan);
-		createForm.selectedPodcastIds.forEach(id => form.append("podcast_ids", id));
+
 		try {
 			setIsCreating(true);
+
+			const form = new FormData();
+			form.set("name", createForm.name.trim());
+			form.set("description", createForm.description.trim());
+			form.set("min_plan", createForm.min_plan);
+			createForm.selectedPodcastIds.forEach(id => form.append("podcast_ids", id));
+
 			await createBundleAction(form);
+
+			// Reset form
 			setCreateForm({
 				name: "",
 				description: "No description",
 				min_plan: "NONE",
 				selectedPodcastIds: [],
 			});
+			setCreateImageFile(null);
+			setCreateImagePreview(null);
 			setShowCreateForm(false);
 			router.refresh();
 		} catch (e) {
@@ -128,6 +206,8 @@ export default function BundlesPanelClient({
 			min_plan: (b.min_plan as string) || "NONE",
 			selectedPodcastIds: b.podcasts.map(p => p.podcast_id),
 		});
+		setEditImageFile(null);
+		setEditImagePreview(null);
 	};
 
 	const cancelEdit = () => {
@@ -138,6 +218,8 @@ export default function BundlesPanelClient({
 			min_plan: "NONE",
 			selectedPodcastIds: [],
 		});
+		setEditImageFile(null);
+		setEditImagePreview(null);
 	};
 
 	const toggleEditPodcastSelection = (id: string) => {
@@ -154,26 +236,46 @@ export default function BundlesPanelClient({
 		const id = editingBundleId;
 		const prevSnapshot = optimistic[id];
 		startTransition(async () => {
-			// Optimistic UI update
-			setOptimistic(prev => ({
-				...prev,
-				[id]: {
-					...(prev[id] || {}),
-					name: editForm.name,
-					description: editForm.description,
-					podcasts: availablePodcasts.filter(p =>
-						editForm.selectedPodcastIds.includes(p.podcast_id)
-					),
-				},
-			}));
 			try {
+				// Upload new image if selected
+				let imageData: string | undefined;
+				let imageType: string | undefined;
+				let imageUrl = ""; // No longer using image_url from state
+
+				if (editImageFile) {
+					const uploadResult = await uploadImage(editImageFile, id);
+					if (uploadResult) {
+						imageData = uploadResult.imageData;
+						imageType = uploadResult.imageType;
+						imageUrl = uploadResult.url;
+					}
+				}
+
+				// Optimistic UI update
+				setOptimistic(prev => ({
+					...prev,
+					[id]: {
+						...(prev[id] || {}),
+						name: editForm.name,
+						description: editForm.description,
+						podcasts: availablePodcasts.filter(p =>
+							editForm.selectedPodcastIds.includes(p.podcast_id)
+						),
+					},
+				}));
+
 				await updateBundleAction(id, {
 					name: editForm.name,
 					description: editForm.description,
+					...(imageData && imageType
+						? { image_data: imageData, image_type: imageType }
+						: {}),
 					min_plan: editForm.min_plan,
 					podcastIds: editForm.selectedPodcastIds,
 				});
 				setEditingBundleId(null);
+				setEditImageFile(null);
+				setEditImagePreview(null);
 				toast.success("Bundle updated");
 				router.refresh();
 			} catch (e) {
@@ -211,7 +313,7 @@ export default function BundlesPanelClient({
 		bundles.length === 0 ? "Add your first bundle" : "Add Another Bundle";
 
 	return (
-		<Card variant="bundle">
+		<Card variant="dunk">
 			<PanelHeader
 				title="Bundle Management"
 				description="Create new bundles and manage existing ones"
@@ -221,7 +323,12 @@ export default function BundlesPanelClient({
 				}}
 				secondaryButton={{
 					label: "Refresh",
-					onClick: () => router.refresh(),
+					onClick: async () => {
+						try {
+							await fetch("/api/admin/revalidate-bundles", { method: "POST" })
+						} catch { }
+						router.refresh()
+					},
 				}}
 			/>
 			<CardContent className="flex rounded-2xl flex-col gap-4 p-4 space-y-6">
@@ -230,13 +337,32 @@ export default function BundlesPanelClient({
 					<div className="space-y-3 p-4 border rounded-lg w-full max-w-[500px]">
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<div>
-								<Label htmlFor="bundleName">Bundle Names</Label>
+								<Label htmlFor="bundleName">Bundle Name</Label>
 								<Input
 									id="bundleName"
 									value={createForm.name}
 									onChange={e => setCreateForm(s => ({ ...s, name: e.target.value }))}
 									placeholder="e.g., Tech Weekly"
 								/>
+							</div>
+
+							<div>
+								<Label htmlFor="bundleImage">Bundle Image</Label>
+								<Input
+									id="bundleImage"
+									type="file"
+									accept="image/*"
+									onChange={handleCreateImageChange}
+								/>
+								{createImagePreview && (
+									<div className="mt-2">
+										<img
+											src={createImagePreview}
+											alt="Preview"
+											className="w-20 h-20 object-cover rounded"
+										/>
+									</div>
+								)}
 							</div>
 
 							<div className="md:col-span-2 max-h-[180px] overflow-y-auto">
@@ -316,17 +442,31 @@ export default function BundlesPanelClient({
 								className={`episode-card-wrapper p-4 border rounded-lg ${bundleOriginal.canInteract === false ? "opacity-60" : ""}`}>
 								{/* Header */}
 								<div className="flex items-start gap-2 justify-between mb-0 w-full">
+									{bundle.bundle_id && !failedBundleImages.has(bundle.bundle_id) ? (
+										<img
+											src={`/api/bundles/${bundle.bundle_id}/image`}
+											alt={bundle.name}
+											width={64}
+											height={64}
+											className="w-16 h-16 object-cover rounded mr-3"
+											onError={() => handleImageError(bundle.bundle_id)}
+										/>
+									) : (
+										<div className="w-16 h-16 bg-muted rounded mr-3 flex items-center justify-center">
+											<span className="text-muted-foreground text-xs">No Image</span>
+										</div>
+									)}
 									<div className="flex-1">
-										<p className="text-primary/70 text-custom-sm font-semibold">
+										<p className="text-primary-foreground text-custom-sm font-semibold">
 											{bundle.name}
 										</p>
 
-										<div className="flex flex-wrap flex-col items-star  text-left justify-start w-full t my-2 gap-2">
+										<div className="flex items-start text-left justify-start  flex-wrap flex-row w-full t my-2 gap-2 ">
 											{bundle.podcasts.map(p => (
 												<Badge
 													key={p.podcast_id}
 													variant="outline"
-													className="text-xxs text-foreground inline-flex items-center w-full text-left p-2 m-0">
+													className="text-xxs text-foreground inline-flex items-center font-semibold justify-start text-left p-2 m-0">
 													{p.name}
 												</Badge>
 											))}
@@ -334,15 +474,15 @@ export default function BundlesPanelClient({
 									</div>
 									{/* Actions */}
 								</div>
-								<div className="flex items-center gap-2">
+								<div className="flex items-center gap-2 mt-3">
 									{isEditing ? (
 										<>
-											<Button variant="outline" size="xs" onClick={cancelEdit}>
+											<Button variant="outline" size="sm" className="border-border border-1 outline-1 outline-white/20" onClick={cancelEdit}>
 												Cancel
 											</Button>
 											<Button
-												variant="secondary"
-												className="my-4"
+												variant="default"
+												className="border-border border-1 outline-1 outline-white/20"
 												size="sm"
 												onClick={saveEdit}
 												disabled={isPending || !editForm.name.trim()}>
@@ -369,7 +509,7 @@ export default function BundlesPanelClient({
 								</div>
 								{/* EDIT FORM - inline when editing */}
 								{isEditing && (
-									<div className="flex flex-col mt-4 p-4 border rounded-lg bg-muted/50">
+									<div className="flex flex-col mt-4 p-4 border rounded-lg episode-card-wrapper-dark">
 										<div className="flex flex-col gap-4 mb-4">
 											<div>
 												<Label htmlFor="editName">Name</Label>
@@ -380,6 +520,27 @@ export default function BundlesPanelClient({
 														setEditForm(s => ({ ...s, name: e.target.value }))
 													}
 												/>
+											</div>
+											<div>
+												<Label htmlFor="editImage">Bundle Image</Label>
+												<Input
+													id="editImage"
+													type="file"
+													accept="image/*"
+													onChange={handleEditImageChange}
+												/>
+												{editImagePreview || (!failedBundleImages.has(bundle.bundle_id) && bundle.bundle_id) ? (
+													<div className="mt-2">
+														<img
+															src={editImagePreview || `/api/bundles/${bundle.bundle_id}/image`}
+															alt="Current"
+															width={80}
+															height={80}
+															className="w-20 h-20 object-cover rounded"
+															onError={() => handleImageError(bundle.bundle_id)}
+														/>
+													</div>
+												) : null}
 											</div>
 											<div>
 												<Label htmlFor="editDescription">Description</Label>

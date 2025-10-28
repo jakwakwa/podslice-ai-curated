@@ -1,5 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import { dark, shadcn } from "@clerk/themes";
+import { dark, shadesOfPurple } from "@clerk/themes";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -89,14 +89,14 @@ export default function RootLayout({
 				<ClerkProvider
 					publishableKey={clerkPublishableKey || ""}
 					appearance={{
-						baseTheme: [dark, shadcn],
+						baseTheme: [dark, shadesOfPurple],
 						variables: { colorPrimary: "aqua" },
 						signIn: {
-							baseTheme: [shadcn],
+							baseTheme: [shadesOfPurple],
 							variables: { colorPrimary: "lightseagreen" },
 						},
 						signUp: {
-							baseTheme: [shadcn],
+							baseTheme: [shadesOfPurple],
 							variables: { colorPrimary: "lightseagreen" },
 						},
 					}}>

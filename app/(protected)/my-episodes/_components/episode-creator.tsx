@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PageHeader } from "@/components/ui/page-header";
 import {
 	Select,
 	SelectContent,
@@ -88,19 +87,21 @@ export function EpisodeCreator() {
 	// News input state
 	const NEWS_SOURCES = [
 		{ id: "global", label: "Guardian, BBC, Reuters, Al Jazeera" },
-		{ id: "aljazeera", label: "Al Jazeera" },
-		{ id: "teslaCrypto", label: "Tesla / BTC" },
-		{ id: "usa", label: "US News" },
-		{ id: "stocks", label: "Bloomberg, Yahoo!, Coindesk, Barrons, TradingView" },
-		{ id: "un", label: "UN, World Bank" },
+		{ id: "crypto", label: "Coindesk, Coinbase, Bloomberg, Yahoo" },
+		{ id: "us", label: "US News" },
+		{ id: "finance", label: "Bloomberg, Yahoo!, Barrons, Coindesk,TradingView" },
+		{ id: "geo", label: "United Nations, World Bank" },
 	] as const;
 	const TOPICS = [
-		"finance",
-		"tesla",
 		"technology",
 		"business",
+		"bitcoin and crypto",
 		"politics",
-		"world",
+		"us politics",
+		"world news",
+		"geo-political",
+		"tesla",
+		"finance"
 	] as const;
 
 	const [selectedSources, setSelectedSources] = useState<string[]>([]);
@@ -108,8 +109,8 @@ export function EpisodeCreator() {
 
 	// Generation options
 	const [generationMode, setGenerationMode] = useState<"single" | "multi">("single");
-	const [voiceA, setVoiceA] = useState<string>("Enceladus");
-	const [voiceB, setVoiceB] = useState<string>("Kore");
+	const [voiceA, setVoiceA] = useState<string>("Rasalgethi");
+	const [voiceB, setVoiceB] = useState<string>("Sulafat");
 	const [isPlaying, setIsPlaying] = useState<string | null>(null);
 	const [isLoadingSample, setIsLoadingSample] = useState<string | null>(null);
 	const [audioUrlCache, setAudioUrlCache] = useState<Record<string, string>>({});
@@ -452,11 +453,7 @@ export function EpisodeCreator() {
 	return (
 		<div className="w-full  bg-bigcard h-auto mb-0 px-0 py-0 md:px-8 md:py-8 lg:px-10 lg:py-6  rounded-lg  shadow-lg">
 			<div className="w-full flex flex-col gap-3 md:gap-8 md:w-full md:min-w-full md:max-w-full">
-				<PageHeader
-					title="Create Episode"
-					className="pt-0"
-					description="Generate a summary (text and podcast styled audio overview) of any podcast show's episode using a YouTube video link OR choose a news topic and source and we will generate the audio and summary for you."
-				/>
+
 
 				<div className="w-full py-8 px-4 md:p-0 ">
 					{/* <ComponentSpinner isLabel={false} /> */}

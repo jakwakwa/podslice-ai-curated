@@ -20,7 +20,6 @@
 		"inngest": "inngest dev",
 		"format": "biome format --write .",
 		"format:fix": "biome format --write . && biome lint --write .",
-		"caching": "ts-node ./src/caching.ts",
 		"test:db:deploy": "bash -lc 'set -a; [ -f .env.test ] && source .env.test; set +a; DATABASE_URL=${TEST_POSTGRES_PRISMA_URL:-$TEST_DATABASE_URL} pnpm prisma migrate deploy'",
 		"test": "vitest run",
 		"test:watch": "vitest --watch",

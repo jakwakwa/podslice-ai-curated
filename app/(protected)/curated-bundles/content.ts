@@ -7,12 +7,12 @@ export const curatedBundlesPageContent = {
 	header: {
 		title: "Explore Bundles",
 		description:
-			"Choose from our pre-curated podcast bundles created by our AI or discover bundles shared by other users. Each bundle is linked to a group of podcast shows. Each week we generate a new bundle of freshly generated summaries from the previous week's curated selection of shows.",
+			`Get summaries from popular shows and channels we've already curated for you. Just subscribe to our Bundles. (e.g., "All in Ai," "Top Shows Bundle," or "Finance Fast-Track"), and new audio and text summaries will appear in your feed automatically`,
 	},
 	filters: {
-		searchPlaceholder: "Search bundles or podcasts...",
+		searchPlaceholder: "Search a topic or show...",
 		searchLabel: "Search bundles or podcasts",
-		planLabel: "Minimum plan",
+		planLabel: "Filter by Plan",
 		allPlansLabel: "All plans",
 		buttons: {
 			search: "Search",

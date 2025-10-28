@@ -68,7 +68,7 @@ export function EpisodeReadyEmail({
 					textAlign: "center",
 				}}
 			>
-				Your custom episode has been generated and is ready for you to enjoy.
+				Your custom summary has been generated and is ready for you to enjoy.
 			</Text>
 
 			<Text

@@ -1,7 +1,6 @@
 "use client";
 
 import { InfoIcon } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -44,11 +43,11 @@ export function SummaryLengthSelector({
 					<div
 						key={key}
 						className={cn(
-							"m-0  flex  flex-row items-center justify-start px-4 py-0 h-18  md:h-11 gap-3 rounded-lg bg-cyan-700/10 border transition-color duration-300 ease-in-out relative",
+							"m-0  flex  flex-row items-center justify-start px-4 py-0 h-18  md:h-11 gap-3 rounded-lg bg-slate-700 border transition-color duration-300 ease-in-out relative",
 							value === key
-								? "bg-accent/10 outline-1 outline-violet-700"
+								? "bg-[var(--kwak-4)] outline-2 outline-teal-400"
 								: "border-border hover:bg-accent/80",
-							disabled && "opacity-50 bg-accent-10 cursor-not-allowed"
+							disabled && "opacity-90 bg-accent-10 cursor-not-allowed"
 						)}>
 						<RadioGroupItem value={key} id={key} disabled={disabled} className="mt-0" />
 						<div className=" items-center h-12 ">
@@ -62,7 +61,7 @@ export function SummaryLengthSelector({
 
 								<Tooltip>
 									<TooltipTrigger>
-										<InfoIcon className="text-xs absolute top-7 right-4" size={16} />
+										<InfoIcon className="text-xs absolute top-7 md:top-3 right-4" size={16} />
 										<span className="hidden">Hover</span>
 									</TooltipTrigger>
 									<TooltipContent className="bg-white ">

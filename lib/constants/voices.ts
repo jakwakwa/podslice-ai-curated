@@ -16,8 +16,8 @@ export const VOICE_OPTIONS = [
 		sample: "This is a quick voice sample for your episode.",
 	},
 	{
-		name: "Enceladus",
-		label: "Enceladus — Breathy Low pitch",
+		name: "Rasalgethi",
+		label: "Rasalgethi — Informative",
 		sample: "Ready to learn something awesome today?",
 	},
 	{

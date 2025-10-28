@@ -152,21 +152,25 @@ export default function PodcastsPanelClient({ podcasts }: { podcasts: Podcast[] 
 	}
 
 	return (
-		<Card>
-			<PanelHeader
-				title={`Podcasts (${podcasts.length})`}
-				description="Create, edit, and manage curated podcasts"
-				actionButton={{
-					label: showCreateForm ? "Hide" : podcasts.length === 0 ? "Add your first podcast" : "Add another podcast",
-					onClick: () => setShowCreateForm(s => !s),
-				}}
-			/>
-			<CardContent className="p-4 space-y-6">
-				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+		<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+
+			<Card className="bg-dunk max-w-[40vw]" >
+				<PanelHeader
+					title={`Podcasts (${podcasts.length})`}
+					description="Create, edit, and manage curated podcasts"
+					actionButton={{
+						label: showCreateForm ? "Hide" : podcasts.length === 0 ? "Add your first podcast" : "Add another podcast",
+						onClick: () => setShowCreateForm(s => !s),
+					}}
+				/>
+				{podcasts.length === 0 && <p className="text-center text-muted-foreground py-4">No podcasts yet.</p>}
+				<div className="p-4 space-y-6 w-full" >
+
 					{/* Left: create form (toggle) */}
 					{showCreateForm && (
-						<div className="space-y-3 p-4 border rounded-lg">
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div className="w-full p-4 border rounded-lg">
+							<div className="flex flex-col gap-4">
 								<div>
 									<Label htmlFor="podName">Name</Label>
 									<Input id="podName" value={createForm.name} onChange={e => setCreateForm(s => ({ ...s, name: e.target.value }))} placeholder="e.g., The Daily" />
@@ -194,83 +198,87 @@ export default function PodcastsPanelClient({ podcasts }: { podcasts: Podcast[] 
 						</div>
 					)}
 
-					{/* Right: list */}
-					<div className="space-y-3">
-						{podcasts.map((podcast: Podcast) => {
-							const p = optimisticPodcast(podcast)
-							return (
-								<div key={p.podcast_id} className="p-3 border rounded-lg ">
-									{/* Row 1: title */}
-									<div className="mb-2">
-										<h4 className="font-medium truncate">{p.name}</h4>
-									</div>
-									{/* Row 2: link icon left, status badge right */}
-									<div className="flex items-center justify-between mb-3">
-										<Button type="button" variant="ghost" size="sm" onClick={() => copyUrl(p.url)} title="Copy feed URL" aria-label="Copy feed URL">
-											<Link2 className="w-4 h-4" />
-										</Button>
-										<Badge variant={p.is_active ? "default" : "default"}>
-											{p.is_active ? "Active" : "Inactive"}
-										</Badge>
-									</div>
-									{/* Row 3: actions */}
-									<div className="flex items-center gap-2">
-										<Dialog open={editOpen && editingPodcastId === p.podcast_id} onOpenChange={o => !o && setEditOpen(false)}>
-											<DialogTrigger asChild>
-												<Button variant="ghost" size="sm" onClick={() => openEdit(p)}>
-													Edit
-												</Button>
-											</DialogTrigger>
-											<DialogContent>
-												<DialogHeader>
-													<DialogTitle>Edit podcast</DialogTitle>
-												</DialogHeader>
-												<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-													<div>
-														<Label htmlFor="editName">Name</Label>
-														<Input id="editName" value={editForm.name} onChange={e => setEditForm(s => ({ ...s, name: e.target.value }))} />
-													</div>
-													<div>
-														<Label htmlFor="editUrl">Feed URL</Label>
-														<Input id="editUrl" value={editForm.url} onChange={e => setEditForm(s => ({ ...s, url: e.target.value }))} />
-													</div>
-													<div className="">
-														<Label htmlFor="editDesc">Description</Label>
-														<Textarea id="editDesc" rows={2} value={editForm.description} onChange={e => setEditForm(s => ({ ...s, description: e.target.value }))} />
-													</div>
-													<div>
-														<Label htmlFor="editImg">Image URL</Label>
-														<Input id="editImg" value={editForm.image_url} onChange={e => setEditForm(s => ({ ...s, image_url: e.target.value }))} />
-													</div>
-													<div>
-														<Label htmlFor="editCat">Category</Label>
-														<Input id="editCat" value={editForm.category} onChange={e => setEditForm(s => ({ ...s, category: e.target.value }))} />
-													</div>
-												</div>
-												<DialogFooter>
-													<Button variant="outline" size="md" onClick={() => setEditOpen(false)}>
-														Cancel
-													</Button>
-													<Button variant="default" onClick={saveEdit} disabled={isPending || !editForm.name.trim() || !editForm.url.trim()}>
-														Save
-													</Button>
-												</DialogFooter>
-											</DialogContent>
-										</Dialog>
-										<Button variant="outline" size="sm" onClick={() => toggleActive(p)} disabled={isPending}>
-											{p.is_active ? "Deactivate" : "Activate"}
-										</Button>
-										<Button variant="ghost" size="sm" onClick={() => deletePodcast(p)} disabled={isPending} className="text-destructive">
-											Delete
-										</Button>
-									</div>
-								</div>
-							)
-						})}
-						{podcasts.length === 0 && <p className="text-center text-muted-foreground py-4">No podcasts yet.</p>}
-					</div>
+
+
+
 				</div>
-			</CardContent>
-		</Card>
+			</Card >
+			{/* Right: list */}
+			< div className="space-y-3 max-w-[20vw]" >
+				{podcasts.map((podcast: Podcast) => {
+					const p = optimisticPodcast(podcast)
+					return (
+						<div key={p.podcast_id} className="p-3  bg-card  border rounded-lg ">
+							{/* Row 1: title */}
+							<div className="mb-2">
+								<h4 className="font-medium truncate">{p.name}</h4>
+							</div>
+							{/* Row 2: link icon left, status badge right */}
+							<div className="flex items-center justify-between mb-3">
+								<Button type="button" variant="ghost" size="sm" onClick={() => copyUrl(p.url)} title="Copy feed URL" aria-label="Copy feed URL">
+									<Link2 className="w-4 h-4" />
+								</Button>
+								<Badge variant={p.is_active ? "default" : "default"}>
+									{p.is_active ? "Active" : "Inactive"}
+								</Badge>
+							</div>
+							{/* Row 3: actions */}
+							<div className="flex items-center gap-2">
+								<Dialog open={editOpen && editingPodcastId === p.podcast_id} onOpenChange={o => !o && setEditOpen(false)}>
+									<DialogTrigger asChild>
+										<Button variant="ghost" size="sm" onClick={() => openEdit(p)}>
+											Edit
+										</Button>
+									</DialogTrigger>
+									<DialogContent>
+										<DialogHeader>
+											<DialogTitle>Edit podcast</DialogTitle>
+										</DialogHeader>
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+											<div>
+												<Label htmlFor="editName">Name</Label>
+												<Input id="editName" value={editForm.name} onChange={e => setEditForm(s => ({ ...s, name: e.target.value }))} />
+											</div>
+											<div>
+												<Label htmlFor="editUrl">Feed URL</Label>
+												<Input id="editUrl" value={editForm.url} onChange={e => setEditForm(s => ({ ...s, url: e.target.value }))} />
+											</div>
+											<div className="">
+												<Label htmlFor="editDesc">Description</Label>
+												<Textarea id="editDesc" rows={2} value={editForm.description} onChange={e => setEditForm(s => ({ ...s, description: e.target.value }))} />
+											</div>
+											<div>
+												<Label htmlFor="editImg">Image URL</Label>
+												<Input id="editImg" value={editForm.image_url} onChange={e => setEditForm(s => ({ ...s, image_url: e.target.value }))} />
+											</div>
+											<div>
+												<Label htmlFor="editCat">Category</Label>
+												<Input id="editCat" value={editForm.category} onChange={e => setEditForm(s => ({ ...s, category: e.target.value }))} />
+											</div>
+										</div>
+										<DialogFooter>
+											<Button variant="outline" size="md" onClick={() => setEditOpen(false)}>
+												Cancel
+											</Button>
+											<Button variant="default" onClick={saveEdit} disabled={isPending || !editForm.name.trim() || !editForm.url.trim()}>
+												Save
+											</Button>
+										</DialogFooter>
+									</DialogContent>
+								</Dialog>
+								<Button variant="outline" size="sm" onClick={() => toggleActive(p)} disabled={isPending}>
+									{p.is_active ? "Deactivate" : "Activate"}
+								</Button>
+								<Button variant="ghost" size="sm" onClick={() => deletePodcast(p)} disabled={isPending} className="text-destructive">
+									Delete
+								</Button>
+							</div>
+						</div>
+					)
+				})
+				}
+
+			</div >
+		</div>
 	)
 }

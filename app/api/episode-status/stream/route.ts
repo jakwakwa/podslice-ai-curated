@@ -2,6 +2,12 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+// Run on Edge to avoid Lambda idle timeouts and enable long-lived streaming
+export const runtime = "edge";
+export const dynamic = "force-dynamic";
+// Upper bound for Edge function; we will rotate connections proactively
+export const maxDuration = 300;
+
 /**
  * Server-Sent Events endpoint for streaming episode status updates
  * Polls the database every 2 seconds and sends updates to the client
@@ -15,8 +21,10 @@ export async function GET(request: Request) {
 
 	const encoder = new TextEncoder();
 	
-	const stream = new ReadableStream({
-		async start(controller) {
+    const stream = new ReadableStream({
+        async start(controller) {
+            // Tell EventSource to retry in 5s on disconnect
+            controller.enqueue(encoder.encode(`retry: 5000\n\n`));
 			// Track last seen status to detect changes
 			const lastSeenStatus = new Map<string, string>();
 			
@@ -92,10 +100,10 @@ export async function GET(request: Request) {
 							encoder.encode(`data: ${JSON.stringify({ type: "heartbeat" })}\n\n`)
 						);
 					}
-				} catch (error) {
+                } catch (error) {
 					console.error("[EPISODE_STATUS_STREAM]", error);
 				}
-			};
+            };
 
 			// Initial send
 			await sendUpdate();
@@ -103,9 +111,30 @@ export async function GET(request: Request) {
 			// Poll every 2 seconds
 			const interval = setInterval(sendUpdate, 2000);
 
+            // Heartbeat every 20 seconds to keep the connection alive through proxies
+            const heartbeat = setInterval(() => {
+                try {
+                    controller.enqueue(encoder.encode(`event: heartbeat\ndata: {"type":"heartbeat"}\n\n`));
+                } catch (_e) {
+                    // no-op
+                }
+            }, 20000);
+
+            // Proactively close the stream around 55s so the browser reconnects and we avoid platform timeouts
+            const plannedClose = setTimeout(() => {
+                try {
+                    controller.enqueue(encoder.encode(`event: close\ndata: {"reason":"rotate"}\n\n`));
+                } catch (_e) {}
+                clearInterval(interval);
+                clearInterval(heartbeat);
+                controller.close();
+            }, 55000);
+
 			// Cleanup on close
 			request.signal.addEventListener("abort", () => {
 				clearInterval(interval);
+                clearInterval(heartbeat);
+                clearTimeout(plannedClose);
 				controller.close();
 			});
 		},

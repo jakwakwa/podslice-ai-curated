@@ -1,7 +1,6 @@
 "use client";
 
 import { AlertCircle, Lock } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -58,17 +57,17 @@ const PLAN_GATE_META = {
 	NONE: {
 		badgeLabel: "All plans",
 		description: "Available on every Podslice plan.",
-		statusLabel: "Included in your plan",
+		statusLabel: "All plans",
 	},
 	FREE_SLICE: {
 		badgeLabel: "Free Slice+",
 		description: "Requires Free Slice plan or higher.",
-		statusLabel: "Included in Free Slice and above",
+		statusLabel: "Free Slice +",
 	},
 	CASUAL_LISTENER: {
 		badgeLabel: "Casual Listener+",
 		description: "Requires Casual Listener plan or higher.",
-		statusLabel: "Included in Casual Listener and Curate Control",
+		statusLabel: "Casual Listener & Curate Control",
 	},
 	CURATE_CONTROL: {
 		badgeLabel: "Curate Control",
@@ -125,6 +124,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [dialogMode, setDialogMode] = useState<"select" | "locked">("select");
 	const [isLoading, setIsLoading] = useState(false);
+	const [failedBundleImages, setFailedBundleImages] = useState<Set<string>>(new Set());
 
 	// SWR: Curated + shared bundles, 7-day client cache window
 	const {
@@ -162,6 +162,10 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 		setSelectedBundle(bundle);
 		setDialogMode(bundle.canInteract ? "select" : "locked");
 		setIsDialogOpen(true);
+	};
+
+	const handleImageError = (bundleId: string) => {
+		setFailedBundleImages(prev => new Set(prev).add(bundleId));
 	};
 
 	const handleConfirmSelection = async ({
@@ -257,14 +261,14 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 				prev =>
 					prev
 						? {
-								...prev,
-								...(isSelectingSharedBundle
-									? { selected_shared_bundle_id: actualBundleId }
-									: { selected_bundle_id: actualBundleId }),
-								selectedBundle: {
-									name: selectedBundle?.name || "",
-								},
-							}
+							...prev,
+							...(isSelectingSharedBundle
+								? { selected_shared_bundle_id: actualBundleId }
+								: { selected_bundle_id: actualBundleId }),
+							selectedBundle: {
+								name: selectedBundle?.name || "",
+							},
+						}
 						: null,
 				{ revalidate: false }
 			);
@@ -327,7 +331,12 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 		);
 	}
 
-	if (bundleList.length === 0) {
+
+
+	// Separate bundles by type
+	const curatedBundles = bundleList.filter(b => b.bundleType === "curated");
+	const sharedBundles = bundleList.filter(b => b.bundleType === "shared");
+	if (curatedBundles.length === 0) {
 		return (
 			<div className="max-w-2xl mx-auto mt-8 ">
 				<Alert>
@@ -341,11 +350,6 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 			</div>
 		);
 	}
-
-	// Separate bundles by type
-	const curatedBundles = bundleList.filter(b => b.bundleType === "curated");
-	const sharedBundles = bundleList.filter(b => b.bundleType === "shared");
-
 	return (
 		<>
 			{/* Curated Bundles Section */}
@@ -451,19 +455,30 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 													)}
 												</div>
 											</div>
-											{bundle.image_url && (
-												<div className="flex items-start gap-2 text-sm font-normal tracking-wide w-full">
-													<div className="relative my-2 rounded-lg outline-0 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
-														<Image
+
+											<div className="flex items-start gap-2 text-sm font-normal tracking-wide w-full">
+												<div className="relative my-2 border-2  border-teal-300 rounded-lg outline-0 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
+													{!failedBundleImages.has(bundle?.bundle_id || "") && bundle?.bundle_id ? (
+														<img
 															className="w-full object-cover"
-															src={bundle.image_url}
+															src={`/api/bundles/${bundle.bundle_id}/image`}
 															alt={bundle.name}
 															width={190}
 															height={110}
+															style={{ width: "100%", height: "auto" }}
+															onError={() => handleImageError(bundle.bundle_id || "")}
 														/>
-													</div>
+													) : (
+														<div className="w-full h-[110px] bg-muted flex items-center justify-center">
+															<img
+																src="/generic-news-placeholder2.png"
+																alt={bundle.name}
+																className="w-full h-full object-cover"
+															/>
+														</div>
+													)}
 												</div>
-											)}
+											</div>
 										</div>
 									</CardHeader>
 								</Card>
@@ -588,15 +603,23 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 											</div>
 
 											<div className="flex items-start gap-2 text-sm font-normal tracking-wide w-full">
-												<div className="relative my-2 rounded-lg outline-0 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
-													{bundle.image_url && (
-														<Image
+												<div className="relative my-2 rounded-lg outline-2 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
+													{!failedBundleImages.has(bundle?.bundle_id || "") && bundle?.bundle_id ? (
+														<img
 															className="w-full object-cover"
-															src={bundle.image_url}
+															src={`/api/bundles/${bundle.bundle_id}/image`}
 															alt={bundle.name}
-															width={190}
-															height={110}
+															style={{ width: "100%", height: "auto" }}
+															onError={() => handleImageError(bundle.bundle_id || "")}
 														/>
+													) : (
+														<div className="w-full h-[110px] bg-muted flex items-center justify-center">
+															<img
+																src="/generic-news-placeholder2.png"
+																alt={bundle.name}
+																className="w-full h-full object-cover"
+															/>
+														</div>
 													)}
 												</div>
 											</div>

@@ -6,7 +6,7 @@ import { Card } from "../ui/card"
 
 export function SourceListItem({ source }: { source: Source }) {
 	return (
-		<Card className="flex flex-col items-center gap-4 p-4">
+		<Card variant="glass" className="flex flex-col items-center gap-4 p-4">
 			<div className="w-full max-w-[200px] md:max-w-[100px] lg:max-w-[150px] p-0">
 				<Image src={source.image_url || "/placeholder.svg"} alt={`${source.name} cover art`} width={80} height={80} className="rounded-sm border p-0" />
 			</div>

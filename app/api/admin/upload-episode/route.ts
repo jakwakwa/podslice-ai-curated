@@ -151,7 +151,7 @@ export async function POST(request: Request) {
 					title,
 					description: description || "",
 					audio_url: finalAudioUrl,
-					image_url: image_url || bundle?.image_url || null,
+					image_url: image_url || null,
 					published_at: new Date(),
 					week_nr: currentWeek,
 					bundle_id: null,
