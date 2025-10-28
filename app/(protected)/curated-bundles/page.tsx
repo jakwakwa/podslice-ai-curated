@@ -55,17 +55,17 @@ export default async function CuratedBundlesPage({
 			is_active: true,
 			...(q
 				? {
-						OR: [
-							{ name: { contains: q, mode: "insensitive" } },
-							{
-								bundle_podcast: {
-									some: {
-										podcast: { name: { contains: q, mode: "insensitive" } },
-									},
+					OR: [
+						{ name: { contains: q, mode: "insensitive" } },
+						{
+							bundle_podcast: {
+								some: {
+									podcast: { name: { contains: q, mode: "insensitive" } },
 								},
 							},
-						],
-					}
+						},
+					],
+				}
 				: {}),
 			...(minPlanFilter ? { min_plan: PlanGate[minPlanFilter] } : {}),
 		};
@@ -78,7 +78,7 @@ export default async function CuratedBundlesPage({
 			orderBy: { created_at: "desc" },
 			cacheStrategy: {
 				swr: 60,
-				ttl: 360000,
+				ttl: 180,
 				tags: ["BundlePanel_in_Admin"],
 			},
 		});
@@ -90,19 +90,19 @@ export default async function CuratedBundlesPage({
 			owner_user_id: { not: userId },
 			...(q
 				? {
-						OR: [
-							{ name: { contains: q, mode: "insensitive" } },
-							{
-								episodes: {
-									some: {
-										userEpisode: {
-											episode_title: { contains: q, mode: "insensitive" },
-										},
+					OR: [
+						{ name: { contains: q, mode: "insensitive" } },
+						{
+							episodes: {
+								some: {
+									userEpisode: {
+										episode_title: { contains: q, mode: "insensitive" },
 									},
 								},
 							},
-						],
-					}
+						},
+					],
+				}
 				: {}),
 		};
 
@@ -140,12 +140,14 @@ export default async function CuratedBundlesPage({
 		}));
 
 		// Transform shared bundles to match Bundle interface
+		// @ts-ignore
 		const transformedSharedBundles: BundleWithPodcasts[] = sharedBundles.map(sb => ({
 			// Map shared bundle fields to Bundle interface
 			bundle_id: sb.shared_bundle_id, // Use shared_bundle_id as bundle_id for display
 			name: sb.name,
 			description: sb.description,
-			image_url: null, // Shared bundles don't have images
+			image_data: null, // Shared bundles don't have images
+			image_type: null,
 			min_plan: PlanGate.FREE_SLICE, // Shared bundles require at least FREE_SLICE
 			is_static: false, // Shared bundles are dynamic, user-created content
 			is_active: sb.is_active,
@@ -179,10 +181,11 @@ export default async function CuratedBundlesPage({
 				title={curatedBundlesPageContent.header.title}
 				description={curatedBundlesPageContent.header.description}
 			/>
+			<div className="bg-[var(--beduk-1)] md:rounded-3xl p-4 mt-6">
+				<CuratedBundlesFilters />
 
-			<CuratedBundlesFilters />
-
-			<CuratedBundlesClient bundles={allBundles} error={error} />
+				<CuratedBundlesClient bundles={allBundles} error={error} />
+			</div>
 		</div>
 	);
 }

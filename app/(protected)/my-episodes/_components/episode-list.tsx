@@ -1,5 +1,6 @@
 "use client";
 
+import useSWR from "swr";
 import { useEffect, useMemo, useState } from "react";
 import { PlayButton } from "@/components/episodes/play-button";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import EpisodeCard from "@/components/ui/episode-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEpisodePlayer } from "@/hooks/use-episode-player";
 import type { UserEpisode } from "@/lib/types";
+import { ONE_MINUTE } from "@/lib/swr";
 
 type UserEpisodeWithSignedUrl = UserEpisode & { signedAudioUrl: string | null };
 
@@ -16,31 +18,14 @@ type EpisodeListProps = {
 };
 
 export function EpisodeList({ completedOnly = false, initialEpisodeId }: EpisodeListProps) {
-	const [episodes, setEpisodes] = useState<UserEpisodeWithSignedUrl[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const { data, error, isLoading, mutate } = useSWR<UserEpisodeWithSignedUrl[]>(
+		"/api/user-episodes/list",
+		{ dedupingInterval: ONE_MINUTE * 5, revalidateOnFocus: false, keepPreviousData: true }
+	);
+	const episodes = (data ?? []).filter(e => (completedOnly ? e.status === "COMPLETED" : true));
 	const [debugLogs, setDebugLogs] = useState<Record<string, unknown[]> | null>(null);
 	const enableDebug = useMemo(() => process.env.NEXT_PUBLIC_ENABLE_EPISODE_DEBUG === "true", []);
 	const { playEpisode } = useEpisodePlayer();
-
-	useEffect(() => {
-		const fetchEpisodes = async () => {
-			try {
-				const res = await fetch("/api/user-episodes/list");
-				if (!res.ok) {
-					throw new Error("Failed to fetch episodes.");
-				}
-				const data: UserEpisodeWithSignedUrl[] = await res.json();
-				setEpisodes(completedOnly ? data.filter(e => e.status === "COMPLETED") : data);
-			} catch (err) {
-				setError(err instanceof Error ? err.message : "An unknown error occurred.");
-			} finally {
-				setIsLoading(false);
-			}
-		};
-
-		fetchEpisodes();
-	}, [completedOnly]);
 
 	// If we arrived via deep link, fetch the single episode immediately to avoid showing stale progress
 	useEffect(() => {
@@ -123,7 +108,7 @@ export function EpisodeList({ completedOnly = false, initialEpisodeId }: Episode
 	};
 
 	if (error) {
-		return <p className="text-red-500">{error}</p>;
+		return <p className="text-red-500">{error.message}</p>;
 	}
 
 	return (

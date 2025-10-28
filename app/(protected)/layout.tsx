@@ -1,11 +1,10 @@
 "use client";
 
 import { useAuth, useUser } from "@clerk/nextjs";
-import { Menu, MoonIcon, SunIcon } from "lucide-react";
+import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { AppSidebar, navItems } from "@/components/app-sidebar";
@@ -43,32 +42,13 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 	useSubscriptionInit();
 
-	function ModeToggle() {
-		const { setTheme, theme } = useTheme();
-
-		return (
-			<Button
-				onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-				variant="icon">
-				<div className="flex flex-col md:flex-row items-center gap-2">
-					{theme === "light" ? (
-						<SunIcon className="w-4 h-4 text-amber-300" />
-					) : (
-						<MoonIcon className="w-4 h-4 text-indigo-300" />
-					)}{" "}
-					<span className="text-[0.5rem] uppercase"> theme</span>
-				</div>
-			</Button>
-		);
-	}
-
 	return (
 		<>
 			<AppSidebar />
 
 			<SidebarInset>
 				<header
-					className={`fixed flex ${isMobile ? "h-18" : "h-20"} bg-header/90   backdrop-blur-[13px]   shadow-[0_1px_5px_3px_rgba(0,0.2,100,0.12)] overflow-hidden shrink-0 items-center border-none gap-4 transition-[width,height]  group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 mt-0 max-w-screen justify-between px-4  py-0 overflow-y-scrol  duration-700 ease-in-out ${state === "expanded" ? "" : "collapsed"}`}>
+					className={`fixed flex ${isMobile ? "h-18" : "h-16"} bg-header/90   backdrop-blur-[13px]   shadow-[0_1px_5px_3px_rgba(0,0.2,100,0.12)] overflow-hidden shrink-0 items-center border-none gap-4   group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 mt-0 max-w-screen justify-between px-4  py-0 overflow-y-scroll transition all  duration-200 ease-in-out ${state === "expanded" ? "" : "collapsed"}`}>
 					<div
 						className={`flex items-center ${isMobile ? "h-18" : "h-14"} justify-start  ${state === "expanded" ? "md:px-4 w-[240px]" : "md:px-0 w-[80px] "}`}>
 						<Link
@@ -126,7 +106,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 						{!isMobile && typeof window !== "undefined" && <NotificationBell />}
 
 						{isMobile && <UserNavMobile user={userData} />}
-						<ModeToggle />
+						{/*<ModeToggle />*/}
 					</div>
 				</header>
 
@@ -134,7 +114,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 					className={` flex flex-col flex-grow transition-all duration-300 ease-in-out px-0 md:px-0 mt-8 md:mt-0 mb-2 m-0 p-0 h-screen ${state === "expanded" ? "ml-0 w-full md:ml-0 md:p-0  " : "ml-0 md:ml-0 w-full md:min-w-[100vw]"}`}>
 					<div className={"layout-inset"} />
 					<div
-						className={` bg-bigcard w-screen md:min-w-none animated-gradient   mx-0  p-0 flex flex-col my-0 md:flex-row pt-6 md:pb-2 md:pt-16 md:mx-0 pl-0  md:my-2   ${state === "expanded" ? "m-0 md:ml-0 md:p-0  lg:px-2 lg:pb-8 max-w-full" : "md:pl-12 pr-0 md:pr-24 md:ml-0  min-w-screen  "}`}>
+						className={`  w-screen md:min-w-none animated-gradient   mx-0  p-0 flex flex-col my-0 md:flex-row pt-6 md:p-3 md:py-16 md:mx-0 pl-0  md:my-0   ${state === "expanded" ? "m-0 md:ml-0 md:p-0  lg:px-2 lg:pb-8 max-w-full" : "md:pl-12 pr-0 md:pr-24 md:ml-0  min-w-screen  "}`}>
 						{children}
 					</div>
 					<Footer />

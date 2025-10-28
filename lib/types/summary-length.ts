@@ -1,7 +1,7 @@
 /**
  * Summary Length Configuration
  *
- * Defines the available episode length options for user-generated episodes.
+ * Defines the available episode length options for user-generated summaries.
  * Each option has different duration targets and usage credit costs.
  */
 

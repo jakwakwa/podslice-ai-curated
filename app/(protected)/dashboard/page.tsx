@@ -6,16 +6,12 @@ import {
     BundleFeedSkeleton,
     RecentListSkeleton,
 } from "@/components/dashboard/dashboard-skeleton";
-import { RecentEpisodesList } from "@/components/dashboard/recent-episodes-list";
 import { EpisodeStatusTable } from "@/components/dashboard/episode-status-table";
+import { RecentEpisodesList } from "@/components/dashboard/recent-episodes-list";
 import { PageHeader } from "@/components/ui/page-header";
 import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
 import { prisma } from "@/lib/prisma";
-import type {
-    Episode,
-    UserCurationProfileWithRelations,
-    UserEpisode,
-} from "@/lib/types";
+import type { Episode, UserCurationProfileWithRelations, UserEpisode } from "@/lib/types";
 import { userIsActive } from "@/lib/usage";
 import { dashboardCopy } from "./content";
 
@@ -50,8 +46,7 @@ export default async function DashboardPage() {
     const latestBundleEpisode = getLatestBundleEpisode(bundleEpisodes);
 
     const hasProfile = !!userCurationProfile;
-    const isBundleSelection =
-        hasProfile && userCurationProfile.is_bundle_selection;
+    const isBundleSelection = hasProfile && userCurationProfile.is_bundle_selection;
     const hasBundle = isBundleSelection && !!latestBundleEpisode;
     const showCurateControlButton =
         (subscription?.plan_type || "").toLowerCase() === "curate_control";
@@ -73,6 +68,7 @@ export default async function DashboardPage() {
                         userCurationProfile={userCurationProfile}
                         latestBundleEpisode={latestBundleEpisode}
                         subscription={subscription}
+                        bundleEpisodes={bundleEpisodes}
                     />
                 </Suspense>
             ) : null}
@@ -98,25 +94,50 @@ export default async function DashboardPage() {
  * Fetch user curation profile with selected bundle and episodes
  */
 async function fetchUserCurationProfile(
-    userId: string,
+    userId: string
 ): Promise<UserCurationProfileWithRelations | null> {
     try {
         const profile = await prisma.userCurationProfile.findFirst({
             where: { user_id: userId },
             include: {
+                // We need bundle -> podcasts, but must not pass binary fields to the client
                 selectedBundle: {
                     include: {
-                        episodes: {
-                            orderBy: { published_at: "desc" },
-                            take: 10,
-                        },
+                        bundle_podcast: { include: { podcast: true } },
                     },
                 },
                 episodes: true,
             },
         });
 
-        return profile as UserCurationProfileWithRelations | null;
+        if (!profile) return null;
+
+        // Shape selectedBundle to exclude binary fields and expose a simple podcasts[] array
+        const rawSelected = (profile as unknown as Record<string, unknown>)
+            .selectedBundle as unknown as (Record<string, unknown> & {
+                bundle_podcast?: Array<{ podcast: unknown }>
+                image_data?: unknown
+                image_type?: unknown
+            }) | null;
+
+        if (!rawSelected) {
+            return profile as unknown as UserCurationProfileWithRelations;
+        }
+
+        const { image_data: _imgData, image_type: _imgType, bundle_podcast, ...rest } = rawSelected;
+        const podcasts = Array.isArray(bundle_podcast)
+            ? bundle_podcast.map(bp => bp.podcast as unknown)
+            : [];
+
+        const shapedSelectedBundle = {
+            ...rest,
+            podcasts,
+        } as unknown;
+
+        return {
+            ...(profile as unknown as UserCurationProfileWithRelations),
+            selectedBundle: shapedSelectedBundle as unknown as UserCurationProfileWithRelations["selectedBundle"],
+        };
     } catch (error) {
         console.error("Failed to fetch user curation profile:", error);
         return null;
@@ -152,11 +173,9 @@ async function fetchBundleEpisodes(userId: string): Promise<Episode[]> {
 }
 
 /**
- * Fetch user's generated episodes with signed URLs
+ * Fetch user's generated summaries with signed URLs
  */
-async function fetchUserEpisodes(
-    userId: string,
-): Promise<UserEpisodeWithSignedUrl[]> {
+async function fetchUserEpisodes(userId: string): Promise<UserEpisodeWithSignedUrl[]> {
     try {
         // Check if user is active
         const isActive = await userIsActive(prisma, userId);
@@ -167,6 +186,7 @@ async function fetchUserEpisodes(
         // Fetch episodes from Prisma
         const episodes = await prisma.userEpisode.findMany({
             where: { user_id: userId },
+            // Only include fields that are needed by RecentEpisodesList and audio player
             select: {
                 episode_id: true,
                 user_id: true,
@@ -175,6 +195,8 @@ async function fetchUserEpisodes(
                 gcs_audio_url: true,
                 duration_seconds: true,
                 status: true,
+                summary: true,
+                summary_length: true,
                 news_sources: true,
                 news_topic: true,
                 created_at: true,
@@ -186,7 +208,7 @@ async function fetchUserEpisodes(
         // Generate signed URLs
         const storageReader = getStorageReader();
         const episodesWithSignedUrls = await Promise.all(
-            episodes.map(async (episode) => {
+            episodes.map(async episode => {
                 let signedAudioUrl: string | null = null;
                 if (episode.gcs_audio_url) {
                     const parsed = parseGcsUri(episode.gcs_audio_url);
@@ -203,7 +225,7 @@ async function fetchUserEpisodes(
                     }
                 }
                 return { ...episode, signedAudioUrl } as UserEpisodeWithSignedUrl;
-            }),
+            })
         );
 
         return episodesWithSignedUrls;
@@ -216,9 +238,7 @@ async function fetchUserEpisodes(
 /**
  * Fetch user subscription info
  */
-async function fetchSubscription(
-    userId: string,
-): Promise<ISubscriptionInfo | null> {
+async function fetchSubscription(userId: string): Promise<ISubscriptionInfo | null> {
     try {
         const subscription = await prisma.subscription.findFirst({
             where: { user_id: userId },

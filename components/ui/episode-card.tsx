@@ -46,7 +46,7 @@ export function EpisodeCard({
 			variant="default"
 			className="bg-card relative w-full h-[230px] sm:h-[150px] md:h-[200px] lg:h-[130px]  gap-2">
 			<CardAction>{actions}</CardAction>
-			<div className="w-full h-fit flex flex-col-reverse sm:flex-row gap-8 justify-between px-0  md:flex-col-reverse lg:flex-row sm:gap-5 lg:gap-8 items-evenly   py-0 lg:py-1 lg:px-0 lg:justify-betwen lg:items-between relative ">
+			<div className="w-full h-fit flex flex-col-reverse sm:flex-row gap-3 justify-between px-0  md:flex-col-reverse lg:flex-row sm:gap-5 lg:gap-8 items-evenly   py-0 lg:py-1 lg:px-0 lg:justify-betwen lg:items-between relative ">
 				{(() => {
 					// For bundle episodes, use the episode's image_url
 					if (imageUrl) {
@@ -106,9 +106,12 @@ export function EpisodeCard({
 				<div className="flex w-[90%] flex-col justify-between h-fit items-start content-start py-0 md:px-3 z-10 md:flex-col  md:pl-0  md:gap-0 md:justify-between md:min-h-fit lg:pl-2 lg:pt-2">
 					{detailsHref ? (
 						<Link
-							className="text-[0.9rem] font-semibold md:w-full md:text-[0.65]  leading-tight line-clamp-2 h-auto max-h-14 lg:max-w-[85%] lg:text-base mb-5 lg:pb-0 text-primary-foreground text-shadow-2xs hover:text-cyan-200 hover:decoration-azure-800 hover:opacity-90 transition-all duration-300 text-left capitalize"
+							className="text-[1.1rem] flex-col gap-1 items-start font-semibold md:w-full md:text-[0.65]  leading-tight line-clamp-2 h-auto max-h-14 lg:max-w-[85%] lg:text-base mb-5 lg:pb-0 text-primary-foreground text-shadow-2xs hover:text-cyan-200 hover:decoration-azure-800 hover:opacity-90 transition-all duration-300 text-left capitalize"
 							href={detailsHref}>
-							{title}
+							<span className="text-[0.6rem] tracking-wider font-light uppercase ">
+								view details
+							</span>
+							<div>{title}</div>
 						</Link>
 					) : null}
 

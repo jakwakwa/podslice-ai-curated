@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma"; // Use the global client
 import { withDatabaseTimeout } from "../../../lib/utils";
 
-// Force this API route to always execute on each request (no ISR / caching)
+// Episodes can be cached briefly server-side; prefer SWR client cache for longer
 export const dynamic = "force-dynamic";
 
 // export const dynamic = "force-dynamic"
@@ -44,7 +44,7 @@ export async function GET(request: Request) {
 		// Fetch curated episodes (from Episode table)
 		let curatedEpisodes: any[] = [];
 		if (bundleType === "curated" || bundleType === "all") {
-			const whereClause: any = {
+            const whereClause: any = {
 				OR: [
 					{ userProfile: { user_id: userId } },
 				],
@@ -57,38 +57,54 @@ export async function GET(request: Request) {
 				whereClause.OR.push({ bundle_id: profile.selectedBundle.bundle_id });
 			}
 
-			curatedEpisodes = await withDatabaseTimeout(
-				prisma.episode.findMany({
-					where: whereClause,
-					include: {
-						podcast: true,
-						userProfile: true,
-					},
-					orderBy: { created_at: "desc" },
-				})
-			);
+            curatedEpisodes = await withDatabaseTimeout(
+                prisma.episode.findMany({
+                    where: whereClause,
+                    include: {
+                        podcast: true,
+                        userProfile: true,
+                    },
+                    orderBy: { created_at: "desc" },
+                    cacheStrategy: {
+                        swr: 60,
+                        ttl: 200,
+                        tags: [
+                          `user_profile_${userId}`,
+                          "curated_episodes",
+                        ],
+                    },
+                })
+            );
 		}
 
 		// Fetch shared bundle episodes (from UserEpisode table)
 		let sharedEpisodes: any[] = [];
 		if ((bundleType === "shared" || bundleType === "all") && sharedBundleEpisodeIds.length > 0) {
-			const userEpisodes = await withDatabaseTimeout(
-				prisma.userEpisode.findMany({
-					where: {
-						episode_id: { in: sharedBundleEpisodeIds },
-						status: "COMPLETED",
-					},
-					include: {
-						user: {
-							select: {
-								user_id: true,
-								name: true,
-							},
-						},
-					},
-					orderBy: { created_at: "desc" },
-				})
-			);
+            const userEpisodes = await withDatabaseTimeout(
+                prisma.userEpisode.findMany({
+                    where: {
+                        episode_id: { in: sharedBundleEpisodeIds },
+                        status: "COMPLETED",
+                    },
+                    include: {
+                        user: {
+                            select: {
+                                user_id: true,
+                                name: true,
+                            },
+                        },
+                    },
+                    orderBy: { created_at: "desc" },
+                    cacheStrategy: {
+                        swr: 60,
+                        ttl: 300,
+                        tags: [
+                          `user_episodes_${userId}`,
+                          "shared_episodes",
+                        ],
+                    },
+                })
+            );
 
 			// Transform UserEpisodes to match Episode structure for frontend compatibility
 			sharedEpisodes = userEpisodes.map(ue => ({
@@ -123,15 +139,7 @@ export async function GET(request: Request) {
 	console.log("[EPISODES_API] Shared episodes fetched:", sharedEpisodes.length);
 	console.log("[EPISODES_API] Total episodes:", episodes.length);
 
-		// Explicitly disable any downstream caching; add timestamp header to bust CDN layers if any
-		return NextResponse.json(episodes, {
-			headers: {
-				"Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-				Pragma: "no-cache",
-				Expires: "0",
-				"X-Data-Timestamp": Date.now().toString(),
-			},
-		});
+        return NextResponse.json(episodes);
 	} catch (error) {
 		console.error("Episodes API: Error fetching episodes:", error);
 		return NextResponse.json({ error: "Internal server error" }, { status: 500 });

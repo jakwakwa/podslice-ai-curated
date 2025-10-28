@@ -199,7 +199,6 @@ async function main() {
 			update: {
 				name: bundle.name,
 				description: bundle.description,
-				image_url: bundle.image_url,
 				min_plan: bundle.min_plan,
 				is_active: true,
 			},
@@ -207,7 +206,6 @@ async function main() {
 				bundle_id: bundle.bundle_id,
 				name: bundle.name,
 				description: bundle.description,
-				image_url: bundle.image_url,
 				min_plan: bundle.min_plan,
 			},
 		})
@@ -356,7 +354,7 @@ async function main() {
 			},
 		})
 	}
-	console.log("✓ User-generated episodes seeded")
+	console.log("✓ User-generated summaries seeded")
 
 	console.log("🌱 Demo data installed successfully. Happy slicing! 🎧")
 }
@@ -369,5 +367,3 @@ main()
 	.finally(async () => {
 		await prisma.$disconnect()
 	})
-
-

@@ -2,7 +2,7 @@
 
 import { Play, Share2 } from "lucide-react";
 import type { ReactElement } from "react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import type { Episode, UserEpisode } from "@/lib/types";
@@ -16,17 +16,36 @@ interface PlayAndShareProps {
 	episode: Episode | UserEpisode;
 	signedAudioUrl: string | null;
 	isPublic?: boolean;
+	onPublicStateChange?: (callback: (newIsPublic: boolean) => void) => void;
 }
 
 export default function PlayAndShare({
 	kind,
 	episode,
 	signedAudioUrl,
-	isPublic = false,
+	isPublic: initialIsPublic = false,
+	onPublicStateChange,
 }: PlayAndShareProps): ReactElement {
 	const { setEpisode } = useAudioPlayerStore();
 	const [showShareDialog, setShowShareDialog] = useState(false);
 	const canPlay = Boolean(signedAudioUrl);
+
+	// Local state for optimistic updates
+	const [isPublic, setIsPublic] = useState(initialIsPublic);
+
+	// Register callback for when toggle button updates the state
+	useEffect(() => {
+		if (onPublicStateChange) {
+			onPublicStateChange((newIsPublic: boolean) => {
+				setIsPublic(newIsPublic);
+			});
+		}
+	}, [onPublicStateChange]);
+
+	// Sync with prop changes (e.g., on initial load or page navigation)
+	useEffect(() => {
+		setIsPublic(initialIsPublic);
+	}, [initialIsPublic]);
 
 	// Generate share URL - if public, use the public route
 	const shareUrl = useMemo(() => {
@@ -71,7 +90,7 @@ export default function PlayAndShare({
 
 	return (
 		<>
-			<div className="flex items-center gap-4">
+			<div className="flex md:flex-row my-4 items-center gap-2 w-2/12">
 				<Button
 					type="button"
 					variant="play"

@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PageHeader } from "@/components/ui/page-header";
 import {
 	Select,
 	SelectContent,
@@ -87,19 +86,22 @@ export function EpisodeCreator() {
 
 	// News input state
 	const NEWS_SOURCES = [
-		{ id: "guardian", label: "The Guardian" },
-		{ id: "aljazeera", label: "Al Jazeera" },
-		{ id: "worldbank", label: "World Bank" },
-		{ id: "stocks", label: "Top Fin News Sources" },
-		{ id: "un", label: "UN News" },
+		{ id: "global", label: "Guardian, BBC, Reuters, Al Jazeera" },
+		{ id: "crypto", label: "Coindesk, Coinbase, Bloomberg, Yahoo" },
+		{ id: "us", label: "US News" },
+		{ id: "finance", label: "Bloomberg, Yahoo!, Barrons, Coindesk,TradingView" },
+		{ id: "geo", label: "United Nations, World Bank" },
 	] as const;
 	const TOPICS = [
-		"finance",
-		"tesla",
 		"technology",
 		"business",
+		"bitcoin and crypto",
 		"politics",
-		"world",
+		"us politics",
+		"world news",
+		"geo-political",
+		"tesla",
+		"finance"
 	] as const;
 
 	const [selectedSources, setSelectedSources] = useState<string[]>([]);
@@ -107,8 +109,8 @@ export function EpisodeCreator() {
 
 	// Generation options
 	const [generationMode, setGenerationMode] = useState<"single" | "multi">("single");
-	const [voiceA, setVoiceA] = useState<string>("Zephyr");
-	const [voiceB, setVoiceB] = useState<string>("Kore");
+	const [voiceA, setVoiceA] = useState<string>("Rasalgethi");
+	const [voiceB, setVoiceB] = useState<string>("Sulafat");
 	const [isPlaying, setIsPlaying] = useState<string | null>(null);
 	const [isLoadingSample, setIsLoadingSample] = useState<string | null>(null);
 	const [audioUrlCache, setAudioUrlCache] = useState<Record<string, string>>({});
@@ -334,7 +336,7 @@ export function EpisodeCreator() {
 					"We're processing your episode and will email you when it's ready.",
 					{
 						duration: Infinity,
-						action: { label: "Dismiss", onClick: () => {} },
+						action: { label: "Dismiss", onClick: () => { } },
 					}
 				);
 				resumeAfterSubmission();
@@ -386,7 +388,7 @@ export function EpisodeCreator() {
 			if (!res.ok) throw new Error(await res.text());
 			toast.message("We're processing your episode and will email you when it's ready.", {
 				duration: Infinity,
-				action: { label: "Dismiss", onClick: () => {} },
+				action: { label: "Dismiss", onClick: () => { } },
 			});
 			resumeAfterSubmission();
 			router.push("/dashboard?from=generate");
@@ -396,8 +398,8 @@ export function EpisodeCreator() {
 			);
 			toast.error(
 				(err instanceof Error ? err.message : "Failed to start episode generation.") ||
-					"",
-				{ duration: Infinity, action: { label: "Dismiss", onClick: () => {} } }
+				"",
+				{ duration: Infinity, action: { label: "Dismiss", onClick: () => { } } }
 			);
 		} finally {
 			setIsCreating(false);
@@ -451,16 +453,12 @@ export function EpisodeCreator() {
 	return (
 		<div className="w-full  bg-bigcard h-auto mb-0 px-0 py-0 md:px-8 md:py-8 lg:px-10 lg:py-6  rounded-lg  shadow-lg">
 			<div className="w-full flex flex-col gap-3 md:gap-8 md:w-full md:min-w-full md:max-w-full">
-				<PageHeader
-					title="Create Episode"
-					className="pt-0"
-					description="Generate a summary (text and podcast styled audio overview) of any podcast show's episode using a YouTube video link OR choose a news topic and source and we will generate the audio and summary for you."
-				/>
 
-				<div className="py-8 px-4 md:p-0 ">
+
+				<div className="w-full py-8 px-4 md:p-0 ">
 					{/* <ComponentSpinner isLabel={false} /> */}
 
-					<div className="flex flex-col px-0 md:px-4  gap-4">
+					<div className="w-full flex flex-col px-0 md:px-4  gap-4">
 						<div className="border-1 border-border bg-sidebar/20 rounded-3xl  shadow-md p-8">
 							<Label className="mb-2 md:mb-4">Pick a Summary Type:</Label>
 							<div className="w-[300px] flex flex-row items-center justify-start gap-2 ">
@@ -545,10 +543,10 @@ export function EpisodeCreator() {
 							)}
 
 							{creatorMode === "news" && (
-								<div className="grid grid-cols-1 md:grid-cols-2 my-8 gap-4 mx-2 md:mx-4">
-									<div className="border-1 border-border rounded-3xl  shadow-md p-8 space-y-2 md:col-span-2 lg:max-w-lg">
+								<div className="flex flex-row flex-wrap my-8 gap-4 mx-2 md:mx-4  md:gap-4 ">
+									<div className="border-1 border-border rounded-3xl  shadow-md p-8 space-y-2 md:col-span-2 lg:max-w-full">
 										<Label>Sources</Label>
-										<div className="flex justify-start items-start flex-wrap gap-1">
+										<div className="flex justify-start items-start flex-wrap gap-4">
 											{NEWS_SOURCES.map(s => {
 												const active = selectedSources.includes(s.id);
 												return (
@@ -570,7 +568,7 @@ export function EpisodeCreator() {
 										</div>
 									</div>
 
-									<div className="mt-4 md:col-span-2 lg:max-w-lg w-full border-1 border-border rounded-3xl  shadow-md p-8">
+									<div className="mt-4 md:col-span-2 lg:min-w-full w-full border-1 border-border rounded-3xl  shadow-md p-8">
 										<Label>Topic</Label>
 										<Select
 											value={selectedTopic ?? ""}
@@ -745,8 +743,11 @@ export function EpisodeCreator() {
 									)}
 
 									{generationMode === "multi" && (
-										<div className="grid grid-cols-1  md:max-w-full md:grid-cols-2 gap-4">
+										<div className="flex flex-col md:flex-row justify-start md:max-w-full md:grid-cols-2 gap-12">
+											{/* voice a */}
 											<div>
+
+
 												<div className="py-2 pl-2 uppercase font-bold text-secondary-foreground text-xs">
 													Voice A
 												</div>
@@ -791,6 +792,7 @@ export function EpisodeCreator() {
 													</Button>
 												</div>
 											</div>
+											{/* voice b */}
 											<div>
 												<div className="py-2 pl-2 uppercase font-bold text-primary-foreground text-xs">
 													Voice B
@@ -805,7 +807,6 @@ export function EpisodeCreator() {
 																<div className="flex items-center justify-between w/full gap-3">
 																	<div className="flex flex-col">
 																		<span>{v.label}</span>
-																		{/* <span className="text-xs opacity-75">{v.sample}</span> */}
 																	</div>
 																	<button
 																		type="button"
@@ -852,7 +853,7 @@ export function EpisodeCreator() {
 								/>
 							</div>
 
-							<div className="flex  w-fit mt-6 flex-col px-0 md:px-4 border-1 border-cyan-300 rounded-3xl  shadow-md p-0 md:p-3 gap-4">
+							<div className="flex  w-fit mt-6 flex-col px-0 md:px-4 border-1 border-gray-900/9	0 rounded-3xl  shadow-md p-0 md:p-3 gap-4">
 								<Button
 									type="submit"
 									variant="secondary"
@@ -878,7 +879,7 @@ export function EpisodeCreator() {
 				}}
 			/>
 
-			<Dialog open={showRestrictionDialog} onOpenChange={() => {}} modal={true}>
+			<Dialog open={showRestrictionDialog} onOpenChange={() => { }} modal={true}>
 				<DialogContent
 					className="sm:max-w-md"
 					onInteractOutside={e => e.preventDefault()}

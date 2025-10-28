@@ -196,3 +196,10 @@ export function ensureNodeBuffer(value: unknown): Buffer {
 	if (isJsonBuffer(value)) return Buffer.from(value.data);
 	throw new Error("Invalid audio buffer returned from TTS step");
 }
+
+export function sanitizeSpeakerLabels(input: string): string {
+  let cleaned = input.replace(/^\s*(?:HOST\s*SLICE|PODSLICE\s*GUEST|HOST|GUEST|A|B)\s*[:\-–]\s*/i, "").trim();
+  // Remove inline references like "A.", "B.", etc.
+  cleaned = cleaned.replace(/\b(?:HOST\s*SLICE|PODSLICE\s*GUEST|HOST|GUEST|A|B)\.(?=\s|$)/gi, "").trim();
+  return cleaned;
+}

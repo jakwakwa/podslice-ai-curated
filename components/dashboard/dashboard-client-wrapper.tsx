@@ -66,7 +66,7 @@ export function DashboardClientWrapper({ hasProfile, userCurationProfile, onProf
 			{/* Empty state if no profile */}
 			{!hasProfile && (
 				<div className="hidden md:block max-w-2xl mt-6 ">
-					<Alert>
+					<Alert className="bg-[#054f5f]">
 						<AlertTitle>
 							<AlertCircle className="h-4 w-4" />
 							Would you like to get started with your feed?
