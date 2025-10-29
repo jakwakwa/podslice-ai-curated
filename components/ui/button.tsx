@@ -4,7 +4,7 @@ import type * as React from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-10 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer disabled:z-20 disabled:bg-[#000] w-fit  min-w-12 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-150",
+	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-10 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer disabled:z-20 disabled:bg-[#000]   min-w-12 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-150",
 	{
 		variants: {
 			variant: {
@@ -44,7 +44,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
 	extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-		VariantProps<typeof buttonVariants> {
+	VariantProps<typeof buttonVariants> {
 	asChild?: boolean;
 }
 
@@ -58,24 +58,24 @@ function Button({
 	...props
 }: React.ComponentProps<"button"> & {
 	variant:
-		| "default"
-		| "destructive"
-		| "outline"
-		| "secondary"
-		| "ghost"
-		| "link"
-		| "play"
-		| "icon";
+	| "default"
+	| "destructive"
+	| "outline"
+	| "secondary"
+	| "ghost"
+	| "link"
+	| "play"
+	| "icon";
 	size?:
-		| "default"
-		| "sm"
-		| "xs"
-		| "md"
-		| "lg"
-		| "playLarge"
-		| "playSmall"
-		| "play"
-		| "icon";
+	| "default"
+	| "sm"
+	| "xs"
+	| "md"
+	| "lg"
+	| "playLarge"
+	| "playSmall"
+	| "play"
+	| "icon";
 	asChild?: boolean;
 	icon?: React.ReactNode;
 }) {

@@ -181,7 +181,7 @@ export default async function CuratedBundlesPage({
 				title={curatedBundlesPageContent.header.title}
 				description={curatedBundlesPageContent.header.description}
 			/>
-			<div className="bg-[var(--beduk-1)] md:rounded-3xl p-4 mt-6">
+			<div className="bg-bigcard md:rounded-3xl p-4 mt-6">
 				<CuratedBundlesFilters />
 
 				<CuratedBundlesClient bundles={allBundles} error={error} />

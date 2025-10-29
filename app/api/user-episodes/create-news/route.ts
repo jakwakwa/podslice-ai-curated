@@ -36,7 +36,7 @@ const ALLOWED_TOPICS = [
 const CreateNewsSchema = z.object({
 	title: z.string().min(2).optional(),
 	sources: z.array(z.enum(ALLOWED_SOURCES)).min(1),
-	topic: z.enum(ALLOWED_TOPICS),
+	topic: z.string(),
 	generationMode: z.enum(["single", "multi"]).default("single").optional(),
 	voiceA: z.enum(VOICE_NAMES as unknown as [string, ...string[]]).optional(),
 	voiceB: z.enum(VOICE_NAMES as unknown as [string, ...string[]]).optional(),

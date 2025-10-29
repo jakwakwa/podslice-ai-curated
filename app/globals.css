@@ -50,10 +50,8 @@
 		opacity: 0.8;
 		font-size: 0.85rem !important;
 		font-weight: 400 !important;
-		/*padding-bottom: 10px !important;*/
-		margin-bottom: 10px;
 
-		padding-bottom: 10px !important;
+		/* padding-bottom: 10px !important; */
 		color: var(--kwak-8) !important;
 		text-transform: initial !important;
 		letter-spacing: 0.3px;
@@ -196,6 +194,7 @@
 	--sidebar-ring: oklch(0.702 0.183 293.541);
 	--sidebar-menu: transparent;
 	--sidebar-avatar: transparent;
+	--sidebar-shadow: var(--color-gray-950);
 	--bundle-card-foreground: transparent;
 	--bundle-card-border: transparent;
 	--bundle-card-shadow: transparent;
@@ -286,10 +285,11 @@
 	--sidebar-accent-foreground: var(--beduk-5);
 	--sidebar-border: var(--swak-4);
 	--sidebar-ring: var(--kwak-6);
-	--inset-gradient: linear-gradient(var(--swak-1) 0%, var(--beduk-3) 110%);
+	--sidebar-shadow: var(--color-gray-950);
+	--inset-gradient: linear-gradient(var(--swak-5) 0%, var(--kwak-5) 110%);
 	--bigepisode-gradient: linear-gradient(0deg,
 			var(--swak-1) -20%,
-			var(--beduk-1) 90%);
+			var(--kwak-1) 90%);
 	--episode-gradient: linear-gradient(320deg,
 			var(--kwak-1) -10%,
 			var(--swak-5) 180%);
@@ -318,26 +318,26 @@
 
 	--card: var(--kwak-10);
 	--card-foreground: var(--kwak-10);
+	--primary: oklch(0.68_0.33_331/0.08);
+	--dialog-card: var(--beduk-9);
+	--dialog-overlay: var(--swak-1);
 
-	--dialog-card: var(--beduk-7);
-	--dialog-overlay: var(--swak-4);
-
-	--background: var(--swak-1);
-	--foreground: var(--swak-7);
+	--background: var(--swak-10);
+	--foreground: var(--swak-9);
 	--popover: var(--color-cyan-950);
-	--popover-foreground: var(--swak-10);
+	--popover-foreground: var(--swak-1);
 	--primary: var(--swak-3);
 
-	--primary-foreground: var(--kwak-9);
-	--header: var(--kwak-3);
-	--header-foreground: var(--beduk-9);
+	--primary-foreground: var(--swak-8);
+	--header: #00000050;
+	--header-foreground: var(--swak-10);
 	--primary-foreground-muted: var(--kwak-6);
-	--secondary: var(--kwak-3);
-	--secondary-foreground: var(--swak-10);
-	--muted: var(--swak-7);
-	--muted-foreground: var(--kwak-5);
-	--accent: var(--beduk-9);
-	--accent-foreground: var(--kwak-5);
+	--secondary: var(--beduk-2);
+	--secondary-foreground: var(--kwak-10);
+	--muted: var(--swak-8);
+	--muted-foreground: var(--beduk-3);
+	--accent: var(--beduk-1);
+	--accent-foreground: var(--kwak-9);
 	--destructive: var(--wyn-5);
 	--border: var(--color-gray-800);
 	--input: var(--swak-5);
@@ -347,7 +347,7 @@
 	--chart-3: var(--kwak-5);
 	--chart-4: var(--kwak-5);
 	--chart-5: var(--kwak-5);
-	--sidebar: var(--swak-1);
+	--sidebar: var(--color-gray-900);
 	--sidebar-foreground: var(--kwak-5);
 	--sidebar-primary: var(--beduk-8);
 	--sidebar-primary-foreground: var(--kwak-5);
@@ -355,24 +355,24 @@
 	--sidebar-accent-foreground: var(--beduk-5);
 	--sidebar-border: var(--swak-4);
 	--sidebar-ring: var(--kwak-6);
-	--inset-gradient: linear-gradient(var(--swak-1) 0%, var(--beduk-3) 110%);
+	--sidebar-shadow: var(--color-gray-950);
+	--inset-gradient: linear-gradient(var(--kwak-1) 0%, var(--color-gray-950) 110%);
 	--bigepisode-gradient: linear-gradient(0deg,
-			var(--swak-1) -20%,
-			var(--beduk-1) 90%);
+			var(--color-gray-950) 20%,
+			var(--color-gray-900) 90%);
 	--episode-gradient: linear-gradient(320deg,
 			var(--kwak-1) -10%,
-			var(--swak-5) 180%);
+			var(--swak-1) 50%,
+			var(--beduk-3) 180%);
 	--container-gradient: linear-gradient(to bottom,
-			var(--swak-1) 0%,
-			var(--swak-3) 100%);
+			var(--swak-9) 0%,
+			var(--swak-8) 100%);
 	--container-dark: linear-gradient(to bottom,
-			var(--swak-1) 0%,
-			var(--swak-2) 100%);
+			var(--color-gray-950) 0%,
+			var(--color-gray-950) 100%);
 	--episode-shell-gradient: linear-gradient(180deg,
-			var(--kwak-1) 0%,
-			var(--kwak-2) 10%,
-			var(--beduk-2) 35%,
-			var(--beduk-1) 50%);
+			ar(--color-gray-950); 0%,
+			var(--swak-1) 95%);
 
 	--episode-card-wrapper-gradient: linear-gradient(to bottom,
 			var(--swak-3) 10%,
@@ -476,8 +476,8 @@
 	.bg-generate-episode-card-wrapper,
 	.bg-episode-card-wrapper,
 	.episode-card-wrapper {
-		background: var(--episode-card-wrapper-gradient) !important;
-		border: 1px solid #8494d924;
+		/*background: var(--episode-card-wrapper-gradient) !important;*/
+		/*border: 1px solid #8494d924;*/
 		border-radius: 30px !important;
 		box-shadow: 0px 16px 15px 1px hsla(240 38.46% 10.2% / 0.18),
 			0px 2px 4px 0px #15151e26 !important;

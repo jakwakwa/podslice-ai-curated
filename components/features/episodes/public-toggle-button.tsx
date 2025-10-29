@@ -6,78 +6,82 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
 interface PublicToggleButtonProps {
-    episodeId: string;
-    initialIsPublic: boolean;
-    onToggleSuccess?: (isPublic: boolean) => void;
+	episodeId: string;
+	initialIsPublic: boolean;
+	onToggleSuccess?: (isPublic: boolean) => void;
 }
 
 export default function PublicToggleButton({
-    episodeId,
-    initialIsPublic,
-    onToggleSuccess,
+	episodeId,
+	initialIsPublic,
+	onToggleSuccess,
 }: PublicToggleButtonProps): React.ReactElement {
-    const [isPublic, setIsPublic] = useState(initialIsPublic);
-    const [isLoading, setIsLoading] = useState(false);
+	const [isPublic, setIsPublic] = useState(initialIsPublic);
+	const [isLoading, setIsLoading] = useState(false);
 
-    const handleToggle = useCallback(async () => {
-        // Store the previous state for potential rollback
-        const previousState = isPublic;
-        const newState = !isPublic;
+	const handleToggle = useCallback(async () => {
+		// Store the previous state for potential rollback
+		const previousState = isPublic;
+		const newState = !isPublic;
 
-        // OPTIMISTIC UPDATE: Update UI immediately
-        setIsPublic(newState);
-        onToggleSuccess?.(newState);
-        setIsLoading(true);
+		// OPTIMISTIC UPDATE: Update UI immediately
+		setIsPublic(newState);
+		onToggleSuccess?.(newState);
+		setIsLoading(true);
 
-        try {
-            const response = await fetch(`/api/user-episodes/${episodeId}/toggle-public`, {
-                method: "POST",
-            });
+		try {
+			const response = await fetch(`/api/user-episodes/${episodeId}/toggle-public`, {
+				method: "POST",
+			});
 
-            if (!response.ok) {
-                const error = await response.text();
-                throw new Error(error);
-            }
+			if (!response.ok) {
+				const error = await response.text();
+				throw new Error(error);
+			}
 
-            const data = await response.json();
+			const data = await response.json();
 
-            // Verify the server state matches our optimistic update
-            // If not, correct it (though this should be rare)
-            if (data.is_public !== newState) {
-                setIsPublic(data.is_public);
-                onToggleSuccess?.(data.is_public);
-            }
+			// Verify the server state matches our optimistic update
+			// If not, correct it (though this should be rare)
+			if (data.is_public !== newState) {
+				setIsPublic(data.is_public);
+				onToggleSuccess?.(data.is_public);
+			}
 
-            toast.success(data.is_public ? "Episode is now public" : "Episode is now private", {
-                description: data.is_public
-                    ? "Anyone with the link can listen to this episode"
-                    : "Only you can access this episode",
-            });
-        } catch (error) {
-            // ROLLBACK: Revert to previous state on failure
-            setIsPublic(previousState);
-            onToggleSuccess?.(previousState);
+			toast.success(data.is_public ? "Episode is now public" : "Episode is now private", {
+				description: data.is_public
+					? "Anyone with the link can listen to this episode"
+					: "Only you can access this episode",
+			});
+		} catch (error) {
+			// ROLLBACK: Revert to previous state on failure
+			setIsPublic(previousState);
+			onToggleSuccess?.(previousState);
 
-            console.error("[PUBLIC_TOGGLE]", error);
-            toast.error("Failed to update sharing settings", {
-                description: error instanceof Error ? error.message : "Please try again later",
-            });
-        } finally {
-            setIsLoading(false);
-        }
-    }, [episodeId, isPublic, onToggleSuccess]);
+			console.error("[PUBLIC_TOGGLE]", error);
+			toast.error("Failed to update sharing settings", {
+				description: error instanceof Error ? error.message : "Please try again later",
+			});
+		} finally {
+			setIsLoading(false);
+		}
+	}, [episodeId, isPublic, onToggleSuccess]);
 
-    return (
-        <Button
-            type="button"
-            variant={isPublic ? "default" : "outline"}
-            size="sm"
-            onClick={handleToggle}
-            disabled={isLoading}
-            icon={isPublic ? <Globe className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
-        >
-            {isLoading ? "Updating..." : isPublic ? "Public" : "Private"}
-        </Button>
-    );
+	return (
+		<span className="flex items-center gap-4 my-8 w-full text-xs">
+
+			Visibility:
+			<Button
+				type="button"
+				variant={isPublic ? "default" : "outline"}
+				size="sm"
+				onClick={handleToggle}
+				disabled={isLoading}
+				icon={isPublic ? <Globe className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+			>
+				{isLoading ? "Updating..." : isPublic ? "Public" : "Private"}
+			</Button>
+		</span>
+	);
 }
 

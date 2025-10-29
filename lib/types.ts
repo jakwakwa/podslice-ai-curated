@@ -14,6 +14,7 @@ export type Subscription = Prisma.$SubscriptionPayload["scalars"];
 export type EpisodeFeedback = Prisma.$EpisodeFeedbackPayload["scalars"];
 export type FeedbackRating = PrismaFeedbackRating;
 export type UserEpisode = Prisma.$UserEpisodePayload["scalars"];
+export type UserIngestionConfig = Prisma.$UserIngestionConfigPayload["scalars"];
 export { UserRole };
 
 // Custom types that combine Prisma types with relations

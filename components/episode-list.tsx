@@ -106,7 +106,7 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, onPlayEpisod
 
 			{
 				episodes.length > 0 ? (
-					<ul className="relative text-card-foreground p-0 px-2 md:px-12 w-full z-1 flex flex-col xl:px-[40px] xl:justify-around items-start xl:gap-2 md:gap-4 h-fit  lg:p-[20px] rounded-3xl episode-card-wrapper-dark shadow-[0px_0px_5px_5px_#261c4b5b]">
+					<ul className="relative text-card-foreground p-0 gap-4 px-2 md:px-12 w-full z-1 flex flex-col xl:px-[40px] xl:justify-around items-start xl:gap-2 md:gap-4 h-fit  lg:p-[20px] rounded-3xl episode-card-wrapper-dark shadow-[0px_0px_5px_5px_#261c4b5b]">
 						{episodes.map(episode => {
 							// Determine details link depending on whether it's user-generated or bundle episode
 							const detailsHref = isUserGeneratedEpisode(episode) ? `/my-episodes/${episode.episode_id}` : `/episodes/${episode.episode_id}`;

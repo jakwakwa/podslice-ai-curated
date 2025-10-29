@@ -14,6 +14,7 @@ import { H3, Typography } from "@/components/ui/typography";
 import { ONE_HOUR, SEVEN_DAYS } from "@/lib/swr";
 import type { Bundle, Podcast } from "@/lib/types";
 import { BundleSelectionDialog } from "./bundle-selection-dialog";
+import SectionHeader from "@/components/section-header";
 
 type BundleWithAccess = Bundle & {
 	podcasts: Podcast[];
@@ -302,7 +303,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 
 	if (error) {
 		return (
-			<div className="max-w-2xl mx-auto mt-8 ">
+			<div className="max-w-4xl mx-auto mt-8 ">
 				<Alert variant="destructive">
 					<AlertCircle className="h-4 w-4" />
 					<AlertTitle>Unable to Load PODSLICE Bundles</AlertTitle>
@@ -338,7 +339,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 	const sharedBundles = bundleList.filter(b => b.bundleType === "shared");
 	if (curatedBundles.length === 0) {
 		return (
-			<div className="max-w-2xl mx-auto mt-8 ">
+			<div className="max-4xl mx-auto mt-8 ">
 				<Alert>
 					<AlertCircle className="h-4 w-4" />
 					<AlertTitle>No PODSLICE Bundles Available</AlertTitle>
@@ -353,12 +354,13 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 	return (
 		<>
 			{/* Curated Bundles Section */}
+
 			{curatedBundles.length > 0 && (
+
 				<div className=" mb-8 px-4">
-					<H3 className="text-[1.2rem] text-primary-foreground font-bold font-sans mb-4 px-2 md:px-12 xl:px-[40px]">
-						🎯 Curated by Podslice
-					</H3>
+					<SectionHeader title="Subscribe to a Channel" description="Subscribe to channels. New audio and text summaries will appear in your feed automatically weekly or daily" />
 					<div className="episode-card-wrapper-dark relative transition-all duration-200 text-card-foreground gap-4 p-0 px-2 md:px-4 md:py-5 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-3 xl:p-[40px]   lg:px-8 xl:justify-evenly items-start lg:gap-5 xl:gap-6 h-fit xl:px-[40px] rounded-3xl  backdrop-blur-[3px]">
+
 						{curatedBundles.map(bundle => {
 							const planMeta = PLAN_GATE_META[bundle.min_plan];
 							const canInteract = bundle.canInteract;
@@ -375,7 +377,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 									onClick={() => handleBundleClick(bundle)}>
 									<CardHeader className="w-full py-4 px-2">
 										<div className="w-full flex flex-col-reverse xl:flex-col-reverse gap-3">
-											<div className="flex items-start gap-3 text-sm font-normal tracking-wide flex-col w-full md:max-w-[240px]">
+											<div className="flex items-start gap-3 text-sm font-normal tracking-wide flex-col w-full gap-3">
 												<H3 className="text-lg text-primary-foreground  font-foreground-muted font-sans mt-2  tracking-tight uppercase leading-tight mb-0 truncate">
 													{bundle.name}
 												</H3>
@@ -436,18 +438,18 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 													) : (
 														<ul
 															key={bundle.bundle_id}
-															className="bg-header/40 rounded-md w-full flex flex-col  py-2 px-1 gap-2 capitalize">
+															className="bg-header/90 min-w-full rounded-md w-full flex flex-row flex-wrap  py-2 px-1 gap-2 capitalize">
 															{bundle.podcasts
 																.slice(0, 4)
 																.map((podcast: Podcast, _index: number) => (
 																	<li
 																		key={podcast.podcast_id}
-																		className="text-foreground leading-none font-medium text-[0.85rem] truncate pl-1 line-clamp-1">
+																		className="text-foreground leading-none font-medium text-[0.75rem] truncate pl-1 line-clamp-1">
 																		{podcast.name}
 																	</li>
 																))}
 															{bundle.podcasts.length > 4 && (
-																<span className="text-[0.8rem] text-primary-foreground font-bold leading-tight mt-0 mb-0 ">
+																<span className="text-[0.7rem] text-primary-foreground font-bold leading-tight mt-0 mb-0 ">
 																	and more
 																</span>
 															)}
@@ -585,7 +587,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 																		key={podcast.podcast_id}
 																		className=" leading-none flex w-full justify-end gap-0 p-0">
 																		<div className="w-full flex flex-col gap-0">
-																			<p className="w-full text-[0.7rem] font-semibold leading-normal my-0 px-1 mx-0 text-left text-[#e9f0f1b3] tracking-wide line-clamp-2">
+																			<p className="w-full text-[0.5rem] font-semibold leading-normal my-0 px-1 mx-0 text-left text-[#e9f0f1b3] tracking-wide line-clamp-2">
 																				{podcast.name}
 																			</p>
 																		</div>
