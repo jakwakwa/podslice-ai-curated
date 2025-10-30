@@ -50,13 +50,13 @@ export function BundleSummaryPanel({
 	};
 
 	return (
-		<div className="rounded-xl w-screen md:w-full pt-0 md:pr-0 md:mr-0 flex flex-col lg:flex-col lg:justify-center lg:items-center md:p-1 sm:pt-0 md:pt-6  p-0 m-0 mx-auto md:mx-0 md:overflow-hidden lg:w-full lg:gap-1 overflow-hidden mt-8 mb-4 md:mt-0 max-h-120">
+		<div className="rounded-xl w-screen md:w-full pt-0 md:pr-0 md:mr-0 flex flex-col lg:flex-col lg:justify-center lg:items-center md:p-1 sm:pt-0 md:pt-6  p-0 m-0 mx-auto md:mx-0 md:overflow-hidden lg:w-full lg:gap-1 overflow-hidden mt-8 mb-4 md:mt-0 max-h-120 max-w-full">
 			<div className="px-0 lg:gap-2 flex flex-col md:justify-between md:p-0 md:rounded-none w-full">
-				<h2 className="pt-8 font-bold md:text-secondary-foreground md:pt-0 md:px-0 pb-3 text-sm max-w-[100%] md:block">
+				<h2 className="pt-8 font-bold md:text-secondary-foreground md:pt-0 md:px-0 py-4 text-base  md:block">
 					{sections.bundleFeed.title}
 				</h2>
 				<div className="md:rounded-2xl">
-					<div className="md:border-1 bg-sidebar shadow-indigo-800/90 md:shadow-none border border-border  py-6 md:pt-4 md:pb-0 px-2 h-fit shadow-lg md:rounded-t-lg text-secondary-foreground md:text-primary-foreground">
+					<div className="md:border-1 bg-sidebar shadow-indigo-800/90 md:shadow-none border border-border  py-6 md:pt-4 md:pb-0 px-2 h-fit shadow-lg rounded-t-lg text-secondary-foreground md:text-primary-foreground">
 						<Button
 							className="inline-flex text-sm md:text-xs justify-end w-full px-0 mb-2 text-foreground"
 							variant="ghost"

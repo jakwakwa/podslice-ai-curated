@@ -356,7 +356,7 @@
 	--sidebar-border: var(--swak-4);
 	--sidebar-ring: var(--kwak-6);
 	--sidebar-shadow: var(--color-gray-950);
-	--inset-gradient: linear-gradient(var(--kwak-1) 0%, var(--color-gray-950) 110%);
+	--inset-gradient: linear-gradient(var(--swak-2) -10%, var(--color-black) 110%);
 	--bigepisode-gradient: linear-gradient(0deg,
 			var(--color-gray-950) 20%,
 			var(--color-gray-900) 90%);
@@ -385,9 +385,23 @@
 /* ============================================= */
 @layer utilities {
 
-	.layout-inset-background {
+	.bg-pattern {
+		background-image: url('/bg-pattern.svg') !important;
 
-		background-image: var(--inset-gradient) !important;
+		opacity: 0.1 !important;
+		z-index: 1 !important;
+	}
+
+	.layout-inset-background {
+		background-image: url('/bg-pattern.svg'), var(--inset-gradient);
+		/* background-color: var(--inset-gradient); */
+		/* mix-blend-mode: multiply, screen; */
+		background-size: 50% !important;
+		background-position: center !important;
+		background-repeat: repeat !important;
+		background-attachment: fixed !important;
+		background-blend-mode: multiply, darken !important;
+		background-color: var(--kwak-4) !important;
 	}
 
 	/* Glassmorphic utility classes */

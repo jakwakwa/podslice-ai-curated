@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth, useUser } from "@clerk/nextjs";
-import { Menu } from "lucide-react";
+import { HomeIcon, Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -52,8 +52,8 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 					<div
 						className={`flex items-center ${isMobile ? "h-18" : "h-14"} justify-start  ${state === "expanded" ? "md:px-4 w-[240px]" : "md:px-0 w-[80px] "}`}>
 						<Link
-							href="/"
-							className={`flex items-center h-24 justify-start  ${state === "expanded" ? "px-0  ml-0 md:pl-0" : "md:pl-1"}`}>
+							href="/dashboard"
+							className={`flex items-center h-24 justify-start text-xs  ${state === "expanded" ? "px-0  ml-0 md:pl-0" : "md:pl-1"}`}>
 							{!isMobile ? (
 								<Image
 									className={`transition-all flex flex-row items-center  duration-300 ease-in-out w-full ${state === "expanded" ? "h-18 max-w-[124px] " : "max-w-[40px]   justify-center"}`}
@@ -71,6 +71,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 									alt={`Menu`}
 								/>
 							)}
+							<HomeIcon className="mt-1 mr-4" height={14} />
 						</Link>
 
 						<SidebarTrigger
@@ -112,7 +113,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 				<div
 					className={` flex flex-col flex-grow transition-all duration-300 ease-in-out px-0 md:px-0 mt-8 md:mt-0 mb-2 m-0 p-0 h-screen ${state === "expanded" ? "ml-0 w-full md:ml-0 md:p-0  " : "ml-0 md:ml-0 w-full md:min-w-[100vw]"}`}>
-					<div className={"layout-inset"} />
+					<div className={"bg-pattern layout-inset"} />
 					<div
 						className={`  w-screen md:min-w-none animated-gradient   mx-0  p-0 flex flex-col my-0 md:flex-row pt-6 md:p-3 md:py-16 md:mx-0 pl-0  md:my-0   ${state === "expanded" ? "m-0 md:ml-0 md:p-0  lg:px-2 lg:pb-8 max-w-full" : "md:pl-12 pr-0 md:pr-24 md:ml-0  min-w-screen  "}`}>
 						{children}

@@ -70,7 +70,7 @@ export default async function DashboardPage() {
 				hasProfile={hasProfile}
 				userCurationProfile={userCurationProfile}
 			/>
-			<div className="grid grid-cols-3 w-full max-w-[50vw] gap-4">
+			<div className="flex flex-col md:flex-col xl:flex-row w-full   gap-4">
 
 
 				{/* Recent Episodes Section */}
@@ -78,7 +78,7 @@ export default async function DashboardPage() {
 					{/* Bundle Feed Section */}
 					{userCurationProfile?.is_bundle_selection ? (
 						<Suspense fallback={<BundleFeedSkeleton />}>
-							<div className="grid grid-cols-1 w-full max-w-[50vw] gap-4">
+							<div className="flex flex-col w-screen lg:max-w-[400px] lg:w-full gap-4">
 								<BundleFeedSection
 									userCurationProfile={userCurationProfile}
 									subscription={subscription}
