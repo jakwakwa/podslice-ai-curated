@@ -66,7 +66,7 @@ const ThirdPartyServicesSection = ({
                                                         href={link.url}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="text-primary hover:text-primary/80 font-medium underline transition-colors text-sm"
+                                                        className="text-link hover:text-link-hover font-medium underline transition-colors text-sm"
                                                     >
                                                         {link.text}
                                                     </Link>

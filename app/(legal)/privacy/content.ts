@@ -292,6 +292,78 @@ export const privacyContent: PrivacyContent = {
       },
     },
     {
+      id: "third-party-sites",
+      title: "9. Third Party Sites and External Services",
+      content: {
+        paragraphs: [
+          "This Privacy Notice does not apply to the websites of any other parties, or the applications, products or services, such websites advertise and which may be linked to this Website, or websites that link to or advertise this Website. Podslice is not responsible for the privacy practices of such third party websites.",
+          "We carefully select third-party service providers who share our commitment to privacy and transparency. Below are the specific services we use:",
+          "We advise you to read the privacy policy of each third party website and decide whether you agree to their privacy practices and policies, as these third party websites may also be collecting or sharing your Personal Information.",
+        ],
+        services: [
+          {
+            heading: "Authentication Services",
+            items: [
+              {
+                name: "Clerk",
+                description:
+                  "We use Clerk for user authentication and account management. Clerk processes your login credentials, profile information, and authentication data to provide secure access to our services.",
+              },
+            ],
+          },
+          {
+            heading: "Payment Processing",
+            items: [
+              {
+                name: "Paddle",
+                description:
+                  "We use Paddle for secure payment processing and subscription management. Paddle processes your payment information, billing details, and subscription data to facilitate transactions.",
+                links: [
+                  {
+                    text: "Paddle Privacy Policy",
+                    url: "https://www.paddle.com/legal/privacy",
+                  },
+                  {
+                    text: "Find Your Purchase & Contact Paddle Support",
+                    url: "https://paddle.net/find-purchase",
+                  },
+                  {
+                    text: "Verify Your Email with Paddle",
+                    url: "https://paddle.net/verify-email",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            heading: "Cloud Storage Services",
+            items: [
+              {
+                name: "Google Cloud Services",
+                description:
+                  "We use Google Cloud for secure storage of audio files only. Google Cloud stores podcast audio content and AI-generated audio summaries. No user personal information is stored in Google Cloud services.",
+              },
+            ],
+          },
+          {
+            heading: "Other Service Providers",
+            items: [
+              {
+                name: "Analytics Services",
+                description:
+                  "We use analytics services with privacy-focused configurations for insights and service improvement.",
+              },
+              {
+                name: "Cloud Providers",
+                description:
+                  "We use cloud providers with robust security certifications for infrastructure and data processing.",
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
       id: "children-privacy",
       title: "10. Children's Privacy",
       content: {
@@ -311,8 +383,7 @@ export const privacyContent: PrivacyContent = {
     },
     {
       id: "consumer-protection",
-      title:
-        "12. Consumer Protection Act, Protection of Personal Information Act and Other Laws",
+      title: "12. Consumer Protection Act, Protection of Personal Information Act and Other Laws",
       content: {
         lists: [
           {
@@ -361,7 +432,7 @@ export const privacyContent: PrivacyContent = {
   ],
   thirdPartySites: {
     id: "third-party-sites",
-    title: "9. Third Party Sites",
+    title: "9. Third Party Sites and External Services",
     content: {
       paragraphs: [
         "This Privacy Notice does not apply to the websites of any other parties, or the applications, products or services, such websites advertise and which may be linked to this Website, or websites that link to or advertise this Website. Podslice is not responsible for the privacy practices of such third party websites.",

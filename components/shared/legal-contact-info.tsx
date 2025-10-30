@@ -25,14 +25,14 @@ const LegalContactInfo = ({ heading, paragraphs, details }: LegalContactInfoProp
 					paragraphs,
 				}}
 			/>
-			<div className="mt-4 p-4 bg-background/20  rounded-lg border border-border">
+			<div className="mt-4 p-4 bg-primary  rounded-lg border border-border">
 				<p className="font-semibold text-base text-foreground">{details.name}</p>
 				<p className="text-sm text-foreground/90">Email: {details.email}</p>
 				<p className="text-sm text-foreground/90">
 					Website:{" "}
 					<Link
 						href="/"
-						className="text-primary hover:text-primary/80 hover:underline transition-colors">
+						className="text-link hover:text-link-hover underline transition-colors">
 						{details.website}
 					</Link>
 				</p>

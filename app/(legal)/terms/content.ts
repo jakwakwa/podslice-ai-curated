@@ -161,15 +161,14 @@ export const termsContent: TermsContent = {
       title: "13. Governing Law and Dispute Resolution",
       content: {
         paragraphs: [
-          "These Terms is to be governed, interpreted and implemented in accordance with the laws of South Africa.",
+          "These Terms are governed by and interpreted in accordance with the laws of South Africa, without regard to conflict of law principles.",
         ],
         lists: [
           {
             type: "ordered",
             items: [
-              "You consent to the non-exclusive jurisdiction of the High Court of South Africa, Western Cape Local Division, Cape Town for any proceedings arising out of or in connection with these Terms.",
-              "The grant of any indulgence, extension of time or relaxation of any provision by Stitch under these Terms shall not constitute a waiver of any right by us or prevent or adversely affect the exercise by us of any existing or future right of ours.",
-              "Any provision in these Terms which is or may become illegal, invalid or unenforceable shall be ineffective to the extent of such prohibition or unenforceability and shall be treated as having not been written and severed from the balance of these Terms, without invalidating the remaining provisions of these Terms or affecting the validity or enforceability of such provision.",
+              "You consent to the exclusive jurisdiction of the High Court of South Africa, Western Cape Local Division, Cape Town for any proceedings arising out of or in connection with these Terms.",
+              "The grant of any indulgence, extension of time or relaxation of any provision by PodSlice under these Terms shall not constitute a waiver of any right by us or prevent or adversely affect the exercise by us of any existing or future right of ours.",
               "Any provision in these Terms which is or may become illegal, invalid or unenforceable shall be ineffective to the extent of such prohibition or unenforceability and shall be treated as having not been written and severed from the balance of these Terms, without invalidating the remaining provisions of these Terms or affecting the validity or enforceability of such provision.",
               "You may not cede any or all of its rights or delegate any or all of its obligations under these Terms.",
             ],
