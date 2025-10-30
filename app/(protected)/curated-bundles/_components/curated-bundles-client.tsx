@@ -377,7 +377,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 									onClick={() => handleBundleClick(bundle)}>
 									<CardHeader className="w-full py-4 px-2">
 										<div className="w-full flex flex-col-reverse xl:flex-col-reverse gap-3">
-											<div className="flex items-start gap-3 text-sm font-normal tracking-wide flex-col w-full gap-3">
+											<div className="flex items-start gap-3 text-sm font-normal tracking-wide flex-col w-full">
 												<H3 className="text-lg text-primary-foreground  font-foreground-muted font-sans mt-2  tracking-tight uppercase leading-tight mb-0 truncate">
 													{bundle.name}
 												</H3>
