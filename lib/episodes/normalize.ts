@@ -102,7 +102,7 @@ export function normalizeEpisode(episode: Episode | UserEpisode): NormalizedEpis
 		const sources = isNews && episode.news_sources ? `Sources: ${formatNewsSources(episode.news_sources)}` : null;
 		return {
 			id: episode.episode_id,
-			title: episode.episode_title,
+			title: episode.episode_title || "Untitled Episode",
 			source: "user",
 			audioUrl: episode.gcs_audio_url || null,
 			artworkUrl: null, // YouTube channel image will be fetched separately
@@ -118,7 +118,7 @@ export function normalizeEpisode(episode: Episode | UserEpisode): NormalizedEpis
 	// Bundle episode
 	return {
 		id: episode.episode_id,
-		title: episode.title,
+		title: episode.title || "Untitled Episode",
 		source: "bundle",
 		audioUrl: episode.audio_url || null,
 		artworkUrl: episode.image_url || null,

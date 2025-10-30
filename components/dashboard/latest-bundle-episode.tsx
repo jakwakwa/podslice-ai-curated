@@ -8,7 +8,7 @@ import { useEpisodePlayer } from "@/hooks/use-episode-player";
 import type { Episode } from "@/lib/types";
 
 interface LatestBundleEpisodeProps {
-	episode: Episode;
+	episode: Episode | null;
 	bundleName: string;
 }
 
@@ -16,9 +16,13 @@ interface LatestBundleEpisodeProps {
  * LatestBundleEpisode
  * Displays the most recent episode from the user's active bundle
  */
-export function LatestBundleEpisode({ episode, bundleName }: LatestBundleEpisodeProps) {
+export function LatestBundleEpisode({ episode, bundleName }: LatestBundleEpisodeProps): React.ReactNode {
 	const { playEpisode } = useEpisodePlayer();
 	const { sections } = dashboardCopy;
+
+	if (!episode) {
+		return null;
+	}
 
 	return (
 		<div className="w-full border-b-0 rounded-0 py-0 my-0 mx-0 border-[#2c2a2a17] mt-0 pt-6 px-4 sm:pt-0 md:pt-9 md:mt-0 md:mb-8 md:px-6 border-dark md:rounded-3xl overflow-hidden">
@@ -33,10 +37,10 @@ export function LatestBundleEpisode({ episode, bundleName }: LatestBundleEpisode
 				<EpisodeCard
 					imageUrl={episode.image_url}
 					title={episode.title}
-					publishedAt={episode.published_at || episode.created_at}
-					detailsHref={`/episodes/${episode.episode_id}`}
-					durationSeconds={episode.duration_seconds}
-					actions={<PlayButton onClick={() => playEpisode(episode)} aria-label={`Play ${episode.title}`} />}
+					publishedAt={episode?.published_at || episode?.created_at}
+					detailsHref={`/episodes/${episode?.episode_id}`}
+					durationSeconds={episode?.duration_seconds}
+					actions={<PlayButton onClick={() => playEpisode(episode)} aria-label={`Play ${episode?.title || "Untitled Episode"}`} />}
 				/>
 			</CardContent>
 		</div>

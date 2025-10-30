@@ -5,9 +5,11 @@ interface SectionHeaderProps {
 
 const SectionHeader = ({ title, description }: SectionHeaderProps) => {
 	return (
-		<div className="text-left mb-0 px-6 xl:px-12  py-8 md:pt-8  ">
-			<h2 className="text-2xl leading-9 font-semibold tracking-tight mb-4 text-primary-foreground">{title}</h2>
-			<p className=" leading-5 font-normal text-secondary-foreground 	 tracking-wide max-w-[600px] pb-6">
+		<div className="max-w-full px-0  text-left mb-0 pb-4 md:pt-4 md:py-0">
+			<h4 className="text-lg leading-relaxed text-shadow-[0px_1px_0px_#ededed30] text-primary-foreground-muted font-semibold tracking-tight mb-3">
+				{title}
+			</h4>
+			<p className=" leading-5 font-normal text-indigo-100/80 tracking-wide text-sm max-w-[600px] pb-6">
 				{description}
 			</p>
 		</div>

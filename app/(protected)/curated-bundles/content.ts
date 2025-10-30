@@ -5,9 +5,9 @@
 
 export const curatedBundlesPageContent = {
 	header: {
-		title: "Explore Bundles",
+		title: "Discover Channels",
 		description:
-			`Get summaries from popular shows and channels we've already curated for you. Just subscribe to our Bundles. (e.g., "All in Ai," "Top Shows Bundle," or "Finance Fast-Track"), and new audio and text summaries will appear in your feed automatically`,
+			`Subscribe to channels and new audio and text summaries will appear in your feed automatically weekly or daily`,
 	},
 	filters: {
 		searchPlaceholder: "Search a topic or show...",

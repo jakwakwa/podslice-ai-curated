@@ -144,7 +144,7 @@ export async function POST(request: Request) {
 
 		const txResults = await prisma.$transaction([
 			// Do not auto-create membership here; rely on existing relationships and validation above
-			// Create the episode with both podcast_id and bundle_id (bundle_id is for diagnostics only; reads remain membership-based)
+			// Create the episode with both podcast_id and bundle_id
 			prisma.episode.create({
 				data: {
 					episode_id: `episode_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -154,7 +154,7 @@ export async function POST(request: Request) {
 					image_url: image_url || null,
 					published_at: new Date(),
 					week_nr: currentWeek,
-					bundle_id: null,
+					bundle_id: bundleId || null,
 					podcast_id: finalPodcastId,
 				},
 			}),

@@ -3,6 +3,7 @@
 import {
 	ChevronDown,
 	ChevronRight,
+	InfoIcon,
 	MessageSquareWarning,
 	PlayCircle,
 	SparklesIcon,
@@ -14,6 +15,7 @@ import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
 import { LongEpisodeWarningDialog } from "@/components/features/episode-generation/long-episode-warning-dialog";
 import { SummaryLengthSelector } from "@/components/features/episode-generation/summary-length-selector";
+import SectionHeader from "@/components/shared/section-header";
 import { Button } from "@/components/ui/button";
 import ComponentSpinner from "@/components/ui/component-spinner";
 import {
@@ -37,6 +39,8 @@ import { VOICE_OPTIONS } from "@/lib/constants/voices";
 import { getMaxDurationSeconds } from "@/lib/env";
 import { useNotificationStore } from "@/lib/stores";
 import type { SummaryLengthOption } from "@/lib/types/summary-length";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import type { config } from "process";
 
 const EPISODE_LIMIT = PRICING_TIER[2]?.episodeLimit ?? 30;
 const YT_MAX_DURATION_SECONDS = getMaxDurationSeconds();
@@ -86,27 +90,16 @@ export function EpisodeCreator() {
 
 	// News input state
 	const NEWS_SOURCES = [
-		{ id: "global", label: "Guardian, BBC, Reuters, Al Jazeera" },
-		{ id: "crypto", label: "Coindesk, Coinbase, Bloomberg, Yahoo" },
-		{ id: "us", label: "US News" },
-		{ id: "finance", label: "Bloomberg, Yahoo!, Barrons, Coindesk,TradingView" },
-		{ id: "geo", label: "United Nations, World Bank" },
+		{ id: "global", label: "Global", tip: "Guardian, BBC, Reuters, Al Jazeera" }, ///Guardian, BBC, Reuters, Al Jazeera"
+		{ id: "crypto", label: "Top Crypto Sources", tip: "Coindesk, TradingView" },
+		{ id: "us", label: "US News", tip: "CNN, SKY, ABC, NY TIMES" },
+		{ id: "finance", label: "Financial Sources", tip: "Bloomberg,Barrons, Tradingview, Yahoo Finance", },
+		{ id: "geo", label: "United Nations, World Bank", tip: "UN, World Bank" },
 	] as const;
-	const TOPICS = [
-		"technology",
-		"business",
-		"bitcoin and crypto",
-		"politics",
-		"us politics",
-		"world news",
-		"geo-political",
-		"tesla",
-		"finance"
-	] as const;
+
 
 	const [selectedSources, setSelectedSources] = useState<string[]>([]);
-	const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
-
+	const [selectedTopic, setSelectedTopic] = useState("");
 	// Generation options
 	const [generationMode, setGenerationMode] = useState<"single" | "multi">("single");
 	const [voiceA, setVoiceA] = useState<string>("Rasalgethi");
@@ -451,17 +444,20 @@ export function EpisodeCreator() {
 	const handleGoBack = () => router.back();
 
 	return (
-		<div className="w-full  bg-bigcard h-auto mb-0 px-0 py-0 md:px-8 md:py-8 lg:px-10 lg:py-6  rounded-lg  shadow-lg">
+		<div className="w-full bg-gray-900 h-auto mb-0 px-0 py-0 md:px-8 md:pt-8 lg:px-10 mr-0 lg:pb-12 lg:mb-0 rounded-none shadow-lg rounded-b-md overflow-hidden">
+			<SectionHeader
+				title="Generate your summary"
+				description="Summarise long-form podcasts, lectures or tutorials from youtube. Or if you are busy studying or doing research on a subjec. Our Ai will help you understand the core concepts with an easy-to-listen to audible overview and text summary with a list of important key concepts you can easily remember"
+			/>
 			<div className="w-full flex flex-col gap-3 md:gap-8 md:w-full md:min-w-full md:max-w-full">
-
-
 				<div className="w-full py-8 px-4 md:p-0 ">
 					{/* <ComponentSpinner isLabel={false} /> */}
 
 					<div className="w-full flex flex-col px-0 md:px-4  gap-4">
-						<div className="border-1 border-border bg-sidebar/20 rounded-3xl  shadow-md p-8">
+						<div className="border-1 border-border bg-sidebar/20 rounded-3xl text-xs shadow-md p-8">
 							<Label className="mb-2 md:mb-4">Pick a Summary Type:</Label>
-							<div className="w-[300px] flex flex-row items-center justify-start gap-2 ">
+							{creatorMode === "youtube" ? "Do you like listening to long-form podcasts, but can't find time for it? Just paste the link of podcast show." : "Want to catch up on the latest news? Select your desired sources and topics. Our AI will get to work and create a custom summary (both audio and text) just for you."}
+							<div className="w-[300px] mt-5 flex flex-row items-center justify-start gap-2 ">
 								<Button
 									type="button"
 									variant={creatorMode === "youtube" ? "default" : "outline"}
@@ -474,7 +470,7 @@ export function EpisodeCreator() {
 									variant={creatorMode === "news" ? "default" : "outline"}
 									onClick={() => setCreatorMode("news")}
 									disabled={isBusy}>
-									news summary
+									Reaseach summary
 								</Button>
 							</div>
 						</div>
@@ -543,47 +539,58 @@ export function EpisodeCreator() {
 							)}
 
 							{creatorMode === "news" && (
-								<div className="flex flex-row flex-wrap my-8 gap-4 mx-2 md:mx-4  md:gap-4 ">
-									<div className="border-1 border-border rounded-3xl  shadow-md p-8 space-y-2 md:col-span-2 lg:max-w-full">
+								<div className="flex flex-row flex-wrap my-8 gap-4 mx-2 md:mx-4 min-w-full md:gap-4 ">
+									<div className="border-1 border-border rounded-3xl  shadow-md p-8 space-y-2 md:col-span-2 lg:min-w-full text-sm">
 										<Label>Sources</Label>
-										<div className="flex justify-start items-start flex-wrap gap-4">
+										<span className="text-foreground/70">Pick your sources, or leave it to the Ai to decide</span>
+										<div className="flex w-full mt-4 justify-start items-start flex-wrap gap-4">
 											{NEWS_SOURCES.map(s => {
 												const active = selectedSources.includes(s.id);
 												return (
-													<Button
-														key={s.id}
-														type="button"
-														variant={active ? "default" : "outline"}
-														onClick={() =>
-															setSelectedSources(prev =>
-																active ? prev.filter(p => p !== s.id) : [...prev, s.id]
-															)
-														}
-														disabled={isBusy}
-														className="px-3 py-1 my-1">
-														{s.label}
-													</Button>
+													<div>
+
+
+														<Button
+															key={s.id}
+															type="button"
+															variant={active ? "outline" : "default"}
+															onClick={() =>
+																setSelectedSources(prev =>
+																	active ? prev.filter(p => p !== s.id) : [...prev, s.id]
+																)
+															}
+															disabled={isBusy}
+															className="px-3 py-1 my-1">
+
+															{s.label}
+
+															<Tooltip>
+																<TooltipTrigger>
+																	<InfoIcon className="text-xs  top-7 md:top-3 right-4" size={16} />
+																	<span className="hidden">Hover</span>
+																</TooltipTrigger>
+																<TooltipContent className="bg-background">
+																	<p className="text-sm text-black cursor-default ">
+																		{s?.tip}
+																	</p>
+																</TooltipContent>
+															</Tooltip>
+														</Button>
+
+													</div>
 												);
 											})}
 										</div>
 									</div>
 
 									<div className="mt-4 md:col-span-2 lg:min-w-full w-full border-1 border-border rounded-3xl  shadow-md p-8">
-										<Label>Topic</Label>
-										<Select
-											value={selectedTopic ?? ""}
-											onValueChange={v => setSelectedTopic(v)}>
-											<SelectTrigger className="w-full mt-4" disabled={isBusy}>
-												<SelectValue placeholder="Select topic" />
-											</SelectTrigger>
-											<SelectContent>
-												{TOPICS.map(t => (
-													<SelectItem key={t} value={t}>
-														{t.charAt(0).toUpperCase() + t.slice(1)}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
+										<Label htmlFor="selectedTopicId">Topic</Label>
+										<Input placeholder="Research any topic..."
+											id="selectedTopicId"
+											onChange={e => setSelectedTopic(e.target.value)}
+											value={selectedTopic}
+											disabled={isBusy}
+											required />
 									</div>
 								</div>
 							)}
@@ -746,8 +753,6 @@ export function EpisodeCreator() {
 										<div className="flex flex-col md:flex-row justify-start md:max-w-full md:grid-cols-2 gap-12">
 											{/* voice a */}
 											<div>
-
-
 												<div className="py-2 pl-2 uppercase font-bold text-secondary-foreground text-xs">
 													Voice A
 												</div>

@@ -19,26 +19,16 @@ import { inngest } from "./client";
 const ALLOWED_SOURCES = [
 	"global",
 	"crypto",
-		"geo",
+	"geo",
 	"finance",
 	"us",
 ] as const;
-const ALLOWED_TOPICS = [
-	"technology",
-	"business",
-	"bitcoin and crypto",
-	"politics",
-	"us politics",
-	"world news",
-	"geo-political",
-	"tesla",
-	"finance"
-] as const;
+
 
 const PayloadSchema = z.object({
 	userEpisodeId: z.string(),
 	sources: z.array(z.enum(ALLOWED_SOURCES)),
-	topic: z.enum(ALLOWED_TOPICS),
+	topic: z.string(),
 	generationMode: z.enum(["single", "multi"]).default("single"),
 	voiceA: z.string().optional(),
 	voiceB: z.string().optional(),
@@ -126,7 +116,7 @@ function buildConciseDisclosure(topic: string, parsedSummary: any): string {
 			fallbackDomains.length > 0
 				? ` like ${fallbackDomains.join(", ")}`
 				: "";
-		return `No recent news articles about '${topicText}' were found from the specified sources; fallback sources were used${listText}.`;
+		return `No articles about '${topicText}' were found from the specified sources; fallback sources were used${listText}.`;
 	} catch {
 		return "";
 	}
@@ -247,14 +237,14 @@ export const generateUserNewsEpisode = inngest.createFunction(
 		const PRIMARY_LOOKBACK_HOURS = 72; // 3 days preferred
 		const FALLBACK_LOOKBACK_HOURS = 168; // up to 7 days if needed
 
-		const constraintText = `You are a news researcher. Use the google_search tool.
+		const constraintText = `You are an expert researcher. Use the google_search tool.
 
 Topic: ${topic}
-Time window: Prefer last ${PRIMARY_LOOKBACK_HOURS} hours. If fewer than ${MIN_REQUIRED} quality articles are found in total, extend up to ${FALLBACK_LOOKBACK_HOURS} hours.
+Time window: Prefer last ${PRIMARY_LOOKBACK_HOURS} 12 months. If fewer than ${MIN_REQUIRED} quality articles are found in total, extend up to ${FALLBACK_LOOKBACK_HOURS} hours.
 
 Source policy:
 - PRIORITIZE these sources in this order: ${domainList}
-- If total high-quality coverage from prioritized sources is below ${MIN_REQUIRED}, BROADEN to other reputable outlets (e.g., Reuters, AP, BBC, FT, WSJ, CNBC, The Verge, TechCrunch, Wired, Bloomberg, The Guardian). Keep results topical and recent.
+- If total high-quality coverage from prioritized sources is below ${MIN_REQUIRED}, BROADEN to other reputable outlets (e.g., Reuters, National Geographic, Wikipedia, FT, WSJ, CNBC, The Verge, TechCrunch, Wired, Bloomberg, The Guardian, Reddit etc). Keep results topical and relative.
 - When broadening, prefer outlets thematically aligned to the topic, and still include any prioritized-source items found.
 
 Output ONLY valid JSON with this exact shape:
@@ -475,7 +465,7 @@ Instructions:
 			const script = await step.run("generate-single-script", async () => {
 				await prisma.userEpisode.update({
 					where: { episode_id: userEpisodeId },
-					data: { progress_message: "Writing your news summary script..." },
+					data: { progress_message: "Writing your research summary script..." },
 				});
 
 				// Parse the structured summary to extract the AI summary content
@@ -494,9 +484,9 @@ Instructions:
 					prompt: `Task: Based on the NEWS SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) single-narrator podcast segment where a Podslice host presents the news highlights to listeners.
 
 Identity & framing:
-- The speaker is a Podslice host summarizing recent news.
-- Present key stories, facts, and perspectives clearly.
-- Maintain journalistic objectivity.
+- The speaker is a Podslice host summarizing research found.
+- Present key facts, things important to understand and perspectives clearly.
+- Maintain an informative and guiding output style.
 
 Brand opener (must be the first line, exactly):
 "Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."
@@ -511,11 +501,12 @@ Constraints:
 - Avoid sensationalism; stick to facts.
 
 Structure:
-- Hook that frames this as a Podslice news summary.
-- Smooth transitions between news items.
+- Hook that frames this as a Podslice research summary.
+- Smooth transitions between items.
+- Help the listener understand complex ideas in a helpful and easy to remember manner.
 - Clear, concise wrap-up.
 
-NEWS SUMMARY:
+RESEARCH SUMMARY:
 ${summaryContent}`,
 				});
 
@@ -638,7 +629,7 @@ ${summaryContent}`,
 			const duetLines = await step.run("generate-duet-script", async () => {
 				await prisma.userEpisode.update({
 					where: { episode_id: userEpisodeId },
-					data: { progress_message: "Creating an engaging two-host news discussion..." },
+					data: { progress_message: "Creating an engaging two-host discussion..." },
 				});
 
 				// Parse the structured summary to extract the AI summary content
@@ -654,12 +645,12 @@ ${summaryContent}`,
 
 				const { text } = await generateText({
 					model: vertex(modelId),
-					prompt: `Task: Based on the NEWS SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) two-host podcast conversation where Podslice hosts discuss the news highlights. Alternate speakers naturally.
+					prompt: `Task: Based on the RESEARCH SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) two-host podcast conversation where Podslice hosts discuss the highlights. Alternate speakers naturally.
 	
 Identity & framing:
-- Hosts are from Podslice presenting recent news.
-- They discuss and provide context on key stories.
-- Maintain journalistic objectivity while being conversational.
+- Hosts are from Podslice presenting recent research to the listener. Digesting core findings and complex theory in memorable and easy to understand ways.
+- They discuss and provide context on key subjects.
+- Maintain informative tone while being conversational.
 	
 Brand opener (must be the first line, exactly, spoken by HOST SLICE):
 "Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."
@@ -690,7 +681,7 @@ ${summaryContent}`,
 						where: { episode_id: userEpisodeId },
 						data: {
 							progress_message:
-								"Converting dialogue to audio with your selected voices...",
+								"Converting dialogue to audio...",
 						},
 					});
 
@@ -706,7 +697,7 @@ ${summaryContent}`,
 						await prisma.userEpisode.update({
 							where: { episode_id: userEpisodeId },
 							data: {
-								progress_message: `Generating dialogue (line ${i + 1} of ${duetLines.length})...`,
+								progress_message: `Generating audio (line ${i + 1} of ${duetLines.length})...`,
 							},
 						});
 						const voice = line.speaker === "HOST SLICE" ? finalVoiceA : finalVoiceB;
@@ -728,7 +719,7 @@ ${summaryContent}`,
 					await prisma.userEpisode.update({
 						where: { episode_id: userEpisodeId },
 						data: {
-							progress_message: "Stitching dialogue into your final news episode...",
+							progress_message: "Wrapping up your summary audio overview...",
 						},
 					});
 
@@ -821,7 +812,7 @@ ${summaryContent}`,
 					data: {
 						user_id: episode.user_id,
 						type: "episode_ready",
-						message: `Your news episode "${episode.episode_title}" is ready.`,
+						message: `Your summary "${episode.episode_title}" is ready.`,
 					},
 				});
 			}
@@ -834,7 +825,7 @@ ${summaryContent}`,
 		});
 
 		return {
-			message: "News episode generation workflow completed",
+			message: "Podslice Research summary completed",
 			userEpisodeId,
 		};
 	}

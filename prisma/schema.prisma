@@ -30,6 +30,7 @@ model User {
   userCurationProfile  UserCurationProfile?
   userEpisodes         UserEpisode[]
   sharedBundles        SharedBundle[]
+  ingestionConfig      UserIngestionConfig?
 
   @@map("user")
 }
@@ -297,4 +298,24 @@ model SharedBundleEpisode {
   @@index([shared_bundle_id])
   @@index([episode_id])
   @@map("shared_bundle_episode")
+}
+
+/// ───────────────────────────────────
+/// USER INGESTION CONFIGURATION
+/// ───────────────────────────────────
+model UserIngestionConfig {
+  id           String   @id @default(cuid()) @map("id")
+  user_id      String   @unique @map("user_id")
+  user         User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  topic        String?  @map("topic")
+  rss_feed_url String?  @map("rss_feed_url")
+  api1_url     String?  @map("api1_url")
+  api2_url     String?  @map("api2_url")
+
+  is_active    Boolean  @default(true) @map("is_active")
+  created_at   DateTime @default(now()) @map("created_at")
+  updated_at   DateTime @updatedAt @map("updated_at")
+
+  @@map("user_ingestion_config")
 }

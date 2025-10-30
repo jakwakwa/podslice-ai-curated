@@ -38,12 +38,12 @@ const DialogContent = React.forwardRef<
 		<DialogPrimitive.Content
 			ref={ref}
 			className={cn(
-				"fixed left-[50%] top-[50%] md:top-[50%]  px-10 py-12  z-50  max-w-[93%] rounded-3xl w-screen backdrop-blur-[20px] md:w-full md:max-w-xl translate-x-[-50%] translate-y-[-50%]  border-2 border-purple-700/20 dialog-card shadow-xl shadow-[#1A1C2E56]/30 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-3xl flex flex-col gap-12 items-between justify-between content-center",
+				"bg-purple-400/20 fixed left-[50%] top-[50%] md:top-[50%]  px-10 py-12  z-50  max-w-[93%] rounded-3xl w-screen backdrop-blur-[20px] md:w-full md:max-w-xl translate-x-[-50%] translate-y-[-50%]  border-2 border-cyan-300/10 dialog-card shadow-xl shadow-[#1A1C2E56]/30 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-3xl flex flex-col gap-12 items-between justify-between content-center",
 				className
 			)}
 			{...props}>
 			{children}
-			<DialogPrimitive.Close className="absolute right-4 top-4 opacity-50 ring-offset-background transition-opacity focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 p-[3px] border-3 border-border rounded-3xl disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground backdrop-blur-2xl bg-indigo-950/70">
+			<DialogPrimitive.Close className="absolute right-4 top-4 opacity-50 ring-offset-background transition-opacity focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 p-[3px] border-3 border-border rounded-3xl disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground backdrop-blur-2xl bg-indigo-950/10">
 				<X className="h-3 w-3 text-white" />
 				<span className="sr-only">Close</span>
 			</DialogPrimitive.Close>
