@@ -41,24 +41,24 @@ export default function LandingPageContent() {
 	const howItWorks = [
 		{
 			step: 1,
-			title: "Choose Your Focus",
-			description: "Define what matters to you in under 2 minutes.",
+			title: "Choose Your Focus, Free up your time",
+			description: "Define what matters to you in under 2 minutes. Let our AI process your selections and extract the most valuable insights from each episode.	",
 			action: "Start your profile",
 		},
 		{
 			step: 2,
-			title: "Free up your time",
+			title: "Receive Weekly Insights",
 			description:
-				"Let our AI process your selections and extract the most valuable insights from each episode.",
+				"Get your personalised, human-quality audio summary delivered every Friday—no hunting, no fluff, just pure value.",
 			action: "AI processes content",
 		},
 		{
 			step: 3,
-			title: "Receive Weekly Insights",
+			title: "Your Subscription Supports the Content You Value.",
 			description:
-				"Get your personalised, human-quality audio summary delivered every Friday—no hunting, no fluff, just pure value.",
+				"Podslice is unequivocally committed to a creator-centric approach. A portion of every subscription fee goes directly back to the creators and networks who make this content possible",
 			action: "Get your briefing",
-		},
+		}
 	];
 
 	return (
@@ -71,49 +71,58 @@ export default function LandingPageContent() {
 
 				{/* Hero Section */}
 				<section className={`${styles.heroSection} w-full min-w-screen  `}>
-
-					<motion.div
-						className={styles.herobg}
-						style={{
-							translateY: useTransform(useScroll().scrollY, [0, 500], [0, -150]),
-						}}
-					/>
 					<div className={`flex flex-col content-center justify-center items-center h-[80vh]`}>
-						<div className={styles.heroContent}>
+						<motion.div
+							className={styles.herobg}
+							style={{
+								translateY: useTransform(useScroll().scrollY, [0, 500], [0, -150]),
+							}}
+						/>
+
+						<div className={` h-[80vh]`}>
+
+
 							<motion.h1
 								className={styles.heroHeading}
 								initial={{ opacity: 0, y: -20 }}
-								animate={{ opacity: 1, y: -70 }}
+								animate={{ opacity: 1, y: -40 }}
 								transition={{ duration: 0.8, ease: "easeInOut" }}>
-								Cut the chatter.
-								<br />
-								<span className={styles.heroHeadingHighlight}>Keep the insight.</span>
+
+								<span className="text-3xl">Super-powered Personalized Summaries<br /> </span>
 							</motion.h1>
-							<motion.p
-								className={styles.heroDescription}
-								initial={{ opacity: 0, y: 0 }}
-								animate={{ opacity: 1, y: -70 }}
-								transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}>
-								Tired of sifting through hours of podcasts for that one golden nugget?
-								Podslice.ai transforms chaotic audio into crystal-clear, actionable
-								knowledge with remarkably human AI voices.
+
+							<motion.h1
+								className={styles.heroHeading}
+								initial={{ opacity: 0, y: -20 }}
+								animate={{ opacity: 1, y: -40 }}
+								transition={{ duration: 0.8, ease: "easeInOut" }}>
+
+
+								<span className={`${styles.heroHeadingHighlight}  text-7xl font-black`}>Helping you cut the chatter<br />and keep the insights</span>
+							</motion.h1>
+
+
+							<motion.p className={`${styles.heroDescription} flex flex-col text-2xl`} initial={{ opacity: 0, y: -15 }} animate={{ opacity: 1, y: -20 }} transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}>Join the platform that champions creators. <br />Get premium insights without compromising your values.
 							</motion.p>
-						</div>
-						<motion.div
-							className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}>
-							{/* <Link href="/sign-in"> */}
-							<div>
+
+							<motion.div
+								className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+								initial={{ opacity: 0, y: 0 }}
+								animate={{ opacity: 1, y: -40 }}
+								transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}>
+
+								{/* <Link href="/sign-in"> */}
+
 								<div className={` text-teal-200 text-xl font-black`}>Listen to a Sample Audio Summary below</div>
+
+								{/* </Link> */}
+							</motion.div>
+							{/* Demo Audio Player */}
+							<div className="mt-4 w-full max-w-screen md:max-w-3xl mx-auto md:px-4">
+								<LandingAudioPlayer />
 							</div>
-							{/* </Link> */}
-						</motion.div>
-						{/* Demo Audio Player */}
-						<div className="mt-4 w-full max-w-screen md:max-w-3xl mx-auto md:px-4">
-							<LandingAudioPlayer />
 						</div>
+
 					</div>
 				</section>
 				<div className="background-base bg-primary" />

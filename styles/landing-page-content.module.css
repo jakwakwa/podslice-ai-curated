@@ -202,7 +202,6 @@
 
 .heroHeadingHighlight {
 	display: inline-block;
-	font-size: inherit;
 	line-height: inherit;
 	background-image: linear-gradient(90deg,
 			rgb(132, 54, 209),
@@ -211,7 +210,7 @@
 	-webkit-background-clip: text;
 	background-clip: text;
 	-webkit-text-fill-color: transparent;
-	font-weight: 900;
+	/* font-weight: 900; */
 	-webkit-background-clip: text;
 	background-clip: text;
 	-webkit-text-fill-color: transparent;
@@ -252,7 +251,7 @@
 	margin: 1rem auto 2rem;
 	max-width: 56rem;
 	line-height: 1.75;
-	font-size: 1.0625rem;
+	font-size: 1.0425rem;
 }
 
 .heroBtn {
@@ -747,7 +746,7 @@
 	}
 
 	.heroDescription {
-		font-size: 1.125rem;
+		font-size: 1.385rem;
 	}
 
 	.featuresGrid {
