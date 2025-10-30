@@ -183,7 +183,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 	const takeaways = !isNewsEpisode ? extractKeyTakeaways(episode.summary) : [];
 
 	return (
-		<div className="min-h-screen bg-background">
+		<div className="min-h-screen layout-inset-background">
 			<div className="container mx-auto px-4 py-8">
 				<EpisodeShell>
 					<div>

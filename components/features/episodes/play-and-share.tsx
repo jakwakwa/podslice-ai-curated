@@ -90,7 +90,7 @@ export default function PlayAndShare({
 
 	return (
 		<>
-			<div className="flex md:flex-row my-8 items-start gap-4">
+			<div className="w-full max-w-[10vw] flex md:flex-row my-8 items-start gap-4">
 				<Button
 					type="button"
 					className="outline-teal-400 outline-1 max-h-10"

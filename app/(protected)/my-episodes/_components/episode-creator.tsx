@@ -34,13 +34,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { PRICING_TIER } from "@/config/paddle-config";
 import { VOICE_OPTIONS } from "@/lib/constants/voices";
 import { getMaxDurationSeconds } from "@/lib/env";
 import { useNotificationStore } from "@/lib/stores";
 import type { SummaryLengthOption } from "@/lib/types/summary-length";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import type { config } from "process";
 
 const EPISODE_LIMIT = PRICING_TIER[2]?.episodeLimit ?? 30;
 const YT_MAX_DURATION_SECONDS = getMaxDurationSeconds();
@@ -93,10 +92,13 @@ export function EpisodeCreator() {
 		{ id: "global", label: "Global", tip: "Guardian, BBC, Reuters, Al Jazeera" }, ///Guardian, BBC, Reuters, Al Jazeera"
 		{ id: "crypto", label: "Top Crypto Sources", tip: "Coindesk, TradingView" },
 		{ id: "us", label: "US News", tip: "CNN, SKY, ABC, NY TIMES" },
-		{ id: "finance", label: "Financial Sources", tip: "Bloomberg,Barrons, Tradingview, Yahoo Finance", },
+		{
+			id: "finance",
+			label: "Financial Sources",
+			tip: "Bloomberg,Barrons, Tradingview, Yahoo Finance",
+		},
 		{ id: "geo", label: "United Nations, World Bank", tip: "UN, World Bank" },
 	] as const;
-
 
 	const [selectedSources, setSelectedSources] = useState<string[]>([]);
 	const [selectedTopic, setSelectedTopic] = useState("");
@@ -329,7 +331,7 @@ export function EpisodeCreator() {
 					"We're processing your episode and will email you when it's ready.",
 					{
 						duration: Infinity,
-						action: { label: "Dismiss", onClick: () => { } },
+						action: { label: "Dismiss", onClick: () => {} },
 					}
 				);
 				resumeAfterSubmission();
@@ -381,7 +383,7 @@ export function EpisodeCreator() {
 			if (!res.ok) throw new Error(await res.text());
 			toast.message("We're processing your episode and will email you when it's ready.", {
 				duration: Infinity,
-				action: { label: "Dismiss", onClick: () => { } },
+				action: { label: "Dismiss", onClick: () => {} },
 			});
 			resumeAfterSubmission();
 			router.push("/dashboard?from=generate");
@@ -391,8 +393,8 @@ export function EpisodeCreator() {
 			);
 			toast.error(
 				(err instanceof Error ? err.message : "Failed to start episode generation.") ||
-				"",
-				{ duration: Infinity, action: { label: "Dismiss", onClick: () => { } } }
+					"",
+				{ duration: Infinity, action: { label: "Dismiss", onClick: () => {} } }
 			);
 		} finally {
 			setIsCreating(false);
@@ -447,7 +449,7 @@ export function EpisodeCreator() {
 		<div className="w-full bg-gray-900 h-auto mb-0 px-0 py-0 md:px-8 md:pt-8 lg:px-10 mr-0 lg:pb-12 lg:mb-0 rounded-none shadow-lg rounded-b-md overflow-hidden">
 			<SectionHeader
 				title="Generate your summary"
-				description="Summarise long-form podcasts, lectures or tutorials from youtube. Or if you are busy studying or doing research on a subjec. Our Ai will help you understand the core concepts with an easy-to-listen to audible overview and text summary with a list of important key concepts you can easily remember"
+				description="Summarise long-form podcasts, lectures or tutorials from youtube into concise, AI produced and analysed, generated audio and text summaries. Our Ai will help you understand the core concepts with an easy-to-listen to audible overview and text summary with a list of important key concepts"
 			/>
 			<div className="w-full flex flex-col gap-3 md:gap-8 md:w-full md:min-w-full md:max-w-full">
 				<div className="w-full py-8 px-4 md:p-0 ">
@@ -456,7 +458,9 @@ export function EpisodeCreator() {
 					<div className="w-full flex flex-col px-0 md:px-4  gap-4">
 						<div className="border-1 border-border bg-sidebar/20 rounded-3xl text-xs shadow-md p-8">
 							<Label className="mb-2 md:mb-4">Pick a Summary Type:</Label>
-							{creatorMode === "youtube" ? "Do you like listening to long-form podcasts, but can't find time for it? Just paste the link of podcast show." : "Want to catch up on the latest news? Select your desired sources and topics. Our AI will get to work and create a custom summary (both audio and text) just for you."}
+							{creatorMode === "youtube"
+								? "Instructions: To find the youtube link, go to the video, click the share button below the video, copy the link that pop-up and paste it over here."
+								: "Want to catch up on the latest news? Select your desired sources and topics. Our AI will get to work and create a custom summary (both audio and text) just for you."}
 							<div className="w-[300px] mt-5 flex flex-row items-center justify-start gap-2 ">
 								<Button
 									type="button"
@@ -542,14 +546,14 @@ export function EpisodeCreator() {
 								<div className="flex flex-row flex-wrap my-8 gap-4 mx-2 md:mx-4 min-w-full md:gap-4 ">
 									<div className="border-1 border-border rounded-3xl  shadow-md p-8 space-y-2 md:col-span-2 lg:min-w-full text-sm">
 										<Label>Sources</Label>
-										<span className="text-foreground/70">Pick your sources, or leave it to the Ai to decide</span>
+										<span className="text-foreground/70">
+											Pick your sources, or leave it to the Ai to decide
+										</span>
 										<div className="flex w-full mt-4 justify-start items-start flex-wrap gap-4">
 											{NEWS_SOURCES.map(s => {
 												const active = selectedSources.includes(s.id);
 												return (
 													<div>
-
-
 														<Button
 															key={s.id}
 															type="button"
@@ -561,12 +565,14 @@ export function EpisodeCreator() {
 															}
 															disabled={isBusy}
 															className="px-3 py-1 my-1">
-
 															{s.label}
 
 															<Tooltip>
 																<TooltipTrigger>
-																	<InfoIcon className="text-xs  top-7 md:top-3 right-4" size={16} />
+																	<InfoIcon
+																		className="text-xs  top-7 md:top-3 right-4"
+																		size={16}
+																	/>
 																	<span className="hidden">Hover</span>
 																</TooltipTrigger>
 																<TooltipContent className="bg-background">
@@ -576,7 +582,6 @@ export function EpisodeCreator() {
 																</TooltipContent>
 															</Tooltip>
 														</Button>
-
 													</div>
 												);
 											})}
@@ -585,12 +590,14 @@ export function EpisodeCreator() {
 
 									<div className="mt-4 md:col-span-2 lg:min-w-full w-full border-1 border-border rounded-3xl  shadow-md p-8">
 										<Label htmlFor="selectedTopicId">Topic</Label>
-										<Input placeholder="Research any topic..."
+										<Input
+											placeholder="Research any topic..."
 											id="selectedTopicId"
 											onChange={e => setSelectedTopic(e.target.value)}
 											value={selectedTopic}
 											disabled={isBusy}
-											required />
+											required
+										/>
 									</div>
 								</div>
 							)}
@@ -884,7 +891,7 @@ export function EpisodeCreator() {
 				}}
 			/>
 
-			<Dialog open={showRestrictionDialog} onOpenChange={() => { }} modal={true}>
+			<Dialog open={showRestrictionDialog} onOpenChange={() => {}} modal={true}>
 				<DialogContent
 					className="sm:max-w-md"
 					onInteractOutside={e => e.preventDefault()}

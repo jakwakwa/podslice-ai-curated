@@ -9,7 +9,7 @@ import { Sidebar, SidebarContent, SidebarFooter } from "@/components/ui/sidebar"
 
 export const navItems = [
 	{
-		title: "Your Dashboard",
+		title: "Dashboard",
 		url: "/dashboard",
 		icon: Home,
 	},
@@ -19,23 +19,23 @@ export const navItems = [
 		icon: Radio,
 	},
 	{
-		title: "Channel Feeds",
+		title: "Your Channel Feeds",
 		url: "/episodes",
 		icon: BoxesIcon,
 	},
 	{
-		title: "Create with AI",
+		title: "Create Custom Ai summaries",
 		url: "#",
 		icon: WandSparkles,
 		hasSubitems: true,
 		subItems: [
 			{
-				name: "Create",
+				name: "Create an Ai Summary",
 				url: "/generate-my-episodes",
 				icon: WandSparkles,
 			},
 			{
-				name: "Your Stuff",
+				name: "Your Ai Summaries",
 				url: "/my-episodes",
 				icon: PlayCircleIcon,
 			},

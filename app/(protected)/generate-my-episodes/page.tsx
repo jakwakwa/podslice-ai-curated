@@ -8,16 +8,16 @@ export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
 	return {
-		title: "Create Your Summary",
-		description: "Create new episodes from YouTube links.",
+		title: "Create Custom Ai Summary",
+		description: "Easily Create pesonalised custom summaries with our Ai engine.",
 	};
 }
 
 export default async function GenerateMyEpisodesPage() {
 	const content = {
-		title: "Create Your Summary",
+		title: "Create an Ai Powered Summary",
 		description:
-			"This is where the real power lies. Found a 2-hour interview or lecture on YouTube? Just paste the link into Podslice. Want to catch up on the latest news? Select your desired sources and topics. Our AI will get to work and create a custom summary (both audio and text) just for you.",
+			"This is where the real power lies. If you find long interviews, 2-hour podcast episodes or lectures on YouTube then you simply need to copy the youtube link found by clicking on the youtube share button and paste it over here. Or enter a research topic for the Ai to summarise into easily digestable short intelligently analysed summaries for your convenience",
 	} as const;
 
 	return (

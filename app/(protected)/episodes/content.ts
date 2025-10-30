@@ -5,17 +5,16 @@
 
 export const episodesPageContent = {
 	header: {
-		title: "Personalized Feed",
-		description:
-			`Get summaries from popular shows and channels we've already curated for you. Just subscribe to our Bundles. (e.g., "All in Ai," "Top Shows Bundle," or "Finance Fast-Track"), and new audio and text summaries will appear in your feed automatically`,
+		title: "Your Active Channel Feeds",
+		description: `A list of all generated summaries generated via channels you are actively subscribed to`,
 	},
 	filters: {
-		label: "Filter by:",
+		label: "Filter  by YOUR subscribed channels:",
 		selectPlaceholder: "Select bundle type",
 		options: {
-			all: "All Bundles",
-			curated: "Curated Bundles",
-			shared: "Shared Bundles",
+			all: "All Subscribed Channels",
+			curated: "Your Active PODSLICE Channel",
+			shared: "Yoour Active PUBLIC Channel",
 		},
 	},
 	sections: {

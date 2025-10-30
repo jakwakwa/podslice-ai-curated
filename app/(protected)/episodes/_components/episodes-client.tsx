@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle, RefreshCw } from "lucide-react";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
 import { EpisodeList } from "@/components/episode-list";
@@ -105,14 +106,14 @@ export function EpisodesClient({
 
 	return (
 		<div className="border-1 bg-[oklch(0.68_0.17_240/_0.06)] border-[rgba(227,114,244,0.14)] rounded-none overflow-hidden mb-0 p-0 mt-0 md:mt-0 md:m-0 md:px-1 outline-0 md:rounded-4xl md:shadow-xl bg-episode-card-wrapper  lg:mt-6">
-			<div className="text-left md:pt-0 rounded-none my-0 py-0 md:mb-0 md:pb-0 overflow-hidden md:rounded-4xl md:py-0 min-w-full min-h-full flex justify-between items-center mx-0 lg:w-full lg:px-6	lg:pb-0	">
+			<div className="text-left md:pt-0 rounded-none my-0 py-0 md:mb-0 md:pb-0 overflow-hidden md:rounded-4xl md:py-0 min-w-full min-h-full flex flex-col justify-between md:flex-row items-center mx-0 lg:w-full lg:px-6	lg:pb-0	">
 				<SectionHeader
-					title="Generate your summary. This is where the real power lies"
-					description="Love the long form podcast, but can't find time for it? Just paste the link of podcast show. Want to catch up on the latest news? Select your desired sources and topics and have the news analyst ai get the best updates for you"
+					title="Your Subscribed Channel Feed"
+					description={`New audio and text summaries will appear over here automatically ( you can easily subscribe to a Channel by selecting one via the "Discover Feeds" page`}
 				/>
 
 				{/* Filter Dropdown */}
-				<div className="w-full md:w-auto md:min-w-[180px]">
+				<div className="w-full flex flex-col md:flex-row items-start justify-center md:justify-end md:items-center gap-3 md:w-auto md:min-w-[180px]">
 					<EpisodesFilterBar
 						value={bundleType}
 						onValueChange={handleBundleTypeChange}
@@ -120,6 +121,9 @@ export function EpisodesClient({
 						placeholder={episodesPageContent.filters.selectPlaceholder}
 						options={episodesPageContent.filters.options}
 					/>
+					<Link href={`/curated-bundles`}>
+						<Button variant="default">Discover Feeds</Button>
+					</Link>
 				</div>
 			</div>
 
@@ -128,6 +132,5 @@ export function EpisodesClient({
 				<EpisodeList episodes={episodes} onPlayEpisode={handlePlayEpisode} />
 			</div>
 		</div>
-
 	);
 }
