@@ -3,6 +3,8 @@
 import {
 	ChevronDown,
 	ChevronRight,
+	Eye,
+	HelpCircle,
 	InfoIcon,
 	MessageSquareWarning,
 	PlayCircle,
@@ -331,7 +333,7 @@ export function EpisodeCreator() {
 					"We're processing your episode and will email you when it's ready.",
 					{
 						duration: Infinity,
-						action: { label: "Dismiss", onClick: () => {} },
+						action: { label: "Dismiss", onClick: () => { } },
 					}
 				);
 				resumeAfterSubmission();
@@ -383,7 +385,7 @@ export function EpisodeCreator() {
 			if (!res.ok) throw new Error(await res.text());
 			toast.message("We're processing your episode and will email you when it's ready.", {
 				duration: Infinity,
-				action: { label: "Dismiss", onClick: () => {} },
+				action: { label: "Dismiss", onClick: () => { } },
 			});
 			resumeAfterSubmission();
 			router.push("/dashboard?from=generate");
@@ -393,8 +395,8 @@ export function EpisodeCreator() {
 			);
 			toast.error(
 				(err instanceof Error ? err.message : "Failed to start episode generation.") ||
-					"",
-				{ duration: Infinity, action: { label: "Dismiss", onClick: () => {} } }
+				"",
+				{ duration: Infinity, action: { label: "Dismiss", onClick: () => { } } }
 			);
 		} finally {
 			setIsCreating(false);
@@ -497,7 +499,21 @@ export function EpisodeCreator() {
 										<Label htmlFor="youtubeUrl">
 											Link to podcast episode ( YouTube only )
 										</Label>
-
+										<Tooltip>
+											<TooltipTrigger asChild>
+												<button type="button" className="flex text-xs flex-row items-center text-teal-200/80 py-1 gap-2">
+													<HelpCircle color={"#39c0b5e2"} className="text-xs  top-7 md:top-3 right-4 text-white" size={16} />
+													<span className="text-xs">Need help finding the link you need?</span>
+												</button>
+											</TooltipTrigger>
+											<span className="hidden">Hover</span>
+											<TooltipContent className="bg-teal-900 backdrop-blur-sm flex flex-col items-center justify-center shadow-lg shadow-gray-950/90">
+												<p className="text-sm text-whitw cursor-default font-bold">
+													Quick Guide: How to Find and Paste YouTube Link
+												</p>
+												<img src="/how-to-get-link.gif" alt="How to get the link" className="w-full h-full object-cover my-2 border-1 border-border rounded-md max-w-lg" />
+											</TooltipContent>
+										</Tooltip>
 										<Input
 											className="max-h-4"
 											id="youtubeUrl"
@@ -507,6 +523,8 @@ export function EpisodeCreator() {
 											disabled={isBusy}
 											required
 										/>
+
+
 										{isFetchingMetadata && <ComponentSpinner />}
 										{youtubeUrlError && (
 											<p className="flex bg-destructive px-2.5 py-1 text-destructive-foreground text-xs mt-2 rounded-md outline-1 outline-destructive">
@@ -523,21 +541,28 @@ export function EpisodeCreator() {
 									</div>
 
 									{videoTitle && (
-										<div className="bg-black/30 space-y-1 md:col-span-2 py-3 px-2 rounded-xl outline-2 outline-azure-500 shadow-lg max-w-sm  ">
-											<p className=" font-bold text-secondary-foreground flex text-xs items-center gap-2">
-												<VideoIcon width={18} height={18} color="#fecdd7b5" />
-												Youtube Video
-											</p>
-											<p className="text-secondary-foreground font-semibold text-xs">
-												{videoTitle}
-											</p>
-											{videoDuration !== null && (
-												<p className="text-xs text-[#39c0b5e2]">
-													Duration: {Math.floor(videoDuration / 60)}m {videoDuration % 60}
-													s
-												</p>
-											)}
+										<>	<div className="flex mt-4 flex-row items-center gap-2">
+											<Eye className="text-xs  top-7 md:top-3 right-4 text-violet-400" size={16} />
+											<span className="text-xs text-indigo-200"><span className="font-bold text-violet-300">Quick Review:</span> Confirm the video details below are correct</span>
 										</div>
+
+											<div className="bg-red-950/20 my-3 md:col-span-2 py-3 px-4 rounded-sm outline-1 outline-pink-900 shadow-sm max-w-sm  ">
+
+												<p className=" font-normal text-pink-300 flex text-[0.6rem] items-center gap-2 py-1">
+													<VideoIcon width={14} height={14} color="pink" />
+													Youtube Video Link:
+												</p>
+												<p className="text-violet-200/70 font-light text-[0.79rem] leading-tight">
+													{videoTitle}
+												</p>
+												{videoDuration !== null && (
+													<p className="text-[0.6rem] py-1 font-mono text-pink-400">
+														{Math.floor(videoDuration / 60)}m {videoDuration % 60}
+														s
+													</p>
+												)}
+											</div>
+										</>
 									)}
 								</div>
 							)}
@@ -568,12 +593,14 @@ export function EpisodeCreator() {
 															{s.label}
 
 															<Tooltip>
-																<TooltipTrigger>
-																	<InfoIcon
-																		className="text-xs  top-7 md:top-3 right-4"
-																		size={16}
-																	/>
-																	<span className="hidden">Hover</span>
+																<TooltipTrigger asChild>
+																	<span className="inline-flex items-center">
+																		<InfoIcon
+																			className="text-xs  top-7 md:top-3 right-4"
+																			size={16}
+																		/>
+																		<span className="hidden">Hover</span>
+																	</span>
 																</TooltipTrigger>
 																<TooltipContent className="bg-background">
 																	<p className="text-sm text-black cursor-default ">
@@ -891,7 +918,7 @@ export function EpisodeCreator() {
 				}}
 			/>
 
-			<Dialog open={showRestrictionDialog} onOpenChange={() => {}} modal={true}>
+			<Dialog open={showRestrictionDialog} onOpenChange={() => { }} modal={true}>
 				<DialogContent
 					className="sm:max-w-md"
 					onInteractOutside={e => e.preventDefault()}

@@ -214,7 +214,7 @@ export default function LandingAudioPlayer() {
 
 
 				{/** biome-ignore lint/a11y/useMediaCaption: <keep> */}
-				<audio ref={audioRef} src="/Podslice_ AI's Solution to Information Overload and Content Drowning.mp3" onEnded={() => setIsPlaying(false)} />
+				<audio ref={audioRef} src="/gemini-sample.mp3" onEnded={() => setIsPlaying(false)} />
 				<div className={styles.waveformContainer}>
 
 

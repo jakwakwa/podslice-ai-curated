@@ -104,11 +104,11 @@ export default function LandingPageContent() {
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}>
-							<Link href="/sign-in">
-								<div>
-									<div className={`${styles.heroBtn} text-amber-50 `}>Start Free Trial</div>
-								</div>
-							</Link>
+							{/* <Link href="/sign-in"> */}
+							<div>
+								<div className={` text-teal-200 text-xl font-black`}>Listen to a Sample Audio Summary below</div>
+							</div>
+							{/* </Link> */}
 						</motion.div>
 						{/* Demo Audio Player */}
 						<div className="mt-4 w-full max-w-screen md:max-w-3xl mx-auto md:px-4">
