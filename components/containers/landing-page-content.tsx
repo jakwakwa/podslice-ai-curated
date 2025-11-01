@@ -12,7 +12,8 @@ import styles from "@/styles/landing-page-content.module.css";
 import { LandingPageHeader } from "../layout/LandingPageHeader";
 import { Badge } from "../ui/badge";
 import { Typography } from "../ui/typography";
-import HomePageBackground from "./home-page-bg";
+
+// import HomePageBackground from "./home-page-bg";
 
 // Map PRICING_TIER to landing page format
 const SUBSCRIPTION_TIERS = PRICING_TIER.map(tier => ({
@@ -42,7 +43,8 @@ export default function LandingPageContent() {
 		{
 			step: 1,
 			title: "Choose Your Focus, Free up your time",
-			description: "Define what matters to you in under 2 minutes. Let our AI process your selections and extract the most valuable insights from each episode.	",
+			description:
+				"Define what matters to you in under 2 minutes. Let our AI process your selections and extract the most valuable insights from each episode.	",
 			action: "Start your profile",
 		},
 		{
@@ -58,20 +60,19 @@ export default function LandingPageContent() {
 			description:
 				"Podslice is unequivocally committed to a creator-centric approach. A portion of every subscription fee goes directly back to the creators and networks who make this content possible",
 			action: "Get your briefing",
-		}
+		},
 	];
 
 	return (
 		<>
 			<LandingPageHeader />
-			<div className={`${styles.container}`} >
-
-
+			<div className={`${styles.container}`}>
 				{/* <div className={`${styles.herobg} max-w-full w-screen md:w-full flex flex-col justify-center items-center content-center mx-auto px-8 md:px-0 pb-4 md:py-0  gap-0 mb-0`} /> */}
 
 				{/* Hero Section */}
 				<section className={`${styles.heroSection} w-full min-w-screen  `}>
-					<div className={`flex flex-col content-center justify-center items-center h-[80vh]`}>
+					<div
+						className={`flex flex-col content-center justify-center items-center h-[70vh]`}>
 						<motion.div
 							className={styles.herobg}
 							style={{
@@ -79,66 +80,72 @@ export default function LandingPageContent() {
 							}}
 						/>
 
-						<div className={` h-[80vh]`}>
+						<div className={` h-[90vh]`}>
+							<motion.div
+								className="text-base lg:text-lg font-bold pt-8 pb-2 px-12 md:px-52 lg:px-0 tracking-normal"
+								initial={{ opacity: 0, y: -20 }}
+								animate={{ opacity: 1, y: -40 }}
+								transition={{ duration: 0.8, ease: "easeInOut" }}>
+								Personalized Summaries powered by our Ai Engine
+							</motion.div>
 
-
-							<motion.h1
+							<motion.h2
 								className={styles.heroHeading}
 								initial={{ opacity: 0, y: -20 }}
 								animate={{ opacity: 1, y: -40 }}
 								transition={{ duration: 0.8, ease: "easeInOut" }}>
+								<span
+									className={`${styles.heroHeadingHighlight} text-4xl sm:text-4.5xl  md:text-6xl lg:text-7xl font-black`}>
+									Cut the chatter,
+									<br />
+									keep the insights
+								</span>
+							</motion.h2>
 
-								<span className="text-3xl">Super-powered Personalized Summaries<br /> </span>
-							</motion.h1>
-
-							<motion.h1
-								className={styles.heroHeading}
-								initial={{ opacity: 0, y: -20 }}
-								animate={{ opacity: 1, y: -40 }}
-								transition={{ duration: 0.8, ease: "easeInOut" }}>
-
-
-								<span className={`${styles.heroHeadingHighlight}  text-7xl font-black`}>Helping you cut the chatter<br />and keep the insights</span>
-							</motion.h1>
-
-
-							<motion.p className={`${styles.heroDescription} flex flex-col text-2xl`} initial={{ opacity: 0, y: -15 }} animate={{ opacity: 1, y: -20 }} transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}>Join the platform that champions creators. <br />Get premium insights without compromising your values.
+							<motion.p
+								className={`${styles.heroDescription} flex flex-col text-base leading-5 md:leading-7	 px-9 pb-12`}
+								initial={{ opacity: 0, y: -15 }}
+								animate={{ opacity: 1, y: -20 }}
+								transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}>
+								Join the platform that champions creators. <br />
+								Get premium insights without compromising your values.
 							</motion.p>
 
 							<motion.div
-								className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+								className="flex flex-col sm:flex-row gap-2 justify-center items-center"
 								initial={{ opacity: 0, y: 0 }}
 								animate={{ opacity: 1, y: -40 }}
 								transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}>
-
 								{/* <Link href="/sign-in"> */}
 
-								<div className={` text-teal-200 text-xl font-black`}>Listen to a Sample Audio Summary below</div>
+								<div className={` text-violet-200 text-base font-semibold`}>
+									Sample below
+								</div>
 
 								{/* </Link> */}
 							</motion.div>
 							{/* Demo Audio Player */}
-							<div className="mt-4 w-full max-w-screen md:max-w-3xl mx-auto md:px-4">
+							<div className="w-full max-w-screen md:max-w-3xl mx-auto md:px-4">
 								<LandingAudioPlayer />
 							</div>
 						</div>
-
 					</div>
 				</section>
 				<div className="background-base bg-primary" />
 				{/* How It Works Section */}
-				<section className="overflow-hidden px-0 min-w-screen w-full md:h-full md:min-w-screen md:w-full md:px-4  bg-linear-to-b from-violet-950 to-violet-900 my-0 md:py-0 md:gap-0 md:mb-0 md:-mt-0">
+				<section className="overflow-hidden px-0 min-w-screen w-full md:h-full md:min-w-screen md:w-full md:px-4  bg-linear-to-b to-cyan-950 from-gray-950 my-0 md:py-0 md:gap-0 md:mb-0 md:-mt-0">
 					<div className="w-full max-w-screen md:min-w-7xl mx-auto md:px-12 px-0 py-8 md:py-24 mt-0 ">
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
 							whileInView={{ opacity: 1, y: 0 }}
 							viewport={{ once: true, margin: "-100px" }}
 							transition={{ duration: 0.6 }}>
-							<h2 className={`${styles.howItWorksTitle} text-left  sm:text-center text-primary-for{eground font-bold px-4 mt-4 md:px-0 md:mt-18  text-3xl md:text-[3rem] `}>
+							<h2
+								className={`${styles.howItWorksTitle} text-left  sm:text-center text-primary-foreground font-bold px-4 mt-4 md:px-0 md:mt-18  text-3xl md:text-[3rem] `}>
 								How it Works
 							</h2>
 
-							<p className="w-full text-base md:text-center  md:mx-auto md:max-w-2xl  px-4 text-left pb-8 mt-4 sm:text-[1.4rem] my-8 leading-[1.4] text-primary-foreground/90 text-shadow-sm  font-medium text-shadow-[#3684de0c]">
+							<p className="w-full text-base md:text-center  md:mx-auto md:max-w-2xl  px-4 text-left pb-8 mt-4 sm:text-[1.4rem] my-8 leading-[1.4] text-foreground/80 text-shadow-sm  font-normal text-shadow-[#3684de0c]">
 								Getting started with Podslice.ai is straightforward. Follow these four
 								simple steps to create your focused content experience.
 							</p>
@@ -147,7 +154,7 @@ export default function LandingPageContent() {
 							{howItWorks.map((step, index) => (
 								<motion.div
 									key={step.step}
-									className="bg-default py-5 px-4 max-w-[89vw]  mx-auto flex   flex-col justify-center lg:mx-auto text-center p-0 rounded-[20px] border-2 border-light  bg-linear-to-br from-fuchsia-700/10 via-indigo-200/10 to-fuchsia-100/20  backdrop-blur-3xl border-violet-400/10 shadow-lg items-center "
+									className="bg-default py-8 px-4 max-w-[89vw]  mx-auto flex   flex-col justify-start lg:mx-auto text-center p-0 rounded-[20px] border-2 border-light  bg-linear-to-br to-purple-600/10 via-indigo-200/10 from-cyan-400/20  backdrop-blur-sm  border-violet-400/10 shadow-xl items-center "
 									initial={{ opacity: 0, y: 30, scale: 0.95 }}
 									whileInView={{ opacity: 1, y: 0, scale: 1 }}
 									viewport={{ once: true, margin: "-100px" }}
@@ -162,14 +169,14 @@ export default function LandingPageContent() {
 										transition: { duration: 0.2 },
 									}}>
 									<div
-										className="rounded-full align-center bg-azure-500/50 text-primary-foreground  shadow-lg 
+										className="rounded-full align-center bg-azure-500/50 text-primary-foreground bg-gray-900/40 shadow-xl  border-cyan-500/30  border-3 shadow-cyan-950/70 font-bold 
 								 mb-3 inline-flex justify-center items-center w-10 h-10">
 										{step.step}
 									</div>
 									<h3 className="text-lg font-bold text-primary-foreground text-shadow text-shadow-[#1C45DAE9]/10 text-shadow-lg">
 										{step.title}
 									</h3>
-									<p className="w-full text-md leading-7 text-center my-6 mx-auto p-0 text-secondary-foreground/50 text-shadow-sm text-shadow-[#3684de0c]">
+									<p className="w-full text-md leading-5.5 text-center my-6 mx-auto p-0 text-secondary-foreground/60 text-shadow-sm text-shadow-[#3684de0c]">
 										{step.description}
 									</p>
 								</motion.div>
@@ -246,7 +253,9 @@ export default function LandingPageContent() {
 												className={`w-full flex items-center justify-center gap-2 mt-auto ${tier.popular ? " text-accent-foreground hover:bg-radial-gradient-secondary/80 transition-all duration-200 ease-in-out h-10" : "h-10"}`}
 												variant={tier.popular ? "default" : "default"}
 												size="lg">
-												{tier.id === "free_slice" ? "Start Free Trial" : "Subscribe Today"}
+												{tier.id === "free_slice"
+													? "Start Free Trial"
+													: "Subscribe Today"}
 											</Button>
 										</Link>
 									</CardContent>
@@ -255,8 +264,7 @@ export default function LandingPageContent() {
 						</div>
 					</div>
 				</section>
-
-			</div >
+			</div>
 
 			<Footer />
 		</>

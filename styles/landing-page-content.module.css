@@ -204,8 +204,9 @@
 	display: inline-block;
 	line-height: inherit;
 	background-image: linear-gradient(90deg,
-			rgb(132, 54, 209),
-			rgb(52, 211, 153));
+			rgb(132, 54, 209) -20%,
+			rgb(255,200,255) 50%,
+			rgb(52, 211, 200) 110%);
 
 	-webkit-background-clip: text;
 	background-clip: text;
@@ -250,8 +251,6 @@
 	color: rgba(229, 231, 235, 0.95);
 	margin: 1rem auto 2rem;
 	max-width: 56rem;
-	line-height: 1.75;
-	font-size: 1.0425rem;
 }
 
 .heroBtn {
@@ -289,8 +288,8 @@
 	align-content: center;
 	max-width: 400px;
 	gap: 1rem;
-	margin: 2rem auto 0;
-	padding: 1.25rem 1.2rem;
+	margin: 0rem auto 0;
+	padding: 0.8rem 1.2rem;
 	border-radius: 3rem;
 	border: 1px solid rgba(104 219 250 / 0.13);
 	background: rgba(9 1 19 / 0.16);
@@ -470,11 +469,10 @@
 	margin: 0 0 0.5rem;
 	font-weight: 800;
 	background: linear-gradient(180deg,
-			rgba(248, 255, 255, 0.97) 0%,
+			rgba(200, 200, 200, 0.97) 0%,
+			hsla(248, 255, 255, 0.97) 30%,
+			hsla(180, 100%, 81%, 0.9) 90%);
 
-			hsla(237, 100%, 81%, 0.9) 90%,
-
-			rgba(19 85 177 / 0.97) 110%);
 	-webkit-background-clip: text;
 	background-clip: text;
 	-webkit-text-fill-color: transparent;
