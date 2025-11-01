@@ -11,12 +11,14 @@ export const dashboardCopy = {
 	},
 	sections: {
 		bundleFeed: {
-			title: "Your Active Bundle Feed",
-			updateButton: "Update Bundle",
-			activeBundleLabel: "Your Active bundle:",
-			summaryLabel: "Summary",
-			bundledEpisodesLabel: "Bundled Episodes:",
-			planLabel: "Plan:",
+			title: "Your Feed Details",
+			updateButton: "Edit Channel Selection",
+			activeBundleLabel: "Channel Content:",
+			summaryLabel: "Channel Summaries",
+			personalFeedLabel: "Personal Content:",
+			pesdonalFeedTitle: " Personal Content Overview:",
+			bundledEpisodesLabel: "Channel Summaries:",
+			planLabel: "Membersip Plan:",
 		},
 		latestBundle: {
 			title: "Latest from your active bundle",
