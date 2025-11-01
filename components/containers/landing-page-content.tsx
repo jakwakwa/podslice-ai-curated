@@ -80,7 +80,7 @@ export default function LandingPageContent() {
 							}}
 						/>
 
-						<div className={` h-[90vh]`}>
+						<div className={`h-[80vh]`}>
 							<motion.div
 								className="text-base lg:text-lg font-bold pt-8 pb-2 px-12 md:px-52 lg:px-0 tracking-normal"
 								initial={{ opacity: 0, y: -20 }}
@@ -107,8 +107,8 @@ export default function LandingPageContent() {
 								initial={{ opacity: 0, y: -15 }}
 								animate={{ opacity: 1, y: -20 }}
 								transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}>
-								Join the platform that champions creators. <br />
-								Get premium insights without compromising your values.
+								Join the platform that champions creators. Get premium insights without
+								compromising your values.
 							</motion.p>
 
 							<motion.div
@@ -133,7 +133,7 @@ export default function LandingPageContent() {
 				</section>
 				<div className="background-base bg-primary" />
 				{/* How It Works Section */}
-				<section className="overflow-hidden px-0 min-w-screen w-full md:h-full md:min-w-screen md:w-full md:px-4  bg-linear-to-b to-cyan-950 from-gray-950 my-0 md:py-0 md:gap-0 md:mb-0 md:-mt-0">
+				<section className="overflow-hidden px-0 min-w-screen w-full md:h-full py-4 md:min-w-screen md:w-full md:px-4  bg-linear-to-b to-cyan-950 from-gray-950 my-0 md:py-0 md:gap-0 md:mb-0 md:-mt-0">
 					<div className="w-full max-w-screen md:min-w-7xl mx-auto md:px-12 px-0 py-8 md:py-24 mt-0 ">
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
@@ -141,11 +141,11 @@ export default function LandingPageContent() {
 							viewport={{ once: true, margin: "-100px" }}
 							transition={{ duration: 0.6 }}>
 							<h2
-								className={`${styles.howItWorksTitle} text-left  sm:text-center text-primary-foreground font-bold px-4 mt-4 md:px-0 md:mt-18  text-3xl md:text-[3rem] `}>
+								className={`${styles.howItWorksTitle} text-center  sm:text-center text-primary-foreground font-bold px-4 mt-4 md:px-0 md:mt-18  text-2xl md:text-[3rem] `}>
 								How it Works
 							</h2>
 
-							<p className="w-full text-base md:text-center  md:mx-auto md:max-w-2xl  px-4 text-left pb-8 mt-4 sm:text-[1.4rem] my-8 leading-[1.4] text-foreground/80 text-shadow-sm  font-normal text-shadow-[#3684de0c]">
+							<p className="w-full text-base md:text-center  md:mx-auto md:max-w-2xl  px-6 text-center pb-8 mt-4 sm:text-[1.4rem] my-8 leading-[1.4] text-foreground/80 text-shadow-sm  font-normal text-shadow-[#3684de0c]">
 								Getting started with Podslice.ai is straightforward. Follow these four
 								simple steps to create your focused content experience.
 							</p>
