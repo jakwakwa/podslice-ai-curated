@@ -80,9 +80,9 @@ export default function LandingPageContent() {
 							}}
 						/>
 
-						<div className={`h-[80vh]`}>
+						<div className={` w-screen px-8`}>
 							<motion.div
-								className="text-base lg:text-lg font-bold pt-8 pb-2 px-12 md:px-52 lg:px-0 tracking-normal"
+								className="text-xs lg:text-lg font-bold pt-8 pb-2 px-0 md:px-52 lg:px-0 tracking-normal"
 								initial={{ opacity: 0, y: -20 }}
 								animate={{ opacity: 1, y: -40 }}
 								transition={{ duration: 0.8, ease: "easeInOut" }}>
@@ -95,7 +95,7 @@ export default function LandingPageContent() {
 								animate={{ opacity: 1, y: -40 }}
 								transition={{ duration: 0.8, ease: "easeInOut" }}>
 								<span
-									className={`${styles.heroHeadingHighlight} text-4xl sm:text-4.5xl  md:text-6xl lg:text-7xl font-black`}>
+									className={`${styles.heroHeadingHighlight} text-4.5xl sm:text-4xl  md:text-6xl lg:text-7xl font-black`}>
 									Cut the chatter,
 									<br />
 									keep the insights
@@ -103,7 +103,7 @@ export default function LandingPageContent() {
 							</motion.h2>
 
 							<motion.p
-								className={`${styles.heroDescription} flex flex-col text-base leading-5 md:leading-7	 px-9 pb-12`}
+								className={`${styles.heroDescription} flex flex-col text-base leading-5 md:leading-7	 px-3 pb-12`}
 								initial={{ opacity: 0, y: -15 }}
 								animate={{ opacity: 1, y: -20 }}
 								transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}>
@@ -118,8 +118,8 @@ export default function LandingPageContent() {
 								transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}>
 								{/* <Link href="/sign-in"> */}
 
-								<div className={` text-violet-200 text-base font-semibold`}>
-									Sample below
+								<div className={` text-violet-200 text-sm font-semibold`}>
+									Audio Summary Sample Below
 								</div>
 
 								{/* </Link> */}
