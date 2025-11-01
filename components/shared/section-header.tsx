@@ -5,7 +5,7 @@ interface SectionHeaderProps {
 
 const SectionHeader = ({ title, description }: SectionHeaderProps) => {
 	return (
-		<div className="max-w-full px-6  text-left mb-0 pb-4 md:pt-4 md:py-0">
+		<div className="max-w-full px-0  text-left mb-0 pb-4 md:pt-4 md:py-0">
 			<h4 className="text-lg leading-relaxed text-shadow-[0px_1px_0px_#ededed30] text-primary-foreground-muted font-semibold tracking-tight mb-3">
 				{title}
 			</h4>

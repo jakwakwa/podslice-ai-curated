@@ -333,7 +333,7 @@ export function EpisodeCreator() {
 					"We're processing your episode and will email you when it's ready.",
 					{
 						duration: Infinity,
-						action: { label: "Dismiss", onClick: () => { } },
+						action: { label: "Dismiss", onClick: () => {} },
 					}
 				);
 				resumeAfterSubmission();
@@ -385,7 +385,7 @@ export function EpisodeCreator() {
 			if (!res.ok) throw new Error(await res.text());
 			toast.message("We're processing your episode and will email you when it's ready.", {
 				duration: Infinity,
-				action: { label: "Dismiss", onClick: () => { } },
+				action: { label: "Dismiss", onClick: () => {} },
 			});
 			resumeAfterSubmission();
 			router.push("/dashboard?from=generate");
@@ -395,8 +395,8 @@ export function EpisodeCreator() {
 			);
 			toast.error(
 				(err instanceof Error ? err.message : "Failed to start episode generation.") ||
-				"",
-				{ duration: Infinity, action: { label: "Dismiss", onClick: () => { } } }
+					"",
+				{ duration: Infinity, action: { label: "Dismiss", onClick: () => {} } }
 			);
 		} finally {
 			setIsCreating(false);
@@ -448,13 +448,13 @@ export function EpisodeCreator() {
 	const handleGoBack = () => router.back();
 
 	return (
-		<div className="w-full bg-gray-900 h-auto mb-0 px-0 py-0 md:px-8 md:pt-8 lg:px-10 mr-0 lg:pb-12 lg:mb-0 rounded-none shadow-lg rounded-b-md overflow-hidden">
+		<div className="w-full h-auto mb-0 px-8 py-0 md:px-8 md:pt-8 lg:px-10 mr-0 lg:pb-12 lg:mb-0 rounded-none shadow-lg rounded-b-md overflow-hidden">
 			<SectionHeader
 				title="Generate your summary"
 				description="Summarise long-form podcasts, lectures or tutorials from youtube into concise, AI produced and analysed, generated audio and text summaries. Our Ai will help you understand the core concepts with an easy-to-listen to audible overview and text summary with a list of important key concepts"
 			/>
-			<div className="w-full flex flex-col gap-3 md:gap-8 md:w-full md:min-w-full md:max-w-full">
-				<div className="w-full py-8 px-4 md:p-0 ">
+			<div className="w-full flex flex-col gap-3 md:gap-8 md:w-full  p-0 md:min-w-full md:max-w-full">
+				<div className="w-full py-8 px-0 md:p-0 ">
 					{/* <ComponentSpinner isLabel={false} /> */}
 
 					<div className="w-full flex flex-col px-0 md:px-4  gap-4">
@@ -501,9 +501,17 @@ export function EpisodeCreator() {
 										</Label>
 										<Tooltip>
 											<TooltipTrigger asChild>
-												<button type="button" className="flex text-xs flex-row items-center text-teal-200/80 py-1 gap-2">
-													<HelpCircle color={"#39c0b5e2"} className="text-xs  top-7 md:top-3 right-4 text-white" size={16} />
-													<span className="text-xs">Need help finding the link you need?</span>
+												<button
+													type="button"
+													className="flex text-xs flex-row items-center text-teal-200/80 py-1 gap-2">
+													<HelpCircle
+														color={"#39c0b5e2"}
+														className="text-xs  top-7 md:top-3 right-4 text-white"
+														size={16}
+													/>
+													<span className="text-xs">
+														Need help finding the link you need?
+													</span>
 												</button>
 											</TooltipTrigger>
 											<span className="hidden">Hover</span>
@@ -511,7 +519,11 @@ export function EpisodeCreator() {
 												<p className="text-sm text-whitw cursor-default font-bold">
 													Quick Guide: How to Find and Paste YouTube Link
 												</p>
-												<img src="/how-to-get-link.gif" alt="How to get the link" className="w-full h-full object-cover my-2 border-1 border-border rounded-md max-w-lg" />
+												<img
+													src="/how-to-get-link.gif"
+													alt="How to get the link"
+													className="w-full h-full object-cover my-2 border-1 border-border rounded-md max-w-lg"
+												/>
 											</TooltipContent>
 										</Tooltip>
 										<Input
@@ -523,7 +535,6 @@ export function EpisodeCreator() {
 											disabled={isBusy}
 											required
 										/>
-
 
 										{isFetchingMetadata && <ComponentSpinner />}
 										{youtubeUrlError && (
@@ -541,13 +552,19 @@ export function EpisodeCreator() {
 									</div>
 
 									{videoTitle && (
-										<>	<div className="flex mt-4 flex-row items-center gap-2">
-											<Eye className="text-xs  top-7 md:top-3 right-4 text-violet-400" size={16} />
-											<span className="text-xs text-indigo-200"><span className="font-bold text-violet-300">Quick Review:</span> Confirm the video details below are correct</span>
-										</div>
-
+										<>
+											{" "}
+											<div className="flex mt-4 flex-row items-center gap-2">
+												<Eye
+													className="text-xs  top-7 md:top-3 right-4 text-violet-400"
+													size={16}
+												/>
+												<span className="text-xs text-indigo-200">
+													<span className="font-bold text-violet-300">Quick Review:</span>{" "}
+													Confirm the video details below are correct
+												</span>
+											</div>
 											<div className="bg-red-950/20 my-3 md:col-span-2 py-3 px-4 rounded-sm outline-1 outline-pink-900 shadow-sm max-w-sm  ">
-
 												<p className=" font-normal text-pink-300 flex text-[0.6rem] items-center gap-2 py-1">
 													<VideoIcon width={14} height={14} color="pink" />
 													Youtube Video Link:
@@ -557,8 +574,7 @@ export function EpisodeCreator() {
 												</p>
 												{videoDuration !== null && (
 													<p className="text-[0.6rem] py-1 font-mono text-pink-400">
-														{Math.floor(videoDuration / 60)}m {videoDuration % 60}
-														s
+														{Math.floor(videoDuration / 60)}m {videoDuration % 60}s
 													</p>
 												)}
 											</div>
@@ -918,7 +934,7 @@ export function EpisodeCreator() {
 				}}
 			/>
 
-			<Dialog open={showRestrictionDialog} onOpenChange={() => { }} modal={true}>
+			<Dialog open={showRestrictionDialog} onOpenChange={() => {}} modal={true}>
 				<DialogContent
 					className="sm:max-w-md"
 					onInteractOutside={e => e.preventDefault()}
