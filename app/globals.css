@@ -5,7 +5,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "@clerk/themes/shadcn.css";
-@import "./theme-color-palette.css";
+@import "./theme-color-pallete.css";
 
 @layer base {
 	* {
@@ -371,7 +371,7 @@
 			var(--color-gray-950) 0%,
 			var(--color-gray-950) 100%);
 	--episode-shell-gradient: linear-gradient(180deg,
-			ar(--color-gray-950); 0%,
+			var(--color-gray-950) 0%,
 			var(--swak-1) 95%);
 
 	--episode-card-wrapper-gradient: linear-gradient(to bottom,
