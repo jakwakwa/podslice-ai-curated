@@ -31,6 +31,7 @@ model User {
   userEpisodes         UserEpisode[]
   sharedBundles        SharedBundle[]
   ingestionConfig      UserIngestionConfig?
+  youtubeFeedEntries   YoutubeFeedEntry[]
 
   @@map("user")
 }
@@ -265,6 +266,25 @@ enum UserRole {
 }
 
 /// ───────────────────────────────────
+/// YOUTUBE RSS FEED ENTRIES
+/// ───────────────────────────────────
+model YoutubeFeedEntry {
+  id             String    @id @default(cuid()) @map("id")
+  user_id        String    @map("user_id")
+  video_url      String    @map("video_url")
+  video_title    String    @map("video_title")
+  published_date DateTime? @map("published_date")
+  fetched_at     DateTime  @default(now()) @map("fetched_at")
+  created_at     DateTime  @default(now()) @map("created_at")
+  user           User      @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@unique([user_id, video_url])
+  @@index([user_id])
+  @@index([published_date])
+  @@map("youtube_feed_entry")
+}
+
+/// ───────────────────────────────────
 /// SHARED BUNDLES (User-Generated)
 /// ───────────────────────────────────
 model SharedBundle {
@@ -304,18 +324,18 @@ model SharedBundleEpisode {
 /// USER INGESTION CONFIGURATION
 /// ───────────────────────────────────
 model UserIngestionConfig {
-  id           String   @id @default(cuid()) @map("id")
-  user_id      String   @unique @map("user_id")
-  user         User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  id      String @id @default(cuid()) @map("id")
+  user_id String @unique @map("user_id")
+  user    User   @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
-  topic        String?  @map("topic")
-  rss_feed_url String?  @map("rss_feed_url")
-  api1_url     String?  @map("api1_url")
-  api2_url     String?  @map("api2_url")
+  topic        String? @map("topic")
+  rss_feed_url String? @map("rss_feed_url")
+  api1_url     String? @map("api1_url")
+  api2_url     String? @map("api2_url")
 
-  is_active    Boolean  @default(true) @map("is_active")
-  created_at   DateTime @default(now()) @map("created_at")
-  updated_at   DateTime @updatedAt @map("updated_at")
+  is_active  Boolean  @default(true) @map("is_active")
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
 
   @@map("user_ingestion_config")
 }

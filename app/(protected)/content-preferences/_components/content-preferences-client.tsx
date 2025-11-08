@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
 	Select,
@@ -30,7 +31,8 @@ export function ContentPreferencesClient({ content }: ContentPreferencesClientPr
 	const { config, isLoading, loadConfig, updateConfig } = useUserConfigStore();
 
 	const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
-	const [selectedFeeds, setSelectedFeeds] = useState<string[]>([]);
+	const [_selectedFeeds, _setSelectedFeeds] = useState<string[]>([]);
+	const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState("");
 	const [api1Url, setApi1Url] = useState("");
 	const [api2Url, setApi2Url] = useState("");
 	const [isSaving, setIsSaving] = useState(false);
@@ -45,7 +47,8 @@ export function ContentPreferencesClient({ content }: ContentPreferencesClientPr
 		if (config) {
 			// Parse comma-separated values or set empty arrays
 			setSelectedTopics(config.topic ? config.topic.split(",") : []);
-			setSelectedFeeds(config.rss_feed_url ? config.rss_feed_url.split(",") : []);
+			// YouTube playlist URL is stored in rss_feed_url for the cron job
+			setYoutubePlaylistUrl(config.rss_feed_url || "");
 			setApi1Url(config.api1_url || "");
 			setApi2Url(config.api2_url || "");
 		}
@@ -64,19 +67,6 @@ export function ContentPreferencesClient({ content }: ContentPreferencesClientPr
 		});
 	};
 
-	const handleFeedToggle = (feed: string) => {
-		setSelectedFeeds(prev => {
-			if (prev.includes(feed)) {
-				return prev.filter(f => f !== feed);
-			}
-			if (prev.length >= 2) {
-				toast.warning("You can only select up to 2 RSS feeds");
-				return prev;
-			}
-			return [...prev, feed];
-		});
-	};
-
 	const validateUrl = (url: string): boolean => {
 		if (!url) return true; // Empty is valid
 		try {
@@ -87,10 +77,38 @@ export function ContentPreferencesClient({ content }: ContentPreferencesClientPr
 		}
 	};
 
+	const validateYouTubeUrl = (url: string): boolean => {
+		if (!url) return true; // Empty is valid
+		try {
+			const urlObj = new URL(url);
+			// Check if it's a YouTube domain
+			const isYouTube =
+				urlObj.hostname === "youtube.com" ||
+				urlObj.hostname === "www.youtube.com" ||
+				urlObj.hostname === "m.youtube.com";
+			if (!isYouTube) return false;
+
+			// Accept playlist URLs (with list parameter)
+			const hasPlaylist = urlObj.searchParams.has("list") || url.includes("/playlist");
+			// Accept channel URLs (@handle or /channel/)
+			const isChannel =
+				urlObj.pathname.startsWith("/@") || urlObj.pathname.startsWith("/channel/");
+
+			return hasPlaylist || isChannel;
+		} catch {
+			return false;
+		}
+	};
+
 	const handleSave = async () => {
 		// Validation
-		if (selectedTopics.length === 0 && selectedFeeds.length === 0) {
-			toast.error("Please select at least one topic or RSS feed");
+		if (selectedTopics.length === 0 && !youtubePlaylistUrl) {
+			toast.error("Please select at least one topic or enter a YouTube playlist URL");
+			return;
+		}
+
+		if (youtubePlaylistUrl && !validateYouTubeUrl(youtubePlaylistUrl)) {
+			toast.error("Please enter a valid YouTube channel or playlist URL");
 			return;
 		}
 
@@ -106,15 +124,50 @@ export function ContentPreferencesClient({ content }: ContentPreferencesClientPr
 
 		setIsSaving(true);
 		try {
+			// Check if YouTube URL changed
+			const urlChanged = youtubePlaylistUrl !== (config?.rss_feed_url || "");
+
 			const result = await updateConfig({
 				topic: selectedTopics.length > 0 ? selectedTopics.join(",") : null,
-				rss_feed_url: selectedFeeds.length > 0 ? selectedFeeds.join(",") : null,
+				// YouTube playlist URL goes into rss_feed_url for the cron job
+				rss_feed_url: youtubePlaylistUrl || null,
 				api1_url: api1Url || null,
 				api2_url: api2Url || null,
 			});
 
 			if ("error" in result) {
 				toast.error(result.error);
+				return;
+			}
+
+			// If YouTube URL was added or changed, trigger immediate fetch
+			if (youtubePlaylistUrl && urlChanged) {
+				toast.info("Fetching videos from your playlist...");
+				try {
+					const cronResponse = await fetch("/api/cron/youtube-feed?force=1");
+					if (cronResponse.ok) {
+						const cronResult = await cronResponse.json();
+						if (cronResult.success && cronResult.results?.length > 0) {
+							const userResult = cronResult.results[0];
+							if (userResult.newEntries > 0) {
+								toast.success(
+									`Successfully fetched ${userResult.newEntries} new video(s) from your playlist!`
+								);
+							} else {
+								toast.success("Playlist synced - no new videos found");
+							}
+						}
+					} else {
+						toast.warning(
+							"Preferences saved, but initial fetch failed. Will retry on next daily run."
+						);
+					}
+				} catch (error) {
+					console.error("Failed to trigger immediate fetch:", error);
+					toast.warning(
+						"Preferences saved, but initial fetch failed. Will retry on next daily run."
+					);
+				}
 			}
 		} finally {
 			setIsSaving(false);
@@ -166,37 +219,30 @@ export function ContentPreferencesClient({ content }: ContentPreferencesClientPr
 				</div>
 			</Card>
 
-			{/* RSS Feeds Section */}
+			{/* YouTube Playlist Section */}
 			<Card className="p-6">
 				<div className="space-y-4">
 					<div>
 						<h3 className="text-lg font-semibold text-primary-foreground-muted">
-							{content.rssFeeds.label}
+							{content.youtubeChannels.label}
 						</h3>
 						<p className="text-sm text-muted-foreground">
-							{content.rssFeeds.helperText} ({selectedFeeds.length} of 2 selected)
+							{content.youtubeChannels.description}
 						</p>
 					</div>
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-						{content.rssFeeds.options.map(feed => {
-							const isSelected = selectedFeeds.includes(feed);
-							const isDisabled = !isSelected && selectedFeeds.length >= 2;
-							return (
-								<div key={feed} className="flex items-center space-x-2">
-									<Checkbox
-										id={`feed-${feed}`}
-										checked={isSelected}
-										disabled={isDisabled}
-										onCheckedChange={() => handleFeedToggle(feed)}
-									/>
-									<Label
-										htmlFor={`feed-${feed}`}
-										className={`cursor-pointer ${isDisabled ? "opacity-50" : ""}`}>
-										{feed}
-									</Label>
-								</div>
-							);
-						})}
+					<div className="space-y-2">
+						<Label htmlFor="youtube-playlist-url">Channel or Playlist URL</Label>
+						<Input
+							id="youtube-playlist-url"
+							type="url"
+							placeholder={content.youtubeChannels.placeholder}
+							value={youtubePlaylistUrl}
+							onChange={e => setYoutubePlaylistUrl(e.target.value)}
+							className="max-w-2xl"
+						/>
+						<p className="text-xs text-muted-foreground">
+							{content.youtubeChannels.helperText}
+						</p>
 					</div>
 				</div>
 			</Card>

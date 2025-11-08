@@ -15,6 +15,7 @@ export type EpisodeFeedback = Prisma.$EpisodeFeedbackPayload["scalars"];
 export type FeedbackRating = PrismaFeedbackRating;
 export type UserEpisode = Prisma.$UserEpisodePayload["scalars"];
 export type UserIngestionConfig = Prisma.$UserIngestionConfigPayload["scalars"];
+export type YoutubeFeedEntry = Prisma.$YoutubeFeedEntryPayload["scalars"];
 export { UserRole };
 
 // Custom types that combine Prisma types with relations

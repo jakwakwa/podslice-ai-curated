@@ -1,7 +1,14 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { BoxesIcon, Home, PlayCircleIcon, Radio, WandSparkles } from "lucide-react";
+import {
+	BoxesIcon,
+	Home,
+	PlayCircleIcon,
+	Radio,
+	SettingsIcon,
+	WandSparkles,
+} from "lucide-react";
 import type * as React from "react";
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -12,6 +19,11 @@ export const navItems = [
 		title: "Dashboard",
 		url: "/dashboard",
 		icon: Home,
+	},
+	{
+		title: "Content Preferences",
+		url: "/content-preferences",
+		icon: SettingsIcon,
 	},
 	{
 		title: "Discover Feeds",
