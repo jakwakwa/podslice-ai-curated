@@ -16,11 +16,19 @@ type Summary = {
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
-	// Basic protection: only allow Vercel Cron or explicit override via ?force=1
+	// Authentication: check for cron secret or Vercel Cron header
 	const url = new URL(request.url);
-	const force = url.searchParams.get("force") === "1";
+	const authHeader = request.headers.get("authorization");
+	const secretParam = url.searchParams.get("secret");
 	const isVercelCron = request.headers.get("x-vercel-cron") === "1";
-	if (!isVercelCron && !force) {
+	
+	const cronSecret = process.env.CRON_SECRET;
+	const isAuthorized = 
+		isVercelCron || 
+		(cronSecret && authHeader === `Bearer ${cronSecret}`) ||
+		(cronSecret && secretParam === cronSecret);
+	
+	if (!isAuthorized) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
