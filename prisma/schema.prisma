@@ -55,6 +55,7 @@ model UserEpisode {
   progress_message     String?               @map("progress_message")
   news_sources         String?               @map("news_sources")
   news_topic           String?               @map("news_topic")
+  auto_generated       Boolean               @default(false) @map("auto_generated")
   created_at           DateTime              @default(now()) @map("created_at")
   updated_at           DateTime              @updatedAt @map("updated_at")
   user                 User                  @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
@@ -62,6 +63,7 @@ model UserEpisode {
 
   @@index([user_id])
   @@index([is_public])
+  @@index([user_id, auto_generated])
   @@map("user_episode")
 }
 
@@ -276,11 +278,13 @@ model YoutubeFeedEntry {
   published_date DateTime? @map("published_date")
   fetched_at     DateTime  @default(now()) @map("fetched_at")
   created_at     DateTime  @default(now()) @map("created_at")
+  processed      Boolean   @default(false) @map("processed")
   user           User      @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
   @@unique([user_id, video_url])
   @@index([user_id])
   @@index([published_date])
+  @@index([user_id, processed])
   @@map("youtube_feed_entry")
 }
 

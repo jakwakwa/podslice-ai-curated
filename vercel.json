@@ -5,6 +5,10 @@
 		{
 			"path": "/api/cron/youtube-feed",
 			"schedule": "0 6 * * *"
+		},
+		{
+			"path": "/api/cron/generate-episodes",
+			"schedule": "30 6 * * *"
 		}
 	]
 }

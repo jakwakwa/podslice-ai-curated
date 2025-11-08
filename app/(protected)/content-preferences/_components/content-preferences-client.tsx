@@ -140,9 +140,21 @@ export function ContentPreferencesClient({ content }: ContentPreferencesClientPr
 				return;
 			}
 
+			// If YouTube URL was changed (not just added), clear old entries
+			if (urlChanged && config?.rss_feed_url) {
+				try {
+					await fetch("/api/youtube-feed-entries", {
+						method: "DELETE",
+					});
+				} catch (error) {
+					console.error("Failed to clear old feed entries:", error);
+					// Don't block the process if clearing fails
+				}
+			}
+
 			// If YouTube URL was added or changed, trigger immediate fetch
 			if (youtubePlaylistUrl && urlChanged) {
-				toast.info("Fetching videos from your playlist...");
+				toast.info("Fetching videos from your channel...");
 				try {
 					const cronResponse = await fetch("/api/cron/youtube-feed?force=1");
 					if (cronResponse.ok) {
@@ -151,10 +163,10 @@ export function ContentPreferencesClient({ content }: ContentPreferencesClientPr
 							const userResult = cronResult.results[0];
 							if (userResult.newEntries > 0) {
 								toast.success(
-									`Successfully fetched ${userResult.newEntries} new video(s) from your playlist!`
+									`Successfully fetched ${userResult.newEntries} new video(s) from your channel!`
 								);
 							} else {
-								toast.success("Playlist synced - no new videos found");
+								toast.success("Channel synced - no new videos found");
 							}
 						}
 					} else {

@@ -64,9 +64,13 @@ export async function POST(request: Request) {
 			json.title?.trim() ||
 			`News summary: ${topic} (${sources.map(s => s.toUpperCase()).join(", ")})`;
 
-		// Fetch completed episodes with their lengths
+		// Fetch completed episodes with their lengths (excluding auto-generated)
 		const completedEpisodes = await prisma.userEpisode.findMany({
-			where: { user_id: userId, status: "COMPLETED" },
+			where: { 
+				user_id: userId, 
+				status: "COMPLETED",
+				auto_generated: false, // Only count manually created episodes
+			},
 			select: { summary_length: true },
 		});
 

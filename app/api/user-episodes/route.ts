@@ -35,6 +35,7 @@ export async function GET(request: Request) {
 					user_id: userId,
 					status: "COMPLETED",
 					created_at: { gte: periodStart, lte: periodEnd },
+					auto_generated: false, // Only count manually created episodes
 				},
 				select: { summary_length: true },
 			});
