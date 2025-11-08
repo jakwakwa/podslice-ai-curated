@@ -15,6 +15,8 @@ import type { Episode, UserCurationProfileWithRelations, UserEpisode } from "@/l
 import { userIsActive } from "@/lib/usage";
 import { dashboardCopy } from "./content";
 import { LatestBundleEpisode } from "@/components/dashboard/latest-bundle-episode";
+import { AutoEpisodesStatusCard } from "@/components/dashboard/auto-episodes-status-card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type UserEpisodeWithSignedUrl = UserEpisode & { signedAudioUrl: string | null };
 
@@ -59,18 +61,23 @@ export default async function DashboardPage() {
 				description={dashboardCopy.header.description}
 			/>
 
-			{/* Episode Generation Status - Real-time updates */}
-			<EpisodeStatusTable defaultExpanded={true} />
+		{/* Episode Generation Status - Real-time updates */}
+		<EpisodeStatusTable defaultExpanded={true} />
 
-			{/* Bundle Feed Section */}
+		{/* Auto-Generated Episodes Status Card */}
+		<Suspense fallback={<Skeleton className="h-[300px] w-full" />}>
+			<AutoEpisodesStatusCard />
+		</Suspense>
+
+		{/* Bundle Feed Section */}
 
 
-			{/* Empty state and modals */}
-			<DashboardClientWrapper
-				hasProfile={hasProfile}
-				userCurationProfile={userCurationProfile}
-			/>
-			<div className="flex flex-col md:flex-col xl:flex-row w-full   gap-4">
+		{/* Empty state and modals */}
+		<DashboardClientWrapper
+			hasProfile={hasProfile}
+			userCurationProfile={userCurationProfile}
+		/>
+		<div className="flex flex-col md:flex-col xl:flex-row w-full   gap-4">
 
 
 				{/* Recent Episodes Section */}
