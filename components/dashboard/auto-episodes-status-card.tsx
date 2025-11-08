@@ -35,14 +35,6 @@ export async function AutoEpisodesStatusCard() {
 		},
 	});
 
-	// Count pending videos
-	const pendingVideosCount = await prisma.youtubeFeedEntry.count({
-		where: {
-			user_id: userId,
-			processed: false,
-		},
-	});
-
 	// Count total auto-generated episodes
 	const totalAutoEpisodes = await prisma.userEpisode.count({
 		where: {
@@ -104,14 +96,10 @@ export async function AutoEpisodesStatusCard() {
 				) : (
 					<>
 						{/* Stats Grid */}
-						<div className="grid grid-cols-2 gap-4 bg-sidebar/50 p-4 rounded-lg border border-border/50">
+						<div className="bg-sidebar/50 p-4 rounded-lg border border-border/50">
 							<div className="space-y-1">
-								<p className="text-xs text-primary-foreground/60 uppercase tracking-wide font-mono font-bold">Total Generated</p>
+								<p className="text-xs text-primary-foreground/60 uppercase tracking-wide font-mono font-bold">Total Auto-Generated</p>
 								<p className="text-2xl font-semibold text-secondary-foreground">{totalAutoEpisodes}</p>
-							</div>
-							<div className="space-y-1">
-								<p className="text-xs text-primary-foreground/60 uppercase tracking-wide font-mono font-bold">Videos in Queue</p>
-								<p className="text-2xl font-semibold text-secondary-foreground">{pendingVideosCount}</p>
 							</div>
 						</div>
 
@@ -151,21 +139,14 @@ export async function AutoEpisodesStatusCard() {
 								<Clock className="h-4 w-4" />
 								<span className="uppercase tracking-wide font-mono font-bold text-xs">Next Generation</span>
 							</div>
-							<div className="flex items-center justify-between bg-sidebar/50 p-3 rounded-lg border border-border/30">
-								<div>
-									<p className="text-sm font-medium text-secondary-foreground">
-										{nextRun.toLocaleDateString()} at {nextRun.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-									</p>
-									<p className="text-xs text-muted-foreground mt-0.5">
-										{hoursUntilNextRun > 0 && `${hoursUntilNextRun}h `}
-										{minutesUntilNextRun}m from now
-									</p>
-								</div>
-								{pendingVideosCount > 0 && (
-									<Badge variant="outline" className="ml-2">
-										{pendingVideosCount} {pendingVideosCount === 1 ? "video" : "videos"} ready
-									</Badge>
-								)}
+							<div className="bg-sidebar/50 p-3 rounded-lg border border-border/30">
+								<p className="text-sm font-medium text-secondary-foreground">
+									{nextRun.toLocaleDateString()} at {nextRun.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+								</p>
+								<p className="text-xs text-muted-foreground mt-0.5">
+									{hoursUntilNextRun > 0 && `${hoursUntilNextRun}h `}
+									{minutesUntilNextRun}m from now
+								</p>
 							</div>
 						</div>
 
