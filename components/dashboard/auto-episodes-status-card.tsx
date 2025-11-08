@@ -1,8 +1,7 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { Clock, CheckCircle2, Video, Calendar, Sparkles } from "lucide-react";
+import { Clock, CheckCircle2, Video, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 export async function AutoEpisodesStatusCard() {
@@ -11,20 +10,6 @@ export async function AutoEpisodesStatusCard() {
 	if (!userId) {
 		return null;
 	}
-
-	// Check if user has Curate Control plan
-	const subscription = await prisma.subscription.findFirst({
-		where: { user_id: userId },
-		orderBy: { updated_at: "desc" },
-		select: {
-			plan_type: true,
-			status: true,
-		},
-	});
-
-	const hasCurateControl = subscription?.plan_type === "curate_control";
-	const isActive = ["active", "trialing"].includes(subscription?.status?.toLowerCase() || "");
-	const hasAccess = hasCurateControl && isActive;
 
 	// Get user's ingestion config
 	const config = await prisma.userIngestionConfig.findFirst({
@@ -79,20 +64,22 @@ export async function AutoEpisodesStatusCard() {
 	const minutesUntilNextRun = Math.floor((timeUntilNextRun % (1000 * 60 * 60)) / (1000 * 60));
 
 	return (
-		<Card>
-			<CardHeader>
-				<div className="flex items-start justify-between">
-					<div className="space-y-1">
-						<CardTitle className="flex items-center gap-2">
+		<div className="bg-bigcard w-full flex flex-col gap-0 justify-start mb-0 items-start shadow-xl shadow-indigo/30 mt-0 md:m-0 xl:flex-col md:gap-4 py-8 p-1 md:mt-4 md:mb-0 border-1 md:rounded-3xl lg:pb-8 lg:pt-0 overflow-hidden md:p-0 md:justify-start align-start lg:mb-8">
+			<div className="pt-0 px-5 md:pl-8 md:mt-8 w-full flex flex-col items-start justify-items-start">
+				<div className="flex items-start justify-between w-full mb-4">
+					<div className="space-y-2 flex-1">
+						<div className="flex items-center gap-2">
 							<Sparkles className="h-5 w-5 text-purple-500" />
-							Auto-Generated Episodes
-						</CardTitle>
-						<CardDescription>
+							<h3 className="text-base font-bold text-secondary-foreground">
+								Auto-Generated Episodes
+							</h3>
+						</div>
+						<p className="text-sm text-primary-foreground/80 opacity-90">
 							Automatically generated daily from your content preferences
-						</CardDescription>
+						</p>
 					</div>
-					{hasAccess && config?.is_active ? (
-						<Badge variant="default" className="bg-green-600">
+					{config?.is_active && config?.rss_feed_url ? (
+						<Badge variant="default" className="bg-[#1ca896] shadow-md shadow-[#53998e91] text-[#fff]/80">
 							<CheckCircle2 className="h-3 w-3 mr-1" />
 							Active
 						</Badge>
@@ -100,21 +87,9 @@ export async function AutoEpisodesStatusCard() {
 						<Badge variant="secondary">Inactive</Badge>
 					)}
 				</div>
-			</CardHeader>
-			<CardContent className="space-y-4">
-				{!hasAccess ? (
-					<div className="text-sm text-muted-foreground space-y-2">
-						<p>
-							Upgrade to <strong>Curate Control</strong> to automatically generate episodes daily from your favorite channels.
-						</p>
-						<Link
-							href="/manage-membership"
-							className="text-primary hover:underline inline-flex items-center gap-1"
-						>
-							View Plans →
-						</Link>
-					</div>
-				) : !config?.is_active || !config?.rss_feed_url ? (
+			</div>
+			<div className="px-5 md:px-8 w-full space-y-4 pb-6">
+				{!config?.is_active || !config?.rss_feed_url ? (
 					<div className="text-sm text-muted-foreground space-y-2">
 						<p>
 							Set up your content preferences to start receiving auto-generated episodes.
@@ -129,33 +104,33 @@ export async function AutoEpisodesStatusCard() {
 				) : (
 					<>
 						{/* Stats Grid */}
-						<div className="grid grid-cols-2 gap-4">
+						<div className="grid grid-cols-2 gap-4 bg-sidebar/50 p-4 rounded-lg border border-border/50">
 							<div className="space-y-1">
-								<p className="text-xs text-muted-foreground">Total Generated</p>
-								<p className="text-2xl font-semibold">{totalAutoEpisodes}</p>
+								<p className="text-xs text-primary-foreground/60 uppercase tracking-wide font-mono font-bold">Total Generated</p>
+								<p className="text-2xl font-semibold text-secondary-foreground">{totalAutoEpisodes}</p>
 							</div>
 							<div className="space-y-1">
-								<p className="text-xs text-muted-foreground">Videos in Queue</p>
-								<p className="text-2xl font-semibold">{pendingVideosCount}</p>
+								<p className="text-xs text-primary-foreground/60 uppercase tracking-wide font-mono font-bold">Videos in Queue</p>
+								<p className="text-2xl font-semibold text-secondary-foreground">{pendingVideosCount}</p>
 							</div>
 						</div>
 
 						{/* Latest Episode */}
 						{latestAutoEpisode ? (
-							<div className="space-y-2 pt-2 border-t">
-								<div className="flex items-center gap-2 text-sm text-muted-foreground">
+							<div className="space-y-2 pt-2 border-t border-border/50">
+								<div className="flex items-center gap-2 text-sm text-primary-foreground/60">
 									<Video className="h-4 w-4" />
-									<span>Latest Episode</span>
+									<span className="uppercase tracking-wide font-mono font-bold text-xs">Latest Episode</span>
 								</div>
 								<Link
 									href={`/my-episodes/${latestAutoEpisode.episode_id}`}
-									className="block hover:bg-muted/50 p-3 rounded-lg transition-colors"
+									className="block hover:bg-sidebar/50 p-3 rounded-lg transition-colors border border-border/30"
 								>
-									<p className="font-medium line-clamp-2 text-sm">
+									<p className="font-medium line-clamp-2 text-sm text-secondary-foreground">
 										{latestAutoEpisode.episode_title}
 									</p>
 									<div className="flex items-center gap-3 mt-2">
-										<Badge variant={latestAutoEpisode.status === "COMPLETED" ? "default" : "secondary"}>
+										<Badge variant={latestAutoEpisode.status === "COMPLETED" ? "default" : "secondary"} className={latestAutoEpisode.status === "COMPLETED" ? "bg-[#1ca896] text-[#fff]/80" : ""}>
 											{latestAutoEpisode.status}
 										</Badge>
 										<span className="text-xs text-muted-foreground">
@@ -165,20 +140,20 @@ export async function AutoEpisodesStatusCard() {
 								</Link>
 							</div>
 						) : (
-							<div className="text-sm text-muted-foreground pt-2 border-t">
+							<div className="text-sm text-muted-foreground pt-2 border-t border-border/50">
 								<p>No episodes generated yet. Your first episode will be created at the next scheduled run.</p>
 							</div>
 						)}
 
 						{/* Next Scheduled Run */}
-						<div className="space-y-2 pt-2 border-t">
-							<div className="flex items-center gap-2 text-sm text-muted-foreground">
+						<div className="space-y-2 pt-2 border-t border-border/50">
+							<div className="flex items-center gap-2 text-sm text-primary-foreground/60">
 								<Clock className="h-4 w-4" />
-								<span>Next Generation</span>
+								<span className="uppercase tracking-wide font-mono font-bold text-xs">Next Generation</span>
 							</div>
-							<div className="flex items-center justify-between">
+							<div className="flex items-center justify-between bg-sidebar/50 p-3 rounded-lg border border-border/30">
 								<div>
-									<p className="text-sm font-medium">
+									<p className="text-sm font-medium text-secondary-foreground">
 										{nextRun.toLocaleDateString()} at {nextRun.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
 									</p>
 									<p className="text-xs text-muted-foreground mt-0.5">
@@ -187,7 +162,7 @@ export async function AutoEpisodesStatusCard() {
 									</p>
 								</div>
 								{pendingVideosCount > 0 && (
-									<Badge variant="outline">
+									<Badge variant="outline" className="ml-2">
 										{pendingVideosCount} {pendingVideosCount === 1 ? "video" : "videos"} ready
 									</Badge>
 								)}
@@ -195,9 +170,9 @@ export async function AutoEpisodesStatusCard() {
 						</div>
 
 						{/* How It Works */}
-						<div className="text-xs text-muted-foreground pt-2 border-t space-y-1">
-							<p className="font-medium">How it works:</p>
-							<ul className="list-disc list-inside space-y-0.5 ml-2">
+						<div className="text-xs text-muted-foreground pt-2 border-t border-border/50 space-y-2 bg-sidebar/30 p-3 rounded-lg">
+							<p className="font-bold text-primary-foreground/60 uppercase tracking-wide font-mono text-[0.65rem]">How it works:</p>
+							<ul className="list-disc list-inside space-y-1 ml-2 text-xs">
 								<li>New videos are fetched daily at 6:00 AM UTC</li>
 								<li>The latest video is auto-processed at 6:30 AM UTC</li>
 								<li>Episodes appear in your library automatically</li>
@@ -205,8 +180,8 @@ export async function AutoEpisodesStatusCard() {
 						</div>
 					</>
 				)}
-			</CardContent>
-		</Card>
+			</div>
+		</div>
 	);
 }
 

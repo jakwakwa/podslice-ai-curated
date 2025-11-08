@@ -51,8 +51,8 @@ export default async function DashboardPage() {
 	const hasProfile = !!userCurationProfile;
 	const isBundleSelection = hasProfile && userCurationProfile.is_bundle_selection;
 	const hasBundle = isBundleSelection && !!latestBundleEpisode;
-	const showCurateControlButton =
-		(subscription?.plan_type || "").toLowerCase() === "curate_control";
+	const hasCurateControl = (subscription?.plan_type || "").toLowerCase() === "curate_control";
+	const showCurateControlButton = hasCurateControl;
 
 	return (
 		<div className="h-full rounded-none  px-0 mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:rounded-4xl md:mt-0 md:p-8 md:w-full md:gap-y-4">
@@ -64,10 +64,12 @@ export default async function DashboardPage() {
 		{/* Episode Generation Status - Real-time updates */}
 		<EpisodeStatusTable defaultExpanded={true} />
 
-		{/* Auto-Generated Episodes Status Card */}
-		<Suspense fallback={<Skeleton className="h-[300px] w-full" />}>
-			<AutoEpisodesStatusCard />
-		</Suspense>
+		{/* Auto-Generated Episodes Status Card - Only for Curate Control users */}
+		{hasCurateControl && (
+			<Suspense fallback={<Skeleton className="h-[300px] w-full" />}>
+				<AutoEpisodesStatusCard />
+			</Suspense>
+		)}
 
 		{/* Bundle Feed Section */}
 
