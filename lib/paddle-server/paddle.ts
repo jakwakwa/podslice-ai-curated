@@ -1,6 +1,14 @@
-const isSandboxEnv = (process.env.NEXT_PUBLIC_PADDLE_ENV || process.env.PADDLE_ENV || "").toLowerCase() === "sandbox" || (process.env.PADDLE_API_KEY || "").includes("sdbx");
-const PADDLE_API_URL = isSandboxEnv ? "https://sandbox-api.paddle.com" : "https://api.paddle.com";
-const PADDLE_API_VERSION = (process.env.PADDLE_VERSION || process.env.PADDLE_API_VERSION || "").trim();
+const isSandboxEnv =
+	(process.env.NEXT_PUBLIC_PADDLE_ENV || process.env.PADDLE_ENV || "").toLowerCase() ===
+		"sandbox" || (process.env.PADDLE_API_KEY || "").includes("sdbx");
+const PADDLE_API_URL = isSandboxEnv
+	? "https://sandbox-api.paddle.com"
+	: "https://api.paddle.com";
+const PADDLE_API_VERSION = (
+	process.env.PADDLE_VERSION ||
+	process.env.PADDLE_API_VERSION ||
+	""
+).trim();
 
 import { ensurePaddleApiKey } from "@/lib/env";
 
@@ -27,7 +35,10 @@ export async function paddleFetch({ method, path, body }: PaddleFetchOptions) {
 		cache: "no-store",
 	});
 
-	const requestId = response.headers.get("x-request-id") || response.headers.get("X-Request-Id") || undefined;
+	const requestId =
+		response.headers.get("x-request-id") ||
+		response.headers.get("X-Request-Id") ||
+		undefined;
 
 	if (!response.ok) {
 		let details = "";
@@ -35,8 +46,15 @@ export async function paddleFetch({ method, path, body }: PaddleFetchOptions) {
 			const text = await response.text();
 			details = text;
 		} catch {}
-		console.error("[PADDLE_FETCH_ERROR]", { path, method, status: response.status, requestId });
-		throw new Error(`Paddle API error: ${response.status} ${response.statusText}${details ? ` - ${details}` : ""}${requestId ? ` [x-request-id=${requestId}]` : ""}`);
+		console.error("[PADDLE_FETCH_ERROR]", {
+			path,
+			method,
+			status: response.status,
+			requestId,
+		});
+		throw new Error(
+			`Paddle API error: ${response.status} ${response.statusText}${details ? ` - ${details}` : ""}${requestId ? ` [x-request-id=${requestId}]` : ""}`
+		);
 	}
 
 	return response.json();
@@ -72,7 +90,13 @@ export async function scheduleCancelSubscription(subscriptionId: string) {
 	});
 }
 
-export async function updateSubscription(subscriptionId: string, updateData: { items: Array<{ price_id: string; quantity: number }>; proration_billing_mode?: "immediate" | "next_billing_period" }) {
+export async function updateSubscription(
+	subscriptionId: string,
+	updateData: {
+		items: Array<{ price_id: string; quantity: number }>;
+		proration_billing_mode?: "immediate" | "next_billing_period";
+	}
+) {
 	return paddleFetch({
 		method: "PATCH",
 		path: `/subscriptions/${subscriptionId}`,
@@ -99,7 +123,10 @@ export async function getSubscriptionsByCustomer(customerId: string) {
 	});
 }
 
-export async function createCustomerPortalSession(customerId: string, subscriptionIds?: string[]) {
+export async function createCustomerPortalSession(
+	customerId: string,
+	subscriptionIds?: string[]
+) {
 	const body: Record<string, unknown> = {};
 	if (subscriptionIds && subscriptionIds.length > 0) {
 		body.subscription_ids = subscriptionIds;
@@ -109,4 +136,91 @@ export async function createCustomerPortalSession(customerId: string, subscripti
 		path: `/customers/${customerId}/portal-sessions`,
 		body,
 	});
+}
+
+// Notification settings (webhook destinations)
+export async function listEventTypes() {
+	return paddleFetch({
+		method: "GET",
+		path: "/event-types",
+	});
+}
+
+export async function listNotificationSettings() {
+	return paddleFetch({
+		method: "GET",
+		path: "/notification-settings",
+	});
+}
+
+export async function createNotificationSetting(body: {
+	description: string;
+	type: "url" | "email";
+	destination: string;
+	api_version?: number;
+	include_sensitive_fields?: boolean;
+	traffic_source?: "all" | "platform" | "simulation";
+	subscribed_events: string[];
+}) {
+	return paddleFetch({
+		method: "POST",
+		path: "/notification-settings",
+		body,
+	});
+}
+
+export async function updateNotificationSetting(
+	notificationSettingId: string,
+	body: {
+		description?: string;
+		destination?: string;
+		active?: boolean;
+		traffic_source?: "all" | "platform" | "simulation";
+		subscribed_events?: string[];
+	}
+) {
+	return paddleFetch({
+		method: "PATCH",
+		path: `/notification-settings/${notificationSettingId}`,
+		body,
+	});
+}
+
+export async function deleteNotificationSetting(notificationSettingId: string) {
+	const response = await fetch(
+		`${PADDLE_API_URL}/notification-settings/${notificationSettingId}`,
+		{
+			method: "DELETE",
+			headers: {
+				Authorization: `Bearer ${process.env.PADDLE_API_KEY}`,
+				...(PADDLE_API_VERSION ? { "Paddle-Version": PADDLE_API_VERSION } : {}),
+			},
+			cache: "no-store",
+		}
+	);
+
+	const requestId =
+		response.headers.get("x-request-id") ||
+		response.headers.get("X-Request-Id") ||
+		undefined;
+
+	if (!response.ok) {
+		let details = "";
+		try {
+			const text = await response.text();
+			details = text;
+		} catch {}
+		console.error("[PADDLE_FETCH_ERROR]", {
+			path: `/notification-settings/${notificationSettingId}`,
+			method: "DELETE",
+			status: response.status,
+			requestId,
+		});
+		throw new Error(
+			`Paddle API error: ${response.status} ${response.statusText}${details ? ` - ${details}` : ""}${requestId ? ` [x-request-id=${requestId}]` : ""}`
+		);
+	}
+
+	// DELETE returns 204 No Content
+	return { success: true };
 }
