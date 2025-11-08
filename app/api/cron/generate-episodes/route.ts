@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 
 /**
  * Daily cron job to generate episodes from the latest unprocessed YouTube videos
- * Runs after the youtube-feed cron job fetches new videos
+ * Runs at 12:30 AM UTC, after the youtube-feed cron job fetches new videos at midnight
  */
 export async function GET(request: Request) {
 	// Authentication: check for cron secret or Vercel Cron header

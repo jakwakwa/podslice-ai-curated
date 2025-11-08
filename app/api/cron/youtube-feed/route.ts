@@ -15,6 +15,10 @@ type Summary = {
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Daily cron job to fetch new YouTube videos from user RSS feeds
+ * Runs at midnight UTC (00:00), before the generate-episodes cron at 12:30 AM
+ */
 export async function GET(request: Request) {
 	// Authentication: check for cron secret or Vercel Cron header
 	const url = new URL(request.url);

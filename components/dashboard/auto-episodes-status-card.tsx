@@ -43,10 +43,10 @@ export async function AutoEpisodesStatusCard() {
 		},
 	});
 
-	// Next scheduled run is 6:30 AM UTC daily
+	// Next scheduled run is 12:30 AM UTC daily (midnight)
 	const now = new Date();
 	const nextRun = new Date();
-	nextRun.setUTCHours(6, 30, 0, 0);
+	nextRun.setUTCHours(0, 30, 0, 0);
 	if (nextRun <= now) {
 		nextRun.setUTCDate(nextRun.getUTCDate() + 1);
 	}
@@ -154,8 +154,8 @@ export async function AutoEpisodesStatusCard() {
 						<div className="text-xs text-muted-foreground pt-2 border-t border-border/50 space-y-2 bg-sidebar/30 p-3 rounded-lg">
 							<p className="font-bold text-primary-foreground/60 uppercase tracking-wide font-mono text-[0.65rem]">How it works:</p>
 							<ul className="list-disc list-inside space-y-1 ml-2 text-xs">
-								<li>New videos are fetched daily at 6:00 AM UTC</li>
-								<li>The latest video is auto-processed at 6:30 AM UTC</li>
+								<li>New videos are fetched daily at midnight UTC</li>
+								<li>The latest video is auto-processed at 12:30 AM UTC</li>
 								<li>Episodes appear in your library automatically</li>
 							</ul>
 						</div>

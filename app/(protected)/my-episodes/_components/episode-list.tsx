@@ -25,7 +25,7 @@ export function EpisodeList({
     completedOnly = false,
     initialEpisodeId,
 }: EpisodeListProps) {
-    const { data, error, isLoading, mutate } = useSWR<UserEpisodeWithSignedUrl[]>(
+    const { data, error, isLoading } = useSWR<UserEpisodeWithSignedUrl[]>(
         "/api/user-episodes/list",
         { dedupingInterval: ONE_MINUTE * 5, revalidateOnFocus: false, keepPreviousData: true }
     );
@@ -140,7 +140,7 @@ export function EpisodeList({
     }
 
     return (
-        <div className="border-1 bg-[oklch(0.68_0.17_240/_0.06)] border-[rgba(227,114,244,0.14)] rounded-none overflow-hidden mb-0 p-0 mt-0 md:mt-0 md:m-0 md:px-1 outline-0 md:rounded-4xl md:shadow-xl">
+        <div className="border-1 bg-[var(--kwak-1)]/80 border-[rgba(227,114,244,0.14)] rounded-none overflow-hidden mb-0 p-0 mt-0 md:mt-0 md:m-0 md:px-1 outline-0 md:rounded-4xl md:shadow-xl">
             <div className="text-left md:pt-0 rounded-none my-0 py-0 md:mb-5 md:pb-0 overflow-hidden md:rounded-4xl md:py-0 min-w-full min-h-full lg:pl-12 bg-episode-card-wrapper">
                 <div className="mx-4">
                     <SectionHeader
@@ -180,11 +180,11 @@ export function EpisodeList({
                         </div>
                     ) : episodes.length === 0 ? (
                         <p className="text-primary m-4 text-sm">
-                            {filter === "manual" 
+                            {filter === "manual"
                                 ? "No manually created episodes found. Create one by generating a podcast summary!"
                                 : filter === "auto"
-                                ? "No auto-generated episodes found. These are created automatically from your content preferences."
-                                : "You haven't created any episodes yet."}
+                                    ? "No auto-generated episodes found. These are created automatically from your content preferences."
+                                    : "You haven't created any episodes yet."}
                         </p>
                     ) : (
                         episodes.map(episode => (
