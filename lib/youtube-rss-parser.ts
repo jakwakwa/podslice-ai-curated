@@ -126,7 +126,7 @@ function parseYouTubeRss(xml: string): RssEntry[] {
 function matchTagText(xml: string, tag: string): string | null {
 	const regex = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i");
 	const match = xml.match(regex);
-	return match ? decodeXml(match[1].trim()) : null;
+	return match?.[1] ? decodeXml(match[1].trim()) : null;
 }
 
 function matchLinkHref(xml: string): string | null {

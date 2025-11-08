@@ -52,26 +52,27 @@ export function SharedBundleView({ bundle, bundleId }: SharedBundleViewProps) {
 
 			const { signedUrl } = await response.json();
 
-			// Create a normalized UserEpisode for the audio player
-			const normalizedEpisode: UserEpisode = {
-				episode_id: episode.episode_id,
-				episode_title: episode.episode_title,
-				gcs_audio_url: signedUrl,
-				summary: null,
-				summary_length: "MEDIUM", // Default value for shared bundles
-				created_at: new Date(episode.created_at),
-				updated_at: new Date(episode.created_at),
-				user_id: "", // Not needed for playback
-				youtube_url: "", // Not available for shared bundles
-				transcript: null,
-				status: "COMPLETED",
-				duration_seconds: episode.duration_seconds,
-				news_sources: null,
-				progress_message: null,
-				news_topic: null,
-				is_public: false,
-				public_gcs_audio_url: null,
-			};
+		// Create a normalized UserEpisode for the audio player
+		const normalizedEpisode: UserEpisode = {
+			episode_id: episode.episode_id,
+			episode_title: episode.episode_title,
+			gcs_audio_url: signedUrl,
+			summary: null,
+			summary_length: "MEDIUM", // Default value for shared bundles
+			created_at: new Date(episode.created_at),
+			updated_at: new Date(episode.created_at),
+			user_id: "", // Not needed for playback
+			youtube_url: "", // Not available for shared bundles
+			transcript: null,
+			status: "COMPLETED",
+			duration_seconds: episode.duration_seconds,
+			news_sources: null,
+			progress_message: null,
+			news_topic: null,
+			is_public: false,
+			public_gcs_audio_url: null,
+			auto_generated: false,
+		};
 
 			setEpisode(normalizedEpisode as unknown as UserEpisode);
 

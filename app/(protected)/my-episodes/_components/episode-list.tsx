@@ -65,6 +65,7 @@ export function EpisodeList({
                         news_topic: ep.news_topic ?? null,
                         is_public: ep.is_public ?? false,
                         public_gcs_audio_url: ep.public_gcs_audio_url ?? null,
+                        auto_generated: ep.auto_generated ?? false,
                     };
                     playEpisode(normalizedEpisode);
                 }
@@ -100,6 +101,7 @@ export function EpisodeList({
             news_topic: match.news_topic ?? null,
             is_public: match.is_public ?? false,
             public_gcs_audio_url: match.public_gcs_audio_url ?? null,
+            auto_generated: match.auto_generated ?? false,
         };
         // Ensure we always set fresh episode on deep link
         playEpisode(normalizedEpisode);
@@ -178,6 +180,7 @@ export function EpisodeList({
                                                             news_topic: episode.news_topic ?? null,
                                                             is_public: episode.is_public ?? false,
                                                             public_gcs_audio_url: episode.public_gcs_audio_url ?? null,
+                                                            auto_generated: episode.auto_generated ?? false,
                                                         };
                                                         playEpisode(normalizedEpisode);
                                                     }}
