@@ -7,6 +7,7 @@ import SectionHeader from "@/components/shared/section-header";
 import { Button } from "@/components/ui/button";
 import EpisodeCard from "@/components/ui/episode-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEpisodePlayer } from "@/hooks/use-episode-player";
 import { ONE_MINUTE } from "@/lib/swr";
 import type { UserEpisode } from "@/lib/types";
@@ -18,6 +19,8 @@ type EpisodeListProps = {
     initialEpisodeId?: string | undefined;
 };
 
+type FilterType = "all" | "manual" | "auto";
+
 export function EpisodeList({
     completedOnly = false,
     initialEpisodeId,
@@ -26,15 +29,29 @@ export function EpisodeList({
         "/api/user-episodes/list",
         { dedupingInterval: ONE_MINUTE * 5, revalidateOnFocus: false, keepPreviousData: true }
     );
-    const episodes = (data ?? []).filter(e =>
-        completedOnly ? e.status === "COMPLETED" : true
-    );
+    const [filter, setFilter] = useState<FilterType>("all");
     const [debugLogs, setDebugLogs] = useState<Record<string, unknown[]> | null>(null);
     const enableDebug = useMemo(
         () => process.env.NEXT_PUBLIC_ENABLE_EPISODE_DEBUG === "true",
         []
     );
     const { playEpisode } = useEpisodePlayer();
+
+    // Apply filters
+    const episodes = useMemo(() => {
+        let filtered = (data ?? []).filter(e =>
+            completedOnly ? e.status === "COMPLETED" : true
+        );
+
+        // Apply auto-generated filter
+        if (filter === "manual") {
+            filtered = filtered.filter(e => !e.auto_generated);
+        } else if (filter === "auto") {
+            filtered = filtered.filter(e => e.auto_generated);
+        }
+
+        return filtered;
+    }, [data, completedOnly, filter]);
 
     // If we arrived via deep link, fetch the single episode immediately to avoid showing stale progress
     useEffect(() => {
@@ -132,6 +149,26 @@ export function EpisodeList({
                     />
                 </div>
 
+                {/* Filter Tabs */}
+                <div className="mx-4 mb-4">
+                    <Tabs value={filter} onValueChange={(value) => setFilter(value as FilterType)}>
+                        <TabsList className="grid w-full max-w-md grid-cols-3">
+                            <TabsTrigger value="all">
+                                All Episodes
+                                {data && <span className="ml-1.5 text-xs opacity-60">({data.filter(e => completedOnly ? e.status === "COMPLETED" : true).length})</span>}
+                            </TabsTrigger>
+                            <TabsTrigger value="manual">
+                                Manual
+                                {data && <span className="ml-1.5 text-xs opacity-60">({data.filter(e => (completedOnly ? e.status === "COMPLETED" : true) && !e.auto_generated).length})</span>}
+                            </TabsTrigger>
+                            <TabsTrigger value="auto">
+                                Auto-Generated
+                                {data && <span className="ml-1.5 text-xs opacity-60">({data.filter(e => (completedOnly ? e.status === "COMPLETED" : true) && e.auto_generated).length})</span>}
+                            </TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+                </div>
+
                 <div className="episode-card-wrapper-dark py-4 rounded-3xl flex flex-col gap-2 lg:mt-8">
                     {isLoading ? (
                         <div>
@@ -143,7 +180,11 @@ export function EpisodeList({
                         </div>
                     ) : episodes.length === 0 ? (
                         <p className="text-primary m-4 text-sm">
-                            You haven't created any episodes yet.
+                            {filter === "manual" 
+                                ? "No manually created episodes found. Create one by generating a podcast summary!"
+                                : filter === "auto"
+                                ? "No auto-generated episodes found. These are created automatically from your content preferences."
+                                : "You haven't created any episodes yet."}
                         </p>
                     ) : (
                         episodes.map(episode => (
