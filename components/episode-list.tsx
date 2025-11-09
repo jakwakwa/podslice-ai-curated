@@ -24,7 +24,11 @@ const _formatDate = (date: Date | null | undefined) => {
     return new Date(date).toLocaleString();
 };
 
-export const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, onPlayEpisode, playingEpisodeId }) => {
+export const EpisodeList: React.FC<EpisodeListProps> = ({
+    episodes,
+    onPlayEpisode,
+    playingEpisodeId,
+}) => {
     const [subscription, setSubscription] = useState<UserSubscription | null>(null);
     const [downloadingEpisodes, setDownloadingEpisodes] = useState<Set<string>>(new Set());
 
@@ -50,7 +54,7 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, onPlayEpisod
     }, []);
 
     // Check if user has tier 3 (CURATE_CONTROL) access
-    const hasTier3Access = () => {
+    const _hasTier3Access = () => {
         if (!subscription) return false;
         const planType = subscription.plan_type?.toLowerCase();
         return planType === "curate_control" || planType === "curate control";
@@ -102,57 +106,63 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, onPlayEpisod
 
     return (
         <>
-
-
-            {
-                episodes.length > 0 ? (
-                    <ul className="relative text-card-foreground p-0 gap-4 px-2 md:px-12 w-full z-1 flex flex-col xl:px-[40px] xl:justify-around items-start xl:gap-2 md:gap-4 h-fit  lg:p-[20px] rounded-3xl episode-card-wrapper-dark shadow-[0px_0px_5px_5px_#261c4b5b]">
-                        {episodes.map(episode => {
-                            // Determine details link depending on whether it's user-generated or bundle episode
-                            const detailsHref = isUserGeneratedEpisode(episode) ? `/my-episodes/${episode.episode_id}` : `/episodes/${episode.episode_id}`;
-                            return (
-                                <EpisodeCard
-                                    key={episode.episode_id}
-                                    as="li"
-                                    imageUrl={episode.image_url || null}
-                                    title={episode.title || "Untitled Episode"}
-                                    publishedAt={episode.published_at || new Date()}
-                                    durationSeconds={episode.duration_seconds ?? null}
-                                    detailsHref={detailsHref}
-                                    actions={
-                                        <div className="flex flex-col gap-2 md:gap-3 md:flex-row md:items-center">
-                                            {episode.audio_url && onPlayEpisode && (
-                                                <PlayButton
-                                                    onClick={() => onPlayEpisode(episode)}
-                                                    aria-label={`Play ${episode.title}`}
-                                                    isPlaying={playingEpisodeId === episode.episode_id}
-                                                    className={playingEpisodeId === episode.episode_id ? "outline-accent outline-1 w-32" : ""}
-                                                />
-                                            )}
-                                            {episode.podcast_id === null ?
-                                                <Button
-                                                    onClick={() => handleDownloadEpisode(episode.episode_id, episode.title)}
-                                                    variant="outline"
-                                                    size="sm"
-                                                    disabled={downloadingEpisodes.has(episode.episode_id)}
-                                                    className="h-8">
-                                                    <Download className="w-4 h-4" />
-                                                    {downloadingEpisodes.has(episode.episode_id) ? "Downloading..." : "Download"}
-                                                </Button>
-                                                : null}
-                                        </div>
-                                    }
-                                />
-                            );
-                        })}
-                    </ul>
-                ) : (
-                    <div className="text-center py-8 text-muted-foreground">
-                        <Music className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                        <p>No episodes available</p>
-                    </div>
-                )
-            }
+            {episodes.length > 0 ? (
+                <ul className="relative text-card-foreground p-0 gap-4 px-2 md:px-12 w-full z-1 flex flex-col xl:px-[40px] xl:justify-around items-start xl:gap-2 md:gap-4 h-fit  lg:p-[20px] rounded-3xl episode-card-wrapper-dark shadow-[0px_0px_5px_5px_#261c4b5b]">
+                    {episodes.map(episode => {
+                        // Determine details link depending on whether it's user-generated or bundle episode
+                        const detailsHref = isUserGeneratedEpisode(episode)
+                            ? `/my-episodes/${episode.episode_id}`
+                            : `/episodes/${episode.episode_id}`;
+                        return (
+                            <EpisodeCard
+                                key={episode.episode_id}
+                                as="li"
+                                imageUrl={episode.image_url || null}
+                                title={episode.title || "Untitled Episode"}
+                                publishedAt={episode.published_at || new Date()}
+                                durationSeconds={episode.duration_seconds ?? null}
+                                detailsHref={detailsHref}
+                                actions={
+                                    <div className="flex flex-col gap-2 md:gap-3 md:flex-row md:items-center">
+                                        {episode.audio_url && onPlayEpisode && (
+                                            <PlayButton
+                                                onClick={() => onPlayEpisode(episode)}
+                                                aria-label={`Play ${episode.title}`}
+                                                isPlaying={playingEpisodeId === episode.episode_id}
+                                                className={
+                                                    playingEpisodeId === episode.episode_id
+                                                        ? "outline-accent outline-1 w-32"
+                                                        : ""
+                                                }
+                                            />
+                                        )}
+                                        {episode.podcast_id === null ? (
+                                            <Button
+                                                onClick={() =>
+                                                    handleDownloadEpisode(episode.episode_id, episode.title)
+                                                }
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={downloadingEpisodes.has(episode.episode_id)}
+                                                className="h-8">
+                                                <Download className="w-4 h-4" />
+                                                {downloadingEpisodes.has(episode.episode_id)
+                                                    ? "Downloading..."
+                                                    : "Download"}
+                                            </Button>
+                                        ) : null}
+                                    </div>
+                                }
+                            />
+                        );
+                    })}
+                </ul>
+            ) : (
+                <div className="text-center py-8 text-muted-foreground bg-background">
+                    <Music className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No episodes available</p>
+                </div>
+            )}
         </>
     );
 };
