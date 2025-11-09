@@ -158,7 +158,7 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
                     })}
                 </ul>
             ) : (
-                <div className="text-center py-8 text-muted-foreground bg-background">
+                <div className="text-center py-8 text-muted-foreground bg-[#18141eb5]">
                     <Music className="h-12 w-12 mx-auto mb-4 opacity-50" />
                     <p>No episodes available</p>
                 </div>
