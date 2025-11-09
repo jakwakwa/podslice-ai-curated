@@ -6,9 +6,13 @@ import {
 	Calendar,
 	EyeIcon,
 	Podcast,
-	// DeleteIcon,
+	CreditCard,
+	AlertTriangle,
+	CheckCircle,
+	TrendingUp,
+	TrendingDown,
+	XCircle,
 	XCircleIcon,
-	// XIcon
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -108,8 +112,24 @@ export function NotificationBell() {
 				return <Podcast className="w-4 h-4" color="#89D7AF" />;
 			case "weekly_reminder":
 				return <Calendar className="w-4 h-4" color="#FFD700" />;
+			case "subscription_activated":
+				return <CheckCircle className="w-4 h-4" color="#10B981" />;
+			case "subscription_renewed":
+				return <CheckCircle className="w-4 h-4" color="#10B981" />;
+			case "subscription_cancelled":
+				return <XCircle className="w-4 h-4" color="#EF4444" />;
+			case "subscription_ending":
+				return <AlertTriangle className="w-4 h-4" color="#F59E0B" />;
+			case "payment_failed":
+				return <CreditCard className="w-4 h-4" color="#EF4444" />;
+			case "payment_successful":
+				return <CreditCard className="w-4 h-4" color="#10B981" />;
+			case "subscription_upgraded":
+				return <TrendingUp className="w-4 h-4" color="#3B82F6" />;
+			case "subscription_downgraded":
+				return <TrendingDown className="w-4 h-4" color="#6B7280" />;
 			default:
-				return "📢";
+				return <Bell className="w-4 h-4" color="#9CA3AF" />;
 		}
 	};
 
@@ -119,6 +139,19 @@ export function NotificationBell() {
 				return "text-green-500";
 			case "weekly_reminder":
 				return "text-amber-500";
+			case "subscription_activated":
+			case "subscription_renewed":
+			case "payment_successful":
+				return "text-green-500";
+			case "subscription_cancelled":
+			case "payment_failed":
+				return "text-red-500";
+			case "subscription_ending":
+				return "text-amber-500";
+			case "subscription_upgraded":
+				return "text-blue-500";
+			case "subscription_downgraded":
+				return "text-gray-500";
 			default:
 				return "text-gray-500";
 		}

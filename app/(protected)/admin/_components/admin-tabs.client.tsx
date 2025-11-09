@@ -11,6 +11,7 @@ export default function AdminTabs() {
 		{ href: "/admin/podcasts", label: "Podcasts" },
 		{ href: "/admin/episodes", label: "Episodes" },
 		{ href: "/admin/cron-monitor", label: "Cron Jobs" },
+		{ href: "/admin/paddle-notifications", label: "Notifications" },
 	]
 	return (
 		<div className="w-full border-b mt-6 border-border bg-[var(--beduk-1)] shadow-md shadow-black/80 p-2 rounded-md mb-4">
