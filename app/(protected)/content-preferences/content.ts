@@ -26,8 +26,10 @@ export const contentPreferencesContent = {
 	youtubeChannels: {
 		label: "YouTube Channel or Playlist",
 		helperText: "Daily automated fetching of new videos",
-		description: "Enter a YouTube channel or playlist URL to automatically fetch new videos daily at 9:00 AM",
-		placeholder: "https://www.youtube.com/@ChannelName or https://www.youtube.com/playlist?list=PLxxx",
+		description:
+			"Enter a YouTube channel or playlist URL to automatically fetch new videos daily at 12:30 PM UTC",
+		placeholder:
+			"https://www.youtube.com/@ChannelName or https://www.youtube.com/playlist?list=PLxxx",
 	},
 	rssFeeds: {
 		label: "RSS Feeds",
