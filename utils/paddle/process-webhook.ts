@@ -115,7 +115,7 @@ export class ProcessWebhook {
 			statusChanged,
 			planChanged,
 			oldStatus: existingSubscription?.status,
-			newPlanType,
+			newPlanType: newPlanType ?? undefined,
 			oldPlanType: existingSubscription?.plan_type,
 			cancelAtPeriodEnd: cancel_at_period_end,
 			currentPeriodEnd: current_period_end ?? undefined,
