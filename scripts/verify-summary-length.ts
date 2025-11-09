@@ -17,12 +17,12 @@ import {
 	type SummaryLengthOption,
 } from "../lib/types/summary-length";
 
-let passedTests = 0;
+let _passedTests = 0;
 let failedTests = 0;
 
 function assert(condition: boolean, message: string): void {
 	if (condition) {
-		passedTests++;
+		_passedTests++;
 		console.log(`✅ ${message}`);
 	} else {
 		failedTests++;
@@ -33,7 +33,7 @@ function assert(condition: boolean, message: string): void {
 function assertEquals<T>(actual: T, expected: T, message: string): void {
 	const condition = JSON.stringify(actual) === JSON.stringify(expected);
 	if (condition) {
-		passedTests++;
+		_passedTests++;
 		console.log(`✅ ${message}`);
 	} else {
 		failedTests++;
@@ -58,18 +58,18 @@ assert(
 assert(SUMMARY_LENGTH_OPTIONS.LONG.usageCount === 2, "LONG option has usageCount of 2");
 assertEquals(
 	SUMMARY_LENGTH_OPTIONS.SHORT.minutes,
-	[2, 3],
-	"SHORT has correct minute range [2, 3]"
+	[1, 2],
+	"SHORT has correct minute range [1, 2]"
 );
 assertEquals(
 	SUMMARY_LENGTH_OPTIONS.MEDIUM.minutes,
-	[5, 7],
-	"MEDIUM has correct minute range [5, 7]"
+	[3, 4],
+	"MEDIUM has correct minute range [3, 4]"
 );
 assertEquals(
 	SUMMARY_LENGTH_OPTIONS.LONG.minutes,
-	[7, 10],
-	"LONG has correct minute range [7, 10]"
+	[5, 7],
+	"LONG has correct minute range [5, 7]"
 );
 
 // Test 2: getSummaryLengthConfig
@@ -264,12 +264,6 @@ const canAddLong = canCreateEpisode(mixedUsage, "LONG", limit);
 assert(canAddLong.canCreate === false, "Cannot add LONG episode (29 + 2 = 31 > 30)");
 
 // Print summary
-console.log("\n" + "═".repeat(60));
-console.log("📊 Test Summary");
-console.log("═".repeat(60));
-console.log(`✅ Passed: ${passedTests}`);
-console.log(`❌ Failed: ${failedTests}`);
-console.log(`📈 Total:  ${passedTests + failedTests}`);
 
 if (failedTests > 0) {
 	console.log("\n❌ Some tests failed!");

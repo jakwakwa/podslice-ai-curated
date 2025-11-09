@@ -36,20 +36,20 @@ describe("lib/types/summary-length - Pure Utility Functions (No DB Required)", (
 
 		it("should have SHORT option with 1 usage count", () => {
 			expect(SUMMARY_LENGTH_OPTIONS.SHORT.usageCount).toBe(1);
-			expect(SUMMARY_LENGTH_OPTIONS.SHORT.minutes).toEqual([2, 3]);
-			expect(SUMMARY_LENGTH_OPTIONS.SHORT.words).toEqual([280, 540]);
+			expect(SUMMARY_LENGTH_OPTIONS.SHORT.minutes).toEqual([1, 2]);
+			expect(SUMMARY_LENGTH_OPTIONS.SHORT.words).toEqual([150, 280]);
 		});
 
 		it("should have MEDIUM option with 1 usage count", () => {
 			expect(SUMMARY_LENGTH_OPTIONS.MEDIUM.usageCount).toBe(1);
-			expect(SUMMARY_LENGTH_OPTIONS.MEDIUM.minutes).toEqual([5, 7]);
-			expect(SUMMARY_LENGTH_OPTIONS.MEDIUM.words).toEqual([700, 1260]);
+			expect(SUMMARY_LENGTH_OPTIONS.MEDIUM.minutes).toEqual([3, 4]);
+			expect(SUMMARY_LENGTH_OPTIONS.MEDIUM.words).toEqual([280, 540]);
 		});
 
 		it("should have LONG option with 2 usage count", () => {
 			expect(SUMMARY_LENGTH_OPTIONS.LONG.usageCount).toBe(2);
-			expect(SUMMARY_LENGTH_OPTIONS.LONG.minutes).toEqual([7, 10]);
-			expect(SUMMARY_LENGTH_OPTIONS.LONG.words).toEqual([980, 1800]);
+			expect(SUMMARY_LENGTH_OPTIONS.LONG.minutes).toEqual([5, 7]);
+			expect(SUMMARY_LENGTH_OPTIONS.LONG.words).toEqual([540, 700]);
 		});
 	});
 

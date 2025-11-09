@@ -19,7 +19,7 @@ const createEpisodeSchema = z.object({
 	voiceA: z.enum(VOICE_NAMES as unknown as [string, ...string[]]).optional(),
 	voiceB: z.enum(VOICE_NAMES as unknown as [string, ...string[]]).optional(),
 	useShortEpisodesOverride: z.boolean().optional(),
-	summaryLength: z.enum(["SHORT", "MEDIUM", "LONG"]).default("MEDIUM"),
+	summaryLength: z.enum(["SHORT", "MEDIUM", "LONG"]).default("SHORT"),
 });
 
 export async function POST(request: Request) {

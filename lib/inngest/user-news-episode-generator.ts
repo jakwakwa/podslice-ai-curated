@@ -7,23 +7,16 @@ import {
 	combineAndUploadWavChunks,
 	generateSingleSpeakerTts,
 	getTtsChunkWordLimit,
+	sanitizeSpeakerLabels,
 	splitScriptIntoChunks,
 	uploadBufferToPrimaryBucket,
-	sanitizeSpeakerLabels,
 } from "@/lib/inngest/episode-shared";
 import { generateTtsAudio } from "@/lib/inngest/utils/genai";
 import { prisma } from "@/lib/prisma";
 import { getSummaryLengthConfig } from "@/lib/types/summary-length";
 import { inngest } from "./client";
 
-const ALLOWED_SOURCES = [
-	"global",
-	"crypto",
-	"geo",
-	"finance",
-	"us",
-] as const;
-
+const ALLOWED_SOURCES = ["global", "crypto", "geo", "finance", "us"] as const;
 
 const PayloadSchema = z.object({
 	userEpisodeId: z.string(),
@@ -32,7 +25,7 @@ const PayloadSchema = z.object({
 	generationMode: z.enum(["single", "multi"]).default("single"),
 	voiceA: z.string().optional(),
 	voiceB: z.string().optional(),
-	summaryLength: z.enum(["SHORT", "MEDIUM", "LONG"]).default("MEDIUM"),
+	summaryLength: z.enum(["SHORT", "MEDIUM", "LONG"]).default("SHORT"),
 });
 
 // Use shared generateTtsAudio directly for multi-speaker; voice selection via param
@@ -69,16 +62,24 @@ function coerceJsonArray(input: string): DialogueLine[] {
 	throw new Error("Failed to parse dialogue script");
 }
 
-function buildConciseDisclosure(topic: string, parsedSummary: any): string {
+function buildConciseDisclosure(
+	topic: string,
+	parsedSummary: {
+		source_strategy?: { used_alternative_sources?: boolean };
+		articles?: { domain?: string; url?: string; from_priority_source?: boolean }[];
+	}
+): string {
 	try {
 		const usedFallback = Boolean(
 			parsedSummary?.source_strategy?.used_alternative_sources
 		);
 		if (!usedFallback) return "";
 
-		const articleList: Array<any> = Array.isArray(parsedSummary?.articles)
-			? parsedSummary.articles
-			: [];
+		const articleList: Array<{
+			domain?: string;
+			url?: string;
+			from_priority_source?: boolean;
+		}> = Array.isArray(parsedSummary?.articles) ? parsedSummary.articles : [];
 
 		const skipHosts = new Set([
 			"vertexaisearch.cloud.google.com",
@@ -113,9 +114,7 @@ function buildConciseDisclosure(topic: string, parsedSummary: any): string {
 
 		const topicText = (topic || "").toString();
 		const listText =
-			fallbackDomains.length > 0
-				? ` like ${fallbackDomains.join(", ")}`
-				: "";
+			fallbackDomains.length > 0 ? ` like ${fallbackDomains.join(", ")}` : "";
 		return `No articles about '${topicText}' were found from the specified sources; fallback sources were used${listText}.`;
 	} catch {
 		return "";
@@ -207,12 +206,22 @@ export const generateUserNewsEpisode = inngest.createFunction(
 		});
 
 		const allowedDomains = {
-			global: [ "theguardian.com/world","abcnews.go.com", "npr.org", "aljazeera.com", "theguardian.com", "reuters", "bbc.com"],
+			global: [
+				"theguardian.com/world",
+				"abcnews.go.com",
+				"npr.org",
+				"aljazeera.com",
+				"theguardian.com",
+				"reuters",
+				"bbc.com",
+			],
 			crypto: [
 				"coindesk.com/latest-crypto-news",
 				"coincentral.com",
 				"coindesk.com/price/bitcoin/news",
-				"tradingview.com/news/","finance.yahoo.com",],
+				"tradingview.com/news/",
+				"finance.yahoo.com",
+			],
 			geo: ["news.un.org", "worldbank.org"],
 			finance: [
 				"finance.yahoo.com",
@@ -223,10 +232,16 @@ export const generateUserNewsEpisode = inngest.createFunction(
 				"bloomberg.com",
 				"coindesk.com/latest-crypto-news",
 				"coincentral.com",
-				"coindesk.com/price/bitcoin/news"
+				"coindesk.com/price/bitcoin/news",
 			],
-			us: ["theguardian.com/us","abcnews.go.com", "npr.org", "aljazeera.com", "theguardian.com", "reuters"],
-		
+			us: [
+				"theguardian.com/us",
+				"abcnews.go.com",
+				"npr.org",
+				"aljazeera.com",
+				"theguardian.com",
+				"reuters",
+			],
 		} as const;
 
 		// Build domain constraints string
@@ -353,6 +368,7 @@ Instructions:
 
 			// If too few articles, rerun with broader policy
 			try {
+				// biome-ignore lint/suspicious/noExplicitAny: <  ai generated code >
 				const parsed = JSON.parse(cleanedText) as any;
 				const count = Array.isArray(parsed?.articles) ? parsed.articles.length : 0;
 				if (count < MIN_REQUIRED) {
@@ -367,12 +383,12 @@ Instructions:
 					let rerunText = rerun.text.trim();
 					if (rerunText.startsWith("```json")) {
 						rerunText = rerunText.replace(/^```json\s*/, "").replace(/\s*```$/, "");
-					} else if (rerunText.startsWith("```") ) {
+					} else if (rerunText.startsWith("```")) {
 						rerunText = rerunText.replace(/^```\s*/, "").replace(/\s*```$/, "");
 					} else if (rerunText.includes("```json")) {
 						const m = rerunText.match(/```json\s*(\{[\s\S]*?\})\s*```/);
 						if (m) rerunText = m[1]!;
-					} else if (rerunText.includes("```") ) {
+					} else if (rerunText.includes("```")) {
 						const m = rerunText.match(/```\s*(\{[\s\S]*?\})\s*```/);
 						if (m) rerunText = m[1]!;
 					}
@@ -414,9 +430,16 @@ Instructions:
 					.replace(/\s{2,}/g, " ");
 
 				const limit = 72;
-				const finalTitle = cleaned.length <= limit
-					? cleaned
-					: (cleaned.slice(0, limit + 1).split(" ").slice(0, -1).join(" ") || cleaned.slice(0, limit)).trim();
+				const finalTitle =
+					cleaned.length <= limit
+						? cleaned
+						: (
+								cleaned
+									.slice(0, limit + 1)
+									.split(" ")
+									.slice(0, -1)
+									.join(" ") || cleaned.slice(0, limit)
+							).trim();
 
 				if (finalTitle) {
 					await prisma.userEpisode.update({
@@ -435,6 +458,7 @@ Instructions:
 		const [minMinutes, maxMinutes] = lengthConfig.minutes;
 
 		// Guard: avoid TTS if insufficient content after fallback
+		// biome-ignore lint/suspicious/noExplicitAny: <  ai generated code >
 		let parsedSummary: any = null;
 		try {
 			parsedSummary = JSON.parse(summary);
@@ -680,8 +704,7 @@ ${summaryContent}`,
 					await prisma.userEpisode.update({
 						where: { episode_id: userEpisodeId },
 						data: {
-							progress_message:
-								"Converting dialogue to audio...",
+							progress_message: "Converting dialogue to audio...",
 						},
 					});
 
@@ -777,7 +800,7 @@ ${summaryContent}`,
 						gcs_audio_url: gcsAudioUrl,
 						status: "COMPLETED",
 						duration_seconds: durationSeconds,
-						transcript: duetLines.map(line => sanitizeSpeakerLabels(line.text)).join(' '),
+						transcript: duetLines.map(line => sanitizeSpeakerLabels(line.text)).join(" "),
 						progress_message: null,
 					},
 				});
