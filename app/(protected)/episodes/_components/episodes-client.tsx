@@ -90,7 +90,7 @@ export function EpisodesClient({
 	// Empty state
 	if (episodes.length === 0) {
 		return (
-			<div className="w-full max-w-[1000px] md:mx-auto mt-0">
+			<div className="w-full max-w-[1000px] md:mx-auto mt-0 bg-background">
 				<Alert>
 					<AlertTitle>{episodesPageContent.states.empty.title}</AlertTitle>
 					<AlertDescription className="mt-2">

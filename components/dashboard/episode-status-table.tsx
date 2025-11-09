@@ -20,6 +20,7 @@ interface EpisodeStatusUpdate {
     status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
     message: string;
     timestamp: string;
+    formattedStartTime?: string;
 }
 
 interface EpisodeStatusTableProps {
@@ -61,7 +62,16 @@ export function EpisodeStatusTable({ defaultExpanded = false }: EpisodeStatusTab
                 // Update episodes map
                 setEpisodes(prev => {
                     const updated = new Map(prev);
-                    updated.set(data.episodeId, data);
+                    const existing = updated.get(data.episodeId);
+
+                    // Preserve the formatted start time if it already exists
+                    const formattedStartTime = existing?.formattedStartTime ||
+                        new Date(data.timestamp).toLocaleTimeString();
+
+                    updated.set(data.episodeId, {
+                        ...data,
+                        formattedStartTime
+                    });
                     return updated;
                 });
 
@@ -160,7 +170,7 @@ export function EpisodeStatusTable({ defaultExpanded = false }: EpisodeStatusTab
                                         <div className="flex flex-col gap-1">
                                             <span className="line-clamp-1">{episode.episodeTitle}</span>
                                             <span className="text-xs text-foreground/50">
-                                                Started {new Date(episode.timestamp).toLocaleTimeString()}
+                                                Started {episode.formattedStartTime}
                                             </span>
                                         </div>
                                     </TableCell>
