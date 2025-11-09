@@ -50,8 +50,9 @@ export async function GET(request: Request) {
 				is_active: true,
 				rss_feed_url: { not: null },
 			},
-			select: { 
+			select: {
 				user_id: true,
+				topic: true,
 				user: {
 					select: {
 						subscriptions: {
@@ -60,10 +61,10 @@ export async function GET(request: Request) {
 							select: {
 								plan_type: true,
 								status: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			},
 		});
 
@@ -97,24 +98,39 @@ export async function GET(request: Request) {
 					continue;
 				}
 
+				const defaultSummaryLength = "MEDIUM" as const;
+				const normalizedTitle = (latestVideo.video_title ?? "").trim();
+				const fallbackSource = (config.topic ?? "").trim();
+				const fallbackTitle = fallbackSource
+					? `Latest insights from ${fallbackSource}`
+					: "Latest YouTube video summary";
+				const episodeTitle = normalizedTitle.length >= 2 ? normalizedTitle : fallbackTitle;
+
 				// Create a UserEpisode record in PENDING state
 				const userEpisode = await prisma.userEpisode.create({
 					data: {
 						user_id: config.user_id,
-						episode_title: latestVideo.video_title,
+						episode_title: episodeTitle,
 						youtube_url: latestVideo.video_url,
 						status: "PENDING",
-						summary_length: "MEDIUM", // Default summary length
+						summary_length: defaultSummaryLength, // Default summary length
 						auto_generated: true, // Mark as auto-generated to exclude from usage limits
 					},
 				});
 
-				// Trigger Inngest episode generation workflow
+				// Kick off metadata-driven transcription + generation workflow
 				await inngest.send({
-					name: "user.episode.generate.requested",
+					name: "user.episode.metadata.requested",
 					data: {
 						userEpisodeId: userEpisode.episode_id,
-						summaryLength: "MEDIUM",
+						title: episodeTitle,
+						podcastName: fallbackSource || undefined,
+						youtubeUrl: latestVideo.video_url,
+						publishedAt: latestVideo.published_date
+							? latestVideo.published_date.toISOString()
+							: undefined,
+						generationMode: "single",
+						summaryLength: defaultSummaryLength,
 					},
 				});
 

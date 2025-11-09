@@ -2,6 +2,7 @@ import { generateText as genText } from "@/lib/inngest/utils/genai";
 import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
 import {
 	getSummaryLengthConfig,
+	SUMMARY_LENGTH_OPTIONS,
 	type SummaryLengthOption,
 } from "@/lib/types/summary-length";
 
@@ -30,6 +31,14 @@ import { inngest } from "./client";
 // Deprecated local config (moved to shared helpers)
 
 // Removed large in-file helpers in favor of shared module
+
+const isSummaryLengthOption = (value: unknown): value is SummaryLengthOption =>
+	typeof value === "string" && value in SUMMARY_LENGTH_OPTIONS;
+
+type GenerateEpisodeEventPayload = {
+	userEpisodeId: string;
+	summaryLength?: SummaryLengthOption;
+};
 
 export const generateUserEpisode = inngest.createFunction(
 	{
@@ -87,10 +96,14 @@ export const generateUserEpisode = inngest.createFunction(
 		event: "user.episode.generate.requested",
 	},
 	async ({ event, step }) => {
-		const { userEpisodeId, summaryLength = "MEDIUM" } = event.data as {
-			userEpisodeId: string;
-			summaryLength?: SummaryLengthOption;
-		};
+		const { userEpisodeId, summaryLength: incomingSummaryLength } =
+			event.data as GenerateEpisodeEventPayload;
+
+		let resolvedSummaryLength: SummaryLengthOption = isSummaryLengthOption(
+			incomingSummaryLength
+		)
+			? incomingSummaryLength
+			: "MEDIUM";
 
 		await step.run("update-status-to-processing", async () => {
 			return await prisma.userEpisode.update({
@@ -103,7 +116,7 @@ export const generateUserEpisode = inngest.createFunction(
 		});
 
 		// Step 1: Get Transcript from Database
-		const transcript = await step.run("get-transcript", async () => {
+		const transcriptContext = await step.run("get-transcript", async () => {
 			await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
 				data: { progress_message: "Loading your video transcript..." },
@@ -111,6 +124,10 @@ export const generateUserEpisode = inngest.createFunction(
 
 			const episode = await prisma.userEpisode.findUnique({
 				where: { episode_id: userEpisodeId },
+				select: {
+					transcript: true,
+					summary_length: true,
+				},
 			});
 
 			if (!episode) {
@@ -121,8 +138,17 @@ export const generateUserEpisode = inngest.createFunction(
 				throw new Error(`No transcript found for episode ${userEpisodeId}`);
 			}
 
-			return episode.transcript;
+			return {
+				transcript: episode.transcript,
+				summaryLength: episode.summary_length,
+			};
 		});
+
+		if (isSummaryLengthOption(transcriptContext.summaryLength)) {
+			resolvedSummaryLength = transcriptContext.summaryLength;
+		}
+
+		const transcript = transcriptContext.transcript;
 
 		// Step 2: Generate TRUE neutral summary (chunked if large)
 		const summary = await step.run("generate-summary", async () => {
@@ -145,7 +171,7 @@ export const generateUserEpisode = inngest.createFunction(
 			const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
 
 			// Get word/minute targets based on selected length
-			const lengthConfig = getSummaryLengthConfig(summaryLength);
+			const lengthConfig = getSummaryLengthConfig(resolvedSummaryLength);
 			const [minWords, maxWords] = lengthConfig.words;
 			const [minMinutes, maxMinutes] = lengthConfig.minutes;
 
@@ -312,6 +338,7 @@ export const generateUserEpisode = inngest.createFunction(
 		return {
 			message: "Episode generation workflow completed",
 			userEpisodeId,
+			summaryLength: resolvedSummaryLength,
 		};
 	}
 );
