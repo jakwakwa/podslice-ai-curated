@@ -1,11 +1,25 @@
 "use client";
 
+import {
+	AlertTriangle,
+	CheckCircle2,
+	Clock,
+	ExternalLink,
+	Play,
+	RefreshCw,
+	XCircle,
+} from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { RefreshCw, Play, Clock, CheckCircle2, XCircle, AlertTriangle, ExternalLink } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 
 type CronJob = {
 	name: string;
@@ -28,16 +42,18 @@ const CRON_JOBS: CronJob[] = [
 	{
 		name: "YouTube Feed Sync",
 		path: "/api/cron/youtube-feed",
-		schedule: "Daily at midnight UTC (0 0 * * *)",
-		description: "Fetches new YouTube videos from user RSS feeds and stores them for processing",
+		schedule: "Daily",
+		description:
+			"Fetches new YouTube videos from user RSS feeds and stores them for processing",
 		estimatedDuration: "~30-60 seconds",
 	},
 	{
 		name: "Generate Auto Episodes",
 		path: "/api/cron/generate-episodes",
-		schedule: "Daily at 12:30 AM UTC (30 0 * * *)",
-		description: "Auto-generates episodes from the latest unprocessed YouTube videos for Curate Control users",
-		estimatedDuration: "~10-30 seconds",
+		schedule: "Daily",
+		description:
+			"Auto-generates episodes from the latest unprocessed YouTube videos for Curate Control users",
+		estimatedDuration: "~10-30 minutes",
 	},
 ];
 
@@ -48,7 +64,7 @@ export default function CronMonitorClient() {
 	const triggerCron = async (path: string) => {
 		setLoading(path);
 		const startTime = Date.now();
-		
+
 		try {
 			const response = await fetch(path, {
 				method: "GET",
@@ -56,10 +72,10 @@ export default function CronMonitorClient() {
 					"Content-Type": "application/json",
 				},
 			});
-			
+
 			const duration = Date.now() - startTime;
 			const data = await response.json();
-			
+
 			setResults(prev => ({
 				...prev,
 				[path]: {
@@ -100,7 +116,11 @@ export default function CronMonitorClient() {
 
 	const getStatusBadge = (result: ExecutionResult) => {
 		if (result.success) {
-			return <Badge variant="default" className="bg-green-600">Success</Badge>;
+			return (
+				<Badge variant="default" className="bg-green-600">
+					Success
+				</Badge>
+			);
 		}
 		return <Badge variant="destructive">Failed</Badge>;
 	};
@@ -112,8 +132,8 @@ export default function CronMonitorClient() {
 				<AlertTriangle className="h-4 w-4" />
 				<AlertTitle>Testing Environment</AlertTitle>
 				<AlertDescription>
-					These cron jobs will run against your current environment (preview or production).
-					Make sure you understand the impact before triggering them.
+					These cron jobs will run against your current environment (preview or
+					production). Make sure you understand the impact before triggering them.
 				</AlertDescription>
 			</Alert>
 
@@ -138,7 +158,9 @@ export default function CronMonitorClient() {
 											<span>{job.schedule}</span>
 										</div>
 										{job.estimatedDuration && (
-											<span className="text-xs">Est. duration: {job.estimatedDuration}</span>
+											<span className="text-xs">
+												Est. duration: {job.estimatedDuration}
+											</span>
 										)}
 									</div>
 									<code className="text-xs text-muted-foreground">{job.path}</code>
@@ -147,8 +169,7 @@ export default function CronMonitorClient() {
 									onClick={() => triggerCron(job.path)}
 									disabled={isLoading}
 									variant="outline"
-									size="lg"
-								>
+									size="lg">
 									{isLoading ? (
 										<>
 											<RefreshCw className="mr-2 h-4 w-4 animate-spin" />
@@ -187,8 +208,9 @@ export default function CronMonitorClient() {
 									{result.success && result.data && (
 										<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 											{Object.entries(result.data)
-												.filter(([key, value]) => 
-													typeof value === "number" || typeof value === "boolean"
+												.filter(
+													([_key, value]) =>
+														typeof value === "number" || typeof value === "boolean"
 												)
 												.map(([key, value]) => (
 													<div key={key} className="space-y-1">
@@ -196,7 +218,11 @@ export default function CronMonitorClient() {
 															{key.replace(/_/g, " ")}
 														</p>
 														<p className="text-2xl font-semibold">
-															{typeof value === "boolean" ? (value ? "✓" : "✗") : String(value)}
+															{typeof value === "boolean"
+																? value
+																	? "✓"
+																	: "✗"
+																: String(value)}
 														</p>
 													</div>
 												))}
@@ -214,8 +240,7 @@ export default function CronMonitorClient() {
 													navigator.clipboard.writeText(
 														JSON.stringify(result.data || result.error, null, 2)
 													);
-												}}
-											>
+												}}>
 												Copy JSON
 											</Button>
 										</div>
@@ -228,7 +253,9 @@ export default function CronMonitorClient() {
 									{result.success && result.data?.errors?.length > 0 && (
 										<Alert variant="destructive">
 											<AlertTriangle className="h-4 w-4" />
-											<AlertTitle>Partial Failures ({result.data.errors.length})</AlertTitle>
+											<AlertTitle>
+												Partial Failures ({result.data.errors.length})
+											</AlertTitle>
 											<AlertDescription>
 												<div className="mt-2 space-y-2">
 													{result.data.errors.map((error: any, idx: number) => (
@@ -261,8 +288,14 @@ export default function CronMonitorClient() {
 				<CardContent>
 					<ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
 						<li>Go to your project in Vercel Dashboard</li>
-						<li>Navigate to <strong>Logs</strong> tab</li>
-						<li>Filter by function path: <code className="text-xs">/api/cron/youtube-feed</code> or <code className="text-xs">/api/cron/generate-episodes</code></li>
+						<li>
+							Navigate to <strong>Logs</strong> tab
+						</li>
+						<li>
+							Filter by function path:{" "}
+							<code className="text-xs">/api/cron/youtube-feed</code> or{" "}
+							<code className="text-xs">/api/cron/generate-episodes</code>
+						</li>
 						<li>View execution history, errors, and performance metrics</li>
 					</ul>
 					<div className="mt-4">
@@ -270,8 +303,7 @@ export default function CronMonitorClient() {
 							<a
 								href="https://vercel.com/dashboard"
 								target="_blank"
-								rel="noopener noreferrer"
-							>
+								rel="noopener noreferrer">
 								Open Vercel Dashboard
 								<ExternalLink className="ml-2 h-4 w-4" />
 							</a>
@@ -285,10 +317,10 @@ export default function CronMonitorClient() {
 				<AlertTitle>Authentication</AlertTitle>
 				<AlertDescription>
 					Cron endpoints are protected and will use your current session authentication.
-					In production, Vercel automatically includes the <code>x-vercel-cron</code> header.
+					In production, Vercel automatically includes the <code>x-vercel-cron</code>{" "}
+					header.
 				</AlertDescription>
 			</Alert>
 		</div>
 	);
 }
-

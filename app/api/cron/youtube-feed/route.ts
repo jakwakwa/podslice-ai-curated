@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { constructRssUrl, extractPlaylistId, extractChannelId, fetchAndParseRssFeed } from "@/lib/youtube-rss-parser";
+import {
+	constructRssUrl,
+	extractChannelId,
+	extractPlaylistId,
+	fetchAndParseRssFeed,
+} from "@/lib/youtube-rss-parser";
 
 type Summary = {
-	success: boolean;
+	success: Response;
 	totalConfigs: number;
 	skippedNoUrl: number;
 	skippedInvalid: number;
@@ -17,27 +22,19 @@ export const dynamic = "force-dynamic";
 
 /**
  * Daily cron job to fetch new YouTube videos from user RSS feeds
- * Runs at midnight UTC (00:00), before the generate-episodes cron at 12:30 AM
+ * Runs daily, before the generate-episodes cron daily at 12:30 AM
  */
 export async function GET(request: Request) {
 	// Authentication: check for cron secret or Vercel Cron header
-	const url = new URL(request.url);
 	const authHeader = request.headers.get("authorization");
-	const secretParam = url.searchParams.get("secret");
-	const isVercelCron = request.headers.get("x-vercel-cron") === "1";
-	
-	const cronSecret = process.env.CRON_SECRET;
-	const isAuthorized = 
-		isVercelCron || 
-		(cronSecret && authHeader === `Bearer ${cronSecret}`) ||
-		(cronSecret && secretParam === cronSecret);
-	
-	if (!isAuthorized) {
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+	if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+		return new Response("Unauthorized", {
+			status: 401,
+		});
 	}
 
 	const summary: Summary = {
-		success: true,
+		success: Response.json({ success: true }),
 		totalConfigs: 0,
 		skippedNoUrl: 0,
 		skippedInvalid: 0,
@@ -64,7 +61,7 @@ export async function GET(request: Request) {
 		try {
 			// Determine final RSS URL
 			let rssUrl: string | null = null;
-			
+
 			if (sourceUrl.includes("feeds/videos.xml")) {
 				// Already an RSS feed URL
 				rssUrl = sourceUrl;
@@ -93,7 +90,7 @@ export async function GET(request: Request) {
 				continue;
 			}
 
-			const data = entries.map((e) => ({
+			const data = entries.map(e => ({
 				user_id: config.user_id,
 				video_url: e.videoUrl,
 				video_title: e.title,
@@ -117,5 +114,3 @@ export async function GET(request: Request) {
 
 	return NextResponse.json(summary);
 }
-
-
