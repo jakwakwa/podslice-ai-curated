@@ -35,7 +35,7 @@ export async function AutoEpisodesStatusCard() {
 		},
 	});
 
-	// Count total completed auto-generated episodes
+	// Count total completed auto-generated episodes list
 	const totalAutoEpisodes = await prisma.userEpisode.count({
 		where: {
 			user_id: userId,
