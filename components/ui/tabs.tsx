@@ -6,11 +6,11 @@ import type * as React from "react"
 import { cn } from "@/lib/utils"
 
 function Tabs({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>) {
-	return <TabsPrimitive.Root data-slot="tabs" className={cn("flex flex-col gap-2", className)} {...props} />
+	return <TabsPrimitive.Root data-slot="tabs" className={cn("", className)} {...props} />
 }
 
 function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
-	return <TabsPrimitive.List data-slot="tabs-list" className={cn("flex w-full min-w-full items-center justify-between", className)} {...props} />
+	return <TabsPrimitive.List data-slot="tabs-list" className={cn("flex flex-col md:flex-row gap-4", className)} {...props} />
 }
 
 function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
@@ -18,7 +18,7 @@ function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPr
 		<TabsPrimitive.Trigger
 			data-slot="tabs-trigger"
 			className={cn(
-				"focus-visible:border-dark  inline-flex  gap-3 flex-3  text-sm items-center justify-center font-medium  disabled:pointer-events-none disabled:opacity-20 btn-toggle",
+				" font-medium text-secondary-foreground  bg-secondary px-2 py-1 rounded-sm hover:bg-secondary/50 transition-all ease-in duration-300ms text-xs font-light uppercase disabled:pointer-events-none disabled:opacity-20",
 				className
 			)}
 			{...props}
@@ -27,7 +27,7 @@ function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPr
 }
 
 function TabsContent({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Content>) {
-	return <TabsPrimitive.Content data-slot="tabs-content" className={cn("flex-1", className)} {...props} />
+	return <TabsPrimitive.Content data-slot="tabs-content bg-black" className={cn("", className)} {...props} />
 }
 
 export { Tabs, TabsList, TabsTrigger, TabsContent }
