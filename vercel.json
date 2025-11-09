@@ -4,11 +4,11 @@
 	"crons": [
 		{
 			"path": "/api/cron/youtube-feed",
-			"schedule": "0 8 * * *"
+			"schedule": "55 7 * * *"
 		},
 		{
 			"path": "/api/cron/generate-episodes",
-			"schedule": "30 8 * * *"
+			"schedule": "00 8 * * *"
 		}
 	]
 }
