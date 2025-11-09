@@ -6,6 +6,14 @@ import { PlayButton } from "@/components/episodes/play-button";
 import SectionHeader from "@/components/shared/section-header";
 import { Button } from "@/components/ui/button";
 import EpisodeCard from "@/components/ui/episode-card";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEpisodePlayer } from "@/hooks/use-episode-player";
@@ -30,6 +38,7 @@ export function EpisodeList({
         { dedupingInterval: ONE_MINUTE * 5, revalidateOnFocus: false, keepPreviousData: true }
     );
     const [filter, setFilter] = useState<FilterType>("all");
+    const [currentPage, setCurrentPage] = useState(1);
     const [debugLogs, setDebugLogs] = useState<Record<string, unknown[]> | null>(null);
     const enableDebug = useMemo(
         () => process.env.NEXT_PUBLIC_ENABLE_EPISODE_DEBUG === "true",
@@ -37,8 +46,10 @@ export function EpisodeList({
     );
     const { playEpisode } = useEpisodePlayer();
 
-    // Apply filters
-    const episodes = useMemo(() => {
+    const episodesPerPage = 5;
+
+    // Apply filters and pagination
+    const { episodes, totalPages } = useMemo(() => {
         let filtered = (data ?? []).filter(e =>
             completedOnly ? e.status === "COMPLETED" : true
         );
@@ -50,8 +61,18 @@ export function EpisodeList({
             filtered = filtered.filter(e => e.auto_generated);
         }
 
-        return filtered;
-    }, [data, completedOnly, filter]);
+        const totalPages = Math.ceil(filtered.length / episodesPerPage);
+        const startIndex = (currentPage - 1) * episodesPerPage;
+        const endIndex = startIndex + episodesPerPage;
+        const paginatedEpisodes = filtered.slice(startIndex, endIndex);
+
+        return { episodes: paginatedEpisodes, totalPages };
+    }, [data, completedOnly, filter, currentPage, episodesPerPage]);
+
+    // Reset to page 1 when filter changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filter]);
 
     // If we arrived via deep link, fetch the single episode immediately to avoid showing stale progress
     useEffect(() => {
@@ -151,19 +172,52 @@ export function EpisodeList({
 
                 {/* Filter Tabs */}
                 <div className="mx-4 mb-4">
-                    <Tabs value={filter} onValueChange={(value) => setFilter(value as FilterType)}>
-                        <TabsList className="grid w-full max-w-md grid-cols-3">
+                    <Tabs value={filter} onValueChange={value => setFilter(value as FilterType)}>
+                        <TabsList className="flex flex-col md:flex-row">
                             <TabsTrigger value="all">
                                 All Episodes
-                                {data && <span className="ml-1.5 text-xs opacity-60">({data.filter(e => completedOnly ? e.status === "COMPLETED" : true).length})</span>}
+                                {data && (
+                                    <span className="ml-1.5 text-xs opacity-60">
+                                        (
+                                        {
+                                            data.filter(e => (completedOnly ? e.status === "COMPLETED" : true))
+                                                .length
+                                        }
+                                        )
+                                    </span>
+                                )}
                             </TabsTrigger>
                             <TabsTrigger value="manual">
                                 Manual
-                                {data && <span className="ml-1.5 text-xs opacity-60">({data.filter(e => (completedOnly ? e.status === "COMPLETED" : true) && !e.auto_generated).length})</span>}
+                                {data && (
+                                    <span className="ml-1.5 text-xs opacity-60">
+                                        (
+                                        {
+                                            data.filter(
+                                                e =>
+                                                    (completedOnly ? e.status === "COMPLETED" : true) &&
+                                                    !e.auto_generated
+                                            ).length
+                                        }
+                                        )
+                                    </span>
+                                )}
                             </TabsTrigger>
                             <TabsTrigger value="auto">
                                 Auto-Generated
-                                {data && <span className="ml-1.5 text-xs opacity-60">({data.filter(e => (completedOnly ? e.status === "COMPLETED" : true) && e.auto_generated).length})</span>}
+                                {data && (
+                                    <span className="ml-1.5 text-xs opacity-60">
+                                        (
+                                        {
+                                            data.filter(
+                                                e =>
+                                                    (completedOnly ? e.status === "COMPLETED" : true) &&
+                                                    e.auto_generated
+                                            ).length
+                                        }
+                                        )
+                                    </span>
+                                )}
                             </TabsTrigger>
                         </TabsList>
                     </Tabs>
@@ -251,6 +305,48 @@ export function EpisodeList({
                         ))
                     )}
                 </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="mx-4 mt-6 mb-4">
+                        <Pagination>
+                            <PaginationContent>
+                                <PaginationItem>
+                                    <PaginationPrevious
+                                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                        className={
+                                            currentPage === 1
+                                                ? "pointer-events-none opacity-50"
+                                                : "cursor-pointer"
+                                        }
+                                    />
+                                </PaginationItem>
+
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                    <PaginationItem key={page}>
+                                        <PaginationLink
+                                            onClick={() => setCurrentPage(page)}
+                                            isActive={currentPage === page}
+                                            className="cursor-pointer">
+                                            {page}
+                                        </PaginationLink>
+                                    </PaginationItem>
+                                ))}
+
+                                <PaginationItem>
+                                    <PaginationNext
+                                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                        className={
+                                            currentPage === totalPages
+                                                ? "pointer-events-none opacity-50"
+                                                : "cursor-pointer"
+                                        }
+                                    />
+                                </PaginationItem>
+                            </PaginationContent>
+                        </Pagination>
+                    </div>
+                )}
             </div>
         </div>
     );
