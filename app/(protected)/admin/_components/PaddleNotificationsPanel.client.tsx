@@ -88,13 +88,16 @@ export default function PaddleNotificationsPanelClient({
 		subscribed_events: [] as string[],
 	});
 
-	// Group event types
+	// Group event types - Fixed TypeScript issue
 	const groupedEvents = eventTypes.reduce(
 		(acc, event) => {
 			if (!acc[event.group]) {
 				acc[event.group] = [];
 			}
-			acc[event.group].push(event);
+			const group = acc[event.group];
+			if (group) {
+				group.push(event);
+			}
 			return acc;
 		},
 		{} as Record<string, EventType[]>
@@ -248,7 +251,7 @@ export default function PaddleNotificationsPanelClient({
 		<div className="space-y-6">
 			{/* Create Button */}
 			<div className="flex justify-end">
-				<Button onClick={() => setIsCreateOpen(true)}>
+				<Button onClick={() => setIsCreateOpen(true)} variant={"link"}>
 					<Plus className="w-4 h-4 mr-2" />
 					Create Notification Destination
 				</Button>
@@ -475,12 +478,10 @@ export default function PaddleNotificationsPanelClient({
 						</Button>
 						<Button
 							onClick={handleCreate}
-							disabled={
-								isSubmitting ||
+							disabled={isSubmitting ||
 								!formData.description ||
 								!formData.destination ||
-								formData.subscribed_events.length === 0
-							}>
+								formData.subscribed_events.length === 0} variant={"default"}>
 							{isSubmitting ? "Creating..." : "Create Destination"}
 						</Button>
 					</DialogFooter>
@@ -594,12 +595,10 @@ export default function PaddleNotificationsPanelClient({
 						</Button>
 						<Button
 							onClick={handleEdit}
-							disabled={
-								isSubmitting ||
+							disabled={isSubmitting ||
 								!formData.description ||
 								!formData.destination ||
-								formData.subscribed_events.length === 0
-							}>
+								formData.subscribed_events.length === 0} variant={"link"}>
 							{isSubmitting ? "Updating..." : "Update Destination"}
 						</Button>
 					</DialogFooter>
@@ -652,7 +651,7 @@ export default function PaddleNotificationsPanelClient({
 					</div>
 
 					<DialogFooter>
-						<Button onClick={closeSecretDialog}>I've Saved the Secret</Button>
+						<Button onClick={closeSecretDialog} variant={"link"}>I've Saved the Secret</Button>
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
