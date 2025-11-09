@@ -11,15 +11,8 @@ import {
 	getInsufficientCreditsMessage,
 } from "@/lib/types/summary-length";
 
-const ALLOWED_SOURCES = [
-	"global",
-	"crypto",
-	"geo",
-	"finance",
-	"us"
-
-] as const;
-const ALLOWED_TOPICS = [
+const ALLOWED_SOURCES = ["global", "crypto", "geo", "finance", "us"] as const;
+const _ALLOWED_TOPICS = [
 	"technology",
 	"business",
 	"bitcoin and crypto",
@@ -28,10 +21,8 @@ const ALLOWED_TOPICS = [
 	"world news",
 	"geo-political",
 	"tesla",
-	"finance"
+	"finance",
 ] as const;
-
-
 
 const CreateNewsSchema = z.object({
 	title: z.string().min(2).optional(),
@@ -40,7 +31,7 @@ const CreateNewsSchema = z.object({
 	generationMode: z.enum(["single", "multi"]).default("single").optional(),
 	voiceA: z.enum(VOICE_NAMES as unknown as [string, ...string[]]).optional(),
 	voiceB: z.enum(VOICE_NAMES as unknown as [string, ...string[]]).optional(),
-	summaryLength: z.enum(["SHORT", "MEDIUM", "LONG"]).default("MEDIUM"),
+	summaryLength: z.enum(["SHORT", "MEDIUM", "LONG"]).default("SHORT"),
 });
 
 export async function POST(request: Request) {
@@ -66,8 +57,8 @@ export async function POST(request: Request) {
 
 		// Fetch completed episodes with their lengths (excluding auto-generated)
 		const completedEpisodes = await prisma.userEpisode.findMany({
-			where: { 
-				user_id: userId, 
+			where: {
+				user_id: userId,
 				status: "COMPLETED",
 				auto_generated: false, // Only count manually created episodes
 			},

@@ -8,7 +8,7 @@ import {
 } from "@/lib/youtube-rss-parser";
 
 type Summary = {
-	success: boolean;
+	success: Response;
 	totalConfigs: number;
 	skippedNoUrl: number;
 	skippedInvalid: number;
@@ -22,35 +22,19 @@ export const dynamic = "force-dynamic";
 
 /**
  * Daily cron job to fetch new YouTube videos from user RSS feeds
- * Runs at midnight UTC (00:00), before the generate-episodes cron at 12:30 AM
+ * Runs daily, before the generate-episodes cron daily at 12:30 AM
  */
 export async function GET(request: Request) {
-	// Authentication: Verify cron secret as per Vercel docs
+	// Authentication: check for cron secret or Vercel Cron header
 	const authHeader = request.headers.get("authorization");
-	const cronSecret = process.env.CRON_SECRET;
-
-	// Debug logging (remove after fixing)
-	console.log("Auth Debug:", {
-		hasAuthHeader: !!authHeader,
-		hasCronSecret: !!cronSecret,
-		authHeaderValue: authHeader ? `${authHeader.substring(0, 20)}...` : "none",
-		expectedValue: cronSecret ? `Bearer ${cronSecret.substring(0, 10)}...` : "none",
-	});
-
-	if (!cronSecret) {
-		console.error("CRON_SECRET environment variable is not set");
-		return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
-	}
-
-	if (authHeader !== `Bearer ${cronSecret}`) {
-		console.warn("Unauthorized cron attempt:", {
-			receivedHeader: authHeader ? authHeader.substring(0, 20) : "none",
+	if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+		return new Response("Unauthorized", {
+			status: 401,
 		});
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
 	const summary: Summary = {
-		success: true,
+		success: Response.json({ success: true }),
 		totalConfigs: 0,
 		skippedNoUrl: 0,
 		skippedInvalid: 0,

@@ -11,6 +11,7 @@ import {
 	SparklesIcon,
 	VideoIcon,
 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -333,7 +334,7 @@ export function EpisodeCreator() {
 					"We're processing your episode and will email you when it's ready.",
 					{
 						duration: Infinity,
-						action: { label: "Dismiss", onClick: () => {} },
+						action: { label: "Dismiss", onClick: () => { } },
 					}
 				);
 				resumeAfterSubmission();
@@ -385,7 +386,7 @@ export function EpisodeCreator() {
 			if (!res.ok) throw new Error(await res.text());
 			toast.message("We're processing your episode and will email you when it's ready.", {
 				duration: Infinity,
-				action: { label: "Dismiss", onClick: () => {} },
+				action: { label: "Dismiss", onClick: () => { } },
 			});
 			resumeAfterSubmission();
 			router.push("/dashboard?from=generate");
@@ -395,8 +396,8 @@ export function EpisodeCreator() {
 			);
 			toast.error(
 				(err instanceof Error ? err.message : "Failed to start episode generation.") ||
-					"",
-				{ duration: Infinity, action: { label: "Dismiss", onClick: () => {} } }
+				"",
+				{ duration: Infinity, action: { label: "Dismiss", onClick: () => { } } }
 			);
 		} finally {
 			setIsCreating(false);
@@ -519,10 +520,12 @@ export function EpisodeCreator() {
 												<p className="text-sm text-whitw cursor-default font-bold">
 													Quick Guide: How to Find and Paste YouTube Link
 												</p>
-												<img
+												<Image
+													width={1000}
+													height={1000}
 													src="/how-to-get-link.gif"
 													alt="How to get the link"
-													className="w-full h-full object-cover my-2 border-1 border-border rounded-md max-w-lg"
+													className="w-full h-full object-cover my-2 border-1 border-border rounded-md max-w-lg object-center"
 												/>
 											</TooltipContent>
 										</Tooltip>
@@ -594,7 +597,7 @@ export function EpisodeCreator() {
 											{NEWS_SOURCES.map(s => {
 												const active = selectedSources.includes(s.id);
 												return (
-													<div>
+													<div key={s.id}>
 														<Button
 															key={s.id}
 															type="button"
@@ -934,7 +937,7 @@ export function EpisodeCreator() {
 				}}
 			/>
 
-			<Dialog open={showRestrictionDialog} onOpenChange={() => {}} modal={true}>
+			<Dialog open={showRestrictionDialog} onOpenChange={() => { }} modal={true}>
 				<DialogContent
 					className="sm:max-w-md"
 					onInteractOutside={e => e.preventDefault()}

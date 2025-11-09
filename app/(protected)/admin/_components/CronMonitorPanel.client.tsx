@@ -42,7 +42,7 @@ const CRON_JOBS: CronJob[] = [
 	{
 		name: "YouTube Feed Sync",
 		path: "/api/cron/youtube-feed",
-		schedule: "Daily at midnight UTC (0 8 * * *)",
+		schedule: "Daily",
 		description:
 			"Fetches new YouTube videos from user RSS feeds and stores them for processing",
 		estimatedDuration: "~30-60 seconds",
@@ -50,10 +50,10 @@ const CRON_JOBS: CronJob[] = [
 	{
 		name: "Generate Auto Episodes",
 		path: "/api/cron/generate-episodes",
-		schedule: "Daily at 12:30 AM UTC (30 8 * * *)",
+		schedule: "Daily",
 		description:
 			"Auto-generates episodes from the latest unprocessed YouTube videos for Curate Control users",
-		estimatedDuration: "~10-30 seconds",
+		estimatedDuration: "~10-30 minutes",
 	},
 ];
 

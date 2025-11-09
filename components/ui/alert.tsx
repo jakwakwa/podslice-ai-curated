@@ -9,7 +9,7 @@ const alertVariants = cva(
 		variants: {
 			variant: {
 				default:
-					"backdrop-blur-sm bg-[#18141eb5] shadow shadow-[0_4px_30px_-4px_rgba(0, 0, 0, 0.916)] p-8 text-foreground rounded-3xl border-2 border-border text-primary-foreground mt-6 ml-0 max-w-lg",
+					"backdrop-blur-sm bg-[var(--kwak-3)]/80 shadow shadow-[0_4px_30px_-4px_rgba(0, 0, 0, 0.916)] p-8 text-foreground rounded-3xl border-2 border-border text-primary-foreground mt-6 ml-0 max-w-lg",
 				destructive:
 					" bg-primary shadow shadow-[0_4px_30px_-4px_rgba(10, 192, 147, 0.143)] p-8 rounded-3xl border-[#ee4ad8b4] text-red-foreground bg-[#b91a5229]",
 			},
