@@ -23,8 +23,8 @@ export async function POST(request: NextRequest) {
 			return Response.json({ error: "Missing request body" }, { status: 400 });
 		}
 
-		// 3. Get the webhook secret key
-		const secretKey = process.env.PADDLE_NOTIFICATION_WEBHOOK_SECRET;
+		// 3. Get the webhook secret key - trim to remove any whitespace/newlines
+		const secretKey = process.env.PADDLE_NOTIFICATION_WEBHOOK_SECRET?.trim();
 
 		if (!secretKey) {
 			console.error(
@@ -33,11 +33,21 @@ export async function POST(request: NextRequest) {
 			return Response.json({ error: "Webhook secret not configured" }, { status: 500 });
 		}
 
+		// Validate secret key format (should start with pdl_ntfset_)
+		if (!secretKey.startsWith("pdl_ntfset_")) {
+			console.error(
+				"[PADDLE_WEBHOOK] Invalid secret key format - should start with pdl_ntfset_"
+			);
+			return Response.json({ error: "Invalid webhook secret format" }, { status: 500 });
+		}
+
 		// Debug logging
 		console.log("[PADDLE_WEBHOOK] Verifying webhook signature:", {
 			signatureLength: signature.length,
 			secretKeyPrefix: `${secretKey.substring(0, 15)}...`,
+			secretKeyLength: secretKey.length,
 			bodyLength: rawRequestBody.length,
+			paddleEnv: process.env.NEXT_PUBLIC_PADDLE_ENV || "not set",
 		});
 
 		// 4. Verify the webhook using Paddle SDK
@@ -52,7 +62,10 @@ export async function POST(request: NextRequest) {
 			console.error("[PADDLE_WEBHOOK] Signature verification failed:", {
 				error: err.message,
 				signatureSample: signature.substring(0, 50),
-				secretSample: `${secretKey.substring(0, 20)}...`,
+				secretSample: `${secretKey.substring(0, 30)}...`,
+				secretLength: secretKey.length,
+				bodyPreview: rawRequestBody.substring(0, 200),
+				paddleEnv: process.env.NEXT_PUBLIC_PADDLE_ENV || "not set",
 			});
 			return Response.json({ error: "Signature verification failed" }, { status: 401 });
 		}
