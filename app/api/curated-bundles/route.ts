@@ -1,53 +1,75 @@
-import { auth } from "@clerk/nextjs/server"
-import { type NextRequest, NextResponse } from "next/server"
-export const dynamic = "force-dynamic"
-export const revalidate = 0
+import { auth } from "@clerk/nextjs/server";
+import { type NextRequest, NextResponse } from "next/server";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-import type { Prisma } from "@prisma/client"
-import { PlanGate as PlanGateEnum } from "@prisma/client"
-import { prisma } from "../../../lib/prisma"
+import type { Prisma } from "@prisma/client";
+import { PlanGate as PlanGateEnum } from "@prisma/client";
+import { prisma } from "../../../lib/prisma";
 
-type BundleWithPodcasts = Prisma.BundleGetPayload<{ include: { bundle_podcast: { include: { podcast: true } } } }>
+type BundleWithPodcasts = Prisma.BundleGetPayload<{
+	include: { bundle_podcast: { include: { podcast: true } } };
+}>;
 
 function resolveAllowedGates(plan: string | null | undefined): PlanGateEnum[] {
-	const normalized = (plan || "").toString().trim().toLowerCase()
+	const normalized = (plan || "").toString().trim().toLowerCase();
 
 	if (normalized === "curate_control" || normalized === "curate control") {
-		return [PlanGateEnum.NONE, PlanGateEnum.FREE_SLICE, PlanGateEnum.CASUAL_LISTENER, PlanGateEnum.CURATE_CONTROL]
+		return [
+			PlanGateEnum.NONE,
+			PlanGateEnum.FREE_SLICE,
+			PlanGateEnum.CASUAL_LISTENER,
+			PlanGateEnum.CURATE_CONTROL,
+		];
 	}
-	if (normalized === "casual_listener" || normalized === "casual listener" || normalized === "casual") {
-		return [PlanGateEnum.NONE, PlanGateEnum.FREE_SLICE, PlanGateEnum.CASUAL_LISTENER]
+	if (
+		normalized === "casual_listener" ||
+		normalized === "casual listener" ||
+		normalized === "casual"
+	) {
+		return [PlanGateEnum.NONE, PlanGateEnum.FREE_SLICE, PlanGateEnum.CASUAL_LISTENER];
 	}
-	if (normalized === "free_slice" || normalized === "free slice" || normalized === "free" || normalized === "freeslice") {
-		return [PlanGateEnum.NONE, PlanGateEnum.FREE_SLICE]
+	if (
+		normalized === "free_slice" ||
+		normalized === "free slice" ||
+		normalized === "free" ||
+		normalized === "freeslice"
+	) {
+		return [PlanGateEnum.NONE, PlanGateEnum.FREE_SLICE];
 	}
 	// Default: NONE plan or no plan
-	return [PlanGateEnum.FREE_SLICE || PlanGateEnum.NONE]
+	return [PlanGateEnum.FREE_SLICE || PlanGateEnum.NONE];
 }
 
 export async function GET(_request: NextRequest) {
 	try {
 		// Check if we're in a build environment
 		if (process.env.NODE_ENV === "production" && !process.env.DATABASE_URL) {
-			console.log("[CURATED_BUNDLES_GET] Skipping during build - no DATABASE_URL")
-			return NextResponse.json([])
+			console.log("[CURATED_BUNDLES_GET] Skipping during build - no DATABASE_URL");
+			return NextResponse.json([]);
 		}
 
-		const { userId } = await auth()
-		let plan: string | null = null
+		const { userId } = await auth();
+		let plan: string | null = null;
 		if (userId) {
-			const sub = await prisma.subscription.findFirst({ where: { user_id: userId }, orderBy: { updated_at: "desc" } })
-			plan = sub?.plan_type ?? null
+			const sub = await prisma.subscription.findFirst({
+				where: { user_id: userId },
+				orderBy: { updated_at: "desc" },
+			});
+			plan = sub?.plan_type ?? null;
 			// Admin bypass: treat admin as highest plan
-			const user = await prisma.user.findUnique({ where: { user_id: userId }, select: { is_admin: true } })
+			const user = await prisma.user.findUnique({
+				where: { user_id: userId },
+				select: { is_admin: true },
+			});
 			if (user?.is_admin) {
-				plan = "curate_control"
+				plan = "curate_control";
 			}
 		}
-		const allowedGates = resolveAllowedGates(plan)
+		const allowedGates = resolveAllowedGates(plan);
 
 		// Get all active admin-curated bundles (return locked ones too)
-        const adminBundles: BundleWithPodcasts[] = await prisma.bundle.findMany({
+		const adminBundles: BundleWithPodcasts[] = await prisma.bundle.findMany({
 			where: { is_active: true },
 			include: {
 				bundle_podcast: {
@@ -57,16 +79,16 @@ export async function GET(_request: NextRequest) {
 				},
 			},
 			orderBy: { created_at: "desc" },
-            cacheStrategy: {
-                // Weekly cache; allow background revalidation
-                swr: 60, // 1 hour SWR window for background refreshes  ttl: 7 * 24 * 60 * 60 * 1000
-                ttl: 86400, // 7 days in ms
-                tags: ["curated_bundles"],
-            },
-		})
+			cacheStrategy: {
+				// Weekly cache; allow background revalidation
+				swr: 3600, // refresh in background hourly
+				ttl: 7 * 24 * 60 * 60 * 1000, // 7 days
+				tags: ["curated_bundles"],
+			},
+		});
 
 		// Get all active shared bundles
-        const sharedBundles = await prisma.sharedBundle.findMany({
+		const sharedBundles = await prisma.sharedBundle.findMany({
 			where: { is_active: true },
 			include: {
 				owner: {
@@ -91,40 +113,43 @@ export async function GET(_request: NextRequest) {
 				},
 			},
 			orderBy: { created_at: "desc" },
-            cacheStrategy: {
-                swr: 3600, // refresh in background hourly
-                ttl: 7 * 24 * 60 * 60 * 1000, // 7 days
-                tags: ["shared_bundles"],
-            },
-		})
+			cacheStrategy: {
+				swr: 86400, // refresh in background daily
+				ttl: 604800, // 7 days
+				tags: ["shared_bundles"],
+			},
+		});
 
-        const bundles = adminBundles.map(b => {
- 
-            const { image_data: _imgData, image_type: _imgType, ...rest } = b as unknown as Record<string, unknown>
-            return rest as BundleWithPodcasts
-        })
+		const bundles = adminBundles.map(b => {
+			const {
+				image_data: _imgData,
+				image_type: _imgType,
+				...rest
+			} = b as unknown as Record<string, unknown>;
+			return rest as BundleWithPodcasts;
+		});
 
 		// Transform admin bundles with gating info
 		const transformedAdminBundles = bundles.map(bundle => {
-			const gate = bundle.min_plan
+			const gate = bundle.min_plan;
 			// Ensure we're comparing the same types - convert both to strings for comparison
-			const canInteract = allowedGates.some(allowedGate => allowedGate === gate)
-			const lockReason = canInteract ? null : "This bundle requires a higher plan."
+			const canInteract = allowedGates.some(allowedGate => allowedGate === gate);
+			const lockReason = canInteract ? null : "This bundle requires a higher plan.";
 
-            return {
-                ...bundle,
+			return {
+				...bundle,
 				podcasts: bundle.bundle_podcast.map(bp => bp.podcast),
 				canInteract,
 				lockReason,
 				bundleType: "curated" as const,
-			}
-		})
+			};
+		});
 
 		// Transform shared bundles - available to FREE_SLICE, CASUAL_LISTENER, and CURATE_CONTROL
 		const transformedSharedBundles = sharedBundles.map(bundle => {
 			// Shared bundles available to all plans except NONE
-			const canInteract = allowedGates.some(gate => gate !== PlanGateEnum.NONE)
-			const lockReason = canInteract ? null : "Shared bundles require a paid plan."
+			const canInteract = allowedGates.some(gate => gate !== PlanGateEnum.NONE);
+			const lockReason = canInteract ? null : "Shared bundles require a paid plan.";
 
 			return {
 				bundle_id: bundle.shared_bundle_id,
@@ -146,19 +171,25 @@ export async function GET(_request: NextRequest) {
 				canInteract,
 				lockReason,
 				bundleType: "shared" as const,
-			}
-		})
+			};
+		});
 
 		// Combine both types of bundles
-		const allBundles = [...transformedAdminBundles, ...transformedSharedBundles]
+		const allBundles = [...transformedAdminBundles, ...transformedSharedBundles];
 
-		return NextResponse.json(allBundles, { headers: { "Cache-Control": "no-store" } })
+		return NextResponse.json(allBundles, { headers: { "Cache-Control": "no-store" } });
 	} catch (error) {
-		if (process.env.NODE_ENV === "production" || (error instanceof Error && error.message.includes("does not exist"))) {
-			return NextResponse.json([])
+		if (
+			process.env.NODE_ENV === "production" ||
+			(error instanceof Error && error.message.includes("does not exist"))
+		) {
+			return NextResponse.json([]);
 		}
 		// Return more specific error message
-		const errorMessage = error instanceof Error ? error.message : "Unknown error"
-		return NextResponse.json({ error: "Internal Server Error", details: errorMessage }, { status: 500 })
+		const errorMessage = error instanceof Error ? error.message : "Unknown error";
+		return NextResponse.json(
+			{ error: "Internal Server Error", details: errorMessage },
+			{ status: 500 }
+		);
 	}
 }

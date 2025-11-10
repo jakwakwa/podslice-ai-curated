@@ -1,15 +1,15 @@
 // @ts-nocheck
 
 import { auth } from "@clerk/nextjs/server";
+import type { SharedBundleEpisode } from "@prisma/client";
 import { NextResponse } from "next/server";
+import type { Episode } from "@/lib/types";
 import { prisma } from "../../../lib/prisma"; // Use the global client
 import { withDatabaseTimeout } from "../../../lib/utils";
 
 // Episodes can be cached briefly server-side; prefer SWR client cache for longer
 export const dynamic = "force-dynamic";
-
-// export const dynamic = "force-dynamic"
-export const maxDuration = 60; // 1 minute for complex database queries
+export const maxDuration = 90;
 
 export async function GET(request: Request) {
 	try {
@@ -26,28 +26,40 @@ export async function GET(request: Request) {
 		// Episodes should relate to podcasts; visibility via user's selected bundle membership
 		const profile = await prisma.userCurationProfile.findFirst({
 			where: { user_id: userId, is_active: true },
-			include: { 
+			include: {
 				selectedBundle: { include: { bundle_podcast: true } },
-				selectedSharedBundle: { include: { episodes: { where: { is_active: true } } } }
+				selectedSharedBundle: { include: { episodes: { where: { is_active: true } } } },
 			},
 		});
 
-	const podcastIdsInSelectedBundle = profile?.selectedBundle?.bundle_podcast.map(bp => bp.podcast_id) ?? [];
-	const sharedBundleEpisodeIds = profile?.selectedSharedBundle?.episodes.map(e => e.episode_id) ?? [];
+		const podcastIdsInSelectedBundle =
+			profile?.selectedBundle?.bundle_podcast.map(bp => bp.podcast_id) ?? [];
+		const sharedBundleEpisodeIds =
+			profile?.selectedSharedBundle?.episodes.map(e => e.episode_id) ?? [];
 
-	console.log("[EPISODES_API] Bundle Type:", bundleType);
-	console.log("[EPISODES_API] Selected Curated Bundle:", profile?.selectedBundle?.name || "None");
-	console.log("[EPISODES_API] Selected Shared Bundle:", profile?.selectedSharedBundle?.name || "None");
-	console.log("[EPISODES_API] Curated podcasts count:", podcastIdsInSelectedBundle.length);
-	console.log("[EPISODES_API] Shared episode IDs count:", sharedBundleEpisodeIds.length);
+		console.log("[EPISODES_API] Bundle Type:", bundleType);
+		console.log(
+			"[EPISODES_API] Selected Curated Bundle:",
+			profile?.selectedBundle?.name || "None"
+		);
+		console.log(
+			"[EPISODES_API] Selected Shared Bundle:",
+			profile?.selectedSharedBundle?.name || "None"
+		);
+		console.log(
+			"[EPISODES_API] Curated podcasts count:",
+			podcastIdsInSelectedBundle.length
+		);
+		console.log(
+			"[EPISODES_API] Shared episode IDs count:",
+			sharedBundleEpisodeIds.length
+		);
 
 		// Fetch curated episodes (from Episode table)
-		let curatedEpisodes: any[] = [];
+		let curatedEpisodes: Episode[] = [];
 		if (bundleType === "curated" || bundleType === "all") {
-            const whereClause: any = {
-				OR: [
-					{ userProfile: { user_id: userId } },
-				],
+			const whereClause: Prisma.EpisodeWhereInput = {
+				OR: [{ userProfile: { user_id: userId } }],
 			};
 
 			if (podcastIdsInSelectedBundle.length > 0) {
@@ -57,54 +69,46 @@ export async function GET(request: Request) {
 				whereClause.OR.push({ bundle_id: profile.selectedBundle.bundle_id });
 			}
 
-            curatedEpisodes = await withDatabaseTimeout(
-                prisma.episode.findMany({
-                    where: whereClause,
-                    include: {
-                        podcast: true,
-                        userProfile: true,
-                    },
-                    orderBy: { created_at: "desc" },
-                    cacheStrategy: {
-                        swr: 60,
-                        ttl: 200,
-                        tags: [
-                          `user_profile_${userId}`,
-                          "curated_episodes",
-                        ],
-                    },
-                })
-            );
+			curatedEpisodes = await withDatabaseTimeout(
+				prisma.episode.findMany({
+					where: whereClause,
+					include: {
+						podcast: true,
+						userProfile: true,
+					},
+					orderBy: { created_at: "desc" },
+					cacheStrategy: {
+						swr: 600, // refresh in background hourly
+						ttl: 43200, // 12 hours
+						tags: [`user_profile_${userId}`, "curated_episodes"],
+					},
+				})
+			);
 		}
 
 		// Fetch shared bundle episodes (from UserEpisode table)
-		let sharedEpisodes: any[] = [];
-		if ((bundleType === "shared" || bundleType === "all") && sharedBundleEpisodeIds.length > 0) {
-            const userEpisodes = await withDatabaseTimeout(
-                prisma.userEpisode.findMany({
-                    where: {
-                        episode_id: { in: sharedBundleEpisodeIds },
-                        status: "COMPLETED",
-                    },
-                    include: {
-                        user: {
-                            select: {
-                                user_id: true,
-                                name: true,
-                            },
-                        },
-                    },
-                    orderBy: { created_at: "desc" },
-                    cacheStrategy: {
-                        swr: 60,
-                        ttl: 300,
-                        tags: [
-                          `user_episodes_${userId}`,
-                          "shared_episodes",
-                        ],
-                    },
-                })
-            );
+		let sharedEpisodes: SharedBundleEpisode[] = [];
+		if (
+			(bundleType === "shared" || bundleType === "all") &&
+			sharedBundleEpisodeIds.length > 0
+		) {
+			const userEpisodes = await withDatabaseTimeout(
+				prisma.userEpisode.findMany({
+					where: {
+						episode_id: { in: sharedBundleEpisodeIds },
+						status: "COMPLETED",
+					},
+					include: {
+						user: {
+							select: {
+								user_id: true,
+								name: true,
+							},
+						},
+					},
+					orderBy: { created_at: "desc" },
+				})
+			);
 
 			// Transform UserEpisodes to match Episode structure for frontend compatibility
 			sharedEpisodes = userEpisodes.map(ue => ({
@@ -132,14 +136,14 @@ export async function GET(request: Request) {
 			}));
 		}
 
-	// Combine both types of episodes
-	const episodes = [...curatedEpisodes, ...sharedEpisodes];
+		// Combine both types of episodes
+		const episodes = [...curatedEpisodes, ...sharedEpisodes];
 
-	console.log("[EPISODES_API] Curated episodes fetched:", curatedEpisodes.length);
-	console.log("[EPISODES_API] Shared episodes fetched:", sharedEpisodes.length);
-	console.log("[EPISODES_API] Total episodes:", episodes.length);
+		console.log("[EPISODES_API] Curated episodes fetched:", curatedEpisodes.length);
+		console.log("[EPISODES_API] Shared episodes fetched:", sharedEpisodes.length);
+		console.log("[EPISODES_API] Total episodes:", episodes.length);
 
-        return NextResponse.json(episodes);
+		return NextResponse.json(episodes);
 	} catch (error) {
 		console.error("Episodes API: Error fetching episodes:", error);
 		return NextResponse.json({ error: "Internal server error" }, { status: 500 });

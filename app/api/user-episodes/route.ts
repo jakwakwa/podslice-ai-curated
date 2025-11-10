@@ -43,7 +43,7 @@ export async function GET(request: Request) {
 			const weightedCount = calculateWeightedUsage(completedEpisodes);
 			const actualCount = completedEpisodes.length;
 
-			return NextResponse.json({ 
+			return NextResponse.json({
 				count: weightedCount,
 				actualCount,
 			});
@@ -68,8 +68,8 @@ export async function GET(request: Request) {
 			},
 			orderBy: { created_at: "desc" },
 			cacheStrategy: {
-				swr: 60,
-				ttl: 300,
+				swr: 60, // refresh every min
+				ttl: 300, // 5mins
 			},
 		});
 

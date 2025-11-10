@@ -65,80 +65,94 @@
 .dark-theme {
 
 
-	--kwak-10: oklch(0.991 0.007 200);
-	--kwak-9: oklch(0.97 0.05 250);
-	--kwak-8: oklch(0.93 0.07 240);
-	--kwak-7: oklch(0.89 0.08 230);
-	--kwak-6: oklch(0.77 0.11 230);
-	--kwak-5: oklch(0.60 0.12 230);
-	--kwak-4: oklch(0.42 0.12 230);
-	--kwak-3: oklch(0.30 0.11 230);
-	--kwak-2: oklch(0.26 0.07 230);
-	--kwak-1: oklch(0.19 0.06 230);
-
-	--beduk-10: oklch(0.96 0.03 300);
-	--beduk-9: oklch(0.92 0.05 300);
-	--beduk-8: oklch(0.88 0.07 300);
-	--beduk-7: oklch(0.76 0.16 300);
-	--beduk-6: oklch(0.72 0.17 300);
-	--beduk-5: oklch(0.55 0.14 300);
-	--beduk-4: oklch(0.37 0.12 300);
-	--beduk-3: oklch(0.28 0.1 300);
-	--beduk-2: oklch(0.24 0.12 300);
-	--beduk-1: oklch(0.19 0.03 290);
+    --kwak-10: oklch(0.991 0.007 200);
+    --kwak-9: oklch(0.97 0.05 250);
+    --kwak-8: oklch(0.93 0.07 240);
+    --kwak-7: oklch(0.89 0.08 230);
+    --kwak-6: oklch(0.77 0.11 230);
+    --kwak-5: oklch(0.60 0.12 230);
+    --kwak-4: oklch(0.42 0.12 230);
+    --kwak-3: oklch(0.30 0.11 230);
+    --kwak-2: oklch(0.26 0.07 230);
+    --kwak-1: oklch(0.2 0.0479 243.35);
 
 
 
-	/* --beduk-10: #ffffff;
-	--beduk-9: #e6dafe;
-	--beduk-8: #e6dafe;
-	--beduk-7: #b99fe9;
-	--beduk-6: #a583e3;
-	--beduk-5: #8603e9;
-	--beduk-4: #6902b9;
-	--beduk-3: #3c0569;
-	--beduk-2: #300256;
-	--beduk-1: #31015c; */
+
+    --kwak-hex-10: #020c11;
+    --kwak-hex-9: #025679;
+    --kwak-hex-8: #0379a9;
+    --kwak-hex-7: #049cd9;
+    --kwak-hex-6: #28abe1;
+    --kwak-hex-5: #4cbbe9;
+    --kwak-hex-4: #70cae1;
+    --kwak-hex-3: #94d9e9;
+    --kwak-hex-2: #b8e8f1;
+    --kwak-hex-1: #dcf7f9;
+
+
+    --beduk-hex-1: #e6dafe;
+    --beduk-hex-2: #e6dafe;
+    --beduk-hex-3: #b99fe9;
+    --beduk-hex-4: #a583e3;
+    --beduk-hex-5: #8603e9;
+    --beduk-hex-6: #6902b9;
+    --beduk-hex-7: #3c0569;
+    --beduk-hex-8: #300256;
+    --beduk-hex-9: #31015c;
+    --beduk-hex-10: #1a1a1a;
+
+    --beduk-10: oklch(0.96 0.03 300);
+    --beduk-9: oklch(0.92 0.05 300);
+    --beduk-8: oklch(0.88 0.07 300);
+    --beduk-7: oklch(0.76 0.16 300);
+    --beduk-6: oklch(0.72 0.17 300);
+    --beduk-5: oklch(0.55 0.14 300);
+    --beduk-4: oklch(0.37 0.12 300);
+    --beduk-3: oklch(0.28 0.1 300);
+    --beduk-2: oklch(0.24 0.12 300);
+    --beduk-1: oklch(0.19 0.03 290);
 
 
 
-	--wyn-1: oklch(0.99 0.01 1);
-	--wyn-2: oklch(0.96 0.02 1);
-	--wyn-3: oklch(0.88 0.08 1);
-	--wyn-4: oklch(0.78 0.15 1);
-	--wyn-5: oklch(0.71 0.15 1);
-	--wyn-6: oklch(0.73 0.16 1);
-	--wyn-7: oklch(0.66 0.14 1);
-	--wyn-8: oklch(0.51 0.11 1);
-	--wyn-9: oklch(0.32 0.07 1);
-	--wyn-10: oklch(0.26 0.06 1);
-	--mustard-1: oklch(0.99 0.01 60);
-	--mustard-2: oklch(0.96 0.02 60);
-	--mustard-3: oklch(0.88 0.08 60);
-	--mustard-4: oklch(0.77 0.15 60);
-	--mustard-5: oklch(0.71 0.15 60);
-	--mustard-6: oklch(0.73 0.16 60);
-	--mustard-7: oklch(0.66 0.14 60);
-	--mustard-8: oklch(0.51 0.11 60);
-	--mustard-9: oklch(0.32 0.07 60);
-	--mustard-10: oklch(0.26 0.06 60);
+
+    --wyn-1: oklch(0.99 0.01 1);
+    --wyn-2: oklch(0.96 0.02 1);
+    --wyn-3: oklch(0.88 0.08 1);
+    --wyn-4: oklch(0.78 0.15 1);
+    --wyn-5: oklch(0.71 0.15 1);
+    --wyn-6: oklch(0.73 0.16 1);
+    --wyn-7: oklch(0.66 0.14 1);
+    --wyn-8: oklch(0.51 0.11 1);
+    --wyn-9: oklch(0.32 0.07 1);
+    --wyn-10: oklch(0.26 0.06 1);
+    --mustard-1: oklch(0.99 0.01 60);
+    --mustard-2: oklch(0.96 0.02 60);
+    --mustard-3: oklch(0.88 0.08 60);
+    --mustard-4: oklch(0.77 0.15 60);
+    --mustard-5: oklch(0.71 0.15 60);
+    --mustard-6: oklch(0.73 0.16 60);
+    --mustard-7: oklch(0.66 0.14 60);
+    --mustard-8: oklch(0.51 0.11 60);
+    --mustard-9: oklch(0.32 0.07 60);
+    --mustard-10: oklch(0.26 0.06 60);
 
 
 
-	--swak-1: oklch(25% 0.0331 276.7);
-	--swak-2: oklch(28.2% 0.0455 276.7);
-	--swak-3: oklch(31.2% 0.0536 276.7);
-	--swak-4: oklch(34.9% 0.0603 276.7);
-	--swak-5: oklch(40.9% 0.0756 276.7);
-	--swak-6: oklch(60% 0.09014 276.7);
-	--swak-7: oklch(75% 0.07014 276.7);
-	--swak-8: oklch(85.6% 0.0297 276.7);
-	--swak-9: oklch(0.9317 0.019 276.18);
-	--swak-10: oklch(0.9510 0.013 276.18);
+    --swak-1: oklch(25% 0.0331 276.7);
+    --swak-2: oklch(28.2% 0.0455 276.7);
+    --swak-3: oklch(31.2% 0.0536 276.7);
+    --swak-4: oklch(34.9% 0.0603 276.7);
+    --swak-5: oklch(40.9% 0.0756 276.7);
+    --swak-6: oklch(60% 0.09014 276.7);
+    --swak-7: oklch(75% 0.07014 276.7);
+    --swak-8: oklch(85.6% 0.0297 276.7);
+    --swak-9: oklch(0.9317 0.019 276.18);
+    --swak-10: oklch(0.9510 0.013 276.18);
 
 
-	--swak-contrast: #ffffff;
-	--swak-surface: rgba(0, 0, 0, 0.05);
-	--swak-indicator: #6068a9;
-	--swak-track: #6068a9;
+    --swak-contrast: #ffffff;
+    --swak-surface: rgba(0, 0, 0, 0.05);
+    --swak-indicator: #6068a9;
+    --swak-track: #6068a9;
 }

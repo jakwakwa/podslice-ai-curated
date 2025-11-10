@@ -1,6 +1,5 @@
 "use client";
 import { ThemeProvider as NextThemesProvider, type ThemeProviderProps } from "next-themes";
-// @ts-ignore
 import type React from "react";
 import { useEffect } from "react";
 import { SWRConfig } from "swr";

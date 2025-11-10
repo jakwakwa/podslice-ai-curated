@@ -1,14 +1,14 @@
 {
 	"$schema": "https://openapi.vercel.sh/vercel.json",
-	"buildCommand": "npx prisma generate && next build",
+	"buildCommand": "bunx prisma generate && next build",
 	"crons": [
 		{
 			"path": "/api/cron/youtube-feed",
-			"schedule": "0 18 * * *"
+			"schedule": "0 0 * * *"
 		},
 		{
 			"path": "/api/cron/generate-episodes",
-			"schedule": "30 18 * * *"
+			"schedule": "30 0 * * *"
 		}
 	]
 }

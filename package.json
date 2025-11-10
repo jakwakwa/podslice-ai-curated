@@ -5,13 +5,12 @@
 	"scripts": {
 		"install:legacy": "bun install",
 		"install:fast": "bun install",
-		"install:clean": "rm -rf node_modules pnpm-lock.yaml package-lock.json",
 		"dev": "next dev --turbopack",
 		"dev:legacy": "next dev",
 		"build": "bunx prisma generate --no-engine && next build",
 		"prisma:generate": "bunx prisma generate --no-engine",
 		"prisma:push": "bunx prisma db push",
-		"prisma:migrate": "npx prisma migrate dev",
+		"prisma:migrate": "bunx prisma migrate dev",
 		"lint": "biome lint .",
 		"lint:fix": "biome lint --write .",
 		"start": "next start",
@@ -128,29 +127,5 @@
 	},
 	"engines": {
 		"node": "22"
-	},
-	"pnpm": {
-		"overrides": {
-			"mdns2": "npm:@empty-npm-package/empty-npm-package@1.0.0"
-		},
-		"onlyBuiltDependencies": [
-			"@biomejs/biome",
-			"@clerk/shared",
-			"@prisma/client",
-			"@prisma/engines",
-			"@tailwindcss/oxide",
-			"core-js",
-			"esbuild",
-			"prisma",
-			"protobufjs",
-			"sharp"
-		],
-		"ignoredBuiltDependencies": [
-			"@parcel/watcher",
-			"oxc-resolver",
-			"tree-sitter",
-			"tree-sitter-javascript",
-			"tree-sitter-typescript"
-		]
 	}
 }
