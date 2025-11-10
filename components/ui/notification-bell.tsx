@@ -2,15 +2,15 @@
 
 import { formatDistanceToNow } from "date-fns";
 import {
+	AlertTriangle,
 	Bell,
 	Calendar,
+	CheckCircle,
+	CreditCard,
 	EyeIcon,
 	Podcast,
-	CreditCard,
-	AlertTriangle,
-	CheckCircle,
-	TrendingUp,
 	TrendingDown,
+	TrendingUp,
 	XCircle,
 	XCircleIcon,
 } from "lucide-react";

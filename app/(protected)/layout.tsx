@@ -104,7 +104,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 								</DrawerContent>
 							</Drawer>
 						)}
-						{!isMobile && typeof window !== "undefined" && <NotificationBell />}
+						{typeof window !== "undefined" && <NotificationBell />}
 
 						{isMobile && <UserNavMobile user={userData} />}
 						{/*<ModeToggle />*/}
