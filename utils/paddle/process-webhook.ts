@@ -1,4 +1,13 @@
-import { type CustomerCreatedEvent, type CustomerUpdatedEvent, type EventEntity, EventName, type SubscriptionCreatedEvent, type SubscriptionUpdatedEvent, type TransactionCompletedEvent, type TransactionPaymentFailedEvent } from "@paddle/paddle-node-sdk";
+import {
+	type CustomerCreatedEvent,
+	type CustomerUpdatedEvent,
+	type EventEntity,
+	EventName,
+	type SubscriptionCreatedEvent,
+	type SubscriptionUpdatedEvent,
+	type TransactionCompletedEvent,
+	type TransactionPaymentFailedEvent,
+} from "@paddle/paddle-node-sdk";
 import { z } from "zod";
 import { ensureBucketName, getStorageUploader } from "@/lib/inngest/utils/gcs";
 import { prisma } from "@/lib/prisma";
@@ -21,10 +30,16 @@ export class ProcessWebhook {
 			case EventName.TransactionPaymentFailed:
 				await this.handlePaymentFailed(eventData);
 				break;
+			default:
+				// Log unhandled events but don't fail
+				console.log(`[WEBHOOK_PROCESSOR] Unhandled event type: ${eventData.eventType}`);
+				break;
 		}
 	}
 
-	private async updateSubscriptionData(event: SubscriptionCreatedEvent | SubscriptionUpdatedEvent) {
+	private async updateSubscriptionData(
+		event: SubscriptionCreatedEvent | SubscriptionUpdatedEvent
+	) {
 		const ItemSchema = z.object({
 			price: z.object({ id: z.string().optional() }).optional(),
 			price_id: z.string().optional(),
@@ -33,6 +48,12 @@ export class ProcessWebhook {
 			starts_at: z.string().optional(),
 			ends_at: z.string().optional(),
 		});
+		const ScheduledChangeSchema = z
+			.object({
+				action: z.string().optional(),
+				effective_at: z.string().optional(),
+			})
+			.optional();
 		const SubscriptionDataSchema = z.object({
 			id: z.string().optional(),
 			subscription_id: z.string().optional(),
@@ -46,11 +67,17 @@ export class ProcessWebhook {
 			canceled_at: z.string().optional(),
 			cancel_at_end: z.boolean().optional(),
 			cancel_at_period_end: z.boolean().optional(),
+			scheduled_change: ScheduledChangeSchema,
 		});
 
-		const parsed = SubscriptionDataSchema.safeParse((event as unknown as { data?: unknown }).data);
+		const parsed = SubscriptionDataSchema.safeParse(
+			(event as unknown as { data?: unknown }).data
+		);
 		if (!parsed.success) {
-			console.error("[SUBSCRIPTION_UPDATE] Failed to parse subscription data:", parsed.error);
+			console.error(
+				"[SUBSCRIPTION_UPDATE] Failed to parse subscription data:",
+				parsed.error
+			);
 			return;
 		}
 
@@ -65,11 +92,29 @@ export class ProcessWebhook {
 
 		const priceId = d.items?.[0]?.price?.id ?? d.items?.[0]?.price_id ?? null;
 		const status = typeof d.status === "string" ? d.status : "active";
-		const current_period_start = d.current_billing_period?.starts_at ? new Date(d.current_billing_period.starts_at) : d.started_at ? new Date(d.started_at) : null;
-		const current_period_end = d.current_billing_period?.ends_at ? new Date(d.current_billing_period.ends_at) : d.next_billed_at ? new Date(d.next_billed_at) : null;
+		const current_period_start = d.current_billing_period?.starts_at
+			? new Date(d.current_billing_period.starts_at)
+			: d.started_at
+				? new Date(d.started_at)
+				: null;
+		const current_period_end = d.current_billing_period?.ends_at
+			? new Date(d.current_billing_period.ends_at)
+			: d.next_billed_at
+				? new Date(d.next_billed_at)
+				: null;
 		const trial_end = d.trial_end_at ? new Date(d.trial_end_at) : null;
 		const canceled_at = d.canceled_at ? new Date(d.canceled_at) : null;
-		const cancel_at_period_end = Boolean(d.cancel_at_end || d.cancel_at_period_end);
+		// Check for scheduled cancellation in the scheduled_change object
+		const hasScheduledCancellation = d.scheduled_change?.action === "cancel";
+		const cancel_at_period_end = Boolean(
+			d.cancel_at_end || d.cancel_at_period_end || hasScheduledCancellation
+		);
+
+		if (hasScheduledCancellation) {
+			console.log(
+				`[SUBSCRIPTION_UPDATE] Detected scheduled cancellation - effective at: ${d.scheduled_change?.effective_at}`
+			);
+		}
 
 		const customerId = d.customer_id;
 		if (!customerId) {
@@ -77,36 +122,53 @@ export class ProcessWebhook {
 			return;
 		}
 
-		const user = await prisma.user.findFirst({ where: { paddle_customer_id: customerId }, select: { user_id: true } });
+		const user = await prisma.user.findFirst({
+			where: { paddle_customer_id: customerId },
+			select: { user_id: true },
+		});
 		if (!user) {
 			console.warn(`[SUBSCRIPTION_UPDATE] No user found for customer ID: ${customerId}`);
 			return;
 		}
 
-		console.log(`[SUBSCRIPTION_UPDATE] Found user ${user.user_id} for customer ${customerId}`);
+		console.log(
+			`[SUBSCRIPTION_UPDATE] Found user ${user.user_id} for customer ${customerId}`
+		);
 
 		// Get existing subscription to detect status changes
 		const existingSubscription = await prisma.subscription.findUnique({
 			where: { paddle_subscription_id: externalId },
-			select: { status: true, plan_type: true }
+			select: { status: true, plan_type: true },
 		});
 
 		const isNewSubscription = !existingSubscription;
-		const statusChanged = Boolean(existingSubscription && existingSubscription.status !== status);
+		const statusChanged = Boolean(
+			existingSubscription && existingSubscription.status !== status
+		);
 		const newPlanType = priceIdToPlanType(priceId);
-		const planChanged = Boolean(existingSubscription && newPlanType && existingSubscription.plan_type !== newPlanType);
+		const planChanged = Boolean(
+			existingSubscription &&
+				newPlanType &&
+				existingSubscription.plan_type !== newPlanType
+		);
 
 		// Log detected changes
 		if (isNewSubscription) {
-			console.log(`[SUBSCRIPTION_UPDATE] New subscription detected - Status: ${status}, Plan: ${newPlanType}`);
+			console.log(
+				`[SUBSCRIPTION_UPDATE] New subscription detected - Status: ${status}, Plan: ${newPlanType}`
+			);
 		} else {
 			if (statusChanged) {
-				console.log(`[SUBSCRIPTION_UPDATE] Status changed: ${existingSubscription?.status} → ${status}`);
+				console.log(
+					`[SUBSCRIPTION_UPDATE] Status changed: ${existingSubscription?.status} → ${status}`
+				);
 			}
 			if (planChanged) {
-				console.log(`[SUBSCRIPTION_UPDATE] Plan changed: ${existingSubscription?.plan_type} → ${newPlanType}`);
+				console.log(
+					`[SUBSCRIPTION_UPDATE] Plan changed: ${existingSubscription?.plan_type} → ${newPlanType}`
+				);
 			}
-			if (!statusChanged && !planChanged) {
+			if (!(statusChanged || planChanged)) {
 				console.log("[SUBSCRIPTION_UPDATE] No significant changes detected");
 			}
 		}
@@ -139,7 +201,9 @@ export class ProcessWebhook {
 			update: updateData,
 		});
 
-		console.log(`[SUBSCRIPTION_UPDATE] Subscription upserted successfully for user ${user.user_id}`);
+		console.log(
+			`[SUBSCRIPTION_UPDATE] Subscription upserted successfully for user ${user.user_id}`
+		);
 
 		// Create notifications for important subscription events
 		console.log("[SUBSCRIPTION_UPDATE] Creating subscription notifications");
@@ -186,22 +250,29 @@ export class ProcessWebhook {
 		try {
 			const user = await prisma.user.findUnique({
 				where: { user_id: userId },
-				select: { in_app_notifications: true }
+				select: { in_app_notifications: true },
 			});
 
 			if (!user?.in_app_notifications) {
-				console.log(`[NOTIFICATION_CREATE] User ${userId} has disabled in-app notifications, skipping`);
+				console.log(
+					`[NOTIFICATION_CREATE] User ${userId} has disabled in-app notifications, skipping`
+				);
 				return;
 			}
 		} catch (error) {
-			console.error(`[NOTIFICATION_CREATE] Error checking user preferences for ${userId}:`, error);
+			console.error(
+				`[NOTIFICATION_CREATE] Error checking user preferences for ${userId}:`,
+				error
+			);
 			// Continue anyway - better to send notification than miss it
 		}
 
 		// New subscription activated
 		if (isNewSubscription && status === "active") {
 			try {
-				console.log(`[NOTIFICATION_CREATE] Creating subscription_activated notification for user ${userId}`);
+				console.log(
+					`[NOTIFICATION_CREATE] Creating subscription_activated notification for user ${userId}`
+				);
 				const notification = await prisma.notification.create({
 					data: {
 						user_id: userId,
@@ -209,9 +280,14 @@ export class ProcessWebhook {
 						message: `Your ${this.formatPlanName(newPlanType)} subscription is now active!`,
 					},
 				});
-				console.log(`[NOTIFICATION_CREATE] Created notification ${notification.notification_id} for user ${userId}`);
+				console.log(
+					`[NOTIFICATION_CREATE] Created notification ${notification.notification_id} for user ${userId}`
+				);
 			} catch (error) {
-				console.error(`[NOTIFICATION_CREATE] Failed to create subscription_activated notification for user ${userId}:`, error);
+				console.error(
+					`[NOTIFICATION_CREATE] Failed to create subscription_activated notification for user ${userId}:`,
+					error
+				);
 			}
 			return;
 		}
@@ -219,7 +295,9 @@ export class ProcessWebhook {
 		// Subscription renewed
 		if (statusChanged && oldStatus === "past_due" && status === "active") {
 			try {
-				console.log(`[NOTIFICATION_CREATE] Creating subscription_renewed notification for user ${userId}`);
+				console.log(
+					`[NOTIFICATION_CREATE] Creating subscription_renewed notification for user ${userId}`
+				);
 				const notification = await prisma.notification.create({
 					data: {
 						user_id: userId,
@@ -227,9 +305,14 @@ export class ProcessWebhook {
 						message: "Your subscription has been successfully renewed.",
 					},
 				});
-				console.log(`[NOTIFICATION_CREATE] Created notification ${notification.notification_id} for user ${userId}`);
+				console.log(
+					`[NOTIFICATION_CREATE] Created notification ${notification.notification_id} for user ${userId}`
+				);
 			} catch (error) {
-				console.error(`[NOTIFICATION_CREATE] Failed to create subscription_renewed notification for user ${userId}:`, error);
+				console.error(
+					`[NOTIFICATION_CREATE] Failed to create subscription_renewed notification for user ${userId}:`,
+					error
+				);
 			}
 			return;
 		}
@@ -237,17 +320,25 @@ export class ProcessWebhook {
 		// Subscription cancelled
 		if (statusChanged && status === "canceled") {
 			try {
-				console.log(`[NOTIFICATION_CREATE] Creating subscription_cancelled notification for user ${userId}`);
+				console.log(
+					`[NOTIFICATION_CREATE] Creating subscription_cancelled notification for user ${userId}`
+				);
 				const notification = await prisma.notification.create({
 					data: {
 						user_id: userId,
 						type: "subscription_cancelled",
-						message: "Your subscription has been cancelled. You'll retain access until the end of your billing period.",
+						message:
+							"Your subscription has been cancelled. You'll retain access until the end of your billing period.",
 					},
 				});
-				console.log(`[NOTIFICATION_CREATE] Created notification ${notification.notification_id} for user ${userId}`);
+				console.log(
+					`[NOTIFICATION_CREATE] Created notification ${notification.notification_id} for user ${userId}`
+				);
 			} catch (error) {
-				console.error(`[NOTIFICATION_CREATE] Failed to create subscription_cancelled notification for user ${userId}:`, error);
+				console.error(
+					`[NOTIFICATION_CREATE] Failed to create subscription_cancelled notification for user ${userId}:`,
+					error
+				);
 			}
 			return;
 		}
@@ -255,17 +346,25 @@ export class ProcessWebhook {
 		// Payment failed
 		if (statusChanged && status === "past_due") {
 			try {
-				console.log(`[NOTIFICATION_CREATE] Creating payment_failed notification for user ${userId}`);
+				console.log(
+					`[NOTIFICATION_CREATE] Creating payment_failed notification for user ${userId}`
+				);
 				const notification = await prisma.notification.create({
 					data: {
 						user_id: userId,
 						type: "payment_failed",
-						message: "We couldn't process your payment. Please update your payment method to continue your subscription.",
+						message:
+							"We couldn't process your payment. Please update your payment method to continue your subscription.",
 					},
 				});
-				console.log(`[NOTIFICATION_CREATE] Created notification ${notification.notification_id} for user ${userId}`);
+				console.log(
+					`[NOTIFICATION_CREATE] Created notification ${notification.notification_id} for user ${userId}`
+				);
 			} catch (error) {
-				console.error(`[NOTIFICATION_CREATE] Failed to create payment_failed notification for user ${userId}:`, error);
+				console.error(
+					`[NOTIFICATION_CREATE] Failed to create payment_failed notification for user ${userId}:`,
+					error
+				);
 			}
 			return;
 		}
@@ -274,7 +373,9 @@ export class ProcessWebhook {
 		if (planChanged && newPlanType && oldPlanType) {
 			const isUpgrade = this.isUpgrade(oldPlanType, newPlanType);
 			try {
-				console.log(`[NOTIFICATION_CREATE] Creating subscription_${isUpgrade ? 'upgraded' : 'downgraded'} notification for user ${userId}`);
+				console.log(
+					`[NOTIFICATION_CREATE] Creating subscription_${isUpgrade ? "upgraded" : "downgraded"} notification for user ${userId}`
+				);
 				const notification = await prisma.notification.create({
 					data: {
 						user_id: userId,
@@ -282,9 +383,14 @@ export class ProcessWebhook {
 						message: `Your plan has been ${isUpgrade ? "upgraded" : "changed"} to ${this.formatPlanName(newPlanType)}.`,
 					},
 				});
-				console.log(`[NOTIFICATION_CREATE] Created notification ${notification.notification_id} for user ${userId}`);
+				console.log(
+					`[NOTIFICATION_CREATE] Created notification ${notification.notification_id} for user ${userId}`
+				);
 			} catch (error) {
-				console.error(`[NOTIFICATION_CREATE] Failed to create subscription_${isUpgrade ? 'upgraded' : 'downgraded'} notification for user ${userId}:`, error);
+				console.error(
+					`[NOTIFICATION_CREATE] Failed to create subscription_${isUpgrade ? "upgraded" : "downgraded"} notification for user ${userId}:`,
+					error
+				);
 			}
 			return;
 		}
@@ -293,7 +399,9 @@ export class ProcessWebhook {
 		if (cancelAtPeriodEnd && currentPeriodEnd) {
 			const endDate = currentPeriodEnd.toLocaleDateString();
 			try {
-				console.log(`[NOTIFICATION_CREATE] Creating subscription_ending notification for user ${userId}`);
+				console.log(
+					`[NOTIFICATION_CREATE] Creating subscription_ending notification for user ${userId}`
+				);
 				const notification = await prisma.notification.create({
 					data: {
 						user_id: userId,
@@ -301,22 +409,27 @@ export class ProcessWebhook {
 						message: `Your subscription will end on ${endDate}. You can reactivate it anytime before then.`,
 					},
 				});
-				console.log(`[NOTIFICATION_CREATE] Created notification ${notification.notification_id} for user ${userId}`);
+				console.log(
+					`[NOTIFICATION_CREATE] Created notification ${notification.notification_id} for user ${userId}`
+				);
 			} catch (error) {
-				console.error(`[NOTIFICATION_CREATE] Failed to create subscription_ending notification for user ${userId}:`, error);
+				console.error(
+					`[NOTIFICATION_CREATE] Failed to create subscription_ending notification for user ${userId}:`,
+					error
+				);
 			}
 		}
 	}
 
 	private formatPlanName(planType?: string): string {
 		if (!planType) return "subscription";
-		
+
 		const planNames: Record<string, string> = {
 			casual_listener: "Casual Listener",
 			regular_listener: "Regular Listener",
 			power_listener: "Power Listener",
 		};
-		
+
 		return planNames[planType] || planType;
 	}
 
@@ -348,32 +461,47 @@ export class ProcessWebhook {
 				await Promise.all(deletePromises);
 				await prisma.userEpisode.deleteMany({ where: { user_id: userId } });
 			} catch (error) {
-				console.error(`Failed to delete GCS files or user episodes for user ${userId}:`, error);
+				console.error(
+					`Failed to delete GCS files or user episodes for user ${userId}:`,
+					error
+				);
 				// Don't throw here, as we still want to update the subscription status
 			}
 		}
 	}
 
 	private async updateCustomerData(event: CustomerCreatedEvent | CustomerUpdatedEvent) {
-		const CustomerDataSchema = z.object({ id: z.string(), email: z.string().email().optional() });
-		const parsed = CustomerDataSchema.safeParse((event as unknown as { data?: unknown }).data);
+		const CustomerDataSchema = z.object({
+			id: z.string(),
+			email: z.string().email().optional(),
+		});
+		const parsed = CustomerDataSchema.safeParse(
+			(event as unknown as { data?: unknown }).data
+		);
 		if (!parsed.success) return;
 		const { id, email } = parsed.data;
 		if (!email) return;
-		await prisma.user.updateMany({ where: { email, paddle_customer_id: null }, data: { paddle_customer_id: id } });
+		await prisma.user.updateMany({
+			where: { email, paddle_customer_id: null },
+			data: { paddle_customer_id: id },
+		});
 	}
 
 	private async handlePaymentSuccess(event: TransactionCompletedEvent) {
 		const TransactionDataSchema = z.object({
 			customer_id: z.string().optional(),
 			subscription_id: z.string().optional(),
-			billing_period: z.object({
-				starts_at: z.string().optional(),
-				ends_at: z.string().optional(),
-			}).optional(),
+			billing_period: z
+				.object({
+					starts_at: z.string().optional(),
+					ends_at: z.string().optional(),
+				})
+				.optional(),
 		});
 
-		const parsed = TransactionDataSchema.safeParse((event as unknown as { data?: unknown }).data);
+		const parsed = TransactionDataSchema.safeParse(
+			(event as unknown as { data?: unknown }).data
+		);
 		if (!parsed.success) {
 			console.error("[PAYMENT_SUCCESS] Failed to parse transaction data:", parsed.error);
 			return;
@@ -387,9 +515,9 @@ export class ProcessWebhook {
 
 		console.log(`[PAYMENT_SUCCESS] Processing payment for customer ${customerId}`);
 
-		const user = await prisma.user.findFirst({ 
-			where: { paddle_customer_id: customerId }, 
-			select: { user_id: true, in_app_notifications: true } 
+		const user = await prisma.user.findFirst({
+			where: { paddle_customer_id: customerId },
+			select: { user_id: true, in_app_notifications: true },
 		});
 		if (!user) {
 			console.warn(`[PAYMENT_SUCCESS] No user found for customer ${customerId}`);
@@ -398,24 +526,28 @@ export class ProcessWebhook {
 
 		// Check if user has enabled notifications
 		if (!user.in_app_notifications) {
-			console.log(`[PAYMENT_SUCCESS] User ${user.user_id} has disabled in-app notifications, skipping`);
+			console.log(
+				`[PAYMENT_SUCCESS] User ${user.user_id} has disabled in-app notifications, skipping`
+			);
 			return;
 		}
 
 		// Only notify for recurring payments (not initial subscription)
 		if (parsed.data.subscription_id) {
 			const subscription = await prisma.subscription.findFirst({
-				where: { 
+				where: {
 					paddle_subscription_id: parsed.data.subscription_id,
-					user_id: user.user_id
+					user_id: user.user_id,
 				},
-				select: { created_at: true }
+				select: { created_at: true },
 			});
 
 			// If subscription is older than 1 day, this is a renewal payment
-			if (subscription && new Date().getTime() - subscription.created_at.getTime() > 86400000) {
+			if (subscription && Date.now() - subscription.created_at.getTime() > 86400000) {
 				try {
-					console.log(`[PAYMENT_SUCCESS] Creating payment_successful notification for user ${user.user_id}`);
+					console.log(
+						`[PAYMENT_SUCCESS] Creating payment_successful notification for user ${user.user_id}`
+					);
 					const notification = await prisma.notification.create({
 						data: {
 							user_id: user.user_id,
@@ -423,12 +555,19 @@ export class ProcessWebhook {
 							message: "Your payment was processed successfully. Thank you!",
 						},
 					});
-					console.log(`[PAYMENT_SUCCESS] Created notification ${notification.notification_id} for user ${user.user_id}`);
+					console.log(
+						`[PAYMENT_SUCCESS] Created notification ${notification.notification_id} for user ${user.user_id}`
+					);
 				} catch (error) {
-					console.error(`[PAYMENT_SUCCESS] Failed to create notification for user ${user.user_id}:`, error);
+					console.error(
+						`[PAYMENT_SUCCESS] Failed to create notification for user ${user.user_id}:`,
+						error
+					);
 				}
 			} else {
-				console.log(`[PAYMENT_SUCCESS] Skipping notification - initial subscription payment or no subscription found`);
+				console.log(
+					`[PAYMENT_SUCCESS] Skipping notification - initial subscription payment or no subscription found`
+				);
 			}
 		}
 	}
@@ -438,7 +577,9 @@ export class ProcessWebhook {
 			customer_id: z.string().optional(),
 		});
 
-		const parsed = TransactionDataSchema.safeParse((event as unknown as { data?: unknown }).data);
+		const parsed = TransactionDataSchema.safeParse(
+			(event as unknown as { data?: unknown }).data
+		);
 		if (!parsed.success) {
 			console.error("[PAYMENT_FAILED] Failed to parse transaction data:", parsed.error);
 			return;
@@ -452,9 +593,9 @@ export class ProcessWebhook {
 
 		console.log(`[PAYMENT_FAILED] Processing failed payment for customer ${customerId}`);
 
-		const user = await prisma.user.findFirst({ 
-			where: { paddle_customer_id: customerId }, 
-			select: { user_id: true, in_app_notifications: true } 
+		const user = await prisma.user.findFirst({
+			where: { paddle_customer_id: customerId },
+			select: { user_id: true, in_app_notifications: true },
 		});
 		if (!user) {
 			console.warn(`[PAYMENT_FAILED] No user found for customer ${customerId}`);
@@ -463,22 +604,32 @@ export class ProcessWebhook {
 
 		// Check if user has enabled notifications
 		if (!user.in_app_notifications) {
-			console.log(`[PAYMENT_FAILED] User ${user.user_id} has disabled in-app notifications, skipping`);
+			console.log(
+				`[PAYMENT_FAILED] User ${user.user_id} has disabled in-app notifications, skipping`
+			);
 			return;
 		}
 
 		try {
-			console.log(`[PAYMENT_FAILED] Creating payment_failed notification for user ${user.user_id}`);
+			console.log(
+				`[PAYMENT_FAILED] Creating payment_failed notification for user ${user.user_id}`
+			);
 			const notification = await prisma.notification.create({
 				data: {
 					user_id: user.user_id,
 					type: "payment_failed",
-					message: "We couldn't process your payment. Please update your payment method to avoid service interruption.",
+					message:
+						"We couldn't process your payment. Please update your payment method to avoid service interruption.",
 				},
 			});
-			console.log(`[PAYMENT_FAILED] Created notification ${notification.notification_id} for user ${user.user_id}`);
+			console.log(
+				`[PAYMENT_FAILED] Created notification ${notification.notification_id} for user ${user.user_id}`
+			);
 		} catch (error) {
-			console.error(`[PAYMENT_FAILED] Failed to create notification for user ${user.user_id}:`, error);
+			console.error(
+				`[PAYMENT_FAILED] Failed to create notification for user ${user.user_id}:`,
+				error
+			);
 		}
 	}
 }
