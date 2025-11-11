@@ -172,7 +172,7 @@ export function NotificationBell() {
 					/>
 					{unreadCount > 0 && (
 						<span className="absolute top-1 right-2 bg-destructive-foreground p-1 h-3 w-3 rounded-full text-[0.9rem]  flex items-center animate-pulse justify-center text-destructive-foreground">
-							2
+							{unreadCount}
 						</span>
 					)}
 				</Button>
