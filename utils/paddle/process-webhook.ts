@@ -58,6 +58,8 @@ export class ProcessWebhook {
 			id: z.string().optional(),
 			subscription_id: z.string().optional(),
 			customer_id: z.string().optional(),
+			// Some payloads may provide nested customer or a string ID
+			customer: z.union([z.object({ id: z.string().optional() }), z.string()]).optional(),
 			status: z.string().optional(),
 			items: z.array(ItemSchema).optional(),
 			current_billing_period: PeriodSchema.optional(),
@@ -116,7 +118,9 @@ export class ProcessWebhook {
 			);
 		}
 
-		const customerId = d.customer_id;
+		const customerId =
+			d.customer_id ??
+			(typeof d.customer === "string" ? d.customer : d.customer?.id);
 		if (!customerId) {
 			console.warn("[SUBSCRIPTION_UPDATE] No customer ID found in event data");
 			return;
@@ -490,6 +494,8 @@ export class ProcessWebhook {
 	private async handlePaymentSuccess(event: TransactionCompletedEvent) {
 		const TransactionDataSchema = z.object({
 			customer_id: z.string().optional(),
+			// Fallback nested customer or string id
+			customer: z.union([z.object({ id: z.string().optional() }), z.string()]).optional(),
 			subscription_id: z.string().optional(),
 			billing_period: z
 				.object({
@@ -507,7 +513,11 @@ export class ProcessWebhook {
 			return;
 		}
 
-		const customerId = parsed.data.customer_id;
+		const customerId =
+			parsed.data.customer_id ??
+			(typeof parsed.data.customer === "string"
+				? parsed.data.customer
+				: parsed.data.customer?.id);
 		if (!customerId) {
 			console.warn("[PAYMENT_SUCCESS] No customer ID in transaction data");
 			return;
@@ -575,6 +585,7 @@ export class ProcessWebhook {
 	private async handlePaymentFailed(event: TransactionPaymentFailedEvent) {
 		const TransactionDataSchema = z.object({
 			customer_id: z.string().optional(),
+			customer: z.union([z.object({ id: z.string().optional() }), z.string()]).optional(),
 		});
 
 		const parsed = TransactionDataSchema.safeParse(
@@ -585,7 +596,11 @@ export class ProcessWebhook {
 			return;
 		}
 
-		const customerId = parsed.data.customer_id;
+		const customerId =
+			parsed.data.customer_id ??
+			(typeof parsed.data.customer === "string"
+				? parsed.data.customer
+				: parsed.data.customer?.id);
 		if (!customerId) {
 			console.warn("[PAYMENT_FAILED] No customer ID in transaction data");
 			return;
