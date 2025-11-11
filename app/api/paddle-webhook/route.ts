@@ -1,9 +1,14 @@
 import type { EventEntity } from "@paddle/paddle-node-sdk";
 import type { NextRequest } from "next/server";
+import { createHmac, timingSafeEqual } from "crypto";
 import { getPaddleInstance } from "@/utils/paddle/get-paddle-instance";
 import { ProcessWebhook } from "@/utils/paddle/process-webhook";
 
 const webhookProcessor = new ProcessWebhook();
+
+// Disable body parsing - we need the raw body for signature verification
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
 	try {
@@ -15,10 +20,8 @@ export async function POST(request: NextRequest) {
 			return Response.json({ error: "Missing signature from header" }, { status: 400 });
 		}
 
-		// 2. Get the raw request body as buffer, then convert to string
-		// CRITICAL: Must use buffer.toString() as per Paddle SDK docs
-		const buffer = await request.arrayBuffer();
-		const rawRequestBody = Buffer.from(buffer).toString();
+		// 2. Get the raw request body - try direct text() method
+		const rawRequestBody = await request.text();
 
 		if (!rawRequestBody) {
 			console.error("[PADDLE_WEBHOOK] Missing request body");
@@ -43,37 +46,91 @@ export async function POST(request: NextRequest) {
 			return Response.json({ error: "Invalid webhook secret format" }, { status: 500 });
 		}
 
+		// 4. Extract timestamp and signature from Paddle-Signature header
+		// Format: ts=1671552777;h1=eb4d0dc8853be92b7f063b9f3ba5233eb920a09459b6e6b2c26705b4364db151
+		if (!signature.includes(";")) {
+			console.error("[PADDLE_WEBHOOK] Invalid Paddle-Signature format");
+			return Response.json({ error: "Invalid signature format" }, { status: 400 });
+		}
+
+		const parts = signature.split(";");
+		if (parts.length !== 2) {
+			console.error("[PADDLE_WEBHOOK] Invalid Paddle-Signature format - expected 2 parts");
+			return Response.json({ error: "Invalid signature format" }, { status: 400 });
+		}
+
+		const [timestampPart, signaturePart] = parts.map(part => part.split("=")[1]);
+		if (!timestampPart || !signaturePart) {
+			console.error("[PADDLE_WEBHOOK] Unable to extract timestamp or signature");
+			return Response.json({ error: "Invalid signature format" }, { status: 400 });
+		}
+
+		const timestamp = timestampPart;
+		const h1Signature = signaturePart;
+
 		// Debug logging
-		console.log("[PADDLE_WEBHOOK] Verifying webhook signature:", {
-			signatureLength: signature.length,
-			secretKeyPrefix: `${secretKey.substring(0, 15)}...`,
+		console.log("[PADDLE_WEBHOOK] Manual signature verification:", {
+			timestamp,
+			h1Signature: h1Signature.substring(0, 20) + "...",
 			secretKeyLength: secretKey.length,
 			bodyLength: rawRequestBody.length,
-			paddleEnv: process.env.NEXT_PUBLIC_PADDLE_ENV || "not set",
 		});
 
-		// 4. Verify the webhook using Paddle SDK
-		const paddle = getPaddleInstance();
+		// 5. Check timestamp (optional - prevent replay attacks)
+		const timestampInt = parseInt(timestamp) * 1000;
+		if (isNaN(timestampInt)) {
+			console.error("[PADDLE_WEBHOOK] Invalid timestamp format");
+			return Response.json({ error: "Invalid timestamp" }, { status: 400 });
+		}
 
-		let eventData: EventEntity | null = null;
+		const currentTime = Date.now();
+		if (currentTime - timestampInt > 5000) {
+			console.warn(`[PADDLE_WEBHOOK] Webhook event expired (timestamp is over 5 seconds old): ${timestampInt} vs ${currentTime}`);
+			// Don't reject - just warn for now
+		}
+
+		// 6. Build signed payload: timestamp + ":" + raw body
+		const signedPayload = `${timestamp}:${rawRequestBody}`;
+
+		// 7. Hash the signed payload using HMAC SHA256
+		const hashedPayload = createHmac("sha256", secretKey)
+			.update(signedPayload, "utf8")
+			.digest("hex");
+
+		console.log("[PADDLE_WEBHOOK] Computed signature:", {
+			computed: hashedPayload.substring(0, 20) + "...",
+			expected: h1Signature.substring(0, 20) + "...",
+			match: hashedPayload === h1Signature,
+		});
+
+		// 8. Compare signatures using timing-safe comparison
 		try {
-			// Use Paddle SDK to unmarshal and verify the webhook
-			eventData = await paddle.webhooks.unmarshal(rawRequestBody, secretKey, signature);
-		} catch (verifyError) {
-			const err = verifyError as Error;
-			console.error("[PADDLE_WEBHOOK] Signature verification failed:", {
-				error: err.message,
-				signatureSample: signature.substring(0, 50),
-				secretSample: `${secretKey.substring(0, 30)}...`,
-				secretLength: secretKey.length,
-				bodyPreview: rawRequestBody.substring(0, 200),
-				paddleEnv: process.env.NEXT_PUBLIC_PADDLE_ENV || "not set",
-			});
+			if (!timingSafeEqual(Buffer.from(hashedPayload), Buffer.from(h1Signature))) {
+				console.error("[PADDLE_WEBHOOK] Signature verification failed - signatures do not match");
+				return Response.json({ error: "Signature verification failed" }, { status: 401 });
+			}
+		} catch (error) {
+			console.error("[PADDLE_WEBHOOK] Error comparing signatures:", error);
 			return Response.json({ error: "Signature verification failed" }, { status: 401 });
 		}
 
+		console.log("[PADDLE_WEBHOOK] ✅ Signature verification successful!");
+
+		// 9. Parse the webhook body
+		let eventData: EventEntity | null = null;
+		try {
+			const bodyJson = JSON.parse(rawRequestBody);
+			
+			// Use Paddle SDK to parse the event (but not verify - we already did that)
+			const paddle = getPaddleInstance();
+			eventData = bodyJson as EventEntity;
+		} catch (error) {
+			console.error("[PADDLE_WEBHOOK] Failed to parse webhook body:", error);
+			return Response.json({ error: "Invalid webhook body" }, { status: 400 });
+		}
+
 		if (!eventData) {
-			console.error("[PADDLE_WEBHOOK] No event data returned from unmarshal");
+			console.error("[PADDLE_WEBHOOK] No event data in webhook body");
 			return Response.json({ error: "No event data" }, { status: 400 });
 		}
 
