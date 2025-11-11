@@ -73,9 +73,12 @@ export class ProcessWebhook {
 		});
 
 		// Support both flat data and JSON:API-style data with attributes/relationships
-		const eventDataAny = event as unknown as { data?: any };
-		const source = eventDataAny?.data;
-		const candidate = source?.attributes ?? source;
+		const eventDataUnknown = event as unknown as { data?: unknown };
+		const source = (eventDataUnknown?.data ?? {}) as Record<string, unknown>;
+		const candidate = ((source.attributes as unknown) ?? source) as Record<
+			string,
+			unknown
+		>;
 		const parsed = SubscriptionDataSchema.safeParse(candidate);
 		if (!parsed.success) {
 			console.error(
@@ -99,7 +102,17 @@ export class ProcessWebhook {
 			d.items?.[0]?.price?.id ??
 			d.items?.[0]?.price_id ??
 			// JSON:API style nested relationship
-			(source?.attributes?.items?.[0]?.price?.data?.id as string | undefined) ??
+			(() => {
+				const attrs = source.attributes as unknown as Record<string, unknown> | undefined;
+				const items = attrs?.items as unknown as unknown[] | undefined;
+				const first = Array.isArray(items)
+					? (items[0] as Record<string, unknown>)
+					: undefined;
+				const price = first?.price as unknown as Record<string, unknown> | undefined;
+				const dataNode = price?.data as unknown as Record<string, unknown> | undefined;
+				const id = dataNode?.id;
+				return typeof id === "string" ? id : undefined;
+			})() ??
 			null;
 		const status = typeof d.status === "string" ? d.status : "active";
 		const current_period_start = d.current_billing_period?.starts_at
@@ -127,13 +140,43 @@ export class ProcessWebhook {
 		}
 
 		// Extract customer id from multiple shapes, including JSON:API relationships
-		const relationshipsCustomerId: string | undefined =
-			typeof source?.relationships?.customer?.data?.id === "string"
-				? source.relationships.customer.data.id
+		const relationshipsCustomerId: string | undefined = (() => {
+			const rels = source.relationships as unknown as Record<string, unknown> | undefined;
+			const customerRel = rels?.customer as unknown as
+				| Record<string, unknown>
+				| undefined;
+			const dataNode = customerRel?.data as unknown as
+				| Record<string, unknown>
+				| undefined;
+			const id = dataNode?.id;
+			return typeof id === "string" ? id : undefined;
+		})();
+		const candidateCustomerIdSnake =
+			typeof candidate["customer_id"] === "string"
+				? (candidate["customer_id"] as string)
 				: undefined;
+		const candidateCustomerIdCamel =
+			typeof candidate["customerId"] === "string"
+				? (candidate["customerId"] as string)
+				: undefined;
+		const candidateCustomerObj = candidate["customer"] as unknown as
+			| string
+			| Record<string, unknown>
+			| undefined;
+		const candidateCustomerInnerId =
+			typeof candidateCustomerObj === "string"
+				? candidateCustomerObj
+				: typeof candidateCustomerObj === "object" && candidateCustomerObj
+					? (candidateCustomerObj["id"] as string | undefined)
+					: undefined;
 		const customerId =
-			d.customer_id ??
-			(typeof d.customer === "string" ? d.customer : d.customer?.id) ??
+			(typeof d.customer_id === "string" ? d.customer_id : undefined) ??
+			(typeof d.customer === "string"
+				? d.customer
+				: (d.customer?.id as string | undefined)) ??
+			candidateCustomerIdSnake ??
+			candidateCustomerIdCamel ??
+			candidateCustomerInnerId ??
 			relationshipsCustomerId;
 		if (!customerId) {
 			console.warn("[SUBSCRIPTION_UPDATE] No customer ID found in event data");
@@ -520,19 +563,26 @@ export class ProcessWebhook {
 		});
 
 		// Support both flat and JSON:API-style transaction payloads
-		const eventAny = event as unknown as { data?: any };
-		const src = eventAny?.data;
-		const cand = src?.attributes ?? src;
+		const eventUnknownSuccess = event as unknown as { data?: unknown };
+		const src = (eventUnknownSuccess?.data ?? {}) as Record<string, unknown>;
+		const cand = ((src.attributes as unknown) ?? src) as Record<string, unknown>;
 		const parsed = TransactionDataSchema.safeParse(cand);
 		if (!parsed.success) {
 			console.error("[PAYMENT_SUCCESS] Failed to parse transaction data:", parsed.error);
 			return;
 		}
 
-		const relationshipsCustomerIdSuccess: string | undefined =
-			typeof src?.relationships?.customer?.data?.id === "string"
-				? src.relationships.customer.data.id
-				: undefined;
+		const relationshipsCustomerIdSuccess: string | undefined = (() => {
+			const rels = src.relationships as unknown as Record<string, unknown> | undefined;
+			const customerRel = rels?.customer as unknown as
+				| Record<string, unknown>
+				| undefined;
+			const dataNode = customerRel?.data as unknown as
+				| Record<string, unknown>
+				| undefined;
+			const id = dataNode?.id;
+			return typeof id === "string" ? id : undefined;
+		})();
 		const customerId =
 			parsed.data.customer_id ??
 			(typeof parsed.data.customer === "string"
@@ -609,19 +659,31 @@ export class ProcessWebhook {
 			customer: z.union([z.object({ id: z.string().optional() }), z.string()]).optional(),
 		});
 
-		const eventAnyFailed = event as unknown as { data?: any };
-		const srcFailed = eventAnyFailed?.data;
-		const candFailed = srcFailed?.attributes ?? srcFailed;
+		const eventUnknownFailed = event as unknown as { data?: unknown };
+		const srcFailed = (eventUnknownFailed?.data ?? {}) as Record<string, unknown>;
+		const candFailed = ((srcFailed.attributes as unknown) ?? srcFailed) as Record<
+			string,
+			unknown
+		>;
 		const parsed = TransactionDataSchema.safeParse(candFailed);
 		if (!parsed.success) {
 			console.error("[PAYMENT_FAILED] Failed to parse transaction data:", parsed.error);
 			return;
 		}
 
-		const relationshipsCustomerIdFailed: string | undefined =
-			typeof srcFailed?.relationships?.customer?.data?.id === "string"
-				? srcFailed.relationships.customer.data.id
-				: undefined;
+		const relationshipsCustomerIdFailed: string | undefined = (() => {
+			const rels = srcFailed.relationships as unknown as
+				| Record<string, unknown>
+				| undefined;
+			const customerRel = rels?.customer as unknown as
+				| Record<string, unknown>
+				| undefined;
+			const dataNode = customerRel?.data as unknown as
+				| Record<string, unknown>
+				| undefined;
+			const id = dataNode?.id;
+			return typeof id === "string" ? id : undefined;
+		})();
 		const customerId =
 			parsed.data.customer_id ??
 			(typeof parsed.data.customer === "string"
