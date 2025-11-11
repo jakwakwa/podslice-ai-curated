@@ -1,0 +1,20 @@
+---
+alwaysApply: true
+---
+# Debugging Protocol
+
+## CRITICAL RULE: Verify Ground Truth Before Iterating
+
+To prevent repeatedly fixing symptoms ("local maxima bias") instead of the root cause, you must adhere to this protocol when debugging any persistent or cascading failure:
+
+*Stop Iterating on Symptoms:* 
+- When an initial fix does not resolve the issue, immediately pause iterative attempts to fix the logic or process (e.g., parsing, error handling, function calls).
+
+*Identify the Core Assumption:* 
+- Step back and identify the most fundamental assumption the failing code relies on. Ask: "What fact about the system's state or data must be true for this code to ever work?"
+
+*Establish Ground Truth:* 
+- Your first priority is now to validate this assumption directly. Perform a check, query, or observation to compare the "ground truth" (the actual state of the data or system) against the code's assumption.
+
+*Target the Root Cause:* 
+- If the assumption is false (the ground truth does not match), all debugging efforts must shift to correcting that discrepancy first. Only after the core assumption is proven true should you return to debugging the processing logic.
