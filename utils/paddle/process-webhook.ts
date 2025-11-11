@@ -139,7 +139,13 @@ export class ProcessWebhook {
 			);
 		}
 
-		// Extract customer id from multiple shapes, including JSON:API relationships
+		// Try to resolve user via existing subscription row first (most reliable, avoids payload variance)
+		const existingDbSub = await prisma.subscription.findUnique({
+			where: { paddle_subscription_id: externalId },
+			select: { user_id: true, status: true, plan_type: true },
+		});
+
+		// Extract customer id from multiple shapes, including JSON:API relationships (fallback only)
 		const relationshipsCustomerId: string | undefined = (() => {
 			const rels = source.relationships as unknown as Record<string, unknown> | undefined;
 			const customerRel = rels?.customer as unknown as
@@ -169,6 +175,24 @@ export class ProcessWebhook {
 				: typeof candidateCustomerObj === "object" && candidateCustomerObj
 					? (candidateCustomerObj["id"] as string | undefined)
 					: undefined;
+		// Raw-event fallback getter to avoid brittle parenthesis chains
+		const getString = (obj: unknown, path: string[]): string | undefined => {
+			let cur: unknown = obj;
+			for (const key of path) {
+				if (!cur || typeof cur !== "object") return undefined;
+				cur = (cur as Record<string, unknown>)[key];
+			}
+			return typeof cur === "string" ? cur : undefined;
+		};
+		const rawData = (event as unknown as { data?: unknown }).data as unknown;
+		const fallbackCustomerId =
+			getString(rawData, ["customer_id"]) ??
+			getString(rawData, ["customerId"]) ??
+			getString(rawData, ["customer", "id"]) ??
+			getString(rawData, ["attributes", "customer_id"]) ??
+			getString(rawData, ["attributes", "customerId"]) ??
+			getString(rawData, ["attributes", "customer", "id"]) ??
+			getString(rawData, ["relationships", "customer", "data", "id"]);
 		const customerId =
 			(typeof d.customer_id === "string" ? d.customer_id : undefined) ??
 			(typeof d.customer === "string"
@@ -177,30 +201,44 @@ export class ProcessWebhook {
 			candidateCustomerIdSnake ??
 			candidateCustomerIdCamel ??
 			candidateCustomerInnerId ??
-			relationshipsCustomerId;
-		if (!customerId) {
-			console.warn("[SUBSCRIPTION_UPDATE] No customer ID found in event data");
-			return;
+			relationshipsCustomerId ??
+			fallbackCustomerId;
+
+		let resolvedUserId: string | null = existingDbSub?.user_id ?? null;
+		if (!resolvedUserId) {
+			if (!customerId) {
+				console.warn(
+					"[SUBSCRIPTION_UPDATE] No user found by subscription_id and no customer_id in payload"
+				);
+				return;
+			}
+			const user = await prisma.user.findFirst({
+				where: { paddle_customer_id: customerId },
+				select: { user_id: true },
+			});
+			if (!user) {
+				console.warn(
+					`[SUBSCRIPTION_UPDATE] No user found for customer ID: ${customerId}`
+				);
+				return;
+			}
+			resolvedUserId = user.user_id;
+			console.log(
+				`[SUBSCRIPTION_UPDATE] Resolved user ${resolvedUserId} via customer ${customerId}`
+			);
+		} else {
+			console.log(
+				`[SUBSCRIPTION_UPDATE] Resolved user ${resolvedUserId} via subscription ${externalId}`
+			);
 		}
 
-		const user = await prisma.user.findFirst({
-			where: { paddle_customer_id: customerId },
-			select: { user_id: true },
-		});
-		if (!user) {
-			console.warn(`[SUBSCRIPTION_UPDATE] No user found for customer ID: ${customerId}`);
-			return;
-		}
-
-		console.log(
-			`[SUBSCRIPTION_UPDATE] Found user ${user.user_id} for customer ${customerId}`
-		);
-
-		// Get existing subscription to detect status changes
-		const existingSubscription = await prisma.subscription.findUnique({
-			where: { paddle_subscription_id: externalId },
-			select: { status: true, plan_type: true },
-		});
+		// Get existing subscription to detect status changes (use prior lookup if present)
+		const existingSubscription = existingDbSub
+			? { status: existingDbSub.status, plan_type: existingDbSub.plan_type }
+			: await prisma.subscription.findUnique({
+					where: { paddle_subscription_id: externalId },
+					select: { status: true, plan_type: true },
+				});
 
 		const isNewSubscription = !existingSubscription;
 		const statusChanged = Boolean(
@@ -235,8 +273,10 @@ export class ProcessWebhook {
 		}
 
 		if (status === "canceled") {
-			console.log(`[SUBSCRIPTION_UPDATE] Handling cancellation for user ${user.user_id}`);
-			await this.handleSubscriptionCancellation(user.user_id);
+			console.log(
+				`[SUBSCRIPTION_UPDATE] Handling cancellation for user ${resolvedUserId}`
+			);
+			await this.handleSubscriptionCancellation(resolvedUserId);
 		}
 
 		const updateData = {
@@ -255,7 +295,7 @@ export class ProcessWebhook {
 		await prisma.subscription.upsert({
 			where: { paddle_subscription_id: externalId },
 			create: {
-				user_id: user.user_id,
+				user_id: resolvedUserId,
 				paddle_subscription_id: externalId,
 				...updateData,
 			},
@@ -263,13 +303,13 @@ export class ProcessWebhook {
 		});
 
 		console.log(
-			`[SUBSCRIPTION_UPDATE] Subscription upserted successfully for user ${user.user_id}`
+			`[SUBSCRIPTION_UPDATE] Subscription upserted successfully for user ${resolvedUserId}`
 		);
 
 		// Create notifications for important subscription events
 		console.log("[SUBSCRIPTION_UPDATE] Creating subscription notifications");
 		await this.createSubscriptionNotifications({
-			userId: user.user_id,
+			userId: resolvedUserId,
 			isNewSubscription,
 			status,
 			statusChanged,
@@ -378,8 +418,8 @@ export class ProcessWebhook {
 			return;
 		}
 
-		// Subscription cancelled
-		if (statusChanged && status === "canceled") {
+		// Subscription cancelled (notify on first-time webhook or on a status change)
+		if ((isNewSubscription || statusChanged) && status === "canceled") {
 			try {
 				console.log(
 					`[NOTIFICATION_CREATE] Creating subscription_cancelled notification for user ${userId}`

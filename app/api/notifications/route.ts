@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
@@ -15,7 +17,9 @@ export async function GET(_request: Request) {
 			orderBy: { created_at: "desc" }
 		});
 
-		return NextResponse.json(notifications);
+		const res = NextResponse.json(notifications);
+		res.headers.set("Cache-Control", "no-store");
+		return res;
 	} catch (error) {
 		console.error("[NOTIFICATIONS_GET]", error);
 		return new NextResponse("Internal Error", { status: 500 });

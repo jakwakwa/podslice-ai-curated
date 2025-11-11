@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
 				eventData = coerced;
 			} catch (parseErr) {
 				console.error("[PADDLE_WEBHOOK] Failed to parse webhook body:", parseErr);
-				return Response.json({ error: "Invalid webhook body" }, { status: 400 });
+			return Response.json({ error: "Invalid webhook body" }, { status: 400 });
 			}
 		}
 		if (!eventData) {
@@ -132,8 +132,8 @@ export async function POST(request: NextRequest) {
 		if (subscriptionId) console.log(`[PADDLE_WEBHOOK] Subscription ID: ${subscriptionId}`);
 
 		// 10. Process
-		await webhookProcessor.processEvent(eventData);
-		console.log(`[PADDLE_WEBHOOK] Processing completed successfully for ${eventName}`);
+			await webhookProcessor.processEvent(eventData);
+			console.log(`[PADDLE_WEBHOOK] Processing completed successfully for ${eventName}`);
 
 		return Response.json({ status: 200, eventName });
 	} catch (e) {
