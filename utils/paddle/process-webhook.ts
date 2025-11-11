@@ -294,6 +294,13 @@ export class ProcessWebhook {
 				`[SUBSCRIPTION_UPDATE] New subscription detected - Status: ${status}, Plan: ${newPlanType}`
 			);
 		} else {
+			console.log("[SUBSCRIPTION_UPDATE] Status/plan comparison", {
+				externalId,
+				previousStatus: existingSubscription?.status ?? null,
+				incomingStatus: status,
+				previousPlan: existingSubscription?.plan_type ?? null,
+				incomingPlan: newPlanType ?? null,
+			});
 			if (statusChanged) {
 				console.log(
 					`[SUBSCRIPTION_UPDATE] Status changed: ${existingSubscription?.status} → ${status}`
@@ -475,6 +482,45 @@ export class ProcessWebhook {
 			} catch (error) {
 				console.error(
 					`[NOTIFICATION_CREATE] Failed to create subscription_cancelled notification for user ${userId}:`,
+					error
+				);
+			}
+			return;
+		}
+
+		// Backfill: if status is canceled but no recent notification exists (e.g., prior event missed),
+		// create a one-time cancellation notification.
+		if (status === "canceled") {
+			try {
+				const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+				const already = await prisma.notification.findFirst({
+					where: {
+						user_id: userId,
+						type: "subscription_cancelled",
+						created_at: { gte: since },
+					},
+					select: { notification_id: true },
+				});
+				if (!already) {
+					console.log(
+						`[NOTIFICATION_CREATE] Backfill: creating subscription_cancelled notification for user ${userId}`
+					);
+					await prisma.notification.create({
+						data: {
+							user_id: userId,
+							type: "subscription_cancelled",
+							message:
+								"Your subscription has been cancelled. You'll retain access until the end of your billing period.",
+						},
+					});
+				} else {
+					console.log(
+						`[NOTIFICATION_CREATE] Backfill skipped: recent cancellation notification already exists for user ${userId}`
+					);
+				}
+			} catch (error) {
+				console.error(
+					`[NOTIFICATION_CREATE] Backfill failed for subscription_cancelled notification (user ${userId}):`,
 					error
 				);
 			}
