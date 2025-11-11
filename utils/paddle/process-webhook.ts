@@ -119,8 +119,7 @@ export class ProcessWebhook {
 		}
 
 		const customerId =
-			d.customer_id ??
-			(typeof d.customer === "string" ? d.customer : d.customer?.id);
+			d.customer_id ?? (typeof d.customer === "string" ? d.customer : d.customer?.id);
 		if (!customerId) {
 			console.warn("[SUBSCRIPTION_UPDATE] No customer ID found in event data");
 			return;
