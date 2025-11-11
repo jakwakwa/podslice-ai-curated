@@ -79,6 +79,26 @@ export class ProcessWebhook {
 			string,
 			unknown
 		>;
+		try {
+			const snapshot = {
+				eventType: (event as unknown as { eventType?: string }).eventType ?? "unknown",
+				dataId: (source?.["id"] as string) ?? null,
+				customer_id: (source?.["customer_id"] as string) ?? null,
+				attr_customer_id:
+					((source?.["attributes"] as Record<string, unknown> | undefined)?.[
+						"customer_id"
+					] as string) ?? null,
+				rel_customer_id:
+					(
+						(
+							(source?.["relationships"] as Record<string, unknown> | undefined)?.[
+								"customer"
+							] as Record<string, unknown> | undefined
+						)?.["data"] as Record<string, unknown> | undefined
+					)?.["id"] ?? null,
+			};
+			console.log("[SUBSCRIPTION_UPDATE_DEBUG] raw snapshot:", snapshot);
+		} catch {}
 		const parsed = SubscriptionDataSchema.safeParse(candidate);
 		if (!parsed.success) {
 			console.error(
@@ -207,8 +227,25 @@ export class ProcessWebhook {
 		let resolvedUserId: string | null = existingDbSub?.user_id ?? null;
 		if (!resolvedUserId) {
 			if (!customerId) {
+				const dbg = {
+					dataId: (source?.["id"] as string) ?? null,
+					customer_id: (source?.["customer_id"] as string) ?? null,
+					attr_customer_id:
+						((source?.["attributes"] as Record<string, unknown> | undefined)?.[
+							"customer_id"
+						] as string) ?? null,
+					rel_customer_id:
+						(
+							(
+								(source?.["relationships"] as Record<string, unknown> | undefined)?.[
+									"customer"
+								] as Record<string, unknown> | undefined
+							)?.["data"] as Record<string, unknown> | undefined
+						)?.["id"] ?? null,
+				};
 				console.warn(
-					"[SUBSCRIPTION_UPDATE] No user found by subscription_id and no customer_id in payload"
+					"[SUBSCRIPTION_UPDATE] No user found by subscription_id and no customer_id in payload",
+					dbg
 				);
 				return;
 			}
