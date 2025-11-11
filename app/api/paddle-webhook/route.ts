@@ -15,8 +15,10 @@ export async function POST(request: NextRequest) {
 			return Response.json({ error: "Missing signature from header" }, { status: 400 });
 		}
 
-		// 2. Get the raw request body - CRITICAL: Do not transform or parse it
-		const rawRequestBody = await request.text();
+		// 2. Get the raw request body as buffer, then convert to string
+		// CRITICAL: Must use buffer.toString() as per Paddle SDK docs
+		const buffer = await request.arrayBuffer();
+		const rawRequestBody = Buffer.from(buffer).toString();
 
 		if (!rawRequestBody) {
 			console.error("[PADDLE_WEBHOOK] Missing request body");
