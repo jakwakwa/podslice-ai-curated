@@ -72,9 +72,11 @@ export class ProcessWebhook {
 			scheduled_change: ScheduledChangeSchema,
 		});
 
-		const parsed = SubscriptionDataSchema.safeParse(
-			(event as unknown as { data?: unknown }).data
-		);
+		// Support both flat data and JSON:API-style data with attributes/relationships
+		const eventDataAny = event as unknown as { data?: any };
+		const source = eventDataAny?.data;
+		const candidate = source?.attributes ?? source;
+		const parsed = SubscriptionDataSchema.safeParse(candidate);
 		if (!parsed.success) {
 			console.error(
 				"[SUBSCRIPTION_UPDATE] Failed to parse subscription data:",
@@ -92,7 +94,13 @@ export class ProcessWebhook {
 
 		console.log(`[SUBSCRIPTION_UPDATE] Processing subscription ${externalId}`);
 
-		const priceId = d.items?.[0]?.price?.id ?? d.items?.[0]?.price_id ?? null;
+		// Extract price id with multiple fallbacks
+		const priceId =
+			d.items?.[0]?.price?.id ??
+			d.items?.[0]?.price_id ??
+			// JSON:API style nested relationship
+			(source?.attributes?.items?.[0]?.price?.data?.id as string | undefined) ??
+			null;
 		const status = typeof d.status === "string" ? d.status : "active";
 		const current_period_start = d.current_billing_period?.starts_at
 			? new Date(d.current_billing_period.starts_at)
@@ -118,8 +126,15 @@ export class ProcessWebhook {
 			);
 		}
 
+		// Extract customer id from multiple shapes, including JSON:API relationships
+		const relationshipsCustomerId: string | undefined =
+			typeof source?.relationships?.customer?.data?.id === "string"
+				? source.relationships.customer.data.id
+				: undefined;
 		const customerId =
-			d.customer_id ?? (typeof d.customer === "string" ? d.customer : d.customer?.id);
+			d.customer_id ??
+			(typeof d.customer === "string" ? d.customer : d.customer?.id) ??
+			relationshipsCustomerId;
 		if (!customerId) {
 			console.warn("[SUBSCRIPTION_UPDATE] No customer ID found in event data");
 			return;
@@ -504,19 +519,26 @@ export class ProcessWebhook {
 				.optional(),
 		});
 
-		const parsed = TransactionDataSchema.safeParse(
-			(event as unknown as { data?: unknown }).data
-		);
+		// Support both flat and JSON:API-style transaction payloads
+		const eventAny = event as unknown as { data?: any };
+		const src = eventAny?.data;
+		const cand = src?.attributes ?? src;
+		const parsed = TransactionDataSchema.safeParse(cand);
 		if (!parsed.success) {
 			console.error("[PAYMENT_SUCCESS] Failed to parse transaction data:", parsed.error);
 			return;
 		}
 
+		const relationshipsCustomerIdSuccess: string | undefined =
+			typeof src?.relationships?.customer?.data?.id === "string"
+				? src.relationships.customer.data.id
+				: undefined;
 		const customerId =
 			parsed.data.customer_id ??
 			(typeof parsed.data.customer === "string"
 				? parsed.data.customer
-				: parsed.data.customer?.id);
+				: parsed.data.customer?.id) ??
+			relationshipsCustomerIdSuccess;
 		if (!customerId) {
 			console.warn("[PAYMENT_SUCCESS] No customer ID in transaction data");
 			return;
@@ -587,19 +609,25 @@ export class ProcessWebhook {
 			customer: z.union([z.object({ id: z.string().optional() }), z.string()]).optional(),
 		});
 
-		const parsed = TransactionDataSchema.safeParse(
-			(event as unknown as { data?: unknown }).data
-		);
+		const eventAnyFailed = event as unknown as { data?: any };
+		const srcFailed = eventAnyFailed?.data;
+		const candFailed = srcFailed?.attributes ?? srcFailed;
+		const parsed = TransactionDataSchema.safeParse(candFailed);
 		if (!parsed.success) {
 			console.error("[PAYMENT_FAILED] Failed to parse transaction data:", parsed.error);
 			return;
 		}
 
+		const relationshipsCustomerIdFailed: string | undefined =
+			typeof srcFailed?.relationships?.customer?.data?.id === "string"
+				? srcFailed.relationships.customer.data.id
+				: undefined;
 		const customerId =
 			parsed.data.customer_id ??
 			(typeof parsed.data.customer === "string"
 				? parsed.data.customer
-				: parsed.data.customer?.id);
+				: parsed.data.customer?.id) ??
+			relationshipsCustomerIdFailed;
 		if (!customerId) {
 			console.warn("[PAYMENT_FAILED] No customer ID in transaction data");
 			return;
