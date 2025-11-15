@@ -49,3 +49,26 @@ next-env.d.ts
 *reader*.json
 *-player-script.js
 .cursor/.mcp
+# Strategic architecture report.md
+.gitignore
+.gitignore
+QUICK_START_PADDLE_INTEGRITY.md
+PADDLE_WEBHOOK_INTEGRITY_IMPLEMENTATION.md
+docs/**/*-report.md
+docs/**/*-tasks.md
+docs/**/*-feedback.md
+docs/**/*-suggestions.md
+docs/**/*-notes.md
+docs/**/*-ideas.md
+docs/**/*-questions.md
+docs/**/*-answers.md
+docs/**/*-concerns.md
+docs/**/*-suggestions.md
+docs/**/*-feedback.md
+docs/**/*-suggestions.md
+docs/**/*-notes.md
+docs/**/*-ideas.md
+docs/**/*-questions.md
+docs/**/*-answers.md
+docs/**/*-concerns.md
+/scripts/maintenance/**/*-subscriptions.ts
