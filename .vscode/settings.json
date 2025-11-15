@@ -88,4 +88,12 @@
     "editor.fontFamily": "Dank Mono, Monaco, 'Courier New', monospace",
     "yaml.maxItemsComputed": 500,
     "yaml.yamlVersion": "1.1",
+    "terminal.integrated.tabs.showActions": "singleTerminal",
+    "terminal.integrated.tabs.showActiveTerminal": "singleTerminal",
+    "terminal.integrated.tabs.title": "${shellType}",
+    "terminal.integrated.enableMultiLinePasteWarning": "never",
+    "terminal.integrated.suggest.cdPath": "relative",
+    "terminal.integrated.tabs.defaultColor": "terminal.ansiGreen",
+    "terminal.integrated.tabStopWidth": 2,
+    "terminal.integrated.drawBoldTextInBrightColors": true,
 }
