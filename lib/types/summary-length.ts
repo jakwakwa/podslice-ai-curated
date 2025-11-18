@@ -15,7 +15,7 @@ export const SUMMARY_LENGTH_OPTIONS = {
 	},
 	MEDIUM: {
 		minutes: [3, 4] as const,
-		words: [700, 1260] as const,
+		words: [420, 720] as const,
 		label: "Standard Summary (3-4 mins)",
 		description: "Balanced depth and brevity",
 		usageCount: 1,
