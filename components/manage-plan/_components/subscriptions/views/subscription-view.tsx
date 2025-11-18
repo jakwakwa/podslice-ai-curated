@@ -223,7 +223,7 @@ export function SubscriptionView() {
 				borderRadius: "12px !important",
 			}}>
 			{isPolling && (
-				<span className="ml-2 text-xs text-primary-foreground-muted ">
+				<span className="ml-2 text-xs text-primary-foreground-muted hidden">
 					(syncing changes…)
 				</span>
 			)}
@@ -249,7 +249,7 @@ export function SubscriptionView() {
 
 						<div className="flex gap-1 w-full md:w-fit">
 							<Button variant="outline" size="sm" onClick={openPortal}>
-								Update Membership
+								 More Billing Details 
 							</Button>
 						</div>
 					</div>
