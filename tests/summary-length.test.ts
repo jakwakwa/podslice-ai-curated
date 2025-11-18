@@ -43,13 +43,13 @@ describe("lib/types/summary-length - Pure Utility Functions (No DB Required)", (
 		it("should have MEDIUM option with 1 usage count", () => {
 			expect(SUMMARY_LENGTH_OPTIONS.MEDIUM.usageCount).toBe(1);
 			expect(SUMMARY_LENGTH_OPTIONS.MEDIUM.minutes).toEqual([3, 4]);
-			expect(SUMMARY_LENGTH_OPTIONS.MEDIUM.words).toEqual([280, 540]);
+			expect(SUMMARY_LENGTH_OPTIONS.MEDIUM.words).toEqual([420, 560]);
 		});
 
 		it("should have LONG option with 2 usage count", () => {
 			expect(SUMMARY_LENGTH_OPTIONS.LONG.usageCount).toBe(2);
 			expect(SUMMARY_LENGTH_OPTIONS.LONG.minutes).toEqual([5, 7]);
-			expect(SUMMARY_LENGTH_OPTIONS.LONG.words).toEqual([540, 700]);
+			expect(SUMMARY_LENGTH_OPTIONS.LONG.words).toEqual([700, 980]);
 		});
 	});
 
@@ -250,14 +250,14 @@ describe("lib/types/summary-length - Pure Utility Functions (No DB Required)", (
 	describe("getInsufficientCreditsMessage", () => {
 		it("should generate correct message for SHORT episode with insufficient credits", () => {
 			const message = getInsufficientCreditsMessage(30, "SHORT", 30);
-			expect(message).toContain("quick slice (2-3 mins)");
+			expect(message).toContain("quick slice (1-2 mins)");
 			expect(message).toContain("0 credits remaining");
 			expect(message).toContain("requires 1 credit");
 		});
 
 		it("should generate correct message for LONG episode with 1 credit", () => {
 			const message = getInsufficientCreditsMessage(29, "LONG", 30);
-			expect(message).toContain("deep dive (7-10 mins)");
+			expect(message).toContain("deep dive (5-7 mins)");
 			expect(message).toContain("1 credit remaining");
 			expect(message).toContain("requires 2 credits");
 		});
@@ -291,7 +291,7 @@ describe("lib/types/summary-length - Pure Utility Functions (No DB Required)", (
 
 		it("should include all key information", () => {
 			const message = getInsufficientCreditsMessage(28, "MEDIUM", 30);
-			expect(message).toContain("standard summary (5-7 mins)");
+			expect(message).toContain("standard summary (3-4 mins)");
 			expect(message).toContain("2 credits remaining");
 			expect(message).toContain("requires 1 credit");
 			expect(message).toContain("would exceed your limit");

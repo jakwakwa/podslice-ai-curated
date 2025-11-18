@@ -48,7 +48,7 @@ export function LongEpisodeWarningDialog({
 								<>
 									<p>
 										The <strong>Deep Dive</strong> option creates a more comprehensive
-										7-10 minute summary, but it counts as <strong>2 episodes</strong>{" "}
+										5-7 minute summary, but it counts as <strong>2 episodes</strong>{" "}
 										towards your monthly limit.
 									</p>
 									<div className="px-3  py-1 border-2 border-amber-500/50 rounded-lg">
