@@ -215,7 +215,7 @@ export function PricingPlans({
           <Card
             key={tier.priceId}
             className={cn(
-              "rounded-lg bg-background/70  overflow-hidden flex-1",
+              "rounded-lg bg-card  overflow-hidden flex-1",
             )}
           >
             <div
