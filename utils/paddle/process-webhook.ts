@@ -126,10 +126,44 @@ export class ProcessWebhook {
 		}
 
 		// Deterministic user resolution: lookup by customer ID
-		const user = await prisma.user.findFirst({
+		let user = await prisma.user.findFirst({
 			where: { paddle_customer_id: customerId },
 			select: { user_id: true, paddle_customer_id: true },
 		});
+
+		// Fallback: if user not found by customer ID, try to fetch customer email from Paddle and link by email
+		// This handles race conditions where subscription event arrives before customer event or during simulation
+		if (!user && customerId) {
+			try {
+				const { getPaddleInstance } = await import("@/utils/paddle/get-paddle-instance");
+				const paddle = getPaddleInstance();
+				const customer = await paddle.customers.get(customerId);
+
+				if (customer.email) {
+					// Try to find user by email and update paddle_customer_id
+					const updatedUser = await prisma.user.update({
+						where: { email: customer.email },
+						data: { paddle_customer_id: customerId },
+						select: { user_id: true, paddle_customer_id: true },
+					});
+					if (updatedUser) {
+						user = updatedUser;
+						this.logWebhookSnapshot("user_linked_via_api_lookup", {
+							eventType: event.eventType,
+							customerId,
+							email: customer.email,
+							userId: user.user_id,
+						});
+					}
+				}
+			} catch (error) {
+				this.logWebhookSnapshot("user_link_fallback_failed", {
+					eventType: event.eventType,
+					customerId,
+					error: error instanceof Error ? error.message : "Unknown error",
+				});
+			}
+		}
 
 		if (!user) {
 			this.logWebhookSnapshot("user_not_found_for_customer", {

@@ -10,7 +10,14 @@ export async function GET(_request: Request) {
 			return new NextResponse("Unauthorized", { status: 401 });
 		}
 
-    const notifications = await prisma.notification.findMany({
+		// DEBUG: Check user linkage
+		const user = await prisma.user.findUnique({
+			where: { user_id: userId },
+			select: { paddle_customer_id: true, email: true }
+		});
+		console.log(`[NOTIFICATIONS_GET] User: ${userId}, Email: ${user?.email}, PaddleID: ${user?.paddle_customer_id}`);
+
+		const notifications = await prisma.notification.findMany({
 			where: { user_id: userId },
 			orderBy: { created_at: "desc" }
 		});
