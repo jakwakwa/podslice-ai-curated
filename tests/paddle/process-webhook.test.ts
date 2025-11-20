@@ -431,6 +431,10 @@ describe("ProcessWebhook - Payment Failed Handling", () => {
 		expect(notifications[0]?.message).toContain("insufficient_funds");
 	});
 });
+<<<<<<< HEAD
+=======
+
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 describe("ProcessWebhook - Logging", () => {
 	it("should log webhook snapshots in non-production environment", () => {
 		const originalEnv = process.env.NODE_ENV;

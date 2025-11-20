@@ -26,6 +26,7 @@ const MAX_OPERATION_RETRIES = Math.max(
 	Number.parseInt(process.env.PADDLE_WEBHOOK_MAX_RETRIES ?? "3", 10)
 );
 
+<<<<<<< HEAD
 const RETRYABLE_ERROR_CODES = new Set([
 	"P1001",
 	"P1002",
@@ -34,6 +35,9 @@ const RETRYABLE_ERROR_CODES = new Set([
 	"P2028",
 	"P2031",
 ]);
+=======
+const RETRYABLE_ERROR_CODES = new Set(["P1001", "P1002", "P1008", "P1017", "P2028", "P2031"]);
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 
 const RETRYABLE_ERROR_PATTERNS = [
 	/ECONNRESET/i,
@@ -42,6 +46,10 @@ const RETRYABLE_ERROR_PATTERNS = [
 	/Connection terminated unexpectedly/i,
 	/Temporary failure in name resolution/i,
 ];
+<<<<<<< HEAD
+=======
+
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 export class ProcessWebhook {
 	/**
 	 * Logs webhook processing snapshots for debugging
@@ -182,6 +190,7 @@ export class ProcessWebhook {
 		}
 
 		// Deterministic user resolution: lookup by customer ID
+<<<<<<< HEAD
 		const user: Awaited<
 			ReturnType<
 				typeof prisma.user.findFirst<{
@@ -190,11 +199,15 @@ export class ProcessWebhook {
 				}>
 			>
 		> = await this.executeWithRetry("subscription_user_lookup", () =>
+=======
+		const user = await this.executeWithRetry("subscription_user_lookup", () =>
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 			prisma.user.findFirst({
 				where: { paddle_customer_id: customerId },
 				select: { user_id: true, paddle_customer_id: true },
 			})
 		);
+<<<<<<< HEAD
 
 		// Fallback: if user not found by customer ID, try to fetch customer email from Paddle and link by email
 		// This handles race conditions where subscription event arrives before customer event or during simulation
@@ -239,6 +252,8 @@ export class ProcessWebhook {
 				});
 			}
 		}
+=======
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 
 		if (!user) {
 			this.logWebhookSnapshot("user_not_found_for_customer", {
@@ -250,6 +265,7 @@ export class ProcessWebhook {
 		}
 
 		// Deterministic subscription resolution: attempt findUnique by paddle_subscription_id
+<<<<<<< HEAD
 		let existingSubscription: Awaited<
 			ReturnType<
 				typeof prisma.subscription.findUnique<{
@@ -267,10 +283,20 @@ export class ProcessWebhook {
 				where: { paddle_subscription_id: externalId },
 				select: { subscription_id: true, user_id: true, status: true, plan_type: true },
 			})
+=======
+		let existingSubscription = await this.executeWithRetry(
+			"subscription_lookup_by_paddle_id",
+			() =>
+				prisma.subscription.findUnique({
+					where: { paddle_subscription_id: externalId },
+					select: { subscription_id: true, user_id: true, status: true, plan_type: true },
+				})
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 		);
 
 		// If not found, check if user has a subscription with NULL or mismatched paddle_subscription_id
 		if (!existingSubscription) {
+<<<<<<< HEAD
 			const userSubscriptions: Awaited<
 				ReturnType<
 					typeof prisma.subscription.findMany<{
@@ -293,6 +319,20 @@ export class ProcessWebhook {
 						plan_type: true,
 					},
 				})
+=======
+			const userSubscriptions = await this.executeWithRetry(
+				"subscription_lookup_by_user",
+				() =>
+					prisma.subscription.findMany({
+						where: { user_id: user.user_id },
+						select: {
+							subscription_id: true,
+							paddle_subscription_id: true,
+							status: true,
+							plan_type: true,
+						},
+					})
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 			);
 
 			// Look for a subscription with NULL or invalid paddle_subscription_id that we can claim
@@ -354,6 +394,10 @@ export class ProcessWebhook {
 			d.trial_end_at || status === "trialing"
 				? current_period_start ?? (d.started_at ? new Date(d.started_at) : null)
 				: null;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 		const updateData = {
 			paddle_price_id: priceId,
 			plan_type: newPlanType ?? undefined,
@@ -400,6 +444,7 @@ export class ProcessWebhook {
 		});
 	}
 
+<<<<<<< HEAD
 	private extractPaymentFailureContext(
 		data: Record<string, unknown>
 	): PaymentFailureContext | undefined {
@@ -431,6 +476,8 @@ export class ProcessWebhook {
 		const paymentAttemptId =
 			this.extractString(data.payment_attempt_id) ||
 			this.extractString(details?.payment_attempt_id);
+=======
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 	private async createSubscriptionNotifications(
 		params: {
 			userId: string;
@@ -506,9 +553,12 @@ export class ProcessWebhook {
 		return null;
 	}
 
+<<<<<<< HEAD
 	private extractString(value: unknown): string | null {
 		if (typeof value === "string" && value.trim().length > 0) {
 			return value;
+=======
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 		// Payment failed (trigger if status changed or explicit payment failure context provided)
 		const shouldNotifyPastDue =
 			status === "past_due" && (statusChanged || Boolean(paymentFailureContext));
@@ -564,6 +614,14 @@ export class ProcessWebhook {
 			return "We couldn't process your payment. Please update your payment method to continue your subscription.";
 		}
 
+<<<<<<< HEAD
+=======
+	private buildPaymentFailureMessage(context?: PaymentFailureContext): string {
+		if (!context) {
+			return "We couldn't process your payment. Please update your payment method to continue your subscription.";
+		}
+
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 		const segments: string[] = ["We couldn't process your payment."];
 		const amountDisplay = this.formatAmountDisplay(context.amount, context.currencyCode);
 		if (amountDisplay) {
@@ -616,16 +674,83 @@ export class ProcessWebhook {
 		);
 	}
 
+<<<<<<< HEAD
+=======
+	private extractPaymentFailureContext(
+		data: Record<string, unknown>
+	): PaymentFailureContext | undefined {
+		const payoutTotals = (data.payout_total as Record<string, unknown> | undefined) ?? null;
+		const details = (data.details as Record<string, unknown> | undefined) ?? null;
+		const amount = this.extractAmountValue([
+			data.amount,
+			data.original_amount,
+			payoutTotals?.amount,
+			(details?.amount as unknown) ?? null,
+		]);
+		const currencyCode =
+			this.extractString(data.currency_code) ||
+			this.extractString(data.currency) ||
+			this.extractString(payoutTotals?.currency_code) ||
+			this.extractString(details?.currency_code);
+		const failureReason =
+			this.extractString(data.failure_reason) || this.extractString(details?.failure_reason);
+		const nextRetryAt =
+			this.parseDate(
+				this.extractString(data.next_payment_attempt_at) ||
+					this.extractString(data.next_payment_attempt) ||
+					this.extractString(data.next_retry_at) ||
+					this.extractString(data.retry_at) ||
+					this.extractString(details?.next_payment_attempt_at)
+			) ?? null;
+		const paymentAttemptId =
+			this.extractString(data.payment_attempt_id) ||
+			this.extractString(details?.payment_attempt_id);
+
+		if (!amount && !currencyCode && !failureReason && !nextRetryAt && !paymentAttemptId) {
+			return undefined;
+		}
+
+		return {
+			amount,
+			currencyCode,
+			failureReason,
+			nextRetryAt,
+			paymentAttemptId,
+		};
+	}
+
+	private extractAmountValue(values: unknown[]): string | number | null {
+		for (const value of values) {
+			if (typeof value === "number" && Number.isFinite(value)) return value;
+			if (typeof value === "string" && value.trim().length > 0) return value;
+		}
+		return null;
+	}
+
+	private extractString(value: unknown): string | null {
+		if (typeof value === "string" && value.trim().length > 0) {
+			return value;
+		}
+		return null;
+	}
+
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 	private parseDate(value: string | null): Date | null {
 		if (!value) return null;
 		const parsed = Date.parse(value);
 		if (Number.isNaN(parsed)) return null;
 		return new Date(parsed);
 	}
+<<<<<<< HEAD
 	private async handleSubscriptionCancellation(userId: string) {
 		const episodes: Awaited<
 			ReturnType<typeof prisma.userEpisode.findMany<{ where: { user_id: string } }>>
 		> = await this.executeWithRetry("user_episode_lookup_for_cancellation", () =>
+=======
+
+	private async handleSubscriptionCancellation(userId: string) {
+		const episodes = await this.executeWithRetry("user_episode_lookup_for_cancellation", () =>
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 			prisma.userEpisode.findMany({
 				where: { user_id: userId },
 			})
@@ -697,6 +822,7 @@ export class ProcessWebhook {
 		const customerId = parsed.data.customer_id;
 		if (!customerId) return;
 
+<<<<<<< HEAD
 		const user: Awaited<
 			ReturnType<
 				typeof prisma.user.findFirst<{
@@ -705,6 +831,9 @@ export class ProcessWebhook {
 				}>
 			>
 		> = await this.executeWithRetry("payment_success_user_lookup", () =>
+=======
+		const user = await this.executeWithRetry("payment_success_user_lookup", () =>
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 			prisma.user.findFirst({
 				where: { paddle_customer_id: customerId },
 				select: { user_id: true },
@@ -714,6 +843,7 @@ export class ProcessWebhook {
 
 		// Only notify for recurring payments (not initial subscription)
 		if (parsed.data.subscription_id) {
+<<<<<<< HEAD
 			const subscription: Awaited<
 				ReturnType<
 					typeof prisma.subscription.findFirst<{
@@ -732,13 +862,28 @@ export class ProcessWebhook {
 					},
 					select: { created_at: true },
 				})
+=======
+			const subscription = await this.executeWithRetry(
+				"payment_success_subscription_lookup",
+				() =>
+					prisma.subscription.findFirst({
+						where: {
+							paddle_subscription_id: parsed.data.subscription_id,
+							user_id: user.user_id,
+						},
+						select: { created_at: true },
+					})
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 			);
 
 			// If subscription is older than 1 day, this is a renewal payment
 			if (subscription && Date.now() - subscription.created_at.getTime() > 86400000) {
+<<<<<<< HEAD
 				this.logWebhookSnapshot("payment_success_renewal_logged", {
 					userId: user.user_id,
 					subscriptionId: parsed.data.subscription_id,
+=======
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 				await this.dispatchNotification({
 					user_id: user.user_id,
 					type: "payment_successful",
@@ -800,6 +945,7 @@ export class ProcessWebhook {
 			return;
 		}
 
+<<<<<<< HEAD
 		const user: Awaited<
 			ReturnType<
 				typeof prisma.user.findFirst<{
@@ -808,6 +954,9 @@ export class ProcessWebhook {
 				}>
 			>
 		> = await this.executeWithRetry("payment_failed_user_lookup", () =>
+=======
+		const user = await this.executeWithRetry("payment_failed_user_lookup", () =>
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 			prisma.user.findFirst({
 				where: { paddle_customer_id: customerId },
 				select: { user_id: true },
@@ -820,6 +969,7 @@ export class ProcessWebhook {
 			});
 			return;
 		}
+<<<<<<< HEAD
 
 		this.logWebhookSnapshot("payment_failed_status_updated", {
 			userId: user.user_id,
@@ -876,6 +1026,27 @@ export class ProcessWebhook {
 				}>
 			>
 		> | null = subscriptionByPaddle;
+=======
+
+		const subscriptionByPaddle = data.subscription_id
+			? await this.executeWithRetry("payment_failed_subscription_lookup_by_paddle", () =>
+					prisma.subscription.findUnique({
+						where: { paddle_subscription_id: data.subscription_id },
+						select: {
+							subscription_id: true,
+							user_id: true,
+							status: true,
+							plan_type: true,
+							cancel_at_period_end: true,
+							current_period_end: true,
+							paddle_subscription_id: true,
+						},
+					})
+				)
+			: null;
+
+		let subscription = subscriptionByPaddle;
+>>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 		if (!subscription) {
 			subscription = await this.executeWithRetry(
 				"payment_failed_subscription_lookup_latest_by_user",
