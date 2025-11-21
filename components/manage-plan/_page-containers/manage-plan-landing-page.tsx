@@ -2,47 +2,31 @@
 
 import { useSearchParams } from "next/navigation";
 import type React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PRICING_TIER } from "@/config/paddle-config";
-import { useSubscriptionStore } from "@/lib/stores/subscription-store-paddlejs";
+import { useSubscription } from "@/hooks/use-subscription";
 import type { PaddleCheckoutCompletedData } from "@/lib/types";
 import { PricingPlans } from "../_components/pricing-plans";
 import { Subscriptions } from "../_components/subscriptions/subscriptions";
 
 const ManagPlanLandingPage: React.FC = () => {
-	const setSubscription = useSubscriptionStore(state => state.setSubscription);
-	const subscription = useSubscriptionStore(state => state.subscription);
+	const { subscription, mutate } = useSubscription();
 	const [isSyncing, setIsSyncing] = useState(false);
 
-	const fetchSubscription = useCallback(async () => {
-		try {
-			const res = await fetch("/api/account/subscription", { cache: "no-store" });
-			if (!res.ok) return;
-
-			// Handle 204 No Content case (no subscription found)
-			if (res.status === 204) {
-				setSubscription(null);
-				return;
-			}
-
-			const data = await res.json();
-			setSubscription(data);
-		} catch (err) {
-			console.error("Failed to fetch subscription", err);
-		}
-	}, [setSubscription]);
-
+	// Sync with Paddle on mount
 	useEffect(() => {
 		const run = async () => {
 			try {
 				await fetch("/api/account/subscription/sync-paddle", { method: "POST" });
-			} catch { }
-			await fetchSubscription();
+				await mutate(); // Revalidate after sync
+			} catch (err) {
+				console.error("Failed to sync with Paddle", err);
+			}
 		};
 		void run();
-	}, [fetchSubscription]);
+	}, [mutate]);
 
 	// Show expired dialog if redirected with expired=1 (authoritative from URL)
 	const searchParams = useSearchParams();
@@ -63,13 +47,17 @@ const ManagPlanLandingPage: React.FC = () => {
 				const errorData = await res.json();
 				throw new Error(errorData.error || "Failed to sync subscription");
 			}
-			// Refetch subscription to update the store and UI
-			await fetchSubscription();
+			// Revalidate subscription data
+			await mutate();
 		} catch (error) {
 			console.error("Error syncing subscription:", error);
 		} finally {
 			setIsSyncing(false);
 		}
+	};
+
+	const onCheckoutClosed = async () => {
+		await mutate();
 	};
 
 	const status = subscription?.status && typeof subscription.status === "string" ? subscription.status.toLowerCase() : null;
@@ -101,13 +89,13 @@ const ManagPlanLandingPage: React.FC = () => {
 			</Dialog>
 			{hasActiveSubscription && (
 				<div className=" mt-4 ">
-					<Subscriptions />
+					<Subscriptions onSubscriptionChange={mutate} />
 				</div>
 			)}
 
 			{!hasActiveSubscription && (
 				<div className="flex w-full flex-col gap-12 mt-4 ">
-					<PricingPlans onCheckoutCompleted={syncSubscription} onCheckoutClosed={fetchSubscription} paddleProductPlan={PRICING_TIER} />
+					<PricingPlans onCheckoutCompleted={syncSubscription} onCheckoutClosed={onCheckoutClosed} paddleProductPlan={PRICING_TIER} />
 				</div>
 			)}
 		</>

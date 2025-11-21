@@ -308,8 +308,25 @@ export class ProcessWebhook {
 			currentPeriodEnd,
 		} = params;
 
+		console.log(
+			`[WEBHOOK_DEBUG] createSubscriptionNotifications called for User ${userId}`,
+			{
+				isNewSubscription,
+				status,
+				statusChanged,
+				planChanged,
+				oldStatus,
+				newPlanType,
+				oldPlanType,
+				cancelAtPeriodEnd,
+			}
+		);
+
 		// New subscription activated
 		if (isNewSubscription && status === "active") {
+			console.log(
+				`[WEBHOOK_DEBUG] Creating notification: subscription_activated for ${userId}`
+			);
 			await prisma.notification.create({
 				data: {
 					user_id: userId,
@@ -322,6 +339,9 @@ export class ProcessWebhook {
 
 		// Subscription renewed
 		if (statusChanged && oldStatus === "past_due" && status === "active") {
+			console.log(
+				`[WEBHOOK_DEBUG] Creating notification: subscription_renewed for ${userId}`
+			);
 			await prisma.notification.create({
 				data: {
 					user_id: userId,
@@ -332,8 +352,11 @@ export class ProcessWebhook {
 			return;
 		}
 
-		// Subscription cancelled
+		// Subscription cancelled (status changed to canceled)
 		if (statusChanged && status === "canceled") {
+			console.log(
+				`[WEBHOOK_DEBUG] Creating notification: subscription_cancelled for ${userId}`
+			);
 			await prisma.notification.create({
 				data: {
 					user_id: userId,
@@ -347,6 +370,7 @@ export class ProcessWebhook {
 
 		// Payment failed
 		if (statusChanged && status === "past_due") {
+			console.log(`[WEBHOOK_DEBUG] Creating notification: payment_failed for ${userId}`);
 			await prisma.notification.create({
 				data: {
 					user_id: userId,
@@ -361,6 +385,9 @@ export class ProcessWebhook {
 		// Plan upgraded/downgraded
 		if (planChanged && newPlanType && oldPlanType) {
 			const isUpgrade = this.isUpgrade(oldPlanType, newPlanType);
+			console.log(
+				`[WEBHOOK_DEBUG] Creating notification: subscription_${isUpgrade ? "upgraded" : "downgraded"} for ${userId}`
+			);
 			await prisma.notification.create({
 				data: {
 					user_id: userId,
@@ -371,9 +398,12 @@ export class ProcessWebhook {
 			return;
 		}
 
-		// Scheduled cancellation
-		if (cancelAtPeriodEnd && currentPeriodEnd) {
+		// Scheduled cancellation (cancel_at_period_end set without status change yet)
+		if (cancelAtPeriodEnd && currentPeriodEnd && !statusChanged) {
 			const endDate = currentPeriodEnd.toLocaleDateString();
+			console.log(
+				`[WEBHOOK_DEBUG] Creating notification: subscription_ending for ${userId}`
+			);
 			await prisma.notification.create({
 				data: {
 					user_id: userId,
@@ -381,7 +411,12 @@ export class ProcessWebhook {
 					message: `Your subscription will end on ${endDate}. You can reactivate it anytime before then.`,
 				},
 			});
+			return;
 		}
+
+		console.log(
+			`[WEBHOOK_DEBUG] No notification created for ${userId} - no conditions matched`
+		);
 	}
 
 	private formatPlanName(planType?: string): string {

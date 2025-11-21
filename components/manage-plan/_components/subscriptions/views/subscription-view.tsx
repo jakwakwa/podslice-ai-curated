@@ -1,41 +1,19 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useShallow } from "zustand/shallow";
+import type { KeyedMutator } from "swr";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PRICING_TIER } from "@/config/paddle-config";
-import { useSubscriptionStore } from "@/lib/stores/subscription-store-paddlejs";
+import { type Subscription, useSubscription } from "@/hooks/use-subscription";
 
-export function SubscriptionView() {
-	const { subscription, setSubscription } = useSubscriptionStore(
-		useShallow(state => ({
-			subscription: state.subscription,
-			setSubscription: state.setSubscription,
-		}))
-	);
-	const [_isSubmitting, _setIsSubmitting] = useState(false);
+interface SubscriptionViewProps {
+	onSubscriptionChange?: KeyedMutator<Subscription | null>;
+}
+
+export function SubscriptionView({ onSubscriptionChange }: SubscriptionViewProps) {
+	const { subscription, mutate } = useSubscription();
 	const [_isSyncing, setIsSyncing] = useState(false);
-	// Removed swap/cancel and manual force-sync local states
-
-	useEffect(() => {
-		const fetchSubscription = async () => {
-			try {
-				const res = await fetch("/api/account/subscription", { cache: "no-store" });
-				if (!res.ok) return;
-
-				// Handle 204 No Content case (no subscription found)
-				if (res.status === 204) {
-					setSubscription(null);
-					return;
-				}
-
-				const data = await res.json();
-				setSubscription(data);
-			} catch {}
-		};
-		fetchSubscription();
-	}, [setSubscription]);
 
 	const _syncMembership = async () => {
 		setIsSyncing(true);
@@ -52,33 +30,17 @@ export function SubscriptionView() {
 				const _syncError = await syncRes.json();
 			}
 
-			// Then fetch the updated subscription data
-			const res = await fetch("/api/account/subscription", { cache: "no-store" });
-			if (!res.ok) {
-				console.error(
-					"Failed to fetch subscription after sync:",
-					res.status,
-					res.statusText
-				);
-				return;
+			// Revalidate subscription data
+			await mutate();
+			if (onSubscriptionChange) {
+				await onSubscriptionChange();
 			}
-
-			// Handle 204 No Content case (no subscription found)
-			if (res.status === 204) {
-				setSubscription(null);
-				return;
-			}
-
-			const data = await res.json();
-			setSubscription(data);
 		} catch (error) {
 			console.error("Failed to sync membership:", error);
 		} finally {
 			setIsSyncing(false);
 		}
 	};
-
-	// Removed manual force sync; we trigger one sync automatically when portal polling starts
 
 	const currentPlan = PRICING_TIER.find(p => p.priceId === subscription?.paddle_price_id);
 
@@ -94,17 +56,11 @@ export function SubscriptionView() {
 	};
 
 	const refreshSubscription = useCallback(async (): Promise<void> => {
-		try {
-			const res = await fetch("/api/account/subscription", { cache: "no-store" });
-			if (!res.ok) return;
-			if (res.status === 204) {
-				setSubscription(null);
-				return;
-			}
-			const data = await res.json();
-			setSubscription(data);
-		} catch {}
-	}, [setSubscription]);
+		await mutate();
+		if (onSubscriptionChange) {
+			await onSubscriptionChange();
+		}
+	}, [mutate, onSubscriptionChange]);
 
 	const pollingTimerRef = useRef<number | null>(null);
 	const pollingUntilRef = useRef<number | null>(null);
