@@ -148,7 +148,7 @@ export const generateUserEpisode = inngest.createFunction(
 			resolvedSummaryLength = transcriptContext.summaryLength;
 		}
 
-		const transcript = transcriptContext.transcript;
+		const transcript = transcriptContext.transcript as string;
 
 		// Step 2: Generate TRUE neutral summary (chunked if large)
 		const summary = await step.run("generate-summary", async () => {
