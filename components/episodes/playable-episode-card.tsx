@@ -1,12 +1,18 @@
 "use client";
 
-import type React from "react";
 import { Download } from "lucide-react";
+import type React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { PlayButton } from "@/components/episodes/play-button";
 import { Button } from "@/components/ui/button";
 import EpisodeCard from "@/components/ui/episode-card";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useEpisodePlayer } from "@/hooks/use-episode-player";
 import { normalizeEpisode } from "@/lib/episodes/normalize";
 import type { Episode, UserEpisode } from "@/lib/types";
@@ -32,10 +38,10 @@ export interface PlayableEpisodeCardProps {
 
 /**
  * Unified Playable Episode Card
- * 
+ *
  * This component provides a consistent way to render episode cards
  * across the application, handling both bundle episodes and user episodes.
- * 
+ *
  * Features:
  * - Automatic episode normalization
  * - Consistent play button styling
@@ -105,6 +111,17 @@ export function PlayableEpisodeCard({
 	// Check if episode has audio
 	const hasAudio = !!normalized.audioUrl;
 
+	// Determine if we should show a disabled play button with status
+	let disabledReason: string | null = null;
+	if (!hasAudio && normalized.source === "user") {
+		const userEp = normalized.original as UserEpisode;
+		if (userEp.status === "PROCESSING" || userEp.status === "PENDING") {
+			disabledReason = "Episode is processing...";
+		} else if (userEp.status === "FAILED") {
+			disabledReason = "Episode generation failed";
+		}
+	}
+
 	return (
 		<EpisodeCard
 			as={as}
@@ -114,17 +131,31 @@ export function PlayableEpisodeCard({
 			durationSeconds={normalized.durationSeconds}
 			youtubeUrl={normalized.youtubeUrl}
 			detailsHref={normalized.permalink}
+			isNewsEpisode={normalized.isNews}
 			actions={
 				<div className="flex flex-col gap-2 md:gap-3 md:flex-row md:items-center">
 					{/* Play Button */}
-					{hasAudio && (
+					{hasAudio ? (
 						<PlayButton
 							onClick={handlePlay}
 							aria-label={`Play ${normalized.title}`}
 							isPlaying={isPlaying}
 							className={selected ? "outline-accent outline-2" : ""}
 						/>
-					)}
+					) : disabledReason ? (
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<span className="inline-block cursor-not-allowed">
+										<PlayButton disabled aria-label={disabledReason} />
+									</span>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>{disabledReason}</p>
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					) : null}
 
 					{/* Download Button (for tier 3 users) */}
 					{showDownload && hasAudio && normalized.source === "user" && (
@@ -133,15 +164,14 @@ export function PlayableEpisodeCard({
 							variant="outline"
 							size="sm"
 							disabled={isDownloading}
-							className="h-8"
-						>
+							className="h-8">
 							<Download className="w-4 h-4" />
 							{isDownloading ? "Downloading..." : "Download"}
 						</Button>
 					)}
 
 					{/* Custom Actions */}
-					{renderActions && renderActions(episode)}
+					{renderActions?.(episode)}
 				</div>
 			}
 		/>
