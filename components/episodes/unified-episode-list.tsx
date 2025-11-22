@@ -223,7 +223,7 @@ export function UnifiedEpisodeList({
 		);
 
 		return (
-			<div className="mt-8 mb-4">
+			<div className="mt-6 mb-4 flex justify-center w-full">
 				<Pagination>
 					<PaginationContent>{items}</PaginationContent>
 				</Pagination>
@@ -237,7 +237,7 @@ export function UnifiedEpisodeList({
 			: "w-full inline-flex flex-col gap-1";
 
 	return (
-		<div className={cn("border-[#ffffff0e] relative", className)}>
+		<div className={cn("border-[#ffffff0e] relative flex flex-col", className)}>
 			<div className="top-shadow"></div>
 			<div className="relative transition-all duration-200 text-card-foreground rounded-xl p-0 md:min-h-[420px] w-full h-fit">
 				{header && <div className="mb-6">{header}</div>}
@@ -253,33 +253,33 @@ export function UnifiedEpisodeList({
 							</div>
 						)
 					) : (
-						<>
-							<ul className={layoutClasses}>
-								{filteredEpisodes.map(episode => {
-									const normalized = normalizeEpisode(episode);
-									const isSelected = selectedId === normalized.id;
-									const isPlaying = playingEpisodeId === normalized.id;
+						<ul className={layoutClasses}>
+							{filteredEpisodes.map(episode => {
+								const normalized = normalizeEpisode(episode);
+								const isSelected = selectedId === normalized.id;
+								const isPlaying = playingEpisodeId === normalized.id;
 
-									return (
-										<PlayableEpisodeCard
-											key={normalized.id}
-											episode={episode}
-											as="li"
-											onPlay={onPlayEpisode}
-											showDownload={showDownload}
-											selected={isSelected}
-											isPlaying={isPlaying}
-											renderActions={renderActions}
-											className={isSelected ? "ring-2 ring-accent" : ""}
-										/>
-									);
-								})}
-							</ul>
-							{renderPagination()}
-						</>
+								return (
+									<PlayableEpisodeCard
+										key={normalized.id}
+										episode={episode}
+										as="li"
+										onPlay={onPlayEpisode}
+										showDownload={showDownload}
+										selected={isSelected}
+										isPlaying={isPlaying}
+										renderActions={renderActions}
+										className={isSelected ? "ring-2 ring-accent" : ""}
+									/>
+								);
+							})}
+						</ul>
 					)}
 				</CardContent>
 			</div>
+
+			{/* Pagination below the list */}
+			{!isLoading && filteredEpisodes.length > 0 && renderPagination()}
 		</div>
 	);
 }
