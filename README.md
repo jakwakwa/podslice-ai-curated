@@ -127,6 +127,10 @@ graph TB
 - **Real-time validation**: Plan gates integrated with content delivery
 - **Robust handling**: Retry logic, data consistency, graceful degradation
 
+## Documentation
+
+- [Webhook processing](docs/webhook-processing.md) — lifecycle of Paddle events, retry guarantees, and testing guidance for `subscription.updated` and `payment.failed`.
+
 ## Strategic Benefits
 
 - **Scalability**: Server Components + background processing
