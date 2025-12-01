@@ -26,7 +26,14 @@ const MAX_OPERATION_RETRIES = Math.max(
 	Number.parseInt(process.env.PADDLE_WEBHOOK_MAX_RETRIES ?? "3", 10)
 );
 
-const RETRYABLE_ERROR_CODES = new Set(["P1001", "P1002", "P1008", "P1017", "P2028", "P2031"]);
+const RETRYABLE_ERROR_CODES = new Set([
+	"P1001",
+	"P1002",
+	"P1008",
+	"P1017",
+	"P2028",
+	"P2031",
+]);
 
 const RETRYABLE_ERROR_PATTERNS = [
 	/ECONNRESET/i,
@@ -176,19 +183,19 @@ export class ProcessWebhook {
 		}
 
 		// Deterministic user resolution: lookup by customer ID
-<<<<<<< HEAD
-		let user = await prisma.user.findFirst({
-			where: { paddle_customer_id: customerId },
-			select: { user_id: true, paddle_customer_id: true },
-		});
-=======
-		const user = await this.executeWithRetry("subscription_user_lookup", () =>
+		let user: Awaited<
+			ReturnType<
+				typeof prisma.user.findFirst<{
+					where: { paddle_customer_id: string };
+					select: { user_id: true; paddle_customer_id: true };
+				}>
+			>
+		> = await this.executeWithRetry("subscription_user_lookup", () =>
 			prisma.user.findFirst({
 				where: { paddle_customer_id: customerId },
 				select: { user_id: true, paddle_customer_id: true },
 			})
 		);
->>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 
 		// Fallback: if user not found by customer ID, try to fetch customer email from Paddle and link by email
 		// This handles race conditions where subscription event arrives before customer event or during simulation
@@ -200,11 +207,21 @@ export class ProcessWebhook {
 
 				if (customer.email) {
 					// Try to find user by email and update paddle_customer_id
-					const updatedUser = await prisma.user.update({
-						where: { email: customer.email },
-						data: { paddle_customer_id: customerId },
-						select: { user_id: true, paddle_customer_id: true },
-					});
+					const updatedUser: Awaited<
+						ReturnType<
+							typeof prisma.user.update<{
+								where: { email: string };
+								data: { paddle_customer_id: string };
+								select: { user_id: true; paddle_customer_id: true };
+							}>
+						>
+					> = await this.executeWithRetry("user_link_fallback_update", () =>
+						prisma.user.update({
+							where: { email: customer.email },
+							data: { paddle_customer_id: customerId },
+							select: { user_id: true, paddle_customer_id: true },
+						})
+					);
 					if (updatedUser) {
 						user = updatedUser;
 						this.logWebhookSnapshot("user_linked_via_api_lookup", {
@@ -234,38 +251,60 @@ export class ProcessWebhook {
 		}
 
 		// Deterministic subscription resolution: attempt findUnique by paddle_subscription_id
-		let existingSubscription = await this.executeWithRetry(
-			"subscription_lookup_by_paddle_id",
-			() =>
-				prisma.subscription.findUnique({
-					where: { paddle_subscription_id: externalId },
-					select: { subscription_id: true, user_id: true, status: true, plan_type: true },
-				})
+		let existingSubscription: Awaited<
+			ReturnType<
+				typeof prisma.subscription.findUnique<{
+					where: { paddle_subscription_id: string };
+					select: {
+						subscription_id: true;
+						user_id: true;
+						status: true;
+						plan_type: true;
+					};
+				}>
+			>
+		> = await this.executeWithRetry("subscription_lookup_by_paddle_id", () =>
+			prisma.subscription.findUnique({
+				where: { paddle_subscription_id: externalId },
+				select: { subscription_id: true, user_id: true, status: true, plan_type: true },
+			})
 		);
 
 		// If not found, check if user has a subscription with NULL or mismatched paddle_subscription_id
 		if (!existingSubscription) {
-			const userSubscriptions = await this.executeWithRetry(
-				"subscription_lookup_by_user",
-				() =>
-					prisma.subscription.findMany({
-						where: { user_id: user.user_id },
+			const userSubscriptions: Awaited<
+				ReturnType<
+					typeof prisma.subscription.findMany<{
+						where: { user_id: string };
 						select: {
-							subscription_id: true,
-							paddle_subscription_id: true,
-							status: true,
-							plan_type: true,
-						},
-					})
+							subscription_id: true;
+							paddle_subscription_id: true;
+							status: true;
+							plan_type: true;
+						};
+					}>
+				>
+			> = await this.executeWithRetry("subscription_lookup_by_user", () =>
+				prisma.subscription.findMany({
+					where: { user_id: user.user_id },
+					select: {
+						subscription_id: true,
+						paddle_subscription_id: true,
+						status: true,
+						plan_type: true,
+					},
+				})
 			);
 
 			// Look for a subscription with NULL or invalid paddle_subscription_id that we can claim
-			const unclaimedSub = userSubscriptions.find(s => {
-				const hasNoPaddleId = !s.paddle_subscription_id;
-				const hasInvalidFormat =
-					s.paddle_subscription_id && !s.paddle_subscription_id.startsWith("sub_");
-				return hasNoPaddleId || hasInvalidFormat;
-			});
+			const unclaimedSub = userSubscriptions.find(
+				(s: (typeof userSubscriptions)[number]) => {
+					const hasNoPaddleId = !s.paddle_subscription_id;
+					const hasInvalidFormat =
+						s.paddle_subscription_id && !s.paddle_subscription_id.startsWith("sub_");
+					return hasNoPaddleId || hasInvalidFormat;
+				}
+			);
 
 			if (unclaimedSub) {
 				this.logWebhookSnapshot("claiming_unclaimed_subscription", {
@@ -314,7 +353,7 @@ export class ProcessWebhook {
 
 		const trial_start =
 			d.trial_end_at || status === "trialing"
-				? current_period_start ?? (d.started_at ? new Date(d.started_at) : null)
+				? (current_period_start ?? (d.started_at ? new Date(d.started_at) : null))
 				: null;
 
 		const updateData = {
@@ -542,7 +581,8 @@ export class ProcessWebhook {
 	private extractPaymentFailureContext(
 		data: Record<string, unknown>
 	): PaymentFailureContext | undefined {
-		const payoutTotals = (data.payout_total as Record<string, unknown> | undefined) ?? null;
+		const payoutTotals =
+			(data.payout_total as Record<string, unknown> | undefined) ?? null;
 		const details = (data.details as Record<string, unknown> | undefined) ?? null;
 		const amount = this.extractAmountValue([
 			data.amount,
@@ -556,7 +596,8 @@ export class ProcessWebhook {
 			this.extractString(payoutTotals?.currency_code) ||
 			this.extractString(details?.currency_code);
 		const failureReason =
-			this.extractString(data.failure_reason) || this.extractString(details?.failure_reason);
+			this.extractString(data.failure_reason) ||
+			this.extractString(details?.failure_reason);
 		const nextRetryAt =
 			this.parseDate(
 				this.extractString(data.next_payment_attempt_at) ||
@@ -569,7 +610,7 @@ export class ProcessWebhook {
 			this.extractString(data.payment_attempt_id) ||
 			this.extractString(details?.payment_attempt_id);
 
-		if (!amount && !currencyCode && !failureReason && !nextRetryAt && !paymentAttemptId) {
+		if (!(amount || currencyCode || failureReason || nextRetryAt || paymentAttemptId)) {
 			return undefined;
 		}
 
@@ -605,7 +646,9 @@ export class ProcessWebhook {
 	}
 
 	private async handleSubscriptionCancellation(userId: string) {
-		const episodes = await this.executeWithRetry("user_episode_lookup_for_cancellation", () =>
+		const episodes: Awaited<
+			ReturnType<typeof prisma.userEpisode.findMany<{ where: { user_id: string } }>>
+		> = await this.executeWithRetry("user_episode_lookup_for_cancellation", () =>
 			prisma.userEpisode.findMany({
 				where: { user_id: userId },
 			})
@@ -616,7 +659,7 @@ export class ProcessWebhook {
 				const storage = getStorageUploader();
 				const bucketName = ensureBucketName();
 
-				const deletePromises = episodes.map(episode => {
+				const deletePromises = episodes.map((episode: (typeof episodes)[number]) => {
 					if (episode.gcs_audio_url) {
 						const objectName = episode.gcs_audio_url.replace(`gs://${bucketName}/`, "");
 						return storage.bucket(bucketName).file(objectName).delete();
@@ -677,7 +720,14 @@ export class ProcessWebhook {
 		const customerId = parsed.data.customer_id;
 		if (!customerId) return;
 
-		const user = await this.executeWithRetry("payment_success_user_lookup", () =>
+		const user: Awaited<
+			ReturnType<
+				typeof prisma.user.findFirst<{
+					where: { paddle_customer_id: string };
+					select: { user_id: true };
+				}>
+			>
+		> = await this.executeWithRetry("payment_success_user_lookup", () =>
 			prisma.user.findFirst({
 				where: { paddle_customer_id: customerId },
 				select: { user_id: true },
@@ -687,16 +737,24 @@ export class ProcessWebhook {
 
 		// Only notify for recurring payments (not initial subscription)
 		if (parsed.data.subscription_id) {
-			const subscription = await this.executeWithRetry(
-				"payment_success_subscription_lookup",
-				() =>
-					prisma.subscription.findFirst({
+			const subscription: Awaited<
+				ReturnType<
+					typeof prisma.subscription.findFirst<{
 						where: {
-							paddle_subscription_id: parsed.data.subscription_id,
-							user_id: user.user_id,
-						},
-						select: { created_at: true },
-					})
+							paddle_subscription_id: string;
+							user_id: string;
+						};
+						select: { created_at: true };
+					}>
+				>
+			> = await this.executeWithRetry("payment_success_subscription_lookup", () =>
+				prisma.subscription.findFirst({
+					where: {
+						paddle_subscription_id: parsed.data.subscription_id,
+						user_id: user.user_id,
+					},
+					select: { created_at: true },
+				})
 			);
 
 			// If subscription is older than 1 day, this is a renewal payment
@@ -762,7 +820,14 @@ export class ProcessWebhook {
 			return;
 		}
 
-		const user = await this.executeWithRetry("payment_failed_user_lookup", () =>
+		const user: Awaited<
+			ReturnType<
+				typeof prisma.user.findFirst<{
+					where: { paddle_customer_id: string };
+					select: { user_id: true };
+				}>
+			>
+		> = await this.executeWithRetry("payment_failed_user_lookup", () =>
 			prisma.user.findFirst({
 				where: { paddle_customer_id: customerId },
 				select: { user_id: true },
@@ -776,7 +841,22 @@ export class ProcessWebhook {
 			return;
 		}
 
-		const subscriptionByPaddle = data.subscription_id
+		const subscriptionByPaddle: Awaited<
+			ReturnType<
+				typeof prisma.subscription.findUnique<{
+					where: { paddle_subscription_id: string };
+					select: {
+						subscription_id: true;
+						user_id: true;
+						status: true;
+						plan_type: true;
+						cancel_at_period_end: true;
+						current_period_end: true;
+						paddle_subscription_id: true;
+					};
+				}>
+			>
+		> | null = data.subscription_id
 			? await this.executeWithRetry("payment_failed_subscription_lookup_by_paddle", () =>
 					prisma.subscription.findUnique({
 						where: { paddle_subscription_id: data.subscription_id },
@@ -793,7 +873,23 @@ export class ProcessWebhook {
 				)
 			: null;
 
-		let subscription = subscriptionByPaddle;
+		let subscription: Awaited<
+			ReturnType<
+				typeof prisma.subscription.findFirst<{
+					where: { user_id: string };
+					orderBy: { updated_at: "desc" };
+					select: {
+						subscription_id: true;
+						user_id: true;
+						status: true;
+						plan_type: true;
+						cancel_at_period_end: true;
+						current_period_end: true;
+						paddle_subscription_id: true;
+					};
+				}>
+			>
+		> | null = subscriptionByPaddle;
 		if (!subscription) {
 			subscription = await this.executeWithRetry(
 				"payment_failed_subscription_lookup_latest_by_user",
@@ -876,8 +972,7 @@ export class ProcessWebhook {
 		try {
 			return await operation();
 		} catch (error) {
-			const shouldRetry =
-				this.isTransientError(error) && attempt < MAX_OPERATION_RETRIES;
+			const shouldRetry = this.isTransientError(error) && attempt < MAX_OPERATION_RETRIES;
 			this.logWebhookSnapshot("operation_failure", {
 				operationName,
 				attempt,
