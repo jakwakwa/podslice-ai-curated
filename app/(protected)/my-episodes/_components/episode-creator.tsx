@@ -459,7 +459,7 @@ export function EpisodeCreator() {
 					{/* <ComponentSpinner isLabel={false} /> */}
 
 					<div className="w-full flex flex-col px-0 md:px-4  gap-4">
-						<div className="border-1 border-border bg-sidebar/20 rounded-3xl text-xs shadow-md p-8">
+						<div className="border border-border bg-sidebar/20 rounded-3xl text-xs shadow-md p-8">
 							<Label className="mb-2 md:mb-4">Pick a Summary Type:</Label>
 							{creatorMode === "youtube"
 								? "Instructions: To find the youtube link, go to the video, click the share button below the video, copy the link that pop-up and paste it over here."
@@ -495,7 +495,7 @@ export function EpisodeCreator() {
 								void handleCreate();
 							}}>
 							{creatorMode === "youtube" && (
-								<div className=" my-8 gap-4 mx-0 md:mx-0 border-1 border-border rounded-3xl  shadow-md p-8">
+								<div className=" my-8 gap-4 mx-0 md:mx-0 border border-border rounded-3xl  shadow-md p-8">
 									<div className="space-y-2 md:w-full md:min-w-fit">
 										<Label htmlFor="youtubeUrl">
 											Link to podcast episode ( YouTube only )
@@ -525,7 +525,7 @@ export function EpisodeCreator() {
 													height={1000}
 													src="/how-to-get-link.gif"
 													alt="How to get the link"
-													className="w-full h-full object-cover my-2 border-1 border-border rounded-md max-w-lg object-center"
+													className="w-full h-full object-cover my-2 border border-border rounded-md max-w-lg object-center"
 												/>
 											</TooltipContent>
 										</Tooltip>
@@ -588,7 +588,7 @@ export function EpisodeCreator() {
 
 							{creatorMode === "news" && (
 								<div className="flex flex-row flex-wrap my-8 gap-4 mx-2 md:mx-4 min-w-full md:gap-4 ">
-									<div className="border-1 border-border rounded-3xl  shadow-md p-8 space-y-2 md:col-span-2 lg:min-w-full text-sm">
+									<div className="border border-border rounded-3xl  shadow-md p-8 space-y-2 md:col-span-2 lg:min-w-full text-sm">
 										<Label>Sources</Label>
 										<span className="text-foreground/70">
 											Pick your sources, or leave it to the Ai to decide
@@ -634,7 +634,7 @@ export function EpisodeCreator() {
 										</div>
 									</div>
 
-									<div className="mt-4 md:col-span-2 lg:min-w-full w-full border-1 border-border rounded-3xl  shadow-md p-8">
+									<div className="mt-4 md:col-span-2 lg:min-w-full w-full border border-border rounded-3xl  shadow-md p-8">
 										<Label htmlFor="selectedTopicId">Topic</Label>
 										<Input
 											placeholder="Research any topic..."
@@ -661,7 +661,7 @@ export function EpisodeCreator() {
 								</div>
 							</div>
 
-							<div className="space-y-6 border-1 rounded-xl md:rounded-4xl w-full md:max-w-full shadow-md px-0 md:px-10 pt-8 pb-12 bg-[#110d1712] md:min-w-full ">
+							<div className="space-y-6 border rounded-xl md:rounded-4xl w-full md:max-w-full shadow-md px-0 md:px-10 pt-8 pb-12 bg-[#110d1712] md:min-w-full ">
 								<div className="py-0 px-4 md:p-0 ">
 									<div className="w-[250px] flex flex-col gap-0 md:min-w-full ">
 										<Label>Voice Settings</Label>
@@ -902,7 +902,7 @@ export function EpisodeCreator() {
 							</div>
 
 							{/* Summary Length Selector */}
-							<div className=" border-1 rounded-xl md:rounded-4xl w-full md:max-w-full shadow-md px-4 md:px-10 pt-8 pb-12 bg-[#110d1712] md:min-w-full mt-6">
+							<div className=" border rounded-xl md:rounded-4xl w-full md:max-w-full shadow-md px-4 md:px-10 pt-8 pb-12 bg-[#110d1712] md:min-w-full mt-6">
 								<SummaryLengthSelector
 									value={summaryLength}
 									onChange={setSummaryLength}
@@ -911,7 +911,7 @@ export function EpisodeCreator() {
 								/>
 							</div>
 
-							<div className="flex  w-fit mt-6 flex-col px-0 md:px-4 border-1 border-gray-900/9	0 rounded-3xl  shadow-md p-0 md:p-3 gap-4">
+							<div className="flex  w-fit mt-6 flex-col px-0 md:px-4 border border-gray-900/9	0 rounded-3xl  shadow-md p-0 md:p-3 gap-4">
 								<Button
 									type="submit"
 									variant="secondary"

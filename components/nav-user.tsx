@@ -93,7 +93,7 @@ export function NavUser({
 			<SidebarMenuItem>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<SidebarMenuButton className="bg-white/10 h-9 w-22 md:h-14 md:w-full md:px-2 md:ml-0 m-0 p-0 rounded-xl overflow-hidden border-sidebar-border border-1  outline-0">
+						<SidebarMenuButton className="bg-white/10 h-9 w-22 md:h-14 md:w-full md:px-2 md:ml-0 m-0 p-0 rounded-xl overflow-hidden border-sidebar-border border  outline-0">
 							<Avatar className=" h-10 w-11 object-cover flex items-center justify-center rounded-lg filter p-0 md:h-10 md:w-10">
 								<AvatarImage src={user.avatar} alt={user.name} />
 								<AvatarFallback className="text-foreground rounded-none hidden overflow-hidden">

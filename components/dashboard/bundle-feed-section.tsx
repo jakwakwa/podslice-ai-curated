@@ -73,7 +73,7 @@ export function BundleFeedSection({
 		<>
 			<div
 				className="bg-bigcard visible px-6 mt-0 w-full md:max-w-[60vw] flex flex-col gap-0 justify-center items-baseline shadow-md shadow-stone-950
-			md:mt-4 md:m-0 xl:flex-row md:gap-1 pt-0 md:mb-0 md:border-[#12121760] md:border-1 md:rounded-3xl lg:max-w-[70vw] lg:w-screen rounded-lg xl:max-w-[400px]">
+			md:mt-4 md:m-0 xl:flex-row md:gap-1 pt-0 md:mb-0 md:border-[#12121760] md:border md:rounded-3xl lg:max-w-[70vw] lg:w-screen rounded-lg xl:max-w-[400px]">
 				<div className="md:flex pt-0 w-full mt-0 flex-col xl:flex-row rounded-lg">
 					<BundleSummaryPanel
 						userCurationProfile={userCurationProfile}

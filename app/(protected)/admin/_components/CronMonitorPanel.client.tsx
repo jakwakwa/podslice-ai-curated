@@ -31,7 +31,10 @@ type CronJob = {
 
 type ExecutionResult = {
 	success: boolean;
-	data?: Record<string, unknown>;
+	data?: {
+		errors?: Array<{ user_id: string; message: string }>;
+		[key: string]: unknown;
+	};
 	error?: string;
 	timestamp: Date;
 	duration?: number;
@@ -250,28 +253,31 @@ export default function CronMonitorClient() {
 									</div>
 
 									{/* Errors Array */}
-									{result.success && result.data?.errors?.length > 0 && (
-										<Alert variant="destructive">
-											<AlertTriangle className="h-4 w-4" />
-											<AlertTitle>
-												Partial Failures ({result.data.errors.length})
-											</AlertTitle>
-											<AlertDescription>
-												<div className="mt-2 space-y-2">
-													{result.data.errors.map(
-														(
-															error: { user_id: string; message: string },
-															idx: number
-														) => (
-															<div key={idx} className="text-xs">
-																<strong>User:</strong> {error.user_id} - {error.message}
-															</div>
-														)
-													)}
-												</div>
-											</AlertDescription>
-										</Alert>
-									)}
+									{result.success &&
+										result.data?.errors &&
+										Array.isArray(result.data.errors) &&
+										result.data.errors.length > 0 && (
+											<Alert variant="destructive">
+												<AlertTriangle className="h-4 w-4" />
+												<AlertTitle>
+													Partial Failures ({result.data.errors?.length || 0})
+												</AlertTitle>
+												<AlertDescription>
+													<div className="mt-2 space-y-2">
+														{result.data.errors.map(
+															(
+																error: { user_id: string; message: string },
+																idx: number
+															) => (
+																<div key={idx} className="text-xs">
+																	<strong>User:</strong> {error.user_id} - {error.message}
+																</div>
+															)
+														)}
+													</div>
+												</AlertDescription>
+											</Alert>
+										)}
 								</div>
 							</CardContent>
 						)}

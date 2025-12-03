@@ -1,5 +1,5 @@
 ---
-globs: *.test.ts,*.test.tsx
+globs: *.test.ts
 alwaysApply: false
 ---
 # Imports and Vitest Rules

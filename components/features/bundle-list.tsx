@@ -120,8 +120,8 @@ export function BundleList({ onBundleSelect }: BundleListProps) {
 											{bundle.bundle_id ? (
 												<Image
 													src={`/api/bundles/${bundle.bundle_id}/image`}
-											width={80}
-											height={80}
+													width={80}
+													height={80}
 													alt={bundle.name}
 													className="w-20 h-20 object-cover rounded-lg"
 												/>

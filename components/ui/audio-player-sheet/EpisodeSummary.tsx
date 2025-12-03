@@ -47,9 +47,9 @@ export const EpisodeSummary: FC<EpisodeSummaryProps> = ({ episode, isExpanded })
 						animate={{ height: "auto", opacity: 1 }}
 						exit={{ height: 0, opacity: 0 }}
 						transition={{ type: "spring", stiffness: 260, damping: 30 }}
-						className="flex flex-col gap-[10px]">
+						className="flex flex-col gap-2.5">
 						<div
-							className={`overflow-y-auto pl-8 pr-4 py-5 lg:p-[12px] text-[12px] lg:text-[14px] bg-[#1f1f328b] backdrop-blur-3xl text-[var(--audio-sheet-foreground)]/80 transition-all lg:px-10 lg:py-7 ${isTranscriptExpanded ? " max-h-[280px]" : "max-h-[120px]"}`}>
+							className={`overflow-y-auto pl-8 pr-4 py-5 lg:p-3 text-[12px] lg:text-[14px] bg-[#1f1f328b] backdrop-blur-3xl text-(--audio-sheet-foreground) transition-all lg:px-10 lg:py-7 ${isTranscriptExpanded ? " max-h-[280px]" : "max-h-[120px]"}`}>
 							{normalizedSummary ? (
 								<div className="prose prose-invert leading-6 gap-1 text-stone-400 text-sm">
 									<ReactMarkdown remarkPlugins={[remarkGfm]}>

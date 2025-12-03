@@ -1,8 +1,6 @@
 ---
-description: Patterns for admin pages and routes – thin page, Server Components for data fetching, Client Components for interactivity, safe GCS init
-globs: app/(protected)/admin/**/*.tsx,app/api/admin/**/route.ts
+alwaysApply: false
 ---
-
 # Admin Pages and Routes Structure
 
 Follow these patterns when working inside `app/(protected)/admin/**` and `app/api/admin/**`:

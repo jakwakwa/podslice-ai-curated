@@ -457,7 +457,7 @@ const sidebarMenuButtonVariants = cva(
 		variants: {
 			variant: {
 				default:
-					"hover:text-[#60cdbb] data-[active=true]:border-1   data-[active=true]:border-sidebar-ring/70 rounded-md overflow-hidden",
+					"hover:text-[#60cdbb] data-[active=true]:border   data-[active=true]:border-sidebar-ring/70 rounded-md overflow-hidden",
 				outline: "",
 			},
 			size: {

@@ -30,7 +30,7 @@ export default function EpisodeHeader({
 					<Badge variant="default">{created.toLocaleString()}</Badge>
 					{metaBadges}
 					{rightLink ? (
-						<div className="text-xs  break-words border-1 *:rounded px-2 py-0 flex rounded-sm gap-2 p-1 text-[#fff] outline-destructive-foreground-muted bg-destructive/70 items-center">
+						<div className="text-xs  break-words border *:rounded px-2 py-0 flex rounded-sm gap-2 p-1 text-[#fff] outline-destructive-foreground-muted bg-destructive/70 items-center">
 							<a
 								className="no-underline text-white hover:underline"
 								href={rightLink.href}

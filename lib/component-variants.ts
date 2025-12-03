@@ -39,7 +39,7 @@ export const cardVariants = cva("", {
 		},
 		selected: {
 			true: "border-2",
-			false: " border-1 border-bundle-card-border",
+			false: " border border-bundle-card-border",
 		},
 		hoverable: {
 			true: "hover:shadow-xl hover:-translate-y-1 transition duration-300 ease-in-out hover:bg-azure-500/90 cursor-pointer",
@@ -161,7 +161,7 @@ export const badgeVariants = cva(
 				secondary: " tbg-red  ext-primary-foreground min-h-[initial]",
 				destructive:
 					" bg-destructive text-destructive-foreground shadow min-h-[initial]	",
-				outline: "text-foreground border-1 border-foreground/40 min-h-[initial]",
+				outline: "text-foreground border border-foreground/40 min-h-[initial]",
 				card: " my-0 bg-[rgba(27 27 182 / 0.76) text-card-foreground shadow-sm min-h-[initial]",
 				primarycard: "bg-red  min-h-[initial]",
 			},

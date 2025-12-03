@@ -1,70 +1,94 @@
 {
-  "preferred_line_length": 90,
-  "format_on_save": "on",
-  "formatter": "language_server",
-  "lsp": {
-    "biome": {
-      "settings": {
-        "config_path": "biome.json"
-      }
-    }
-  },
-  "languages": {
-    "JavaScript": {
-      "formatter": {
-        "language_server": {
-          "name": "biome"
-        }
-      },
-      "code_actions_on_format": {
-        "source.fixAll.biome": true,
-        "source.organizeImports.biome": true
-      },
-      "format_on_save": "on"
-    },
-    "TypeScript": {
-      "formatter": {
-        "language_server": {
-          "name": "biome"
-        }
-      },
-      "code_actions_on_format": {
-        "source.fixAll.biome": true,
-        "source.organizeImports.biome": true
-      },
-      "format_on_save": "on"
-    },
-    "TSX": {
-      "formatter": {
-        "language_server": {
-          "name": "biome"
-        }
-      },
-      "code_actions_on_format": {
-        "source.fixAll.biome": true,
-        "source.organizeImports.biome": true
-      },
-      "format_on_save": "on"
-    },
-    "JSX": {
-      "formatter": {
-        "language_server": {
-          "name": "biome"
-        }
-      },
-      "code_actions_on_format": {
-        "source.fixAll.biome": true,
-        "source.organizeImports.biome": true
-      },
-      "format_on_save": "on"
-    },
-    "CSS": {
-      "formatter": {
-        "language_server": {
-          "name": "biome"
-        }
-      },
-      "format_on_save": "on"
-    }
-  }
+	"preferred_line_length": 90,
+	"format_on_save": "on",
+	"formatter": "language_server",
+	"lsp": {
+		"biome": {
+			"settings": {
+				"config_path": "biome.json"
+			}
+		}
+	},
+	"languages": {
+		"JavaScript": {
+			"formatter": {
+				"language_server": {
+					"name": "biome"
+				}
+			},
+			"code_actions_on_format": {
+				"source.fixAll.biome": true,
+				"source.organizeImports.biome": true
+			},
+			"format_on_save": "on"
+		},
+		"TypeScript": {
+			"formatter": {
+				"language_server": {
+					"name": "biome"
+				}
+			},
+			"code_actions_on_format": {
+				"source.fixAll.biome": true,
+				"source.organizeImports.biome": true
+			},
+			"format_on_save": "on"
+		},
+		"TSX": {
+			"formatter": {
+				"language_server": {
+					"name": "biome"
+				}
+			},
+			"code_actions_on_format": {
+				"source.fixAll.biome": true,
+				"source.organizeImports.biome": true
+			},
+			"format_on_save": "on"
+		},
+		"JSON": {
+			"formatter": {
+				"language_server": {
+					"name": "biome"
+				}
+			},
+			"code_actions_on_format": {
+				"source.fixAll.biome": true,
+				"source.organizeImports.biome": true
+			},
+			"format_on_save": "on"
+		},
+		"CSS": {
+			"formatter": {
+				"language_server": {
+					"name": "prettier"
+				}
+			},
+			"format_on_save": "on"
+		}
+	},
+	// Container Use MCP Server Settings
+	// 
+	// The path to the cu binary is optional. If not provided,
+	// the extension will look for cu in your PATH.
+	//
+	// "cu_path": "/path/to/cu"
+	"context_servers": {
+		"local-mcp-server": {
+			"command": "bunx",
+			"args": [
+				"arg-1",
+				"arg-2"
+			],
+			"env": {}
+		},
+		"prisma": {
+			"command": "bunx",
+			"args": [
+				"-y",
+				"mcp-remote",
+				"https://mcp.prisma.io/mcp"
+			]
+		}
+	}
 }
