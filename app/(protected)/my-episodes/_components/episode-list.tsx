@@ -69,7 +69,7 @@ export function EpisodeList({
 	// Reset to page 1 when filter changes
 	useEffect(() => {
 		setCurrentPage(1);
-	}, []);
+	}, [filter]);
 
 	// If we arrived via deep link, fetch the single episode immediately to avoid showing stale progress
 	useEffect(() => {
