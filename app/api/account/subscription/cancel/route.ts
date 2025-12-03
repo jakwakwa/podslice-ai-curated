@@ -13,11 +13,17 @@ export async function POST() {
 		}
 
 		const existing = await prisma.subscription.findFirst({
-			where: { user_id: userId, OR: [{ status: "active" }, { status: "trialing" }, { status: "paused" }] },
+			where: {
+				user_id: userId,
+				OR: [{ status: "active" }, { status: "trialing" }, { status: "paused" }],
+			},
 			orderBy: { created_at: "desc" },
 		});
 		if (!existing?.paddle_subscription_id) {
-			return NextResponse.json({ error: "No active subscription to cancel" }, { status: 404 });
+			return NextResponse.json(
+				{ error: "No active subscription to cancel" },
+				{ status: 404 }
+			);
 		}
 
 		await scheduleCancelSubscription(existing.paddle_subscription_id);
@@ -31,6 +37,9 @@ export async function POST() {
 		return NextResponse.json({ ok: true });
 	} catch (e) {
 		console.error("[SUBSCRIPTION_CANCEL]", e);
-		return NextResponse.json({ error: "Failed to schedule cancellation" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Failed to schedule cancellation" },
+			{ status: 500 }
+		);
 	}
 }

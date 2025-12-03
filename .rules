@@ -1,0 +1,233 @@
+ALWAYS use ONLY Environments for ANY and ALL file, code, or shell operations—NO EXCEPTIONS—even for simple or generic requests.
+
+DO NOT install or use the git cli with the environment_run_cmd tool. All environment tools will handle git operations for you. Changing ".git" yourself will compromise the integrity of your environment.
+
+You MUST inform the user how to view your work using `container-use log <env_id>` AND `container-use checkout <env_id>`. Failure to do this will make your work inaccessible to others.
+
+DO NOT use Implicit `any` or missing prop types.
+
+
+## Task Implementation
+- **Thin pages**: `page.tsx` is minimal and declarative.
+- **Content extraction**: Move static copy/config into a dedicated object or `content.ts` file.
+- **Componentization**: Replace repeated markup with small, reusable, typed components under `components/shared` (or feature folders).
+- **Consistency**: Centralize section layout/typography to ensure consistent UX/UI.
+- **Maintainability**: Clear responsibilities, fewer props, explicit types.
+---
+
+## Anti-patterns to avoid
+
+- Mixing content, layout, and interactivity in one large `page.tsx`.
+- Duplicating markup/classes across pages instead of extracting components.
+- Using Client Components without need; prefer Server Components.
+
+---
+
+## Standard component building blocks (Welcome pattern)
+
+1) Section header
+
+```tsx
+// components/shared/section-header.tsx
+interface SectionHeaderProps {
+	title: string;
+	description: string;
+}
+
+const SectionHeader = ({ title, description }: SectionHeaderProps) => {
+	return (
+		<div className="text-left mb-0 px-6 xl:px-12  py-8 md:pt-8  ">
+			<h2 className="text-2xl leading-9 font-semibold tracking-tight mb-4 text-primary-foreground">{title}</h2>
+			<p className=" leading-5 font-normal text-secondary-foreground 		tracking-wide max-w-[600px] pb-6">
+				{description}
+			</p>
+		</div>
+	);
+};
+
+export { SectionHeader as default };
+```
+
+2) Section wrapper with children
+
+```tsx
+// components/shared/section-common.tsx
+import type React from "react";
+import SectionHeader from "./section-header";
+
+interface CommonSectionWithChildrenProps {
+	children: React.ReactNode;
+	title: string;
+	description: string;
+}
+
+const CommonSectionWithChildren = ({ children, title, description }: CommonSectionWithChildrenProps) => {
+	return (
+		<div className="border-none rounded-none overflow-hidden mb-0 p-0  mt-0 md:mt-4 md:m-0  md:p-0  outline-0 md:rounded-4xl md:shadow-xl">
+			<div className="text-left pt-8 rounded-none  mb-5 pb-7 overflow-hidden md:rounded-4xl  md:py-0 min-w-full min-h-full bg-primary/70  ">
+				<SectionHeader title={title} description={description} />
+				{children}
+			</div>
+		</div>
+	);
+}
+
+export { CommonSectionWithChildren as default };
+```
+
+---
+
+## File and naming conventions
+
+- Place shared, reusable UI in `components/shared`.
+- Page-specific variants can live alongside the page or under a feature directory.
+- Extract static copy/config to `content.ts` next to `page.tsx` for non-trivial pages; tiny pages can use an exported const inside `page.tsx`.
+- Keep `page.tsx` minimal: compose shared components and pass typed content.
+- Co-locate `loading.tsx` and `error.tsx` if the route fetches data.
+
+---
+- Stop after each sub‑task and wait for the user's  explicit approval with the word "approved"
+## Step-by-step refactor recipe
+
+## Task List Maintenance
+1) Identify content and structure
+
+1. **Update the task list as you work:**
+   - Add new tasks as they emerge.
+- Separate static copy (headings, descriptions, steps) from layout.
+- Decide whether content belongs in `content.ts` or an inline const.
+
+2. **Maintain the "Relevant Files" section:**
+   - List every file created or modified.
+   - Give each file a one‑line description of its purpose.
+2) Extract content
+
+```ts
+// app/(protected)/welcome/content.ts (example)
+export const welcomePageContent = {
+	title: "How It Works",
+	description: "Getting started with Podslice.ai is straightforward. Follow these four simple steps to create your focused content experience.",
+	howItWorks: [
+		{ step: 1, title: "Create Your Profile", description: "Start by building a custom Personalized Feed or choose from our pre-PODSLICE Bundles." },
+		{ step: 2, title: "Select Your Content", description: "Choose up to 5 individual podcasts or pick one of our 3 PODSLICE Bundles." },
+		{ step: 3, title: "Get & Enjoy Your Podcast", description: "Our AI processes your selections and generates a personalized episode every Friday, then listen through our built-in audio player." },
+	],
+	cta: { title: "Start Free Trial", description: "Click the button to explore our bundles and try out our AI curated bundles.", button: { text: "Start Free Trial", link: "/manage-membership" } },
+};
+```
+
+3) Compose a thin page
+
+```tsx
+// app/(protected)/welcome/page.tsx (simplified)
+"use client";
+import FreeTrialPromo from "@/components/shared/free-trial-promo";
+import CommonSectionWithChildren from "@/components/shared/section-common";
+import StepCard from "@/components/shared/step-card";
+import { PageHeader } from "@/components/ui/page-header";
+import { welcomePageContent } from "./content"; // or inline const for tiny pages
+
+export default function WelcomePage() {
+	const { title, description, howItWorks, cta } = welcomePageContent;
+	return (
+		<div className="flex flex-col gap-4">
+			<PageHeader title={cta.title} description={cta.description} />
+			<FreeTrialPromo href={cta.button.link} size="lg" variant="default" buttonText={cta.button.text} />
+			<CommonSectionWithChildren title={title} description={description}>
+				<div className="md:px-4 pb-8 mx-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-1 gap-4">
+					{howItWorks.map((step, index: number) => (
+						<StepCard key={`${index + 1}-${step.title}`} step={index + 1} title={step.title} description={step.description} />
+					))}
+				</div>
+			</CommonSectionWithChildren>
+		</div>
+	);
+}
+```
+
+---
+
+## Minimal before/after snapshot
+
+Before (mixed concerns):
+
+```tsx
+// One large page handling copy, layout, and repeated markup in-place
+```
+
+After (thin page using shared components):
+
+```tsx
+<PageHeader title={cta.title} description={cta.description} />
+<FreeTrialPromo href={cta.button.link} size="lg" variant="default" buttonText={cta.button.text} />
+<CommonSectionWithChildren title={title} description={description}>
+	{howItWorks.map((step, index) => (
+		<StepCard key={`${index + 1}-${step.title}`} step={index + 1} title={step.title} description={step.description} />
+	))}
+</CommonSectionWithChildren>
+```
+
+---
+
+## AI Instructions
+## Appendix: Applying this pattern elsewhere
+
+When working with task lists, the AI must:
+- Pricing/Plans: extract tiers/features into `content.ts`, reuse `SectionHeader` and create a `TierCard` analog to `StepCard`.
+- Onboarding: extract steps/checklists; reuse `StepCard` or a checklist variant.
+- Marketing sections: reuse `CommonSectionWithChildren` to keep consistent spacing and typography.
+
+1. Regularly update the task list file after finishing any significant work.
+2. Follow the completion protocol
+3. Add newly discovered tasks.
+4. Keep "Relevant Files" accurate and up to date.
+5. Before starting work, check which task is next.
+6. After implementing a task, update the file and then pause for user approval
+
+
+4) Type props explicitly
+
+- Define component prop interfaces/types in component files.
+- Use `import type` for type-only imports.
+
+5) Styling and accessibility
+
+- Reuse existing utility classes and design tokens.
+- Keep headings semantic (`h2` for section titles inside pages).
+- Provide alt text for images and labels for buttons/links.
+
+6) Server vs Client
+
+- Prefer Server Components. Mark Client Components with `"use client"` only when needed.
+- Keep data fetching in Server Components, validate with Zod where applicable, and pass data to Client Components via props.
+
+---
+
+## Acceptance checklist
+
+- [ ] `page.tsx` is thin; no duplicated markup.
+- [ ] Shared UI extracted or reused from `components/shared`.
+- [ ] Props are explicitly typed; no implicit `any`.
+- [ ] Content isolated in a `content.ts` (or inline const for tiny pages).
+- [ ] Accessibility: semantic headings, labels, focus states.
+- [ ] Styling consistent with existing classes.
+- [ ] `pnpm build` and `pnpm lint` pass.
+
+---
+
+## LLM playbook
+When refactoring a similar page, follow this sequence:
+
+1. Read current `page.tsx`. Separate copy from layout and interactivity.
+2. Create/extend shared components where markup repeats (headers, sections, cards, CTAs). Do not duplicate existing components.
+3. Extract content into `content.ts` next to the page (or use a small exported const for trivial pages).
+4. Rebuild `page.tsx` using shared components with explicit prop types.
+5. If data fetching exists, keep it server-side and validate with Zod; keep interactivity in Client Components.
+6. Replace any `<img>` with `<Image />` and ensure accessibility.
+7. Run `pnpm build` and `pnpm lint`. Fix issues.
+
+Do not:
+
+- Invent types or fields; import from `@/lib/types` or use local prop interfaces only.
+- Modify middleware or routing logic; this pattern targets UI composition.
+- Introduce new styling patterns without justification.

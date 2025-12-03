@@ -3,8 +3,25 @@ import { Button } from "@/components/ui/button";
 
 interface FreeTrialPromoProps {
 	href: string;
-	size: "lg" | "default" | "sm" | "xs" | "md" | "icon" | "play" | "playSmall" | "playLarge";
-	variant: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "play" | "icon";
+	size:
+		| "lg"
+		| "default"
+		| "sm"
+		| "xs"
+		| "md"
+		| "icon"
+		| "play"
+		| "playSmall"
+		| "playLarge";
+	variant:
+		| "default"
+		| "destructive"
+		| "outline"
+		| "secondary"
+		| "ghost"
+		| "link"
+		| "play"
+		| "icon";
 	buttonText: string;
 }
 const FreeTrialPromo = ({ href, size, variant, buttonText }: FreeTrialPromoProps) => {
@@ -14,12 +31,15 @@ const FreeTrialPromo = ({ href, size, variant, buttonText }: FreeTrialPromoProps
 				Claim Your 14 Day Premium Trial
 			</p>
 			<Link href={href}>
-				<Button variant={variant} size={size} className="w-full md:w-fit mx-auto md:mx-0 md:px-4">
+				<Button
+					variant={variant}
+					size={size}
+					className="w-full md:w-fit mx-auto md:mx-0 md:px-4">
 					{buttonText}
 				</Button>
 			</Link>
 		</div>
 	);
-}
+};
 
 export default FreeTrialPromo;

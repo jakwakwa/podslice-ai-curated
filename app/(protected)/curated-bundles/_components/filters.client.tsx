@@ -87,7 +87,7 @@ export function CuratedBundlesFilters() {
 	return (
 		<form
 			onSubmit={onSubmit}
-			className=" border-1 bg-black/20 border-border shadow-lg md:rounded-2xl mt-4 px-4 py-2 md:px-0 mb-8 sticky">
+			className=" border bg-black/20 border-border shadow-lg md:rounded-2xl mt-4 px-4 py-2 md:px-0 mb-8 sticky">
 			<div className="flex flex-col md:flex-row gap-4 md:items-center align-middle w-full rounded-2xl px-3 py-2 justify-start">
 				<div className="flex flex-col md:flex-row gap-4">
 					<Select value={plan} onValueChange={setPlan}>

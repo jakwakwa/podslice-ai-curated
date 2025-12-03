@@ -1,10 +1,14 @@
 import { auth } from "@clerk/nextjs/server";
+import type { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { userIsActive } from "@/lib/usage";
 
 // GET /api/public/shared-bundles/[bundleId]
-export async function GET(_request: Request, { params }: { params: Promise<{ bundleId: string }> }) {
+export async function GET(
+	_request: Request,
+	{ params }: { params: Promise<{ bundleId: string }> }
+) {
 	try {
 		// Require authentication
 		const { userId } = await auth();
@@ -55,10 +59,28 @@ export async function GET(_request: Request, { params }: { params: Promise<{ bun
 		});
 
 		if (!bundle) {
-			return NextResponse.json({ error: "Bundle not found or not active" }, { status: 404 });
+			return NextResponse.json(
+				{ error: "Bundle not found or not active" },
+				{ status: 404 }
+			);
 		}
 
 		// Return bundle with metadata
+		type SharedBundleWithEpisodes = Prisma.SharedBundleGetPayload<{
+			include: {
+				episodes: {
+					include: {
+						userEpisode: true;
+					};
+				};
+				owner: {
+					select: {
+						name: true;
+					};
+				};
+			};
+		}>;
+
 		return NextResponse.json({
 			shared_bundle_id: bundle.shared_bundle_id,
 			name: bundle.name,
@@ -67,14 +89,16 @@ export async function GET(_request: Request, { params }: { params: Promise<{ bun
 			owner: {
 				name: bundle.owner.name,
 			},
-			episodes: bundle.episodes.map(ep => ({
-				episode_id: ep.episode_id,
-				display_order: ep.display_order,
-				episode_title: ep.userEpisode.episode_title,
-				duration_seconds: ep.userEpisode.duration_seconds,
-				gcs_audio_url: ep.userEpisode.gcs_audio_url,
-				created_at: ep.userEpisode.created_at,
-			})),
+			episodes: (bundle as SharedBundleWithEpisodes).episodes.map(
+				(ep: SharedBundleWithEpisodes["episodes"][number]) => ({
+					episode_id: ep.episode_id,
+					display_order: ep.display_order,
+					episode_title: ep.userEpisode.episode_title,
+					duration_seconds: ep.userEpisode.duration_seconds,
+					gcs_audio_url: ep.userEpisode.gcs_audio_url,
+					created_at: ep.userEpisode.created_at,
+				})
+			),
 			total_episodes: bundle.episodes.length,
 		});
 	} catch (error) {

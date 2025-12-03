@@ -24,7 +24,8 @@ const PRICING_TIER: PlanTier[] = [
 			"Custom User-Curated Bundles: Our team selects approximately 25 high-quality podcast shows. You have the flexibility to choose up to five individual shows from this curated list to create your custom collection.",
 			"Pre-curated Bundles: For ultimate convenience, we offer three exclusive 'Editor's Choice' bundles. Each bundle is a carefully curated package of five shows centered around a specific theme, refreshed monthly by our team to ensure the content remains relevant and engaging.",
 		],
-		description: "Enhanced experience with For ultimate convenience, we offer three exclusive 'Editor's Choice' bundles and an option to customise yourbundle feed podcast selections",
+		description:
+			"Enhanced experience with For ultimate convenience, we offer three exclusive 'Editor's Choice' bundles and an option to customise yourbundle feed podcast selections",
 		episodeLimit: 0,
 		featured: false,
 	},
@@ -39,7 +40,8 @@ const PRICING_TIER: PlanTier[] = [
 			"Custom User-Curated Bundles: With this plan you have the flexibility to choose from our curated list of 25 high-quality podcast shows and we will automatically generate a personalised bundle feed for you every week",
 			"Create your own Ai powered generated audio summaries from any podcast show or news on the web",
 		],
-		description: "Stay in control with the ability to create custom bundled feeds and fully personalised Ai powered generated audio summaries",
+		description:
+			"Stay in control with the ability to create custom bundled feeds and fully personalised Ai powered generated audio summaries",
 		episodeLimit: 30,
 		featured: false,
 	},

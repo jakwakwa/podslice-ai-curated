@@ -1,12 +1,18 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useShallow } from "zustand/shallow"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { PAYMENT_CONFIG } from "@/config/ai"
-import { useSubscriptionStore } from "@/lib/stores/subscription-store-paddlejs"
+import { useState } from "react";
+import { useShallow } from "zustand/shallow";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import { PAYMENT_CONFIG } from "@/config/ai";
+import { useSubscriptionStore } from "@/lib/stores/subscription-store-paddlejs";
 
 export function SubscriptionTestControlsPaddle() {
 	const { setSubscription, subscription } = useSubscriptionStore(
@@ -14,8 +20,8 @@ export function SubscriptionTestControlsPaddle() {
 			setSubscription: state.setSubscription,
 			subscription: state.subscription,
 		}))
-	)
-	const [isVisible, setIsVisible] = useState(true)
+	);
+	const [isVisible, setIsVisible] = useState(true);
 
 	// Mock subscription states for testing
 	const mockSubscriptions = {
@@ -100,17 +106,23 @@ export function SubscriptionTestControlsPaddle() {
 			created_at: new Date("2023-12-15"),
 			updated_at: new Date("2024-01-15"),
 		},
-	}
+	};
 
 	const getCurrentPlanName = () => {
-		if (!subscription) return "FreeSlice"
-		return subscription.plan_type === "casual_listener" ? "Casual Listener" : "Curate & Control"
-	}
+		if (!subscription) return "FreeSlice";
+		return subscription.plan_type === "casual_listener"
+			? "Casual Listener"
+			: "Curate & Control";
+	};
 
 	return (
 		<div className="fixed bottom-4 right-4 z-50">
 			{/* Toggle Button */}
-			<Button onClick={() => setIsVisible(!isVisible)} variant="outline" size="sm" className="bg-background/80">
+			<Button
+				onClick={() => setIsVisible(!isVisible)}
+				variant="outline"
+				size="sm"
+				className="bg-background/80">
 				{isVisible ? "Hide" : "Show"} Paddle Test Controls
 			</Button>
 
@@ -119,35 +131,64 @@ export function SubscriptionTestControlsPaddle() {
 				<Card className="w-80 mt-2 bg-background/95 border-2">
 					<CardHeader className="pb-3">
 						<CardTitle className="text-sm">Paddle Subscription Test Controls</CardTitle>
-						<CardDescription className="text-xs">Switch between different subscription states for testing</CardDescription>
+						<CardDescription className="text-xs">
+							Switch between different subscription states for testing
+						</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-3">
 						{/* Current State Display */}
 						<div className="p-2 bg-muted rounded-md text-xs">
-							<strong>Current:</strong> {subscription ? getCurrentPlanName() : "FreeSlice"}
+							<strong>Current:</strong>{" "}
+							{subscription ? getCurrentPlanName() : "FreeSlice"}
 							<br />
 							<strong>Status:</strong> {subscription?.status || "Free"}
-							{subscription?.cancel_at_period_end && <span className="text-yellow-600"> (Canceling)</span>}
+							{subscription?.cancel_at_period_end && (
+								<span className="text-yellow-600"> (Canceling)</span>
+							)}
 						</div>
 
 						{/* Test Buttons */}
 						<div className="grid grid-cols-2 gap-2">
-							<Button variant="outline" size="sm" onClick={() => setSubscription(mockSubscriptions.free)} className="text-xs">
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => setSubscription(mockSubscriptions.free)}
+								className="text-xs">
 								FreeSlice
 							</Button>
-							<Button variant="outline" size="sm" onClick={() => setSubscription(mockSubscriptions.trial)} className="text-xs">
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => setSubscription(mockSubscriptions.trial)}
+								className="text-xs">
 								Trial
 							</Button>
-							<Button variant="outline" size="sm" onClick={() => setSubscription(mockSubscriptions.casual)} className="text-xs">
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => setSubscription(mockSubscriptions.casual)}
+								className="text-xs">
 								Casual
 							</Button>
-							<Button variant="outline" size="sm" onClick={() => setSubscription(mockSubscriptions.premium)} className="text-xs">
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => setSubscription(mockSubscriptions.premium)}
+								className="text-xs">
 								Premium
 							</Button>
-							<Button variant="outline" size="sm" onClick={() => setSubscription(mockSubscriptions.canceling)} className="text-xs">
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => setSubscription(mockSubscriptions.canceling)}
+								className="text-xs">
 								Canceling
 							</Button>
-							<Button variant="outline" size="sm" onClick={() => setSubscription(mockSubscriptions.canceled)} className="text-xs">
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => setSubscription(mockSubscriptions.canceled)}
+								className="text-xs">
 								Canceled
 							</Button>
 						</div>
@@ -157,11 +198,12 @@ export function SubscriptionTestControlsPaddle() {
 							<Badge variant="secondary" className="text-xs">
 								{subscription?.status || "Free"}
 							</Badge>
-							{subscription?.trial_end && new Date(subscription.trial_end) > new Date() && (
-								<Badge variant="outline" className="text-xs">
-									Trial
-								</Badge>
-							)}
+							{subscription?.trial_end &&
+								new Date(subscription.trial_end) > new Date() && (
+									<Badge variant="outline" className="text-xs">
+										Trial
+									</Badge>
+								)}
 							{subscription?.cancel_at_period_end && (
 								<Badge variant="outline" className="text-xs text-yellow-600">
 									Canceling
@@ -177,5 +219,5 @@ export function SubscriptionTestControlsPaddle() {
 				</Card>
 			)}
 		</div>
-	)
+	);
 }

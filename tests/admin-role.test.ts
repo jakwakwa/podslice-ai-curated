@@ -71,7 +71,10 @@ describe("Admin Role Functionality", () => {
 			const result = await isAdmin();
 
 			expect(result).toBe(false);
-			expect(consoleSpy).toHaveBeenCalledWith("Error checking admin status:", expect.any(Error));
+			expect(consoleSpy).toHaveBeenCalledWith(
+				"Error checking admin status:",
+				expect.any(Error)
+			);
 		});
 	});
 

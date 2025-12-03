@@ -8,7 +8,10 @@ import { hasPlanAccess } from "@/utils/paddle/plan-utils";
 const CreateSharedBundleSchema = z.object({
 	name: z.string().min(1, "Bundle name is required"),
 	description: z.string().optional(),
-	episode_ids: z.array(z.string()).min(1, "At least 1 episode is required").max(10, "Maximum 10 episodes allowed"),
+	episode_ids: z
+		.array(z.string())
+		.min(1, "At least 1 episode is required")
+		.max(10, "Maximum 10 episodes allowed"),
 });
 
 export async function POST(request: Request) {
@@ -22,12 +25,12 @@ export async function POST(request: Request) {
 		const body = await request.json();
 		const validation = CreateSharedBundleSchema.safeParse(body);
 
-	if (!validation.success) {
-		return NextResponse.json(
-			{ error: validation.error.errors[0]?.message ?? "Invalid request body" },
-			{ status: 400 }
-		);
-	}
+		if (!validation.success) {
+			return NextResponse.json(
+				{ error: validation.error.errors[0]?.message ?? "Invalid request body" },
+				{ status: 400 }
+			);
+		}
 
 		const { name, description, episode_ids: episodeIds } = validation.data;
 
@@ -45,17 +48,17 @@ export async function POST(request: Request) {
 			);
 		}
 
-	// Check bundle limit (max 5 including disabled)
-	const existingBundlesCount = await prisma.sharedBundle.count({
-		where: { owner_user_id: userId },
-	});
+		// Check bundle limit (max 5 including disabled)
+		const existingBundlesCount = await prisma.sharedBundle.count({
+			where: { owner_user_id: userId },
+		});
 
-	if (existingBundlesCount >= 5) {
-		return NextResponse.json(
-			{ error: "Maximum 5 shared bundles allowed per user" },
-			{ status: 400 }
-		);
-	}
+		if (existingBundlesCount >= 5) {
+			return NextResponse.json(
+				{ error: "Maximum 5 shared bundles allowed per user" },
+				{ status: 400 }
+			);
+		}
 
 		// Validate all episodes belong to the user and are COMPLETED
 		const episodes = await prisma.userEpisode.findMany({
@@ -77,21 +80,20 @@ export async function POST(request: Request) {
 		}
 
 		const invalidEpisodes = episodes.filter(
-			(ep) => ep.user_id !== userId || ep.status !== "COMPLETED"
+			ep => ep.user_id !== userId || ep.status !== "COMPLETED"
 		);
 
 		if (invalidEpisodes.length > 0) {
 			return NextResponse.json(
 				{
-					error:
-						"All episodes must belong to you and be in COMPLETED status",
+					error: "All episodes must belong to you and be in COMPLETED status",
 				},
 				{ status: 400 }
 			);
 		}
 
 		// Create bundle and junction records in a transaction
-		const bundle = await prisma.$transaction(async (tx) => {
+		const bundle = await prisma.$transaction(async tx => {
 			const newBundle = await tx.sharedBundle.create({
 				data: {
 					owner_user_id: userId,
@@ -124,10 +126,7 @@ export async function POST(request: Request) {
 		);
 	} catch (error) {
 		console.error("[SHARED_BUNDLES_POST]", error);
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 }
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
@@ -163,9 +162,6 @@ export async function GET(_request: Request) {
 		return NextResponse.json(bundles);
 	} catch (error) {
 		console.error("[SHARED_BUNDLES_GET]", error);
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 }
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }

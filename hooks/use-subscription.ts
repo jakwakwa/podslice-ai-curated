@@ -19,16 +19,16 @@ export interface Subscription {
 
 const fetcher = async (url: string): Promise<Subscription | null> => {
 	const response = await fetch(url, { cache: "no-store" });
-	
+
 	// Handle 204 No Content case (no subscription found)
 	if (response.status === 204) {
 		return null;
 	}
-	
+
 	if (!response.ok) {
 		throw new Error(`Failed to fetch subscription: ${response.status}`);
 	}
-	
+
 	return response.json();
 };
 
@@ -51,4 +51,3 @@ export function useSubscription() {
 		mutate, // Expose for manual revalidation after actions
 	};
 }
-

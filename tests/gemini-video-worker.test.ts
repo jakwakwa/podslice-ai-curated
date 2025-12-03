@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { evaluateSegmentQuality, sanitizeSegmentText, type TranscribedSegment } from "../lib/inngest/providers/gemini-video-worker";
+import {
+	evaluateSegmentQuality,
+	sanitizeSegmentText,
+	type TranscribedSegment,
+} from "../lib/inngest/providers/gemini-video-worker";
 
 describe("sanitizeSegmentText", () => {
 	it("removes timestamps, speaker labels, and extra whitespace", () => {
@@ -16,7 +20,10 @@ describe("sanitizeSegmentText", () => {
 });
 
 describe("evaluateSegmentQuality", () => {
-	const makeSegment = (text: string, overrides?: Partial<TranscribedSegment>): TranscribedSegment => ({
+	const makeSegment = (
+		text: string,
+		overrides?: Partial<TranscribedSegment>
+	): TranscribedSegment => ({
 		index: overrides?.index ?? 1,
 		text,
 		startOffset: overrides?.startOffset ?? "0s",
@@ -24,7 +31,11 @@ describe("evaluateSegmentQuality", () => {
 	});
 
 	it("accepts a sufficiently detailed segment", () => {
-		const result = evaluateSegmentQuality(makeSegment("This segment contains enough meaningful, descriptive words to pass validation."));
+		const result = evaluateSegmentQuality(
+			makeSegment(
+				"This segment contains enough meaningful, descriptive words to pass validation."
+			)
+		);
 		expect(result).toEqual({ valid: true });
 	});
 
@@ -34,7 +45,9 @@ describe("evaluateSegmentQuality", () => {
 	});
 
 	it("rejects segments dominated by stop words", () => {
-		const result = evaluateSegmentQuality(makeSegment("and the and the and the and the and the"));
+		const result = evaluateSegmentQuality(
+			makeSegment("and the and the and the and the and the")
+		);
 		expect(result).toEqual({ valid: false, reason: "stopword_ratio" });
 	});
 
@@ -44,7 +57,9 @@ describe("evaluateSegmentQuality", () => {
 	});
 
 	it("rejects empty text when timestamps are present", () => {
-		const result = evaluateSegmentQuality(makeSegment("   ", { startOffset: "0s", endOffset: "5s" }));
+		const result = evaluateSegmentQuality(
+			makeSegment("   ", { startOffset: "0s", endOffset: "5s" })
+		);
 		expect(result).toEqual({ valid: false, reason: "empty_text_with_timestamp" });
 	});
 });

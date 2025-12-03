@@ -1,42 +1,48 @@
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { requireAdminMiddleware } from "@/lib/admin-middleware";
-import { getTemplateBySlug } from "@/src/emails";
-import { renderEmail } from "@/src/emails/render";
+import { getTemplateBySlug } from "@/emails";
+import { renderEmail } from "@/emails/render";
 
-export const runtime = "nodejs";
+/**
+ * API endpoint for previewing email templates
+ * Used by the email management admin panel
+ */
+export async function GET(request: NextRequest) {
+	try {
+		// Check admin permissions
+		const adminCheck = await requireAdminMiddleware();
+		if (adminCheck) {
+			return adminCheck;
+		}
 
-export async function GET(request: Request) {
-  try {
-    const adminCheck = await requireAdminMiddleware();
-    if (adminCheck) {
-      return adminCheck;
-    }
+		const searchParams = request.nextUrl.searchParams;
+		const slug = searchParams.get("slug");
 
-    const url = new URL(request.url);
-    const slug = url.searchParams.get("slug");
+		if (!slug) {
+			return NextResponse.json({ message: "Missing slug parameter" }, { status: 400 });
+		}
 
-    if (!slug) {
-      return NextResponse.json({ message: "Missing 'slug' query param" }, { status: 400 });
-    }
+		const template = getTemplateBySlug(slug);
+		if (!template) {
+			return NextResponse.json({ message: "Template not found" }, { status: 404 });
+		}
 
-    const template = getTemplateBySlug(slug);
-    if (!template) {
-      return NextResponse.json({ message: "Template not found" }, { status: 404 });
-    }
+		const sampleProps = template.getSampleProps();
+		const { html } = await renderEmail(
+			template.component as React.ComponentType<unknown>,
+			sampleProps,
+			{
+				pretty: true,
+			}
+		);
 
-    const sampleProps = template.getSampleProps() as any;
-    const { html } = await renderEmail(template.component as any, sampleProps, { pretty: true });
-
-    return new Response(html, {
-      status: 200,
-      headers: {
-        "Content-Type": "text/html; charset=utf-8",
-        // Avoid caching during dev previews
-        "Cache-Control": "no-store",
-      },
-    });
-  } catch (error) {
-    console.error("[ADMIN_EMAIL_PREVIEW_GET]", error);
-    return NextResponse.json({ message: "Failed to render email preview" }, { status: 500 });
-  }
+		return new Response(html, {
+			headers: {
+				"Content-Type": "text/html",
+			},
+		});
+	} catch (error) {
+		console.error("Error previewing email:", error);
+		return NextResponse.json({ message: "Failed to preview email" }, { status: 500 });
+	}
 }

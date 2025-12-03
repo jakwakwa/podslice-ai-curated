@@ -31,7 +31,7 @@ export function useNotifications() {
 	);
 
 	const notifications = data ?? [];
-	const unreadCount = notifications.filter((n) => !n.is_read).length;
+	const unreadCount = notifications.filter(n => !n.is_read).length;
 
 	return {
 		notifications,
@@ -41,4 +41,3 @@ export function useNotifications() {
 		mutate, // Expose for manual revalidation
 	};
 }
-

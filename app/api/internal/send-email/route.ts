@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { EMAIL_TEMPLATES } from "@/src/emails";
+import { type AnyEmailProps, EMAIL_TEMPLATES } from "@/src/emails";
 import { renderEmail } from "@/src/emails/render";
 
 type DirectBody = {
@@ -11,9 +11,9 @@ type DirectBody = {
 };
 
 type TemplateBody = {
-	templateId: string;
+	templateId: keyof typeof EMAIL_TEMPLATES;
 	to: string;
-	props: any;
+	props: AnyEmailProps;
 };
 
 type Body = DirectBody | TemplateBody;
@@ -47,12 +47,15 @@ export async function POST(request: Request) {
 
 		if (isTemplateBody(body)) {
 			// Render template in Next.js runtime
-			const template = (EMAIL_TEMPLATES as any)[body.templateId];
+			const template = EMAIL_TEMPLATES[body.templateId];
 			if (!template) {
 				return NextResponse.json({ error: "Invalid template" }, { status: 400 });
 			}
 
-			const rendered = await renderEmail(template.component, body.props);
+			const rendered = await renderEmail(
+				template.component as React.ComponentType<AnyEmailProps>,
+				body.props
+			);
 			to = body.to;
 			subject = template.getSubject(body.props);
 			text = rendered.text;
@@ -83,5 +86,3 @@ export async function POST(request: Request) {
 		return NextResponse.json({ error: "Failed" }, { status: 500 });
 	}
 }
-
-

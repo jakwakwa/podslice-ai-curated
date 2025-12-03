@@ -1,6 +1,5 @@
 ---
-description: Using zustand store with app router architecture
-alwaysApply: false
+alwaysApply: true
 ---
 Using the store with Next.js App Router architecture
 

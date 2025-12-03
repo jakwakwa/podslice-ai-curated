@@ -32,15 +32,14 @@ export const cardVariants = cva("", {
 			default: "bg-card backdrop-filter-sm rounded-xl border text-card-foreground px-4",
 			glass:
 				"md:bg-background/80 md:backdrop-blur-[4px] border text-card-foreground px-4",
-			dunk:
-				"bg-dunk border-2 border-bundle-card-border w-full transition-shadow duration-200 gap-3 bundle-card-hover xl:min-w-[70vw]  xl:overflow-hidden rounded-4xl ease-in-out text-shadow-sm shadow-[0_4px_4px_1px_#0506062c] relative",
+			dunk: "bg-dunk border-2 border-bundle-card-border w-full transition-shadow duration-200 gap-3 bundle-card-hover xl:min-w-[70vw]  xl:overflow-hidden rounded-4xl ease-in-out text-shadow-sm shadow-[0_4px_4px_1px_#0506062c] relative",
 			transparent: "main-card",
 			bundle:
 				"bg-card  border-2 border-bundle-card-border w-full transition-shadow duration-200 gap-3 bundle-card-hover xl:max-w-[500px]  xl:overflow-hidden rounded-xl ease-in-out text-shadow-sm shadow-[0_4px_4px_1px_#0506062c]",
 		},
 		selected: {
 			true: "border-2",
-			false: " border-1 border-bundle-card-border",
+			false: " border border-bundle-card-border",
 		},
 		hoverable: {
 			true: "hover:shadow-xl hover:-translate-y-1 transition duration-300 ease-in-out hover:bg-azure-500/90 cursor-pointer",
@@ -162,7 +161,7 @@ export const badgeVariants = cva(
 				secondary: " tbg-red  ext-primary-foreground min-h-[initial]",
 				destructive:
 					" bg-destructive text-destructive-foreground shadow min-h-[initial]	",
-				outline: "text-foreground border-1 border-foreground/40 min-h-[initial]",
+				outline: "text-foreground border border-foreground/40 min-h-[initial]",
 				card: " my-0 bg-[rgba(27 27 182 / 0.76) text-card-foreground shadow-sm min-h-[initial]",
 				primarycard: "bg-red  min-h-[initial]",
 			},

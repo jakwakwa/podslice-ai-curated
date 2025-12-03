@@ -26,11 +26,17 @@ export async function POST(request: Request) {
 		const { priceId } = parsed.data;
 
 		const existing = await prisma.subscription.findFirst({
-			where: { user_id: userId, OR: [{ status: "active" }, { status: "trialing" }, { status: "paused" }] },
+			where: {
+				user_id: userId,
+				OR: [{ status: "active" }, { status: "trialing" }, { status: "paused" }],
+			},
 			orderBy: { created_at: "desc" },
 		});
 		if (!existing?.paddle_subscription_id) {
-			return NextResponse.json({ error: "No active subscription to swap" }, { status: 404 });
+			return NextResponse.json(
+				{ error: "No active subscription to swap" },
+				{ status: 404 }
+			);
 		}
 
 		// Schedule plan change for next billing period (no immediate proration)

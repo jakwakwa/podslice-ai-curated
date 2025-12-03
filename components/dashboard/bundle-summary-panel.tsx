@@ -63,7 +63,7 @@ export function BundleSummaryPanel({
 					{sections.bundleFeed.title}
 				</h2>
 				<div className="md:rounded-2xl">
-					<div className="md:border-1 bg-sidebar shadow-indigo-800/90 md:shadow-none border border-border  py-6 md:pt-4 md:pb-0 px-2 shadow-lg rounded-t-lg text-secondary-foreground md:text-primary-foreground">
+					<div className="md:border bg-sidebar shadow-indigo-800/90 md:shadow-none border border-border  py-6 md:pt-4 md:pb-0 px-2 shadow-lg rounded-t-lg text-secondary-foreground md:text-primary-foreground">
 						<Button
 							className="inline-flex text-sm md:text-xs justify-end w-full px-0 mb-2 text-foreground"
 							variant="ghost"
@@ -78,7 +78,7 @@ export function BundleSummaryPanel({
 								{sections.bundleFeed.activeBundleLabel}
 							</p>
 
-							<div className="bg-card flex  py-2 px-3 md:px-2 md:py-1 md:rounded-sm border-1 border-sidebar-border/50 shadow-sm shadow-indigo-950/90 rounded-md gap-3">
+							<div className="bg-card flex  py-2 px-3 md:px-2 md:py-1 md:rounded-sm border border-sidebar-border/50 shadow-sm shadow-indigo-950/90 rounded-md gap-3">
 								<Typography className="flex w-full text-sm font-bold items-center gap-2">
 									<Podcast
 										size={16}
@@ -97,8 +97,8 @@ export function BundleSummaryPanel({
 					</div>
 
 					<div className=" md:inline mt-0 w-full">
-						<div className="bg-[#393247]/30 border-t-0 overflow-hidden rounded-b-md border-1 border-[#51516500] px-0 p-0">
-							<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full border-1 border-gray-800/30 rounded-md overflow-hidden pt-0">
+						<div className="bg-[#393247]/30 border-t-0 overflow-hidden rounded-b-md border border-[#51516500] px-0 p-0">
+							<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full border border-gray-800/30 rounded-md overflow-hidden pt-0">
 								<Table>
 									<TableHeader>
 										<TableRow>
@@ -143,7 +143,7 @@ export function BundleSummaryPanel({
 								{sections.bundleFeed.personalFeedLabel}
 							</p>
 
-							<div className="bg-card flex  py-2 px-3 md:px-2 md:py-1 md:rounded-sm border-1 border-sidebar-border/50 shadow-sm shadow-indigo-950/90 rounded-md gap-3">
+							<div className="bg-card flex  py-2 px-3 md:px-2 md:py-1 md:rounded-sm border border-sidebar-border/50 shadow-sm shadow-indigo-950/90 rounded-md gap-3">
 								<Typography className="flex w-full text-sm font-bold items-center gap-2">
 									<UserIcon size={16} className="text-ring md:text-accent-foreground" />
 									<span className="text-sm text-foreground gap-3 font-sans text-left font-bold">
@@ -152,7 +152,7 @@ export function BundleSummaryPanel({
 								</Typography>
 							</div>
 						</div>{" "}
-						<div className="bg-[#393247]/40 border-t-0 overflow-hidden rounded-md border-1 border-[#51516500] px-0 p-0">
+						<div className="bg-[#393247]/40 border-t-0 overflow-hidden rounded-md border border-[#51516500] px-0 p-0">
 							<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full border-0  border-gray-800/30 rounded-md overflow-hidden pt-0">
 								<Table>
 									<TableHeader>

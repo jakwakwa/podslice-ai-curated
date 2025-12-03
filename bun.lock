@@ -35,6 +35,7 @@
         "@react-email/render": "^1.3.1",
         "@tabler/icons-react": "^3.34.1",
         "@tailwindcss/postcss": "^4.1.12",
+        "@upstash/context7-sdk": "^0.1.0",
         "@vercel/analytics": "^1.5.0",
         "ai": "^5.0.62",
         "class-variance-authority": "^0.7.1",
@@ -993,6 +994,8 @@
     "@types/unist": ["@types/unist@3.0.3", "", {}, "sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q=="],
 
     "@ungap/structured-clone": ["@ungap/structured-clone@1.3.0", "", {}, "sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g=="],
+
+    "@upstash/context7-sdk": ["@upstash/context7-sdk@0.1.0", "", {}, "sha512-hev3MQTlyJJPb1mVpqPhh60fjpZAMq0bt1NhfuD1RmlrBojv6EgI8EvusJrCu5zUU3J+BPtu9GhSsc5uIBhDvQ=="],
 
     "@vercel/analytics": ["@vercel/analytics@1.5.0", "", { "peerDependencies": { "@remix-run/react": "^2", "@sveltejs/kit": "^1 || ^2", "next": ">= 13", "react": "^18 || ^19 || ^19.0.0-rc", "svelte": ">= 4", "vue": "^3", "vue-router": "^4" }, "optionalPeers": ["@remix-run/react", "@sveltejs/kit", "next", "react", "svelte", "vue", "vue-router"] }, "sha512-MYsBzfPki4gthY5HnYN7jgInhAZ7Ac1cYDoRWFomwGHWEX7odTEzbtg9kf/QSo7XEsEAqlQugA6gJ2WS2DEa3g=="],
 

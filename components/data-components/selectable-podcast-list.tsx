@@ -1,10 +1,13 @@
-import type { Podcast } from "@/lib/types"
+import type { Podcast } from "@/lib/types";
 
 interface CuratedPodcastListProps {
-	onSelectPodcast: (podcast: Podcast) => void
-	selectedPodcasts: Podcast[]
+	onSelectPodcast: (podcast: Podcast) => void;
+	selectedPodcasts: Podcast[];
 }
 
-export function CuratedPodcastList({ onSelectPodcast: _onSelectPodcast, selectedPodcasts: _selectedPodcasts }: CuratedPodcastListProps) {
-	return <div className="text-amber-400 font-bold text-sm">COMING SOON!</div>
+export function CuratedPodcastList({
+	onSelectPodcast: _onSelectPodcast,
+	selectedPodcasts: _selectedPodcasts,
+}: CuratedPodcastListProps) {
+	return <div className="text-amber-400 font-bold text-sm">COMING SOON!</div>;
 }

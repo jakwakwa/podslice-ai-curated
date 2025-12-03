@@ -37,7 +37,8 @@ export function useYouTubeChannel(youtubeUrl: string | null): UseYouTubeChannelR
 		} else {
 			try {
 				const u = new URL(youtubeUrl);
-				isYouTubeLike = u.hostname.includes("youtube.com") || u.hostname.includes("youtu.be");
+				isYouTubeLike =
+					u.hostname.includes("youtube.com") || u.hostname.includes("youtu.be");
 			} catch {
 				isYouTubeLike = false;
 			}
@@ -55,7 +56,9 @@ export function useYouTubeChannel(youtubeUrl: string | null): UseYouTubeChannelR
 			setError(null);
 
 			try {
-				const response = await fetch(`/api/youtube/channel?url=${encodeURIComponent(youtubeUrl)}`);
+				const response = await fetch(
+					`/api/youtube/channel?url=${encodeURIComponent(youtubeUrl)}`
+				);
 				const data: ChannelData = await response.json();
 
 				if (response.ok && data.channelName) {

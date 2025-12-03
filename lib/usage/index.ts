@@ -1,4 +1,9 @@
-export async function userIsActive(prisma: any, userId: string): Promise<boolean> {
+import type { PrismaClient } from "@prisma/client";
+
+export async function userIsActive(
+	prisma: PrismaClient,
+	userId: string
+): Promise<boolean> {
 	// Active-like statuses
 	const activeStatuses = ["active", "trialing", "paused"];
 	const sub = await prisma.subscription.findFirst({

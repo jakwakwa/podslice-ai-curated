@@ -16,13 +16,19 @@ function parseGcsUrl(rawUrl: string): ParsedGcs | null {
 			const withoutScheme = rawUrl.slice("gs://".length);
 			const firstSlash = withoutScheme.indexOf("/");
 			if (firstSlash === -1) return null;
-			return { bucket: withoutScheme.slice(0, firstSlash), filePath: withoutScheme.slice(firstSlash + 1) };
+			return {
+				bucket: withoutScheme.slice(0, firstSlash),
+				filePath: withoutScheme.slice(firstSlash + 1),
+			};
 		}
 
 		if (host === "storage.googleapis.com" || host === "storage.cloud.google.com") {
 			const firstSlash = path.indexOf("/");
 			if (firstSlash === -1) return null;
-			return { bucket: path.slice(0, firstSlash), filePath: decodeURIComponent(path.slice(firstSlash + 1)) };
+			return {
+				bucket: path.slice(0, firstSlash),
+				filePath: decodeURIComponent(path.slice(firstSlash + 1)),
+			};
 		}
 
 		if (host.endsWith(".storage.googleapis.com")) {
@@ -63,7 +69,10 @@ async function updateUserEpisodes(): Promise<{ updated: number; failed: number }
 		if (!ep.gcs_audio_url) continue;
 		const duration = await extractDurationFromGCSFile(ep.gcs_audio_url);
 		if (duration && duration > 0) {
-			await prisma.userEpisode.update({ where: { episode_id: ep.episode_id }, data: { duration_seconds: duration } });
+			await prisma.userEpisode.update({
+				where: { episode_id: ep.episode_id },
+				data: { duration_seconds: duration },
+			});
 			await updateGcsMetadata(ep.gcs_audio_url, duration);
 			updated++;
 			console.log(`✅ UserEpisode updated: ${ep.episode_title} (${duration}s)`);
@@ -93,7 +102,10 @@ async function updateRegularEpisodes(): Promise<{ updated: number; failed: numbe
 		}
 		const duration = await extractDurationFromGCSFile(ep.audio_url);
 		if (duration && duration > 0) {
-			await prisma.episode.update({ where: { episode_id: ep.episode_id }, data: { duration_seconds: duration } });
+			await prisma.episode.update({
+				where: { episode_id: ep.episode_id },
+				data: { duration_seconds: duration },
+			});
 			await updateGcsMetadata(ep.audio_url, duration);
 			updated++;
 			console.log(`✅ Episode updated: ${ep.title} (${duration}s)`);

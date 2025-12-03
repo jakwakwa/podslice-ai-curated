@@ -6,7 +6,7 @@ describe("lib/env - getProviderWindowSeconds", () => {
 
 	beforeEach(() => {
 		process.env = { ...originalEnv };
-		delete process.env.PROVIDER_WINDOW_SECONDS;
+		process.env.PROVIDER_WINDOW_SECONDS = undefined;
 	});
 
 	it("returns 270 when env var is missing", () => {
@@ -54,7 +54,7 @@ describe("lib/env - getEpisodeTargetMinutes", () => {
 
 	beforeEach(() => {
 		process.env = { ...originalEnv };
-		delete process.env.EPISODE_TARGET_MINUTES;
+		process.env.EPISODE_TARGET_MINUTES = undefined;
 	});
 
 	it("returns 4 when env var is missing", () => {
