@@ -741,6 +741,10 @@ export class ProcessWebhook {
 				this.logWebhookSnapshot("payment_success_renewal_logged", {
 					userId: user.user_id,
 					subscriptionId: parsed.data.subscription_id,
+				await this.dispatchNotification({
+					user_id: user.user_id,
+					type: "payment_successful",
+					message: "Your payment was processed successfully. Thank you!",
 				});
 			}
 		}
@@ -819,6 +823,12 @@ export class ProcessWebhook {
 			return;
 		}
 
+		this.logWebhookSnapshot("payment_failed_status_updated", {
+			userId: user.user_id,
+			subscriptionId: subscription.subscription_id,
+			statusChanged,
+			failureContext,
+		});
 		const subscriptionByPaddle: Awaited<
 			ReturnType<
 				typeof prisma.subscription.findUnique<{
@@ -918,12 +928,21 @@ export class ProcessWebhook {
 			);
 		}
 
-		this.logWebhookSnapshot("payment_failed_status_updated", {
-			userId: user.user_id,
-			subscriptionId: subscription.subscription_id,
-			statusChanged,
-			failureContext,
-		});
+		await this.createSubscriptionNotifications(
+			{
+				userId: user.user_id,
+				isNewSubscription: false,
+				status: "past_due",
+				statusChanged,
+				planChanged: false,
+				oldStatus: subscription.status,
+				newPlanType: subscription.plan_type,
+				oldPlanType: subscription.plan_type,
+				cancelAtPeriodEnd: Boolean(subscription.cancel_at_period_end),
+				currentPeriodEnd: subscription.current_period_end ?? undefined,
+			},
+			failureContext
+		);
 
 		this.logWebhookSnapshot("payment_failed_processed", {
 			customerId,
