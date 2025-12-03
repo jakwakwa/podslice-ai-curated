@@ -337,14 +337,11 @@ Instructions:
 			const { text } = await generateText({
 				model: vertex(modelId),
 				tools: { google_search: vertex.tools.googleSearch({}) },
+
 				providerOptions: {
 					google: {
-						// Thinking tokens (reasoning) for compatible Gemini models
 						thinking: {
-							// The SDK calls it 'budgetTokens', Google receives it as 'thinkingBudget'
-							budgetTokens: 1024,
-
-							// This was the setting causing the error because the budget above was missing
+							budgetTokens: 10024,
 							includeThoughts: true,
 						},
 					},
