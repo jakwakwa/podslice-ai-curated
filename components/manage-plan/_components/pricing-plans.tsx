@@ -198,6 +198,7 @@ export function PricingPlans({
 		}
 	};
 
+<<<<<<< Updated upstream
 	return (
 		<>
 			{!hasActiveSubscription &&
@@ -235,4 +236,50 @@ export function PricingPlans({
 				))}
 		</>
 	);
+=======
+  return (
+    <>
+      {!hasActiveSubscription &&
+        paddleProductPlan?.map((tier) => (
+          <Card
+            key={tier.priceId}
+            className={cn(
+              "rounded-lg bg-card  overflow-hidden flex-1",
+            )}
+          >
+            <div
+              className={cn(
+                "flex gap-5 flex-col rounded-lg rounded-b-none pricing-card-border",
+              )}
+            >
+              <PriceTitle tier={tier} />
+              <PriceAmount
+                loading={loading}
+                // This is the main fix: Use the tier's priceId to look up the correct price from the prices object.
+                value={prices?.[tier.priceId]}
+                priceSuffix={frequency.priceSuffix}
+              />
+              <div className={"px-8"}>
+                <Separator className={"bg-border"} />
+              </div>
+              <div className={"px-8 text-[16px] leading-[24px]"}>
+                {tier.description}
+              </div>
+            </div>
+            <div className={"px-8 mt-8"}>
+              <Button
+                onClick={(e) => openPaddleCheckout(e, tier.priceId)}
+                className={"w-full"}
+                variant={"secondary"}
+                disabled={hasActiveSubscription}
+              >
+                Upgrade
+              </Button>
+            </div>
+            <FeatureList tier={tier} loading={loading} />
+          </Card>
+        ))}
+    </>
+  );
+>>>>>>> Stashed changes
 }
