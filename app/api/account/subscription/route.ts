@@ -13,9 +13,19 @@ export const dynamic = "force-dynamic";
 // - transaction_id | transactionId | id
 // - customer: { id } | customer_id
 // - items: [{ price_id }] | items: [{ price: { id } }] | items: [{ priceId }]
-const CheckoutItemSchema = z.union([z.object({ price_id: z.string() }), z.object({ price: z.object({ id: z.string() }) }), z.object({ priceId: z.string() })]).transform(item => ({
-	price_id: (item as { price_id?: string }).price_id ?? (item as { price?: { id?: string } }).price?.id ?? (item as { priceId?: string }).priceId ?? "",
-}));
+const CheckoutItemSchema = z
+	.union([
+		z.object({ price_id: z.string() }),
+		z.object({ price: z.object({ id: z.string() }) }),
+		z.object({ priceId: z.string() }),
+	])
+	.transform(item => ({
+		price_id:
+			(item as { price_id?: string }).price_id ??
+			(item as { price?: { id?: string } }).price?.id ??
+			(item as { priceId?: string }).priceId ??
+			"",
+	}));
 
 const checkoutCompletedSchema = z
 	.object({
@@ -74,10 +84,14 @@ export async function POST(request: Request) {
 					create: {
 						user_id: userId,
 						name: clerk?.fullName || clerk?.firstName || "Unknown",
-						email: clerk?.emailAddresses?.[0]?.emailAddress || `unknown+${userId}@example.com`,
+						email:
+							clerk?.emailAddresses?.[0]?.emailAddress || `unknown+${userId}@example.com`,
 						password: "clerk_managed",
 						image: clerk?.imageUrl || null,
-						email_verified: clerk?.emailAddresses?.[0]?.verification?.status === "verified" ? new Date() : null,
+						email_verified:
+							clerk?.emailAddresses?.[0]?.verification?.status === "verified"
+								? new Date()
+								: null,
 						paddle_customer_id: customer.id,
 					},
 				});
@@ -106,14 +120,23 @@ export async function POST(request: Request) {
 				started_at: z.string().optional(),
 				next_billed_at: z.string().optional(),
 			});
-			const raw = Array.isArray(paddleResp?.data) ? paddleResp.data : Array.isArray(paddleResp) ? paddleResp : [];
+			const raw = Array.isArray(paddleResp?.data)
+				? paddleResp.data
+				: Array.isArray(paddleResp)
+					? paddleResp
+					: [];
 			const parsed = z.array(PaddleSubscriptionItemSchema).safeParse(raw);
 			const subs = parsed.success ? parsed.data : [];
 			if (subs.length > 0) {
-				const preferred = subs.find(s => s?.status === "active") ?? subs.find(s => s?.status === "trialing") ?? subs[0];
+				const preferred =
+					subs.find(s => s?.status === "active") ??
+					subs.find(s => s?.status === "trialing") ??
+					subs[0];
 				externalSubscriptionId = preferred?.id ?? preferred?.subscription_id ?? null;
-				const starts = preferred?.current_billing_period?.starts_at || preferred?.started_at || null;
-				const ends = preferred?.current_billing_period?.ends_at || preferred?.next_billed_at || null;
+				const starts =
+					preferred?.current_billing_period?.starts_at || preferred?.started_at || null;
+				const ends =
+					preferred?.current_billing_period?.ends_at || preferred?.next_billed_at || null;
 				current_period_start = starts ? new Date(starts) : null;
 				current_period_end = ends ? new Date(ends) : null;
 			}
@@ -126,8 +149,19 @@ export async function POST(request: Request) {
 				OR: [{ status: "active" }, { status: "trialing" }, { status: "paused" }],
 			},
 		});
-		if (existingActive && (externalSubscriptionId ? existingActive.paddle_subscription_id !== externalSubscriptionId : true)) {
-			return NextResponse.json({ error: "You already have an active subscription. Manage or change your plan instead of purchasing a new one." }, { status: 409 });
+		if (
+			existingActive &&
+			(externalSubscriptionId
+				? existingActive.paddle_subscription_id !== externalSubscriptionId
+				: true)
+		) {
+			return NextResponse.json(
+				{
+					error:
+						"You already have an active subscription. Manage or change your plan instead of purchasing a new one.",
+				},
+				{ status: 409 }
+			);
 		}
 
 		// Be idempotent: upsert by unique paddle_subscription_id (fall back to transaction_id if Paddle sub id is missing)
@@ -163,7 +197,9 @@ export async function GET() {
 	try {
 		console.log("[SUBSCRIPTION_GET] Starting request");
 		const { userId } = await auth();
-		console.log("[SUBSCRIPTION_GET] Auth result:", { userId: userId ? "present" : "null" });
+		console.log("[SUBSCRIPTION_GET] Auth result:", {
+			userId: userId ? "present" : "null",
+		});
 
 		if (!userId) {
 			console.log("[SUBSCRIPTION_GET] No userId, returning 401");
@@ -172,7 +208,10 @@ export async function GET() {
 
 		// Prefer an "active-like" subscription if multiple rows exist
 		const findPreferred = async () => {
-			console.log("[SUBSCRIPTION_GET] Looking for active-like subscription for userId:", userId);
+			console.log(
+				"[SUBSCRIPTION_GET] Looking for active-like subscription for userId:",
+				userId
+			);
 			const activeLike = await prisma.subscription.findFirst({
 				where: {
 					user_id: userId,
@@ -181,7 +220,9 @@ export async function GET() {
 				orderBy: { updated_at: "desc" },
 			});
 			if (activeLike) return activeLike;
-			console.log("[SUBSCRIPTION_GET] No active-like subscription, falling back to latest by updated_at");
+			console.log(
+				"[SUBSCRIPTION_GET] No active-like subscription, falling back to latest by updated_at"
+			);
 			return prisma.subscription.findFirst({
 				where: { user_id: userId },
 				orderBy: { updated_at: "desc" },
@@ -189,14 +230,20 @@ export async function GET() {
 		};
 
 		let subscription = await findPreferred();
-		console.log("[SUBSCRIPTION_GET] Preferred query result:", subscription ? "found" : "null");
+		console.log(
+			"[SUBSCRIPTION_GET] Preferred query result:",
+			subscription ? "found" : "null"
+		);
 
 		// Retry once on transient connection closure
 		if (!subscription) {
 			try {
 				console.log("[SUBSCRIPTION_GET] Retrying preferred query");
 				subscription = await findPreferred();
-				console.log("[SUBSCRIPTION_GET] Retry query result:", subscription ? "found" : "null");
+				console.log(
+					"[SUBSCRIPTION_GET] Retry query result:",
+					subscription ? "found" : "null"
+				);
 			} catch (retryError) {
 				console.error("[SUBSCRIPTION_GET] Retry failed:", retryError);
 			}
@@ -214,7 +261,10 @@ export async function GET() {
 		return res;
 	} catch (error) {
 		console.error("[SUBSCRIPTION_GET] Unexpected error:", error);
-		console.error("[SUBSCRIPTION_GET] Error stack:", error instanceof Error ? error.stack : "No stack");
+		console.error(
+			"[SUBSCRIPTION_GET] Error stack:",
+			error instanceof Error ? error.stack : "No stack"
+		);
 		return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
 	}
 }

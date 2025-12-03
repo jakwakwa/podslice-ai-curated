@@ -24,7 +24,10 @@ function buildYouTubeVideoPart(url: string, seg?: SegmentOptions): Part {
 	return base as Part;
 }
 
-export async function transcribeWithGeminiFromUrl(url: string, seg?: SegmentOptions): Promise<string | null> {
+export async function transcribeWithGeminiFromUrl(
+	url: string,
+	seg?: SegmentOptions
+): Promise<string | null> {
 	const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
 	if (!apiKey) {
 		throw new Error("GOOGLE_GENERATIVE_AI_API_KEY is not set.");
@@ -61,7 +64,10 @@ export interface ChunkOptions {
 	minChunkSeconds?: number; // floor when shrinking (default 60)
 }
 
-export async function transcribeWithGeminiFromUrlChunked(url: string, options?: ChunkOptions): Promise<string | null> {
+export async function transcribeWithGeminiFromUrlChunked(
+	url: string,
+	options?: ChunkOptions
+): Promise<string | null> {
 	// Strategy overview:
 	// - We rely on Gemini videoMetadata segmentation (startOffset/endOffset) so only the specified
 	//   temporal window is ingested each request (unlike pure instruction-based timestamp prompts).
@@ -101,7 +107,10 @@ export async function transcribeWithGeminiFromUrlChunked(url: string, options?: 
 	function estTokens(sec: number): number {
 		return Math.round(sec * TOKENS_PER_VIDEO_SECOND);
 	}
-	while (estTokens(targetChunkSeconds) > maxTokensPerChunk && targetChunkSeconds > minChunkSeconds) {
+	while (
+		estTokens(targetChunkSeconds) > maxTokensPerChunk &&
+		targetChunkSeconds > minChunkSeconds
+	) {
 		targetChunkSeconds = Math.max(minChunkSeconds, Math.floor(targetChunkSeconds / 2));
 	}
 
@@ -109,7 +118,10 @@ export async function transcribeWithGeminiFromUrlChunked(url: string, options?: 
 	let start = 0;
 	while (start < durationSeconds) {
 		const end = Math.min(durationSeconds, start + targetChunkSeconds);
-		segments.push({ start: Math.max(0, start - (segments.length > 0 ? overlapSeconds : 0)), end });
+		segments.push({
+			start: Math.max(0, start - (segments.length > 0 ? overlapSeconds : 0)),
+			end,
+		});
 		start = end;
 	}
 

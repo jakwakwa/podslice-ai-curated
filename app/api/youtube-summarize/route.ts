@@ -3,7 +3,10 @@ import { GoogleGenAI, type Part } from "@google/genai";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-const InputSchema = z.object({ url: z.string().url(), sentences: z.number().min(1).max(10).optional() });
+const InputSchema = z.object({
+	url: z.string().url(),
+	sentences: z.number().min(1).max(10).optional(),
+});
 
 export async function POST(request: Request) {
 	try {
@@ -17,10 +20,16 @@ export async function POST(request: Request) {
 
 		const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
 		if (!apiKey) {
-			return NextResponse.json({ error: "GOOGLE_GENERATIVE_AI_API_KEY is not set" }, { status: 500 });
+			return NextResponse.json(
+				{ error: "GOOGLE_GENERATIVE_AI_API_KEY is not set" },
+				{ status: 500 }
+			);
 		}
 
-		const modelName = process.env.GEMINI_SUMMARY_MODEL || process.env.GEMINI_TRANSCRIBE_MODEL || "gemini-2.5-pro";
+		const modelName =
+			process.env.GEMINI_SUMMARY_MODEL ||
+			process.env.GEMINI_TRANSCRIBE_MODEL ||
+			"gemini-2.5-pro";
 		const genAI = new GoogleGenAI({ apiKey });
 		const instruction = `Please summarize the video in ${sentences ?? 3} sentences.`;
 		const mediaPart: Part = { fileData: { fileUri: url, mimeType: "video/*" } };

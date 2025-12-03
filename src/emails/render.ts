@@ -3,7 +3,7 @@
  */
 
 import { render } from "@react-email/render";
-import { createElement, type ComponentType } from "react";
+import { type ComponentType, createElement } from "react";
 
 export interface RenderedEmail {
 	html: string;
@@ -17,20 +17,20 @@ export interface RenderedEmail {
  * @param options - Rendering options
  * @returns Object with html and text versions
  */
-export async function renderEmail<P = any>(
+export async function renderEmail<P = Record<string, unknown>>(
 	component: ComponentType<P>,
 	props: P,
 	options?: {
 		pretty?: boolean;
-	},
+	}
 ): Promise<RenderedEmail> {
 	// Render HTML
-	const html = await render(createElement(component as any, props as any), {
+	const html = await render(createElement(component, props) as React.ReactElement, {
 		pretty: options?.pretty ?? process.env.NODE_ENV === "development",
 	});
 
 	// Render plain text version
-	const text = await render(createElement(component as any, props as any), {
+	const text = await render(createElement(component, props) as React.ReactElement, {
 		plainText: true,
 	});
 
@@ -41,15 +41,15 @@ export async function renderEmail<P = any>(
  * Synchronous version of renderEmail for use in non-async contexts
  * Note: Uses blocking await internally - use renderEmail when possible
  */
-export function renderEmailSync<P = any>(
+export function renderEmailSync<P = Record<string, unknown>>(
 	component: ComponentType<P>,
 	props: P,
 	options?: {
 		pretty?: boolean;
-	},
+	}
 ): RenderedEmail {
 	// Create element
-	const element = createElement(component as any, props as any);
+	const element = createElement(component, props) as React.ReactElement;
 
 	// Render synchronously - this will work because render is actually sync despite typing
 	const html = render(element, {

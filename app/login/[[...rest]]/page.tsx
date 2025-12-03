@@ -1,6 +1,6 @@
-import { redirect } from "next/navigation"
-import { getClerkSignInUrl } from "@/lib/env"
+import { redirect } from "next/navigation";
+import { getClerkSignInUrl } from "@/lib/env";
 
 export default function LoginAlias() {
-	redirect(getClerkSignInUrl())
+	redirect(getClerkSignInUrl());
 }

@@ -14,7 +14,9 @@ export function SheetShowcase(): JSX.Element {
 	return (
 		<div className="flex flex-col gap-4">
 			<div className="flex items-center gap-3">
-<Button variant="default" onClick={() => setOpen(true)}>Open AudioPlayerSheet</Button>
+				<Button variant="default" onClick={() => setOpen(true)}>
+					Open AudioPlayerSheet
+				</Button>
 				<span className="text-sm opacity-70">Opens from the right using Sheet</span>
 			</div>
 			{/* AudioPlayerSheet ready for real episode data */}

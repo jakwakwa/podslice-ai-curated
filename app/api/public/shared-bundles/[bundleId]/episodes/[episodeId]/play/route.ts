@@ -6,7 +6,10 @@ import { prisma } from "@/lib/prisma";
 function extractGcsFromHttp(url: string): { bucket: string; object: string } | null {
 	try {
 		const u = new URL(url);
-		if (u.hostname === "storage.googleapis.com" || u.hostname === "storage.cloud.google.com") {
+		if (
+			u.hostname === "storage.googleapis.com" ||
+			u.hostname === "storage.cloud.google.com"
+		) {
 			// Path style: /bucket/object
 			const path = u.pathname.replace(/^\//, "");
 			const slash = path.indexOf("/");
@@ -22,7 +25,10 @@ function extractGcsFromHttp(url: string): { bucket: string; object: string } | n
 	return null;
 }
 
-export async function GET(_request: Request, { params }: { params: Promise<{ bundleId: string; episodeId: string }> }) {
+export async function GET(
+	_request: Request,
+	{ params }: { params: Promise<{ bundleId: string; episodeId: string }> }
+) {
 	try {
 		// Require authentication
 		const { userId } = await auth();
@@ -55,7 +61,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ bun
 			},
 		});
 
-		if (!(bundleEpisode && bundleEpisode.sharedBundle.is_active)) {
+		if (!bundleEpisode?.sharedBundle.is_active) {
 			return new NextResponse("Episode not found in active bundle", { status: 404 });
 		}
 

@@ -12,9 +12,9 @@ export default function PaddleNotificationsPage() {
 					Manage webhook endpoints and email destinations for Paddle events
 				</p>
 			</div>
-		<Suspense fallback={<div>Loading notification settings...</div>}>
-			<PaddleNotificationsPanel />
-		</Suspense>
+			<Suspense fallback={<div>Loading notification settings...</div>}>
+				<PaddleNotificationsPanel />
+			</Suspense>
 		</div>
 	);
 }

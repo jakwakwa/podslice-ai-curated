@@ -11,7 +11,10 @@ import { myBundlesContent } from "./content";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-	return { title: "My Shared Bundles", description: "Manage your shared episode bundles." };
+	return {
+		title: "My Shared Bundles",
+		description: "Manage your shared episode bundles.",
+	};
 }
 
 export default async function MyBundlesPage() {
@@ -20,20 +23,24 @@ export default async function MyBundlesPage() {
 	if (userId) {
 		isActive = await userIsActive(prisma, userId);
 	}
-    const { header } = myBundlesContent;
-    return (
-        <div className="flex episode-card-wrapper mt-4 flex-col justify-center mx-auto w-screen md:w-screen max-w-full">
-            <PageHeader
-                title={header.title}
-                description={isActive ? header.activeDescription : header.inactiveDescription}
-                button={
-                    <div className={!isActive ? "p-4" : ""}>
-                        <CreateBundleModalWrapper isActive={isActive} />
-                    </div>
-                }
-            />
+	const { header } = myBundlesContent;
+	return (
+		<div className="flex episode-card-wrapper mt-4 flex-col justify-center mx-auto w-screen md:w-screen max-w-full">
+			<PageHeader
+				title={header.title}
+				description={isActive ? header.activeDescription : header.inactiveDescription}
+				button={
+					<div className={!isActive ? "p-4" : ""}>
+						<CreateBundleModalWrapper isActive={isActive} />
+					</div>
+				}
+			/>
 
-            {isActive ? <BundleList /> : <UserInfoPageLevelMsg isActive={isActive} message={header.inactiveMessage} />}
-        </div>
-    );
+			{isActive ? (
+				<BundleList />
+			) : (
+				<UserInfoPageLevelMsg isActive={isActive} message={header.inactiveMessage} />
+			)}
+		</div>
+	);
 }

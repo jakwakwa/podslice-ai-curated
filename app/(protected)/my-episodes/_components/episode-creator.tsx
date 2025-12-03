@@ -334,7 +334,7 @@ export function EpisodeCreator() {
 					"We're processing your episode and will email you when it's ready.",
 					{
 						duration: Infinity,
-						action: { label: "Dismiss", onClick: () => { } },
+						action: { label: "Dismiss", onClick: () => {} },
 					}
 				);
 				resumeAfterSubmission();
@@ -386,7 +386,7 @@ export function EpisodeCreator() {
 			if (!res.ok) throw new Error(await res.text());
 			toast.message("We're processing your episode and will email you when it's ready.", {
 				duration: Infinity,
-				action: { label: "Dismiss", onClick: () => { } },
+				action: { label: "Dismiss", onClick: () => {} },
 			});
 			resumeAfterSubmission();
 			router.push("/dashboard?from=generate");
@@ -396,8 +396,8 @@ export function EpisodeCreator() {
 			);
 			toast.error(
 				(err instanceof Error ? err.message : "Failed to start episode generation.") ||
-				"",
-				{ duration: Infinity, action: { label: "Dismiss", onClick: () => { } } }
+					"",
+				{ duration: Infinity, action: { label: "Dismiss", onClick: () => {} } }
 			);
 		} finally {
 			setIsCreating(false);
@@ -937,7 +937,7 @@ export function EpisodeCreator() {
 				}}
 			/>
 
-			<Dialog open={showRestrictionDialog} onOpenChange={() => { }} modal={true}>
+			<Dialog open={showRestrictionDialog} onOpenChange={() => {}} modal={true}>
 				<DialogContent
 					className="sm:max-w-md"
 					onInteractOutside={e => e.preventDefault()}

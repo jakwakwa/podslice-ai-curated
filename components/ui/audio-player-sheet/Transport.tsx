@@ -15,8 +15,20 @@ type TransportProps = {
 	onToggleMute: () => void;
 };
 
-export const Transport: FC<TransportProps> = ({ isPlaying, isLoading, currentTime, duration, onToggle, onSeek, volume, isMuted, onVolumeChange, onToggleMute }) => {
-	const progressPercent = duration > 0 ? Math.max(0, Math.min(100, (currentTime / duration) * 100)) : 0;
+export const Transport: FC<TransportProps> = ({
+	isPlaying,
+	isLoading,
+	currentTime,
+	duration,
+	onToggle,
+	onSeek,
+	volume,
+	isMuted,
+	onVolumeChange,
+	onToggleMute,
+}) => {
+	const progressPercent =
+		duration > 0 ? Math.max(0, Math.min(100, (currentTime / duration) * 100)) : 0;
 	const volumePercent = Math.round((isMuted ? 0 : volume) * 100);
 	const formattedCurrent = formatTime(currentTime);
 	const formattedDuration = formatTime(duration);
@@ -91,8 +103,11 @@ export const Transport: FC<TransportProps> = ({ isPlaying, isLoading, currentTim
 					aria-pressed={isPlaying}
 					onClick={onToggle}
 					disabled={isLoading}
-					className={`inline-flex h-[48px] w-[48px] items-center justify-center rounded-[14px] border border-[var(--audio-sheet-border)] text-sm font-semibold shadow-sm shadow-black/30 transition-all hover:brightness-110 active:translate-y-[2px] disabled:opacity-90 disabled:cursor-not-allowed border-none ${isPlaying ? "bg-[radial-gradient(circle_at_30%_18%,#4c75d6f8_0%,#320576f1_100%)]" : "bg-[radial-gradient(circle_at_30%_18%,#19f8cfc0_0%,#283152ef_100%)]"
-						}`}>
+					className={`inline-flex h-[48px] w-[48px] items-center justify-center rounded-[14px] border border-[var(--audio-sheet-border)] text-sm font-semibold shadow-sm shadow-black/30 transition-all hover:brightness-110 active:translate-y-[2px] disabled:opacity-90 disabled:cursor-not-allowed border-none ${
+						isPlaying
+							? "bg-[radial-gradient(circle_at_30%_18%,#4c75d6f8_0%,#320576f1_100%)]"
+							: "bg-[radial-gradient(circle_at_30%_18%,#19f8cfc0_0%,#283152ef_100%)]"
+					}`}>
 					{isLoading ? (
 						<Loader2 className="h-[18px] w-[18px] animate-spin" color="#1ef5bf80" />
 					) : isPlaying ? (
@@ -105,7 +120,9 @@ export const Transport: FC<TransportProps> = ({ isPlaying, isLoading, currentTim
 
 			{/* Progress */}
 			<div className="flex items-center gap-[16px]">
-				<span className="w-[27.2px] text-primary-foreground text-center text-[10px] tabular-nums opacity-90" aria-live="polite">
+				<span
+					className="w-[27.2px] text-primary-foreground text-center text-[10px] tabular-nums opacity-90"
+					aria-live="polite">
 					{formattedCurrent}
 				</span>
 				<div
@@ -122,11 +139,14 @@ export const Transport: FC<TransportProps> = ({ isPlaying, isLoading, currentTim
 						className="absolute inset-y-0 left-0 rounded-[11px] transition-all"
 						style={{
 							width: `${progressPercent}%`,
-							background: "linear-gradient(90deg, rgb(142 70 235) 0%, rgba(10 107 187 / 0.81) 70%, #08C5B2 100%)",
+							background:
+								"linear-gradient(90deg, rgb(142 70 235) 0%, rgba(10 107 187 / 0.81) 70%, #08C5B2 100%)",
 						}}
 					/>
 				</div>
-				<span className="w-[32px] text-muted-foreground text-center text-[10px] tabular-nums opacity-70">{formattedDuration}</span>
+				<span className="w-[32px] text-muted-foreground text-center text-[10px] tabular-nums opacity-70">
+					{formattedDuration}
+				</span>
 			</div>
 
 			{/* Volume */}
@@ -137,7 +157,11 @@ export const Transport: FC<TransportProps> = ({ isPlaying, isLoading, currentTim
 					aria-pressed={isMuted}
 					onClick={onToggleMute}
 					className="inline-flex h-[28px] w-[28px] items-center justify-center rounded-full border-1  p-1.5 border-primary-foreground/10 bg-primary/40 text-xs transition-colors hover:bg-[var(--audio-sheet-border)]/20 focus-visible:ring-0 focus-visible:ring-[var(--audio-sheet-accent)]/50 focus-visible:outline-none focus-visible:ring-offset-0 ">
-					{isMuted ? <VolumeX color="#F80EC5DF" className="h-[16px] w-[16px]" /> : <Volume2 color="#0EF8F4DF" className="h-[16px] w-[16px]" />}
+					{isMuted ? (
+						<VolumeX color="#F80EC5DF" className="h-[16px] w-[16px]" />
+					) : (
+						<Volume2 color="#0EF8F4DF" className="h-[16px] w-[16px]" />
+					)}
 				</button>
 				<div
 					role="slider"
@@ -152,7 +176,8 @@ export const Transport: FC<TransportProps> = ({ isPlaying, isLoading, currentTim
 					<div
 						className="absolute inset-y-[-1px] left-0 rounded-[11px] linear-gradient(90deg, rgb(142 70 235) 0%, rgba(10 107 187 / 0.81) 70%, #08C5B2 100%) transition-all"
 						style={{
-							background: "linear-gradient(90deg, rgba(56 45 210 / 0.81) 30%, #8F67E5 120%)",
+							background:
+								"linear-gradient(90deg, rgba(56 45 210 / 0.81) 30%, #8F67E5 120%)",
 							width: `${volumePercent}%`,
 						}}
 					/>

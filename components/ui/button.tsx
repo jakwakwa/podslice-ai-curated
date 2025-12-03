@@ -44,7 +44,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
 	extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-	VariantProps<typeof buttonVariants> {
+		VariantProps<typeof buttonVariants> {
 	asChild?: boolean;
 }
 
@@ -58,24 +58,24 @@ function Button({
 	...props
 }: React.ComponentProps<"button"> & {
 	variant:
-	| "default"
-	| "destructive"
-	| "outline"
-	| "secondary"
-	| "ghost"
-	| "link"
-	| "play"
-	| "icon";
+		| "default"
+		| "destructive"
+		| "outline"
+		| "secondary"
+		| "ghost"
+		| "link"
+		| "play"
+		| "icon";
 	size?:
-	| "default"
-	| "sm"
-	| "xs"
-	| "md"
-	| "lg"
-	| "playLarge"
-	| "playSmall"
-	| "play"
-	| "icon";
+		| "default"
+		| "sm"
+		| "xs"
+		| "md"
+		| "lg"
+		| "playLarge"
+		| "playSmall"
+		| "play"
+		| "icon";
 	asChild?: boolean;
 	icon?: React.ReactNode;
 }) {

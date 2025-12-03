@@ -55,7 +55,7 @@ export function PlayableEpisodeCard({
 	showDownload = false,
 	renderActions,
 	selected = false,
-	className,
+	className: _className,
 	as = "div",
 	isPlaying = false,
 }: PlayableEpisodeCardProps) {

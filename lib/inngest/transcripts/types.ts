@@ -23,7 +23,15 @@ export interface TranscriptResponseFailure {
 
 export type TranscriptResponse = TranscriptResponseSuccess | TranscriptResponseFailure;
 
-export type ProviderName = "gemini-video" | "youtube-captions" | "youtube-client" | "youtube-audio-extractor" | "youtube-stream-resolver" | "grok-search" | "paid-asr" | "openai-text-fallback";
+export type ProviderName =
+	| "gemini-video"
+	| "youtube-captions"
+	| "youtube-client"
+	| "youtube-audio-extractor"
+	| "youtube-stream-resolver"
+	| "grok-search"
+	| "paid-asr"
+	| "openai-text-fallback";
 
 export interface TranscriptProvider {
 	name: ProviderName;

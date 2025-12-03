@@ -240,14 +240,14 @@ export default function BundlesPanelClient({
 				// Upload new image if selected
 				let imageData: string | undefined;
 				let imageType: string | undefined;
-				let imageUrl = ""; // No longer using image_url from state
+				let _imageUrl = ""; // No longer using image_url from state
 
 				if (editImageFile) {
 					const uploadResult = await uploadImage(editImageFile, id);
 					if (uploadResult) {
 						imageData = uploadResult.imageData;
 						imageType = uploadResult.imageType;
-						imageUrl = uploadResult.url;
+						_imageUrl = uploadResult.url;
 					}
 				}
 
@@ -325,9 +325,9 @@ export default function BundlesPanelClient({
 					label: "Refresh",
 					onClick: async () => {
 						try {
-							await fetch("/api/admin/revalidate-bundles", { method: "POST" })
-						} catch { }
-						router.refresh()
+							await fetch("/api/admin/revalidate-bundles", { method: "POST" });
+						} catch {}
+						router.refresh();
 					},
 				}}
 			/>
@@ -477,7 +477,11 @@ export default function BundlesPanelClient({
 								<div className="flex items-center gap-2 mt-3">
 									{isEditing ? (
 										<>
-											<Button variant="outline" size="sm" className="border-border border-1 outline-1 outline-white/20" onClick={cancelEdit}>
+											<Button
+												variant="outline"
+												size="sm"
+												className="border-border border-1 outline-1 outline-white/20"
+												onClick={cancelEdit}>
 												Cancel
 											</Button>
 											<Button
@@ -529,10 +533,15 @@ export default function BundlesPanelClient({
 													accept="image/*"
 													onChange={handleEditImageChange}
 												/>
-												{editImagePreview || (!failedBundleImages.has(bundle.bundle_id) && bundle.bundle_id) ? (
+												{editImagePreview ||
+												(!failedBundleImages.has(bundle.bundle_id) &&
+													bundle.bundle_id) ? (
 													<div className="mt-2">
 														<img
-															src={editImagePreview || `/api/bundles/${bundle.bundle_id}/image`}
+															src={
+																editImagePreview ||
+																`/api/bundles/${bundle.bundle_id}/image`
+															}
 															alt="Current"
 															width={80}
 															height={80}

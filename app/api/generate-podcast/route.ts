@@ -9,7 +9,8 @@ export const maxDuration = 5;
 export async function POST() {
 	return NextResponse.json(
 		{
-			error: "Deprecated endpoint. Use /api/admin/generate-episode instead (requires admin).",
+			error:
+				"Deprecated endpoint. Use /api/admin/generate-episode instead (requires admin).",
 			status: 410,
 		},
 		{ status: 410 }

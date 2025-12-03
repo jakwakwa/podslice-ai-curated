@@ -40,27 +40,24 @@ export async function PATCH(
 		}
 
 		if (bundle.owner_user_id !== userId) {
-			return NextResponse.json(
-				{ error: "You do not own this bundle" },
-				{ status: 403 }
-			);
+			return NextResponse.json({ error: "You do not own this bundle" }, { status: 403 });
 		}
 
 		// Parse request body
 		const body = await request.json();
 		const validation = UpdateSharedBundleSchema.safeParse(body);
 
-	if (!validation.success) {
-		return NextResponse.json(
-			{ error: validation.error.errors[0]?.message ?? "Invalid request body" },
-			{ status: 400 }
-		);
-	}
+		if (!validation.success) {
+			return NextResponse.json(
+				{ error: validation.error.errors[0]?.message ?? "Invalid request body" },
+				{ status: 400 }
+			);
+		}
 
 		const { name, description, is_active, episodeUpdates } = validation.data;
 
 		// Update bundle and episode statuses in a transaction
-		await prisma.$transaction(async (tx) => {
+		await prisma.$transaction(async tx => {
 			// Update bundle fields if provided
 			if (name !== undefined || description !== undefined || is_active !== undefined) {
 				await tx.sharedBundle.update({
@@ -114,10 +111,7 @@ export async function PATCH(
 		return NextResponse.json(updatedBundle);
 	} catch (error) {
 		console.error("[SHARED_BUNDLE_PATCH]", error);
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 }
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
@@ -147,18 +141,17 @@ export async function DELETE(
 		}
 
 		if (bundle.owner_user_id !== userId) {
-			return NextResponse.json(
-				{ error: "You do not own this bundle" },
-				{ status: 403 }
-			);
+			return NextResponse.json({ error: "You do not own this bundle" }, { status: 403 });
 		}
 
 		// Check if any episodes are active
-		const hasActiveEpisodes = bundle.episodes.some((ep) => ep.is_active);
+		const hasActiveEpisodes = bundle.episodes.some(ep => ep.is_active);
 
 		if (hasActiveEpisodes) {
 			return NextResponse.json(
-				{ error: "Cannot delete bundle with active episodes. Disable all episodes first." },
+				{
+					error: "Cannot delete bundle with active episodes. Disable all episodes first.",
+				},
 				{ status: 400 }
 			);
 		}
@@ -171,9 +164,6 @@ export async function DELETE(
 		return NextResponse.json({ success: true });
 	} catch (error) {
 		console.error("[SHARED_BUNDLE_DELETE]", error);
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 }
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }

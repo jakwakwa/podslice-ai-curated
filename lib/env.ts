@@ -4,7 +4,11 @@ type RuntimeEnv = "production" | "preview" | "development";
 
 function getRuntimeEnv(): RuntimeEnv {
 	const vercelEnv = process.env.VERCEL_ENV as RuntimeEnv | undefined;
-	if (vercelEnv === "production" || vercelEnv === "preview" || vercelEnv === "development") {
+	if (
+		vercelEnv === "production" ||
+		vercelEnv === "preview" ||
+		vercelEnv === "development"
+	) {
 		return vercelEnv;
 	}
 	return process.env.NODE_ENV === "production" ? "production" : "development";
@@ -24,14 +28,22 @@ export function getAppUrl(): string {
 
 export function getClerkSignInUrl(): string {
 	if (isProduction()) {
-		return process.env.NEXT_PUBLIC_CLERK_PROD_SIGN_UP_URL || process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL || "/sign-up";
+		return (
+			process.env.NEXT_PUBLIC_CLERK_PROD_SIGN_UP_URL ||
+			process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL ||
+			"/sign-up"
+		);
 	}
 	return process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL || "/sign-up";
 }
 
 export function getClerkSignUpUrl(): string {
 	if (isProduction()) {
-		return process.env.NEXT_PUBLIC_CLERK_PROD_SIGN_UP_URL || process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL || "/sign-up";
+		return (
+			process.env.NEXT_PUBLIC_CLERK_PROD_SIGN_UP_URL ||
+			process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL ||
+			"/sign-up"
+		);
 	}
 	return process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL || "/sign-up";
 }
@@ -70,9 +82,19 @@ export function getMaxDurationSeconds(): number {
 		return 10000800; // 10000800 = ~2789 hours for local testing
 	}
 	const parsed = Number(raw);
-	console.log("[DEBUG] getMaxDurationSeconds - parsed value:", parsed, "isFinite:", Number.isFinite(parsed), "isPositive:", parsed > 0);
+	console.log(
+		"[DEBUG] getMaxDurationSeconds - parsed value:",
+		parsed,
+		"isFinite:",
+		Number.isFinite(parsed),
+		"isPositive:",
+		parsed > 0
+	);
 	if (Number.isFinite(parsed) && parsed > 0) {
-		console.log("[DEBUG] getMaxDurationSeconds - returning parsed value:", Math.floor(parsed));
+		console.log(
+			"[DEBUG] getMaxDurationSeconds - returning parsed value:",
+			Math.floor(parsed)
+		);
 		return Math.floor(parsed);
 	}
 	console.log("[DEBUG] getMaxDurationSeconds - invalid parsed value, using fallback");
@@ -98,7 +120,11 @@ export function getProviderWindowSeconds(): number {
 		return parsed;
 	}
 	if (process.env.NODE_ENV === "development") {
-		console.log("[ENV] Invalid PROVIDER_WINDOW_SECONDS value:", raw, "- using default: 270");
+		console.log(
+			"[ENV] Invalid PROVIDER_WINDOW_SECONDS value:",
+			raw,
+			"- using default: 270"
+		);
 	}
 	return 270;
 }

@@ -18,8 +18,7 @@ export function WeeklyReminderEmail({ userName }: WeeklyReminderEmailProps) {
 	return (
 		<EmailLayout
 			title="Weekly Reminder"
-			previewText="Your next weekly podcast episode will be generated this Friday at midnight."
-		>
+			previewText="Your next weekly podcast episode will be generated this Friday at midnight.">
 			{/* Greeting */}
 			<Text
 				style={{
@@ -29,8 +28,7 @@ export function WeeklyReminderEmail({ userName }: WeeklyReminderEmailProps) {
 					fontWeight,
 					textAlign: "center",
 					margin: "0 0 16px 0",
-				}}
-			>
+				}}>
 				Hi {userName}
 			</Text>
 
@@ -42,8 +40,7 @@ export function WeeklyReminderEmail({ userName }: WeeklyReminderEmailProps) {
 						color: "#3b82f6",
 						fontSize: "28px",
 						margin: 0,
-					}}
-				>
+					}}>
 					📅 Weekly Reminder
 				</Heading>
 			</Section>
@@ -54,10 +51,9 @@ export function WeeklyReminderEmail({ userName }: WeeklyReminderEmailProps) {
 					fontSize: "16px",
 					lineHeight: 1.5,
 					marginBottom: "24px",
-				}}
-			>
-				Just a friendly reminder that your next weekly podcast episode will be generated this Friday
-				at midnight.
+				}}>
+				Just a friendly reminder that your next weekly podcast episode will be generated
+				this Friday at midnight.
 			</Text>
 
 			<Section
@@ -66,17 +62,15 @@ export function WeeklyReminderEmail({ userName }: WeeklyReminderEmailProps) {
 					padding: "20px",
 					borderRadius: "8px",
 					marginBottom: "24px",
-				}}
-			>
+				}}>
 				<Text
 					style={{
 						color: "#1e40af",
 						margin: 0,
 						fontWeight: 500,
-					}}
-				>
-					💡 Make sure your personalized feed is set up with the content you want to hear about this
-					week.
+					}}>
+					💡 Make sure your personalized feed is set up with the content you want to hear
+					about this week.
 				</Text>
 			</Section>
 
@@ -91,8 +85,7 @@ export function WeeklyReminderEmail({ userName }: WeeklyReminderEmailProps) {
 						textDecoration: "none",
 						borderRadius: "6px",
 						fontWeight: 500,
-					}}
-				>
+					}}>
 					Visit Dashboard
 				</Button>
 			</Section>
@@ -105,8 +98,7 @@ export function WeeklyReminderEmail({ userName }: WeeklyReminderEmailProps) {
 						color: EMAIL_CONSTANTS.COLORS.text.light,
 						fontSize: "12px",
 						margin: 0,
-					}}
-				>
+					}}>
 					Happy listening!
 					<br />
 					The PODSLICE Team

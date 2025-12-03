@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
+import type { Prisma } from "@prisma/client";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { z } from "zod";
-import type { Prisma } from "@prisma/client";
 import EpisodeHeader from "@/components/features/episodes/episode-header";
 import EpisodeShell from "@/components/features/episodes/episode-shell";
 import KeyTakeaways from "@/components/features/episodes/key-takeaways";
@@ -35,7 +35,10 @@ type EpisodeWithSigned = Episode & { signedAudioUrl: string | null };
 function extractGcsFromHttp(url: string): { bucket: string; object: string } | null {
 	try {
 		const u = new URL(url);
-		if (u.hostname === "storage.googleapis.com" || u.hostname === "storage.cloud.google.com") {
+		if (
+			u.hostname === "storage.googleapis.com" ||
+			u.hostname === "storage.cloud.google.com"
+		) {
 			const path = u.pathname.replace(/^\//, "");
 			const slash = path.indexOf("/");
 			if (slash > 0) {
@@ -50,7 +53,10 @@ function extractGcsFromHttp(url: string): { bucket: string; object: string } | n
 	return null;
 }
 
-async function getEpisodeWithAccess(id: string, currentUserId: string): Promise<EpisodeWithSigned | null> {
+async function getEpisodeWithAccess(
+	id: string,
+	currentUserId: string
+): Promise<EpisodeWithSigned | null> {
 	// First, try to find in the Episode table (curated episodes)
 	const episode = await prisma.episode.findUnique({
 		where: { episode_id: id },
@@ -67,17 +73,29 @@ async function getEpisodeWithAccess(id: string, currentUserId: string): Promise<
 			};
 		}>;
 
-		const profile: UserCurationProfileWithBundle | null = await prisma.userCurationProfile.findFirst({
-			where: { user_id: currentUserId, is_active: true },
-			include: { selectedBundle: { include: { bundle_podcast: true } } },
-		});
-		const podcastIdsInSelectedBundle = profile?.selectedBundle?.bundle_podcast.map((bp: NonNullable<UserCurationProfileWithBundle["selectedBundle"]>["bundle_podcast"][number]) => bp.podcast_id) ?? [];
+		const profile: UserCurationProfileWithBundle | null =
+			await prisma.userCurationProfile.findFirst({
+				where: { user_id: currentUserId, is_active: true },
+				include: { selectedBundle: { include: { bundle_podcast: true } } },
+			});
+		const podcastIdsInSelectedBundle =
+			profile?.selectedBundle?.bundle_podcast.map(
+				(
+					bp: NonNullable<
+						UserCurationProfileWithBundle["selectedBundle"]
+					>["bundle_podcast"][number]
+				) => bp.podcast_id
+			) ?? [];
 		const selectedBundleId = profile?.selectedBundle?.bundle_id ?? null;
 
 		const isOwnedByUser = episode.userProfile?.user_id === currentUserId;
-		const isInSelectedBundleByPodcast = podcastIdsInSelectedBundle.includes(episode.podcast_id);
-		const isDirectlyLinkedToSelectedBundle = !!selectedBundleId && episode.bundle_id === selectedBundleId;
-		const authorized = isOwnedByUser || isInSelectedBundleByPodcast || isDirectlyLinkedToSelectedBundle;
+		const isInSelectedBundleByPodcast = podcastIdsInSelectedBundle.includes(
+			episode.podcast_id
+		);
+		const isDirectlyLinkedToSelectedBundle =
+			!!selectedBundleId && episode.bundle_id === selectedBundleId;
+		const authorized =
+			isOwnedByUser || isInSelectedBundleByPodcast || isDirectlyLinkedToSelectedBundle;
 		if (!authorized) return null;
 
 		let signedAudioUrl: string | null = null;
@@ -114,14 +132,15 @@ async function getEpisodeWithAccess(id: string, currentUserId: string): Promise<
 		where: { user_id: currentUserId, is_active: true },
 		include: {
 			selectedSharedBundle: {
-				include: { episodes: { where: { episode_id: id, is_active: true } } }
-			}
+				include: { episodes: { where: { episode_id: id, is_active: true } } },
+			},
 		},
 	});
 
 	// Check if episode is owned by user OR is in their selected shared bundle
 	const isOwnedByUser = userEpisode.user_id === currentUserId;
-	const isInSelectedSharedBundle = (profile?.selectedSharedBundle?.episodes.length ?? 0) > 0;
+	const isInSelectedSharedBundle =
+		(profile?.selectedSharedBundle?.episodes.length ?? 0) > 0;
 	const authorized = isOwnedByUser || isInSelectedSharedBundle;
 	if (!authorized) return null;
 
@@ -163,7 +182,11 @@ async function getEpisodeWithAccess(id: string, currentUserId: string): Promise<
 	return transformedEpisode;
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+	params,
+}: {
+	params: Promise<{ id: string }>;
+}): Promise<Metadata> {
 	const { id } = await params;
 	const { userId } = await auth();
 	if (!userId) return { title: "Episode" };
@@ -192,7 +215,11 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 					rightLink={{ href: "/episodes", label: "Back to Episodes", external: false }}
 				/>
 				<div className="mt-4 mb-4">
-					<PlayAndShare kind="curated" episode={episode} signedAudioUrl={episode.signedAudioUrl} />
+					<PlayAndShare
+						kind="curated"
+						episode={episode}
+						signedAudioUrl={episode.signedAudioUrl}
+					/>
 				</div>
 				<div className="mt-4 my-8">
 					<Separator className="my-8" />

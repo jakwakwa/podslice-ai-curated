@@ -38,11 +38,8 @@ export function LongEpisodeWarningDialog({
 								? "Deep Dive Uses 2 Episode Credits"
 								: "Insufficient Credits"}
 						</AlertDialogTitle>
-
-
 					</div>
 					<AlertDialogDescription asChild>
-
 						<div className="space-y-3 text-base text-muted-foreground">
 							{hasEnoughCredits ? (
 								<>

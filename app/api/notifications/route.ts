@@ -13,13 +13,15 @@ export async function GET(_request: Request) {
 		// DEBUG: Check user linkage
 		const user = await prisma.user.findUnique({
 			where: { user_id: userId },
-			select: { paddle_customer_id: true, email: true }
+			select: { paddle_customer_id: true, email: true },
 		});
-		console.log(`[NOTIFICATIONS_GET] User: ${userId}, Email: ${user?.email}, PaddleID: ${user?.paddle_customer_id}`);
+		console.log(
+			`[NOTIFICATIONS_GET] User: ${userId}, Email: ${user?.email}, PaddleID: ${user?.paddle_customer_id}`
+		);
 
 		const notifications = await prisma.notification.findMany({
 			where: { user_id: userId },
-			orderBy: { created_at: "desc" }
+			orderBy: { created_at: "desc" },
 		});
 
 		return NextResponse.json(notifications);

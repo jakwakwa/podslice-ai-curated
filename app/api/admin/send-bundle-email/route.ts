@@ -1,10 +1,10 @@
-import { auth } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
-import { requireAdminMiddleware } from '@/lib/admin-middleware';
-import { emailService } from '@/lib/email-service';
-import { prisma } from '@/lib/prisma';
+import { auth } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import { requireAdminMiddleware } from "@/lib/admin-middleware";
+import { emailService } from "@/lib/email-service";
+import { prisma } from "@/lib/prisma";
 
-export const runtime = 'nodejs';
+export const runtime = "nodejs";
 
 export async function POST(request: Request) {
 	try {
@@ -16,16 +16,13 @@ export async function POST(request: Request) {
 
 		const { userId } = await auth();
 		if (!userId) {
-			return new NextResponse('Unauthorized', { status: 401 });
+			return new NextResponse("Unauthorized", { status: 401 });
 		}
 
 		const { bundleId, episodeId, subject, message } = await request.json();
 
 		if (!(bundleId && episodeId && subject && message)) {
-			return NextResponse.json(
-				{ message: 'Missing required fields' },
-				{ status: 400 }
-			);
+			return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
 		}
 
 		// Get the episode details
@@ -34,10 +31,7 @@ export async function POST(request: Request) {
 		});
 
 		if (!episode) {
-			return NextResponse.json(
-				{ message: 'Episode not found' },
-				{ status: 404 }
-			);
+			return NextResponse.json({ message: "Episode not found" }, { status: 404 });
 		}
 
 		// Get users subscribed to this bundle
@@ -54,7 +48,7 @@ export async function POST(request: Request) {
 
 		if (userProfiles.length === 0) {
 			return NextResponse.json(
-				{ message: 'No users found for this bundle' },
+				{ message: "No users found for this bundle" },
 				{ status: 404 }
 			);
 		}
@@ -67,8 +61,8 @@ export async function POST(request: Request) {
 			try {
 				// Hardcode domain URL for dev environment
 				const baseUrl =
-					process.env.NODE_ENV === 'development'
-						? 'https://podslice-ai-synthesis.vercel.app'
+					process.env.NODE_ENV === "development"
+						? "https://podslice-ai-synthesis.vercel.app"
 						: process.env.NEXT_PUBLIC_APP_URL;
 
 				const episodeUrl = `${baseUrl}/episodes`;
@@ -134,10 +128,7 @@ export async function POST(request: Request) {
 			errors: errors.length > 0 ? errors : undefined,
 		});
 	} catch (error) {
-		console.error('Error in send-bundle-email:', error);
-		return NextResponse.json(
-			{ message: 'Internal server error' },
-			{ status: 500 }
-		);
+		console.error("Error in send-bundle-email:", error);
+		return NextResponse.json({ message: "Internal server error" }, { status: 500 });
 	}
 }

@@ -169,33 +169,35 @@ export async function GET(_request: NextRequest) {
 			};
 		}>;
 
-		const transformedSharedBundles = sharedBundles.map((bundle: SharedBundleWithEpisodes) => {
-			// Shared bundles available to all plans except NONE
-			const canInteract = allowedGates.some(gate => gate !== PlanGateEnum.NONE);
-			const lockReason = canInteract ? null : "Shared bundles require a paid plan.";
+		const transformedSharedBundles = sharedBundles.map(
+			(bundle: SharedBundleWithEpisodes) => {
+				// Shared bundles available to all plans except NONE
+				const canInteract = allowedGates.some(gate => gate !== PlanGateEnum.NONE);
+				const lockReason = canInteract ? null : "Shared bundles require a paid plan.";
 
-			return {
-				bundle_id: bundle.shared_bundle_id,
-				shared_bundle_id: bundle.shared_bundle_id,
-				name: bundle.name,
-				description: bundle.description,
-				image_url: null, // Shared bundles don't have images yet
-				is_active: bundle.is_active,
-				created_at: bundle.created_at,
-				min_plan: PlanGateEnum.FREE_SLICE, // Shared bundles require at least FREE_SLICE
-				episodes: bundle.episodes.map(ep => ({
-					episode_id: ep.userEpisode.episode_id,
-					episode_title: ep.userEpisode.episode_title,
-					duration_seconds: ep.userEpisode.duration_seconds,
-				})),
-				episode_count: bundle.episodes.length,
-				owner: bundle.owner,
-				podcasts: [], // Shared bundles don't have podcasts, they have episodes
-				canInteract,
-				lockReason,
-				bundleType: "shared" as const,
-			};
-		});
+				return {
+					bundle_id: bundle.shared_bundle_id,
+					shared_bundle_id: bundle.shared_bundle_id,
+					name: bundle.name,
+					description: bundle.description,
+					image_url: null, // Shared bundles don't have images yet
+					is_active: bundle.is_active,
+					created_at: bundle.created_at,
+					min_plan: PlanGateEnum.FREE_SLICE, // Shared bundles require at least FREE_SLICE
+					episodes: bundle.episodes.map(ep => ({
+						episode_id: ep.userEpisode.episode_id,
+						episode_title: ep.userEpisode.episode_title,
+						duration_seconds: ep.userEpisode.duration_seconds,
+					})),
+					episode_count: bundle.episodes.length,
+					owner: bundle.owner,
+					podcasts: [], // Shared bundles don't have podcasts, they have episodes
+					canInteract,
+					lockReason,
+					bundleType: "shared" as const,
+				};
+			}
+		);
 
 		// Combine both types of bundles
 		const allBundles = [...transformedAdminBundles, ...transformedSharedBundles];

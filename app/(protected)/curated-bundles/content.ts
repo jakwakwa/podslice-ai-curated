@@ -6,8 +6,7 @@
 export const curatedBundlesPageContent = {
 	header: {
 		title: "Discover Channels",
-		description:
-			`Subscribe to channels and new audio and text summaries will appear in your feed automatically weekly or daily`,
+		description: `Subscribe to channels and new audio and text summaries will appear in your feed automatically weekly or daily`,
 	},
 	filters: {
 		searchPlaceholder: "Search a topic or show...",

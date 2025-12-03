@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import YoutubeFeedEntriesPanelClient from "./YoutubeFeedEntriesPanel.client";
 
 export default async function YoutubeFeedEntriesPanel() {
@@ -28,6 +28,3 @@ export default async function YoutubeFeedEntriesPanel() {
 
 	return <YoutubeFeedEntriesPanelClient entries={shaped} />;
 }
-
-
-

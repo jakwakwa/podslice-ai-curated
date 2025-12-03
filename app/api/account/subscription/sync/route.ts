@@ -32,7 +32,9 @@ export async function POST() {
 		});
 
 		if (user?.paddle_customer_id) {
-			console.log(`[SUBSCRIPTION_SYNC] User has Paddle customer ID: ${user.paddle_customer_id}`);
+			console.log(
+				`[SUBSCRIPTION_SYNC] User has Paddle customer ID: ${user.paddle_customer_id}`
+			);
 			return NextResponse.json({
 				message: "No subscription found in database",
 				note: `User has Paddle customer ID: ${user.paddle_customer_id}. The Paddle API endpoint for customer subscriptions is currently not working.`,

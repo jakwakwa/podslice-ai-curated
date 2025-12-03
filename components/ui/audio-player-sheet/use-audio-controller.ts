@@ -26,7 +26,14 @@ type Action =
 	| { type: "volume"; volume: number }
 	| { type: "mute"; value: boolean };
 
-const initial: State = { isPlaying: false, isLoading: false, currentTime: 0, duration: 0, volume: 1, isMuted: false };
+const initial: State = {
+	isPlaying: false,
+	isLoading: false,
+	currentTime: 0,
+	duration: 0,
+	volume: 1,
+	isMuted: false,
+};
 
 function reducer(state: State, action: Action): State {
 	switch (action.type) {
@@ -49,7 +56,11 @@ function reducer(state: State, action: Action): State {
 	}
 }
 
-export function useAudioController({ audioRef }: { audioRef: RefObject<HTMLAudioElement | null> }) {
+export function useAudioController({
+	audioRef,
+}: {
+	audioRef: RefObject<HTMLAudioElement | null>;
+}) {
 	const [state, dispatch] = useReducer(reducer, initial);
 	const loadingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -57,7 +68,9 @@ export function useAudioController({ audioRef }: { audioRef: RefObject<HTMLAudio
 	// Apply volume changes to audio element
 	useEffect(() => {
 		if (audioRef.current) {
-			audioRef.current.volume = state.isMuted ? 0 : Math.max(0, Math.min(1, state.volume));
+			audioRef.current.volume = state.isMuted
+				? 0
+				: Math.max(0, Math.min(1, state.volume));
 		}
 	}, [state.volume, state.isMuted, audioRef]);
 

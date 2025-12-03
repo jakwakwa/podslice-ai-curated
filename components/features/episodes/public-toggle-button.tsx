@@ -69,7 +69,6 @@ export default function PublicToggleButton({
 
 	return (
 		<span className="flex items-center gap-4 my-8 w-full text-xs">
-
 			Visibility:
 			<Button
 				type="button"
@@ -77,11 +76,9 @@ export default function PublicToggleButton({
 				size="sm"
 				onClick={handleToggle}
 				disabled={isLoading}
-				icon={isPublic ? <Globe className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
-			>
+				icon={isPublic ? <Globe className="h-4 w-4" /> : <Lock className="h-4 w-4" />}>
 				{isLoading ? "Updating..." : isPublic ? "Public" : "Private"}
 			</Button>
 		</span>
 	);
 }
-

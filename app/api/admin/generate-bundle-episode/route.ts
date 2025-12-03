@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
 import type { Prisma } from "@prisma/client";
+import { NextResponse } from "next/server";
 import { inngest } from "@/inngest/client";
 import { requireAdminMiddleware } from "@/lib/admin-middleware";
 import { prisma } from "@/lib/prisma";
@@ -48,7 +48,13 @@ export async function POST(request: Request) {
 		}
 
 		if (!(bundleId && podcastId && youtubeUrl)) {
-			return NextResponse.json({ error: "Missing required fields: bundleId, podcastId, youtubeUrl (or legacy sources)" }, { status: 400 });
+			return NextResponse.json(
+				{
+					error:
+						"Missing required fields: bundleId, podcastId, youtubeUrl (or legacy sources)",
+				},
+				{ status: 400 }
+			);
 		}
 
 		// Validate that the bundle exists (and fetch podcasts)
@@ -65,9 +71,14 @@ export async function POST(request: Request) {
 		type BundleWithPodcasts = Prisma.BundleGetPayload<{
 			include: { bundle_podcast: true };
 		}>;
-		const isMember = (bundle as BundleWithPodcasts).bundle_podcast.some((bp: BundleWithPodcasts["bundle_podcast"][number]) => bp.podcast_id === podcastId);
+		const isMember = (bundle as BundleWithPodcasts).bundle_podcast.some(
+			(bp: BundleWithPodcasts["bundle_podcast"][number]) => bp.podcast_id === podcastId
+		);
 		if (!isMember) {
-			return NextResponse.json({ error: "Selected podcast is not in the chosen bundle" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Selected podcast is not in the chosen bundle" },
+				{ status: 400 }
+			);
 		}
 
 		// Single ingestion event (one video -> one curated episode)
@@ -80,11 +91,21 @@ export async function POST(request: Request) {
 			},
 		});
 
-		const res = NextResponse.json({ success: true, message: "Admin episode generation dispatched", legacy: legacyUsed ? true : undefined });
+		const res = NextResponse.json({
+			success: true,
+			message: "Admin episode generation dispatched",
+			legacy: legacyUsed ? true : undefined,
+		});
 		if (legacyUsed) {
 			res.headers.set("Deprecation", "true");
-			res.headers.set("Sunset", new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toUTCString()); // 14 days window
-			res.headers.set("Link", '<https://github.com/jakwakwa/podslice-ai-curated>; rel="documentation"; title="Update payload to { youtubeUrl }"');
+			res.headers.set(
+				"Sunset",
+				new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toUTCString()
+			); // 14 days window
+			res.headers.set(
+				"Link",
+				'<https://github.com/jakwakwa/podslice-ai-curated>; rel="documentation"; title="Update payload to { youtubeUrl }"'
+			);
 		}
 		return res;
 	} catch (error) {

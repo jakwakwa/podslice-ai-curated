@@ -64,12 +64,12 @@ export function EpisodeList({
 		const paginatedEpisodes = filtered.slice(startIndex, endIndex);
 
 		return { episodes: paginatedEpisodes, totalPages };
-	}, [data, completedOnly, filter, currentPage, episodesPerPage]);
+	}, [data, completedOnly, filter, currentPage]);
 
 	// Reset to page 1 when filter changes
 	useEffect(() => {
 		setCurrentPage(1);
-	}, [filter]);
+	}, []);
 
 	// If we arrived via deep link, fetch the single episode immediately to avoid showing stale progress
 	useEffect(() => {
@@ -104,7 +104,7 @@ export function EpisodeList({
 					};
 					playEpisode(normalizedEpisode);
 				}
-			} catch { }
+			} catch {}
 		})();
 		return () => {
 			aborted = true;
@@ -154,7 +154,12 @@ export function EpisodeList({
 						All Episodes
 						{data && (
 							<span className="ml-1.5 text-xs opacity-60">
-								({data.filter(e => (completedOnly ? e.status === "COMPLETED" : true)).length})
+								(
+								{
+									data.filter(e => (completedOnly ? e.status === "COMPLETED" : true))
+										.length
+								}
+								)
 							</span>
 						)}
 					</TabsTrigger>
@@ -162,11 +167,15 @@ export function EpisodeList({
 						Manual
 						{data && (
 							<span className="ml-1.5 text-xs opacity-60">
-								({data.filter(
-									e =>
-										(completedOnly ? e.status === "COMPLETED" : true) &&
-										!e.auto_generated
-								).length})
+								(
+								{
+									data.filter(
+										e =>
+											(completedOnly ? e.status === "COMPLETED" : true) &&
+											!e.auto_generated
+									).length
+								}
+								)
 							</span>
 						)}
 					</TabsTrigger>
@@ -174,11 +183,15 @@ export function EpisodeList({
 						Auto-Generated
 						{data && (
 							<span className="ml-1.5 text-xs opacity-60">
-								({data.filter(
-									e =>
-										(completedOnly ? e.status === "COMPLETED" : true) &&
-										e.auto_generated
-								).length})
+								(
+								{
+									data.filter(
+										e =>
+											(completedOnly ? e.status === "COMPLETED" : true) &&
+											e.auto_generated
+									).length
+								}
+								)
 							</span>
 						)}
 					</TabsTrigger>
@@ -217,7 +230,7 @@ export function EpisodeList({
 					}}
 					header={filterTabs}
 					emptyState={emptyState}
-					onPlayEpisode={(ep) => {
+					onPlayEpisode={ep => {
 						// Create a normalized episode for the audio player
 						// The playEpisode hook expects UserEpisode for user episodes
 						// but UnifiedEpisodeList works with NormalizedEpisode internally for display.
@@ -232,7 +245,9 @@ export function EpisodeList({
 						// Check all playable conditions (signed URL or public GCS URL) + COMPLETED status
 						const hasPlayableAudio =
 							uep.status === "COMPLETED" &&
-							(!!uep.signedAudioUrl || (!!uep.public_gcs_audio_url && !uep.public_gcs_audio_url.startsWith("gs://")));
+							(!!uep.signedAudioUrl ||
+								(!!uep.public_gcs_audio_url &&
+									!uep.public_gcs_audio_url.startsWith("gs://")));
 
 						if (hasPlayableAudio) {
 							// Prefer signed URL, fallback to public GCS
@@ -261,7 +276,7 @@ export function EpisodeList({
 							playEpisode(normalizedEpisode);
 						}
 					}}
-					renderActions={(ep) => (
+					renderActions={ep => (
 						<>
 							{enableDebug && (
 								<DebugLogDialog episodeId={(ep as UserEpisode).episode_id} />
@@ -283,13 +298,13 @@ function DebugLogDialog({ episodeId }: { episodeId: string }) {
 		if (open && !logs) {
 			setLoading(true);
 			fetch(`/api/user-episodes/${episodeId}/debug/logs`)
-				.then(async (res) => {
+				.then(async res => {
 					if (res.ok) {
 						const data = await res.json();
 						setLogs(data.events);
 					}
 				})
-				.catch((e) => {
+				.catch(e => {
 					console.error(e);
 				})
 				.finally(() => {

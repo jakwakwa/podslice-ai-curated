@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
 import type { Prisma } from "@prisma/client";
+import { NextResponse } from "next/server";
 import { requireAdminMiddleware } from "@/lib/admin-middleware";
 import { ensureBucketName, getStorageUploader } from "../../../../lib/inngest/utils/gcs";
 import { prisma } from "../../../../lib/prisma";
@@ -23,13 +23,30 @@ async function uploadContentToBucket(data: Buffer, destinationFileName: string) 
 			console.error("[ADMIN_GCS_UPLOAD] Bucket missing", { bucketName });
 			throw new Error(`Bucket ${bucketName} does not exist`);
 		}
-		await withUploadTimeout(storage.bucket(bucketName).file(destinationFileName).save(data, { resumable: false }));
-		console.log("[ADMIN_GCS_UPLOAD] success", { file: destinationFileName, bytes: data.length, ms: Date.now() - start });
+		await withUploadTimeout(
+			storage
+				.bucket(bucketName)
+				.file(destinationFileName)
+				.save(data, { resumable: false })
+		);
+		console.log("[ADMIN_GCS_UPLOAD] success", {
+			file: destinationFileName,
+			bytes: data.length,
+			ms: Date.now() - start,
+		});
 		return { success: true, fileName: destinationFileName };
 	} catch (error) {
 		const err = error as Error & { code?: string };
-		const possibleCode = typeof (err as { code?: unknown }).code === "string" ? (err as { code?: string }).code : undefined;
-		console.error("[ADMIN_GCS_UPLOAD] fail", { file: destinationFileName, bytes: Buffer.isBuffer(data) ? data.length : undefined, err: err.message, code: possibleCode });
+		const possibleCode =
+			typeof (err as { code?: unknown }).code === "string"
+				? (err as { code?: string }).code
+				: undefined;
+		console.error("[ADMIN_GCS_UPLOAD] fail", {
+			file: destinationFileName,
+			bytes: Buffer.isBuffer(data) ? data.length : undefined,
+			err: err.message,
+			code: possibleCode,
+		});
 		throw new Error("Failed to upload content");
 	}
 }
@@ -77,7 +94,8 @@ export async function POST(request: Request) {
 			});
 			return NextResponse.json(
 				{
-					message: "Missing required fields. Please provide either a file upload or an audio URL.",
+					message:
+						"Missing required fields. Please provide either a file upload or an audio URL.",
 				},
 				{ status: 400 }
 			);
@@ -105,7 +123,10 @@ export async function POST(request: Request) {
 			const uploadResult = await uploadContentToBucket(buffer, audioFileName);
 
 			if (!uploadResult.success) {
-				return NextResponse.json({ message: "Failed to upload file to storage" }, { status: 500 });
+				return NextResponse.json(
+					{ message: "Failed to upload file to storage" },
+					{ status: 500 }
+				);
 			}
 
 			// Create the full URL following the same pattern as functions.ts
@@ -124,7 +145,13 @@ export async function POST(request: Request) {
 		const finalPodcastId = providedPodcastId || firstPodcast?.podcast_id || "";
 
 		if (!finalPodcastId) {
-			return NextResponse.json({ message: "podcastId is required, or the selected bundle must include at least one podcast" }, { status: 400 });
+			return NextResponse.json(
+				{
+					message:
+						"podcastId is required, or the selected bundle must include at least one podcast",
+				},
+				{ status: 400 }
+			);
 		}
 
 		// If both bundle and podcast provided, ensure membership
@@ -132,9 +159,15 @@ export async function POST(request: Request) {
 			type BundleWithPodcasts = Prisma.BundleGetPayload<{
 				include: { bundle_podcast: { include: { podcast: true } } };
 			}>;
-			const isMember = (bundle as BundleWithPodcasts).bundle_podcast.some((bp: BundleWithPodcasts["bundle_podcast"][number]) => bp.podcast_id === providedPodcastId);
+			const isMember = (bundle as BundleWithPodcasts).bundle_podcast.some(
+				(bp: BundleWithPodcasts["bundle_podcast"][number]) =>
+					bp.podcast_id === providedPodcastId
+			);
 			if (!isMember) {
-				return NextResponse.json({ message: "Selected podcast is not in the chosen bundle" }, { status: 400 });
+				return NextResponse.json(
+					{ message: "Selected podcast is not in the chosen bundle" },
+					{ status: 400 }
+				);
 			}
 		}
 
@@ -164,7 +197,9 @@ export async function POST(request: Request) {
 			}),
 		]);
 
-		const episode = txResults[txResults.length - 1] as Awaited<ReturnType<typeof prisma.episode.create>>;
+		const episode = txResults[txResults.length - 1] as Awaited<
+			ReturnType<typeof prisma.episode.create>
+		>;
 
 		console.log("Episode created successfully:", episode.episode_id);
 
@@ -176,7 +211,11 @@ export async function POST(request: Request) {
 	} catch (error) {
 		console.error("Error uploading episode:", error);
 
-		if (error instanceof Error && (error.message.includes("Organization role required") || error.message === "Admin access required")) {
+		if (
+			error instanceof Error &&
+			(error.message.includes("Organization role required") ||
+				error.message === "Admin access required")
+		) {
 			return NextResponse.json({ message: "Admin access required" }, { status: 403 });
 		}
 

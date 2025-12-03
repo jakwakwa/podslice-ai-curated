@@ -15,7 +15,6 @@
 			"**/*.tsx",
 			"!**/.cursor/**",
 			"!**/.next/**",
-			"!**/.vercel/**",
 			"!**/node_modules/**",
 			"!**/google-cloud-sdk/**",
 			"!**/gcs/**",
@@ -147,23 +146,5 @@
 			"attributePosition": "auto",
 			"bracketSpacing": true
 		}
-	},
-	"overrides": [
-		{
-			"includes": [
-				"tests/**/*.test.ts",
-				"tests/**/*.test.tsx",
-				"**/*.test.ts",
-				"**/*.test.tsx"
-			],
-			"linter": {
-				"rules": {
-					"suspicious": {
-						"noExplicitAny": "off",
-						"noImplicitAnyLet": "off"
-					}
-				}
-			}
-		}
-	]
+	}
 }

@@ -31,7 +31,7 @@ type CronJob = {
 
 type ExecutionResult = {
 	success: boolean;
-	data?: any;
+	data?: Record<string, unknown>;
 	error?: string;
 	timestamp: Date;
 	duration?: number;
@@ -258,11 +258,16 @@ export default function CronMonitorClient() {
 											</AlertTitle>
 											<AlertDescription>
 												<div className="mt-2 space-y-2">
-													{result.data.errors.map((error: any, idx: number) => (
-														<div key={idx} className="text-xs">
-															<strong>User:</strong> {error.user_id} - {error.message}
-														</div>
-													))}
+													{result.data.errors.map(
+														(
+															error: { user_id: string; message: string },
+															idx: number
+														) => (
+															<div key={idx} className="text-xs">
+																<strong>User:</strong> {error.user_id} - {error.message}
+															</div>
+														)
+													)}
 												</div>
 											</AlertDescription>
 										</Alert>

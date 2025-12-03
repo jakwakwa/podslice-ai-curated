@@ -1,7 +1,10 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { transcribeViaOrchestrator, validateForTranscription } from "@/lib/inngest/transcripts/orchestrator-service";
+import {
+	transcribeViaOrchestrator,
+	validateForTranscription,
+} from "@/lib/inngest/transcripts/orchestrator-service";
 
 const transcribeSchema = z.object({
 	url: z.string().url(),
@@ -42,12 +45,18 @@ export async function POST(request: Request) {
 				return NextResponse.json(
 					{
 						success: false,
-						error: "YouTube blocked automated access for this video (anti-bot). Use client captions or the paid transcription option.",
+						error:
+							"YouTube blocked automated access for this video (anti-bot). Use client captions or the paid transcription option.",
 					},
 					{ status: 429 }
 				);
 			}
-			return new NextResponse(message.includes("too large") ? "Audio exceeded size limits. We tried compressing; try a shorter clip or enable paid fallback." : message, { status: 500 });
+			return new NextResponse(
+				message.includes("too large")
+					? "Audio exceeded size limits. We tried compressing; try a shorter clip or enable paid fallback."
+					: message,
+				{ status: 500 }
+			);
 		}
 
 		return NextResponse.json({
@@ -58,7 +67,13 @@ export async function POST(request: Request) {
 	} catch (error) {
 		console.error("[YOUTUBE_TRANSCRIBE_POST]", error);
 		if (error instanceof Error) {
-			const escapeHtml = (unsafe: string) => unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+			const escapeHtml = (unsafe: string) =>
+				unsafe
+					.replace(/&/g, "&amp;")
+					.replace(/</g, "&lt;")
+					.replace(/>/g, "&gt;")
+					.replace(/"/g, "&quot;")
+					.replace(/'/g, "&#039;");
 			return new NextResponse(escapeHtml(error.message), {
 				status: 500,
 				headers: { "content-type": "text/plain" },

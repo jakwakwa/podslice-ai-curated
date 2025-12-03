@@ -39,27 +39,36 @@ export const sendEpisodeReadyEmail = inngest.createFunction(
 		]);
 
 		if (!(user?.email && user.email_notifications)) {
-			console.log(`[EMAIL] User ${episode.user_id} has email notifications disabled or no email`);
+			console.log(
+				`[EMAIL] User ${episode.user_id} has email notifications disabled or no email`
+			);
 			return;
 		}
 
 		const userFirstName = (user.name || "").trim().split(" ")[0] || "there";
 		const profileName = profile?.name ?? "Your personalized feed";
-		const baseUrl = process.env.EMAIL_LINK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || "";
+		const baseUrl =
+			process.env.EMAIL_LINK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || "";
 		const episodeUrl = `${baseUrl}/my-episodes/${encodeURIComponent(userEpisodeId)}`;
 
-		const success = await emailService.sendEpisodeReadyEmail(episode.user_id, user.email, {
-			userFirstName,
-			episodeTitle: episode.episode_title,
-			episodeUrl,
-			profileName,
-		});
+		const success = await emailService.sendEpisodeReadyEmail(
+			episode.user_id,
+			user.email,
+			{
+				userFirstName,
+				episodeTitle: episode.episode_title,
+				episodeUrl,
+				profileName,
+			}
+		);
 
 		if (!success) {
 			throw new Error("Failed to send episode ready email");
 		}
 
-		console.log(`[EMAIL] Successfully sent episode ready email for ${userEpisodeId} to ${user.email}`);
+		console.log(
+			`[EMAIL] Successfully sent episode ready email for ${userEpisodeId} to ${user.email}`
+		);
 		return { success: true, userEpisodeId };
 	}
 );
@@ -90,23 +99,30 @@ export const sendEpisodeFailedEmail = inngest.createFunction(
 		});
 
 		if (!(user?.email && user.email_notifications)) {
-			console.log(`[EMAIL] User ${episode.user_id} has email notifications disabled or no email`);
+			console.log(
+				`[EMAIL] User ${episode.user_id} has email notifications disabled or no email`
+			);
 			return;
 		}
 
 		const userFirstName = (user.name || "").trim().split(" ")[0] || "there";
 
-		const success = await emailService.sendEpisodeFailedEmail(episode.user_id, user.email, {
-			userFirstName,
-			episodeTitle: episode.episode_title,
-		});
+		const success = await emailService.sendEpisodeFailedEmail(
+			episode.user_id,
+			user.email,
+			{
+				userFirstName,
+				episodeTitle: episode.episode_title,
+			}
+		);
 
 		if (!success) {
 			throw new Error("Failed to send episode failed email");
 		}
 
-		console.log(`[EMAIL] Successfully sent episode failed email for ${userEpisodeId} to ${user.email}`);
+		console.log(
+			`[EMAIL] Successfully sent episode failed email for ${userEpisodeId} to ${user.email}`
+		);
 		return { success: true, userEpisodeId };
 	}
 );
-

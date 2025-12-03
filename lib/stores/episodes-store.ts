@@ -42,7 +42,9 @@ export const useEpisodesStore = create<EpisodesState>()(
 
 					// Fetch fresh episodes
 					// Add cache busting query param + no-store to ensure freshest data
-					const response = await fetch(`/api/episodes?ts=${Date.now()}`, { cache: "no-store" });
+					const response = await fetch(`/api/episodes?ts=${Date.now()}`, {
+						cache: "no-store",
+					});
 
 					if (!response.ok) {
 						throw new Error("Failed to fetch episodes");
@@ -70,7 +72,8 @@ export const useEpisodesStore = create<EpisodesState>()(
 						isLoading: false,
 					});
 				} catch (error) {
-					const message = error instanceof Error ? error.message : "Failed to fetch episodes";
+					const message =
+						error instanceof Error ? error.message : "Failed to fetch episodes";
 					set({ error: message, isLoading: false });
 					console.error("Failed to fetch episodes:", error);
 				}
@@ -91,7 +94,8 @@ export const useEpisodesStore = create<EpisodesState>()(
 						userCurationProfile: fetchedProfile,
 					});
 				} catch (error) {
-					const message = error instanceof Error ? error.message : "Failed to fetch profile";
+					const message =
+						error instanceof Error ? error.message : "Failed to fetch profile";
 					set({ error: message });
 					console.error("Failed to fetch user curation profile:", error);
 				}
@@ -102,14 +106,19 @@ export const useEpisodesStore = create<EpisodesState>()(
 					set({ isLoading: true, error: null });
 
 					// Fetch profile first, then episodes (since episodes depend on profile)
-					const profileResponse = await fetch(`/api/user-curation-profiles?ts=${Date.now()}`, { cache: "no-store" });
+					const profileResponse = await fetch(
+						`/api/user-curation-profiles?ts=${Date.now()}`,
+						{ cache: "no-store" }
+					);
 					if (!profileResponse.ok) {
 						throw new Error("Failed to fetch user curation profile");
 					}
 					const fetchedProfile = await profileResponse.json();
 
 					// Now fetch episodes with the updated profile
-					const episodesResponse = await fetch(`/api/episodes?ts=${Date.now()}`, { cache: "no-store" });
+					const episodesResponse = await fetch(`/api/episodes?ts=${Date.now()}`, {
+						cache: "no-store",
+					});
 					if (!episodesResponse.ok) {
 						throw new Error("Failed to fetch episodes");
 					}
@@ -136,7 +145,8 @@ export const useEpisodesStore = create<EpisodesState>()(
 						isLoading: false,
 					});
 				} catch (error) {
-					const message = error instanceof Error ? error.message : "Failed to refresh data";
+					const message =
+						error instanceof Error ? error.message : "Failed to refresh data";
 					set({ error: message, isLoading: false });
 					console.error("Failed to refresh data:", error);
 				}

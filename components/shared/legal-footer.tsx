@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 
 interface LegalFooterProps {
@@ -10,21 +9,14 @@ interface LegalFooterProps {
 /**
  * Reusable footer component for legal pages
  */
-const LegalFooter = ({
-	acknowledgment,
-	linkText,
-	linkHref,
-}: LegalFooterProps) => {
+const LegalFooter = ({ acknowledgment, linkText, linkHref }: LegalFooterProps) => {
 	return (
 		<div className="text-left mt-8 pt-8 border-t border-border">
-			<p className="text-base text-foreground leading-relaxed">
-				{acknowledgment}
-			</p>
+			<p className="text-base text-foreground leading-relaxed">{acknowledgment}</p>
 			<div className="mt-4">
 				<Link
 					href={linkHref}
-					className="text-sm text-link hover:text-link-hover underline transition-colors"
-				>
+					className="text-sm text-link hover:text-link-hover underline transition-colors">
 					{linkText}
 				</Link>
 			</div>
@@ -33,4 +25,3 @@ const LegalFooter = ({
 };
 
 export default LegalFooter;
-

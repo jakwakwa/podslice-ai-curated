@@ -7,7 +7,7 @@ const webhookProcessor = new ProcessWebhook();
 export async function POST(request: NextRequest) {
 	const signature = request.headers.get("paddle-signature") || "";
 	const rawRequestBody = await request.text();
-	const privateKey = process.env["PADDLE_NOTIFICATION_WEBHOOK_SECRET"] || "";
+	const privateKey = process.env.PADDLE_NOTIFICATION_WEBHOOK_SECRET || "";
 
 	try {
 		if (!(signature && rawRequestBody)) {

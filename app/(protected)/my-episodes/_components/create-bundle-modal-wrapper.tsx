@@ -31,5 +31,11 @@ export function CreateBundleModalWrapper({ isActive }: { isActive?: boolean }) {
 		router.push(`/my-bundles`);
 	};
 
-	return <CreateBundleModal allUserEpisodes={episodes} onSuccess={handleSuccess} isActive={isActive} />;
+	return (
+		<CreateBundleModal
+			allUserEpisodes={episodes}
+			onSuccess={handleSuccess}
+			isActive={isActive}
+		/>
+	);
 }

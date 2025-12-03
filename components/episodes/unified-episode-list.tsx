@@ -94,12 +94,12 @@ export function UnifiedEpisodeList({
 	const filteredEpisodes =
 		filterCompleted && !isLoading
 			? episodes.filter(ep => {
-				// Check if it's a UserEpisode with COMPLETED status
-				if ("status" in ep && "signedAudioUrl" in ep) {
-					return ep.status === "COMPLETED" && !!ep.signedAudioUrl;
-				}
-				return true;
-			})
+					// Check if it's a UserEpisode with COMPLETED status
+					if ("status" in ep && "signedAudioUrl" in ep) {
+						return ep.status === "COMPLETED" && !!ep.signedAudioUrl;
+					}
+					return true;
+				})
 			: episodes;
 
 	// Auto-scroll to selected episode
