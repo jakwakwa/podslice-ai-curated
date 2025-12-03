@@ -181,7 +181,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 	// Show minimal loading while checking authentication or syncing user
 	if (!isLoaded || (isSignedIn && !isUserSynced)) {
 		return (
-			<SidebarProvider>
+			<SidebarProvider defaultOpen={false}>
 				{/* <SiteHeader /> */}
 				<div className="progress-loader">
 					<div className="progress-bar">
@@ -195,7 +195,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 	// Redirect if not signed in
 	if (!isSignedIn) {
 		return (
-			<SidebarProvider>
+			<SidebarProvider defaultOpen={false}>
 				{/* <SiteHeader /> */}
 				<div className="progress-loader">
 					<div className="progress-bar">
@@ -208,7 +208,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
 	// No auth check needed here - middleware handles all protection
 	return (
-		<SidebarProvider>
+		<SidebarProvider defaultOpen={false}>
 			<ProtectedLayoutInner>{children}</ProtectedLayoutInner>
 		</SidebarProvider>
 	);
