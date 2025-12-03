@@ -422,7 +422,7 @@ Instructions:
 					summaryContent = parsed.ai_summary || summary;
 				} catch {}
 
-				const titlePrompt = `Write ONE concise, compelling podcast episode title.\n\nConstraints:\n- Max 72 characters\n- No dates or times\n- No quotes, backticks, hashtags, or emojis\n- Not clickbait; be clear and informative\n- Use proper casing (sentence or title case)\n\nTopic: ${topic || ""}\nSummary:\n${summaryContent}`;
+				const titlePrompt = `Write ONE concise, compelling podcast episode title.\n\nConstraints:\n- Max 60 characters\n- No dates or times\n- No quotes, backticks, hashtags, or emojis\n- Not clickbait; be clear and informative\n- Use proper casing (sentence or title case)\n\nTopic: ${topic || ""}\nSummary:\n${summaryContent}`;
 
 				const { text } = await generateText({
 					model: vertex(modelId),
@@ -523,9 +523,12 @@ Brand opener (must be the first line, exactly):
 
 If DISCLOSURE is non-empty, include this exact sentence immediately after the opener:
 ${disclosureLine}
+Tone: Investigative journalism, insightful, weighing the pros and cons. The Vibe: “A deep dive into the mechanics of modern finance.”
+Hosts:
 
 Constraints:
 - No stage directions, no timestamps, no sound effects.
+	(Note to Hosts: Do NOT read the text in brackets like [Thoughtful pause] or [Nods].)
 - Spoken words only.
 - Natural, engaging tone.
 - Avoid sensationalism; stick to facts.
@@ -534,6 +537,9 @@ Structure:
 - Hook that frames this as a Podslice research summary.
 - Smooth transitions between items.
 - Help the listener understand complex ideas in a helpful and easy to remember manner.
+* incorporating elements like interruptions, 'ums,' 'ahs,' and casual language) but balanced, and still natural, emotional flow (sounding less 'read').
+* Ensure the output is always less scripted than the input.
+* Maintain the core content and information of the original script.
 - Clear, concise wrap-up.
 
 RESEARCH SUMMARY:
@@ -675,25 +681,38 @@ ${summaryContent}`,
 
 				const { text } = await generateText({
 					model: vertex(modelId),
-					prompt: `Task: Based on the RESEARCH SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) two-host podcast conversation where Podslice hosts discuss the highlights. Alternate speakers naturally.
+					prompt: `Task: Based on the RESEARCH SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) two-host podcast conversation where Podslice hosts discuss the highlights. Alternate speakers naturally. - Rewrite the input into dynamic, conversational dialogue suitable for podcast hosts.
 	
 Identity & framing:
 - Hosts are from Podslice presenting recent research to the listener. Digesting core findings and complex theory in memorable and easy to understand ways.
 - They discuss and provide context on key subjects.
 - Maintain informative tone while being conversational.
+
+	Dialogue Generation and Formatting:
+
+    a)  maintain the standard podcast script format, clearly separating 'Stage Directions' (emotions/actions) from the spoken dialogue.
+
+    c) Tone (Informal): Inject realistic conversational fillers ('um,' 'like,' 'you know'), slight topic drift, and simulated crosstalk/interruptions to maximize but Maintain a professional flow and utilize phrasing and pacing that feel spontaneous and emotionally appropriate without excessive fillers or interruptions.
+
+* Maintain the core content and information of the original script.
 	
 Brand opener (must be the first line, exactly, spoken by HOST SLICE):
-"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."
-	
+"This summary is brought to you by Podslice. In a world full of chatter, we help you find the insight."
+
 If DISCLOSURE is non-empty, include this exact one-sentence disclosure as the next line spoken by HOST SLICE:
 ${disclosureLine}
 	
-Constraints:
-- No stage directions, no timestamps, no sound effects.
-- Spoken dialogue only.
-- Natural, engaging tone.
-- Avoid sensationalism; stick to facts.
-- Do not include any speaker names, labels, or direct addresses in the text (e.g., no 'HOST SLICE', 'PODSLICE GUEST', 'A', 'B', 'Hey Host'). The hosts should discuss the content without referencing each other by name or label.
+Constraints:Structure:
+- Hook that frames this as a Podslice research summary.
+- Smooth transitions between items.
+- Help the listener understand complex ideas in a helpful and easy to remember manner.
+* Ensure the output is always less scripted than the input.
+* Maintain the core content and information of the original script.
+- Clear, concise wrap-up.
+
+
+Overall Tone
+	Act as a talented Hollywood professional script writer, specializing in crafting engaging and natural-sounding podcast dialogues for host
 	
 Output ONLY valid JSON array of objects with fields: speaker ("HOST SLICE" or "PODSLICE GUEST") and text (string). The text MUST NOT include any speaker names or labels; only the spoken words. No markdown.
 	
