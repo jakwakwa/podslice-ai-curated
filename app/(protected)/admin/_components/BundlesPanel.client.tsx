@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -356,11 +357,13 @@ export default function BundlesPanelClient({
 								/>
 								{createImagePreview && (
 									<div className="mt-2">
-										<img
-											src={createImagePreview}
-											alt="Preview"
-											className="w-20 h-20 object-cover rounded"
-										/>
+										<Image
+								src={createImagePreview}
+								alt="Preview"
+								width={80}
+								height={80}
+								className="object-cover rounded"
+							/>
 									</div>
 								)}
 							</div>
@@ -443,14 +446,14 @@ export default function BundlesPanelClient({
 								{/* Header */}
 								<div className="flex items-start gap-2 justify-between mb-0 w-full">
 									{bundle.bundle_id && !failedBundleImages.has(bundle.bundle_id) ? (
-										<img
-											src={`/api/bundles/${bundle.bundle_id}/image`}
-											alt={bundle.name}
-											width={64}
-											height={64}
-											className="w-16 h-16 object-cover rounded mr-3"
-											onError={() => handleImageError(bundle.bundle_id)}
-										/>
+										<Image
+									src={`/api/bundles/${bundle.bundle_id}/image`}
+									alt={bundle.name}
+									width={64}
+									height={64}
+									className="object-cover rounded mr-3"
+									onError={() => handleImageError(bundle.bundle_id)}
+								/>
 									) : (
 										<div className="w-16 h-16 bg-muted rounded mr-3 flex items-center justify-center">
 											<span className="text-muted-foreground text-xs">No Image</span>
@@ -537,17 +540,17 @@ export default function BundlesPanelClient({
 												(!failedBundleImages.has(bundle.bundle_id) &&
 													bundle.bundle_id) ? (
 													<div className="mt-2">
-														<img
-															src={
-																editImagePreview ||
-																`/api/bundles/${bundle.bundle_id}/image`
-															}
-															alt="Current"
-															width={80}
-															height={80}
-															className="w-20 h-20 object-cover rounded"
-															onError={() => handleImageError(bundle.bundle_id)}
-														/>
+														<Image
+										src={
+											editImagePreview ||
+											`/api/bundles/${bundle.bundle_id}/image`
+										}
+										alt="Current"
+										width={80}
+										height={80}
+										className="object-cover rounded"
+										onError={() => handleImageError(bundle.bundle_id)}
+									/>
 													</div>
 												) : null}
 											</div>

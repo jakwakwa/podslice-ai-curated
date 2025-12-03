@@ -2,6 +2,7 @@
 
 import { AlertCircle, Lock } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -461,22 +462,24 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 												<div className="relative my-2 border-2  border-teal-300 rounded-lg outline-0 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
 													{!failedBundleImages.has(bundle?.bundle_id || "") &&
 													bundle?.bundle_id ? (
-														<img
-															className="w-full object-cover"
-															src={`/api/bundles/${bundle.bundle_id}/image`}
-															alt={bundle.name}
-															width={190}
-															height={110}
-															style={{ width: "100%", height: "auto" }}
-															onError={() => handleImageError(bundle.bundle_id || "")}
-														/>
+														<Image
+										className="w-full object-cover"
+										src={`/api/bundles/${bundle.bundle_id}/image`}
+										alt={bundle.name}
+										width={190}
+										height={110}
+										style={{ width: "100%", height: "auto" }}
+										onError={() => handleImageError(bundle.bundle_id || "")}
+									/>
 													) : (
 														<div className="w-full h-[110px] bg-muted flex items-center justify-center">
-															<img
-																src="/generic-news-placeholder2.png"
-																alt={bundle.name}
-																className="w-full h-full object-cover"
-															/>
+															<Image
+											src="/generic-news-placeholder2.png"
+											alt={bundle.name}
+											width={190}
+											height={110}
+											className="w-full h-full object-cover"
+										/>
 														</div>
 													)}
 												</div>
@@ -617,11 +620,13 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 														/>
 													) : (
 														<div className="w-full h-[110px] bg-muted flex items-center justify-center">
-															<img
-																src="/generic-news-placeholder2.png"
-																alt={bundle.name}
-																className="w-full h-full object-cover"
-															/>
+															<Image
+											src="/generic-news-placeholder2.png"
+											alt={bundle.name}
+											width={190}
+											height={110}
+											className="w-full h-full object-cover"
+										/>
 														</div>
 													)}
 												</div>

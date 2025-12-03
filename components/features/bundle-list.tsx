@@ -1,6 +1,7 @@
 "use client";
 
 import { Lock } from "lucide-react";
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
@@ -117,8 +118,10 @@ export function BundleList({ onBundleSelect }: BundleListProps) {
 										{/* Image on the left - fixed square dimensions */}
 										<div className="shrink-0 p-4">
 											{bundle.bundle_id ? (
-												<img
+												<Image
 													src={`/api/bundles/${bundle.bundle_id}/image`}
+											width={80}
+											height={80}
 													alt={bundle.name}
 													className="w-20 h-20 object-cover rounded-lg"
 												/>

@@ -124,14 +124,19 @@
 				"noSparseArray": "error",
 				"noConsole": {
 					"options": {
-						"allow": ["assert", "error", "warn"]
+						"allow": [
+							"assert",
+							"error",
+							"warn"
+						]
 					},
 					"fix": "safe"
 				}
 			},
 			"performance": {
 				"noDelete": "error",
-				"noAccumulatingSpread": "error"
+				"noAccumulatingSpread": "error",
+				"noImgElement": "error"
 			}
 		}
 	},
