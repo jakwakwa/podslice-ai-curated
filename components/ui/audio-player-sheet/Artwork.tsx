@@ -13,7 +13,11 @@ export const Artwork: FC<ArtworkProps> = ({ episode }) => {
 	// Get YouTube channel name and image for user episodes
 	const youtubeUrl = episode && "youtube_url" in episode ? episode.youtube_url : null;
 
-	const { channelName: youtubeChannelName, channelImage: youtubeChannelImage, isLoading: isChannelLoading } = useYouTubeChannel(youtubeUrl);
+	const {
+		channelName: youtubeChannelName,
+		channelImage: youtubeChannelImage,
+		isLoading: isChannelLoading,
+	} = useYouTubeChannel(youtubeUrl);
 
 	if (!episode) return null;
 
@@ -22,7 +26,13 @@ export const Artwork: FC<ArtworkProps> = ({ episode }) => {
 		return (
 			<div className="aspect-[16/9] shadow-black/40 shadow-xl h-auto w-full shrink-0 rounded-xl mx-auto max-w-[200px] border-4 border-[#000] overflow-hidden flex justify-center items-center">
 				<div className="overflow-hidden h-auto w-full shrink-0 mx-auto aspect-[16/12]">
-					<Image src={episode.image_url} alt={episode.title} width={200} height={100} className="outline-2 outline-[#9ecaf53d] shadow-black shadow-xl object-cover" />
+					<Image
+						src={episode.image_url}
+						alt={episode.title}
+						width={200}
+						height={100}
+						className="outline-2 outline-[#9ecaf53d] shadow-black shadow-xl object-cover"
+					/>
 				</div>
 			</div>
 		);
@@ -33,7 +43,13 @@ export const Artwork: FC<ArtworkProps> = ({ episode }) => {
 		return (
 			<div className="shadow-mdshadow-black aspect-video shadow-black/40 shadow-xl h-auto w-full  rounded-4xl mx-auto max-w-[250px] border-4 border-[#9ecaf5f] object-cover overflow-hidden flex">
 				<div className="overflow-hidden object-cover x-auto w-full aspect-video">
-					<Image src="/generic-news-placeholder.png" alt="News Episode" width={300} height={200} className="w-full h-full object-fit" />
+					<Image
+						src="/generic-news-placeholder.png"
+						alt="News Episode"
+						width={300}
+						height={200}
+						className="w-full h-full object-fit"
+					/>
 				</div>
 			</div>
 		);
@@ -45,7 +61,13 @@ export const Artwork: FC<ArtworkProps> = ({ episode }) => {
 			return (
 				<div className="shadow-mdshadow-black aspect-square shadow-black/40 shadow-xl h-auto w-full shrink-0 rounded-4xl mx-auto max-w-[100px] border-4 border-[#9ecaf5f] overflow-hidden flex">
 					<div className="overflow-hidden h-auto w-full shrink-0 mx-auto max-w-[100px] aspect-square">
-						<Image src={youtubeChannelImage} alt={youtubeChannelName || "YouTube Channel"} width={200} height={200} className="w-full h-full object-cover" />
+						<Image
+							src={youtubeChannelImage}
+							alt={youtubeChannelName || "YouTube Channel"}
+							width={200}
+							height={200}
+							className="w-full h-full object-cover"
+						/>
 					</div>
 				</div>
 			);

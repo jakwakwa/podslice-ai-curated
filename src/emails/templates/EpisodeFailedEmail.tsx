@@ -12,15 +12,17 @@ export interface EpisodeFailedEmailProps {
 	episodeTitle: string;
 }
 
-export function EpisodeFailedEmail({ userFirstName, episodeTitle }: EpisodeFailedEmailProps) {
+export function EpisodeFailedEmail({
+	userFirstName,
+	episodeTitle,
+}: EpisodeFailedEmailProps) {
 	const supportEmail = "notifications@podslice.ai";
 	const { fontSize, fontWeight, color, lineHeight } = EMAIL_CONSTANTS.GREETING;
 
 	return (
 		<EmailLayout
 			title="Episode Generation Failed"
-			previewText={`We encountered a technical difficulty while generating your episode "${episodeTitle}".`}
-		>
+			previewText={`We encountered a technical difficulty while generating your episode "${episodeTitle}".`}>
 			{/* Greeting */}
 			<Text
 				style={{
@@ -30,8 +32,7 @@ export function EpisodeFailedEmail({ userFirstName, episodeTitle }: EpisodeFaile
 					fontWeight,
 					textAlign: "center",
 					margin: "0 0 12px 0",
-				}}
-			>
+				}}>
 				Hi {userFirstName}
 			</Text>
 
@@ -43,8 +44,7 @@ export function EpisodeFailedEmail({ userFirstName, episodeTitle }: EpisodeFaile
 						color: EMAIL_CONSTANTS.COLORS.error,
 						fontSize: "22px",
 						margin: 0,
-					}}
-				>
+					}}>
 					Episode Generation Failed
 				</Heading>
 			</Section>
@@ -54,10 +54,9 @@ export function EpisodeFailedEmail({ userFirstName, episodeTitle }: EpisodeFaile
 					color: EMAIL_CONSTANTS.COLORS.text.secondary,
 					fontSize: "15px",
 					lineHeight: 1.6,
-				}}
-			>
-				We're sorry, but we encountered a technical difficulty while generating your episode "
-				{episodeTitle}".
+				}}>
+				We're sorry, but we encountered a technical difficulty while generating your
+				episode "{episodeTitle}".
 			</Text>
 
 			<Text
@@ -65,11 +64,13 @@ export function EpisodeFailedEmail({ userFirstName, episodeTitle }: EpisodeFaile
 					color: EMAIL_CONSTANTS.COLORS.text.secondary,
 					fontSize: "15px",
 					lineHeight: 1.6,
-				}}
-			>
-				Our team has been notified and is looking into the issue. Please try generating the episode
-				again later. If the problem persists, feel free to reach out to our support team at{" "}
-				<Link href={`mailto:${supportEmail}`} style={{ color: EMAIL_CONSTANTS.COLORS.primary }}>
+				}}>
+				Our team has been notified and is looking into the issue. Please try generating
+				the episode again later. If the problem persists, feel free to reach out to our
+				support team at{" "}
+				<Link
+					href={`mailto:${supportEmail}`}
+					style={{ color: EMAIL_CONSTANTS.COLORS.primary }}>
 					{supportEmail}
 				</Link>
 				.
@@ -80,8 +81,7 @@ export function EpisodeFailedEmail({ userFirstName, episodeTitle }: EpisodeFaile
 					color: EMAIL_CONSTANTS.COLORS.text.secondary,
 					fontSize: "15px",
 					lineHeight: 1.6,
-				}}
-			>
+				}}>
 				We apologize for any inconvenience this may have caused.
 			</Text>
 
@@ -93,8 +93,7 @@ export function EpisodeFailedEmail({ userFirstName, episodeTitle }: EpisodeFaile
 					fontSize: "12px",
 					margin: 0,
 					textAlign: "center",
-				}}
-			>
+				}}>
 				The PODSLICE Team
 			</Text>
 		</EmailLayout>

@@ -32,7 +32,10 @@ export interface NotificationStore {
 
 	// Actions for preferences
 	loadPreferences: () => Promise<void>;
-	updatePreferences: (preferences: { emailNotifications: boolean; inAppNotifications: boolean }) => Promise<{ success: boolean } | { error: string }>;
+	updatePreferences: (preferences: {
+		emailNotifications: boolean;
+		inAppNotifications: boolean;
+	}) => Promise<{ success: boolean } | { error: string }>;
 	toggleEmailNotifications: () => Promise<{ success: boolean } | { error: string }>;
 	toggleInAppNotifications: () => Promise<{ success: boolean } | { error: string }>;
 
@@ -101,7 +104,10 @@ export const useNotificationStore = create<NotificationStore>()(
 				}
 			},
 
-			updatePreferences: async (newPreferences: { emailNotifications: boolean; inAppNotifications: boolean }) => {
+			updatePreferences: async (newPreferences: {
+				emailNotifications: boolean;
+				inAppNotifications: boolean;
+			}) => {
 				set({ isLoading: true, error: null });
 
 				try {
@@ -175,14 +181,18 @@ export const useNotificationStore = create<NotificationStore>()(
 
 					if (!response.ok) {
 						const errorText = await response.text();
-						console.error(`[NOTIFICATION_LOAD_ERROR] Status: ${response.status}, Response: ${errorText}`);
+						console.error(
+							`[NOTIFICATION_LOAD_ERROR] Status: ${response.status}, Response: ${errorText}`
+						);
 						throw new Error(`Failed to load notifications: ${response.status}`);
 					}
 
 					const fetched: Notification[] = await response.json();
 					const { locallyReadIds } = get();
 					// Ensure locally marked-as-read stay read even if server cache is stale
-					const normalized = fetched.map(n => (locallyReadIds.has(n.notification_id) ? { ...n, is_read: true } : n));
+					const normalized = fetched.map(n =>
+						locallyReadIds.has(n.notification_id) ? { ...n, is_read: true } : n
+					);
 					const unreadCount = normalized.filter(n => !n.is_read).length;
 					set({ notifications: normalized, unreadCount, isLoading: false });
 				} catch (error) {
@@ -209,9 +219,20 @@ export const useNotificationStore = create<NotificationStore>()(
 					const { notifications, locallyReadIds } = get();
 					const nextLocallyRead = new Set(locallyReadIds);
 					nextLocallyRead.add(notificationId);
-					const updatedNotifications = notifications.map((notification: Notification) => (notification.notification_id === notificationId ? { ...notification, is_read: true } : notification));
-					const unreadCount = updatedNotifications.filter((n: Notification) => !n.is_read).length;
-					set({ notifications: updatedNotifications, unreadCount, locallyReadIds: nextLocallyRead, pausedUntilSubmission: true });
+					const updatedNotifications = notifications.map((notification: Notification) =>
+						notification.notification_id === notificationId
+							? { ...notification, is_read: true }
+							: notification
+					);
+					const unreadCount = updatedNotifications.filter(
+						(n: Notification) => !n.is_read
+					).length;
+					set({
+						notifications: updatedNotifications,
+						unreadCount,
+						locallyReadIds: nextLocallyRead,
+						pausedUntilSubmission: true,
+					});
 					get().stopPolling();
 				} catch (error) {
 					const _message = error instanceof Error ? error.message : "Unknown error";
@@ -227,15 +248,24 @@ export const useNotificationStore = create<NotificationStore>()(
 					});
 
 					if (!response.ok) {
-						throw new Error(`Failed to mark all notifications as read: ${response.status}`);
+						throw new Error(
+							`Failed to mark all notifications as read: ${response.status}`
+						);
 					}
 
 					// Update local state and pause polling until next submission
 					const { notifications, locallyReadIds } = get();
 					const nextLocallyRead = new Set(locallyReadIds);
 					for (const n of notifications) nextLocallyRead.add(n.notification_id);
-					const updatedNotifications = notifications.map((notification: Notification) => ({ ...notification, is_read: true }));
-					set({ notifications: updatedNotifications, unreadCount: 0, locallyReadIds: nextLocallyRead, pausedUntilSubmission: true });
+					const updatedNotifications = notifications.map(
+						(notification: Notification) => ({ ...notification, is_read: true })
+					);
+					set({
+						notifications: updatedNotifications,
+						unreadCount: 0,
+						locallyReadIds: nextLocallyRead,
+						pausedUntilSubmission: true,
+					});
 					get().stopPolling();
 					toast.success("All notifications marked as read");
 				} catch (error) {
@@ -257,9 +287,14 @@ export const useNotificationStore = create<NotificationStore>()(
 
 					// Update local state
 					const { notifications } = get();
-					const updatedNotifications = notifications.filter((notification: Notification) => notification.notification_id !== notificationId);
+					const updatedNotifications = notifications.filter(
+						(notification: Notification) =>
+							notification.notification_id !== notificationId
+					);
 
-					const unreadCount = updatedNotifications.filter((notification: Notification) => !notification.is_read).length;
+					const unreadCount = updatedNotifications.filter(
+						(notification: Notification) => !notification.is_read
+					).length;
 
 					set({
 						notifications: updatedNotifications,
@@ -318,7 +353,9 @@ export const useNotificationStore = create<NotificationStore>()(
 						try {
 							const response = await fetch("/api/notifications");
 							if (response.status === 401) {
-								console.warn("[NOTIFICATION_POLLING] Authentication failed, stopping polling");
+								console.warn(
+									"[NOTIFICATION_POLLING] Authentication failed, stopping polling"
+								);
 								get().stopPolling();
 								return;
 							}

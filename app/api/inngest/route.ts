@@ -2,7 +2,10 @@ import { serve } from "inngest/next";
 // Legacy Gemini TTS functions removed; using new admin episode generator
 import { generateAdminEpisode } from "@/lib/inngest/admin-episode-generator";
 import { inngest } from "@/lib/inngest/client";
-import { sendEpisodeReadyEmail, sendEpisodeFailedEmail } from "@/lib/inngest/email-sender";
+import {
+	sendEpisodeFailedEmail,
+	sendEpisodeReadyEmail,
+} from "@/lib/inngest/email-sender";
 import { geminiVideoWorker } from "@/lib/inngest/providers/gemini-video-worker";
 import { enqueueTranscriptionJob } from "@/lib/inngest/transcribe-from-metadata";
 import { transcriptionCoordinator } from "@/lib/inngest/transcription-saga";

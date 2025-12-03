@@ -4,13 +4,12 @@ import { AlertCircle, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
-import { EpisodeList } from "@/components/episode-list";
+import { UnifiedEpisodeList } from "@/components/episodes/unified-episode-list";
 import SectionHeader from "@/components/shared/section-header";
-import { EpisodesPageSkeleton } from "@/components/shared/skeletons/episodes-skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ONE_HOUR } from "@/lib/swr";
-import type { Episode } from "@/lib/types";
+import type { Episode, UserEpisode } from "@/lib/types";
 import { useAudioPlayerStore } from "@/store/audioPlayerStore";
 import { episodesPageContent } from "../content";
 import { EpisodesFilterBar } from "./episodes-filter-bar";
@@ -43,30 +42,10 @@ export function EpisodesClient({
 		setBundleType(value);
 	};
 
-	const handlePlayEpisode = (episode: Episode) => {
+	const handlePlayEpisode = (episode: Episode | UserEpisode) => {
 		console.log("Episodes - Setting episode:", episode);
-		setEpisode(episode);
+		setEpisode(episode as Episode);
 	};
-
-	// Get section content (title and description) based on bundle type
-	const getSectionContent = () => {
-		const { sections } = episodesPageContent;
-		switch (bundleType) {
-			case "all":
-				return sections.all;
-			case "curated":
-				return sections.curated;
-			case "shared":
-				return sections.shared;
-			default:
-				return sections.all;
-		}
-	};
-
-	// Loading state
-	if (isLoading) {
-		return <EpisodesPageSkeleton />;
-	}
 
 	// Error state
 	if (error) {
@@ -88,24 +67,19 @@ export function EpisodesClient({
 	}
 
 	// Empty state
-	if (episodes.length === 0) {
-		return (
-			<div className="w-full max-w-[1000px] md:mx-auto mt-0 bg-background">
-				<Alert>
-					<AlertTitle>{episodesPageContent.states.empty.title}</AlertTitle>
-					<AlertDescription className="mt-2">
-						{episodesPageContent.states.empty.description}
-					</AlertDescription>
-				</Alert>
-			</div>
-		);
-	}
-
-	// Main content
-	const _sectionContent = getSectionContent();
+	const emptyState = (
+		<div className="w-full max-w-[1000px] md:mx-auto mt-0">
+			<Alert>
+				<AlertTitle>{episodesPageContent.states.empty.title}</AlertTitle>
+				<AlertDescription className="mt-2">
+					{episodesPageContent.states.empty.description}
+				</AlertDescription>
+			</Alert>
+		</div>
+	);
 
 	return (
-		<div className="border-1 bg-[var(--kwak-1)]/80 border-[rgba(227,114,244,0.14)] rounded-none overflow-hidden mb-0 p-0 mt-0 md:mt-0 md:m-0 md:px-1 outline-0 md:rounded-4xl md:shadow-xl bg-episode-card-wrapper  lg:mt-6">
+		<div className="border bg-(--kwak-1)/80 border-[rgba(227,114,244,0.14)] rounded-none overflow-hidden mb-0 p-0 mt-0 md:mt-0 md:m-0 md:px-1 outline-0 md:rounded-4xl md:shadow-xl bg-episode-card-wrapper  lg:mt-6">
 			<div className="text-left md:pt-0 rounded-none my-0 py-0 md:mb-0 md:pb-0 overflow-hidden md:rounded-4xl md:py-0 min-w-full min-h-full flex flex-col justify-between md:flex-row items-center mx-0 lg:w-full lg:px-6	lg:pb-0	">
 				<SectionHeader
 					title="Your Subscribed Channel Feed"
@@ -129,7 +103,14 @@ export function EpisodesClient({
 
 			{/* Episode List */}
 			<div className="flex md:rounded-3xl md:px-2 mt-6 md:mt-0 lg:mt-8 flex-col justify-start items-start w-full gap-0 ">
-				<EpisodeList episodes={episodes} onPlayEpisode={handlePlayEpisode} />
+				<UnifiedEpisodeList
+					episodes={episodes}
+					isLoading={isLoading}
+					onPlayEpisode={handlePlayEpisode}
+					emptyState={emptyState}
+					showDownload={true}
+					className="episode-card-wrapper-dark py-4 rounded-3xl lg:mt-8 w-full"
+				/>
 			</div>
 		</div>
 	);

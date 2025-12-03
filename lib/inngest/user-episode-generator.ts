@@ -148,7 +148,7 @@ export const generateUserEpisode = inngest.createFunction(
 			resolvedSummaryLength = transcriptContext.summaryLength;
 		}
 
-		const transcript = transcriptContext.transcript;
+		const transcript = transcriptContext.transcript as string;
 
 		// Step 2: Generate TRUE neutral summary (chunked if large)
 		const summary = await step.run("generate-summary", async () => {
@@ -179,7 +179,6 @@ export const generateUserEpisode = inngest.createFunction(
 				modelName2,
 				`Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) single-narrator podcast segment where a Podslice host explains the highlights to listeners.\n\nIdentity & framing:\n- The speaker is a Podslice host summarizing someone else's content.\n- Do NOT reenact or impersonate the original speakers.\n- Present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken words only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as “the video” or “the episode.”\n\nStructure:\n- Hook that frames this as a Podslice summary.\n- Smooth transitions between highlight clusters.\n- Clear, concise wrap-up.\n\nSUMMARY:\n${summary}`
 			);
-
 			// Validate and enforce word count limit to ensure episodes stay within target duration
 			const words = rawScript.split(/\s+/).filter(Boolean);
 			const wordCount = words.length;
@@ -196,12 +195,12 @@ export const generateUserEpisode = inngest.createFunction(
 				const lastQuestion = truncatedScript.lastIndexOf("?");
 				const lastExclamation = truncatedScript.lastIndexOf("!");
 				const lastSentenceEnd = Math.max(lastPeriod, lastQuestion, lastExclamation);
-				
+
 				if (lastSentenceEnd > truncatedScript.length * 0.8) {
 					// If we can end on a sentence boundary without losing too much, do it
 					truncatedScript = truncatedScript.substring(0, lastSentenceEnd + 1);
 				}
-				
+
 				return truncatedScript;
 			}
 

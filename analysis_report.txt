@@ -1,0 +1,125 @@
+--- Log Analysis Summary ---
+Total Log Entries: 263
+
+--- Status Codes ---
+┌─────────┬────────┐
+│ (index) │ Values │
+├─────────┼────────┤
+│ 200     │ 136    │
+│ 307     │ 36     │
+│ 401     │ 9      │
+│ 403     │ 3      │
+│ -1      │ 79     │
+└─────────┴────────┘
+
+--- Log Levels ---
+┌─────────┬────────┐
+│ (index) │ Values │
+├─────────┼────────┤
+│ info    │ 235    │
+│ warning │ 19     │
+│ error   │ 9      │
+└─────────┴────────┘
+
+--- Branches ---
+┌─────────────────────────────────────────────────────┬────────┐
+│ (index)                                             │ Values │
+├─────────────────────────────────────────────────────┼────────┤
+│ paddle/notification-bug                             │ 231    │
+│ main                                                │ 3      │
+│ cloud_agent_investigate-and-fix-episode-length-d056 │ 29     │
+└─────────────────────────────────────────────────────┴────────┘
+
+--- Top 10 Endpoints ---
+65: podslice-ai-synthesis-staged.vercel.app/api/account/subscription
+61: podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook
+21: podslice-ai-synthesis-staged.vercel.app/api/notifications
+15: podslice-ai-synthesis-2as5esx8s-jacofrontend-dev.vercel.app/
+14: podslice-ai-synthesis-3bw68c2o2-jacofrontend-dev.vercel.app/
+8: podslice-ai-synthesis-staged.vercel.app/dashboard
+8: podslice-ai-synthesis-staged.vercel.app/
+8: podslice-ai-synthesis.vercel.app/
+7: podslice-ai-synthesis-staged.vercel.app/api/admin/check
+6: podslice-ai-synthesis-staged.vercel.app/api/episode-status/stream
+
+--- Slow Requests (>1000ms) ---
+┌─────────┬───────────────────────┬─────────────────────────────────────────────────────┬──────────┐
+│ (index) │ time                  │ path                                                │ duration │
+├─────────┼───────────────────────┼─────────────────────────────────────────────────────┼──────────┤
+│ 0       │ '2025-12-03 00:39:25' │ 'podslice-ai-synthesis-staged.vercel.app/dashboard' │ 1419     │
+└─────────┴───────────────────────┴─────────────────────────────────────────────────────┴──────────┘
+
+--- Errors and Warnings ---
+[WARNING] 2025-12-03 00:46:37 - podslice-ai-synthesis-484azqgcv-jacofrontend-dev.vercel.app/api/cron/youtube-feed: prisma:warn In production, we recommend using `prisma generate --no-engine` (See: `prisma generate --help`)
+[WARNING] 2025-12-03 00:44:05 - podslice-ai-synthesis-staged.vercel.app/api/admin/check: 
+[WARNING] 2025-12-03 00:42:53 - podslice-ai-synthesis-staged.vercel.app/api/admin/check: 
+[WARNING] 2025-12-03 00:39:49 - podslice-ai-synthesis-staged.vercel.app/api/episode-status/stream: prisma:warn In production, we recommend using `prisma generate --no-engine` (See: `prisma generate --help`)
+[WARNING] 2025-12-03 00:39:33 - podslice-ai-synthesis-staged.vercel.app/api/notifications: prisma:warn In production, we recommend using `prisma generate --no-engine` (See: `prisma generate --help`)
+[WARNING] 2025-12-03 00:39:33 - podslice-ai-synthesis-staged.vercel.app/api/account/subscription: prisma:warn In production, we recommend using `prisma generate --no-engine` (See: `prisma generate --help`)
+[WARNING] 2025-12-03 00:39:33 - podslice-ai-synthesis-staged.vercel.app/api/admin/check: prisma:warn In production, we recommend using `prisma generate --no-engine` (See: `prisma generate --help`)
+[WARNING] 2025-12-03 00:39:32 - podslice-ai-synthesis-staged.vercel.app/api/admin/check: 
+[WARNING] 2025-12-03 00:39:31 - podslice-ai-synthesis-staged.vercel.app/api/sync-user: prisma:warn In production, we recommend using `prisma generate --no-engine` (See: `prisma generate --help`)
+[WARNING] 2025-12-03 00:39:26 - podslice-ai-synthesis-staged.vercel.app/dashboard: prisma:warn In production, we recommend using `prisma generate --no-engine` (See: `prisma generate --help`)
+[ERROR] 2025-12-03 00:29:04 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: [Paddle Webhook] Signature Verification Failed: Error: [Paddle] Webhook signature verification failed
+    at cA.unmarshal (.next/server/app/api/paddle-webhook/route.js:1:75470)
+    at async B (.next/server/app/api/paddle-webhook/route.js:1:9863)
+    at async k (.next/server/app/api/paddle-webhook/route.js:1:12973)
+    at async g (.next/server/app/api/paddle-webhook/route.js:1:13976)
+    at async H (.next/server/app/api/paddle-webhook/route.js:1:15098)
+[WARNING] 2025-12-03 00:29:04 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: 
+[ERROR] 2025-12-03 00:28:20 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: [Paddle Webhook] Signature Verification Failed: Error: [Paddle] Webhook signature verification failed
+    at cA.unmarshal (.next/server/app/api/paddle-webhook/route.js:1:75470)
+    at async B (.next/server/app/api/paddle-webhook/route.js:1:9863)
+    at async k (.next/server/app/api/paddle-webhook/route.js:1:12973)
+    at async g (.next/server/app/api/paddle-webhook/route.js:1:13976)
+    at async H (.next/server/app/api/paddle-webhook/route.js:1:15098)
+[WARNING] 2025-12-03 00:28:20 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: 
+[ERROR] 2025-12-03 00:27:59 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: [Paddle Webhook] Signature Verification Failed: Error: [Paddle] Webhook signature verification failed
+    at cA.unmarshal (.next/server/app/api/paddle-webhook/route.js:1:75470)
+    at async B (.next/server/app/api/paddle-webhook/route.js:1:9863)
+    at async k (.next/server/app/api/paddle-webhook/route.js:1:12973)
+    at async g (.next/server/app/api/paddle-webhook/route.js:1:13976)
+    at async H (.next/server/app/api/paddle-webhook/route.js:1:15098)
+[WARNING] 2025-12-03 00:27:59 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: 
+[ERROR] 2025-12-03 00:27:04 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: [Paddle Webhook] Signature Verification Failed: Error: [Paddle] Webhook signature verification failed
+    at cA.unmarshal (.next/server/app/api/paddle-webhook/route.js:1:75470)
+    at async B (.next/server/app/api/paddle-webhook/route.js:1:9863)
+    at async k (.next/server/app/api/paddle-webhook/route.js:1:12973)
+    at async g (.next/server/app/api/paddle-webhook/route.js:1:13976)
+    at async H (.next/server/app/api/paddle-webhook/route.js:1:15098)
+[WARNING] 2025-12-03 00:27:04 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: 
+[ERROR] 2025-12-03 00:26:03 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: [Paddle Webhook] Signature Verification Failed: Error: [Paddle] Webhook signature verification failed
+    at cA.unmarshal (.next/server/app/api/paddle-webhook/route.js:1:75470)
+    at async B (.next/server/app/api/paddle-webhook/route.js:1:9863)
+    at async k (.next/server/app/api/paddle-webhook/route.js:1:12973)
+    at async g (.next/server/app/api/paddle-webhook/route.js:1:13976)
+    at async H (.next/server/app/api/paddle-webhook/route.js:1:15098)
+[WARNING] 2025-12-03 00:26:03 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: 
+[ERROR] 2025-12-03 00:25:20 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: [Paddle Webhook] Signature Verification Failed: Error: [Paddle] Webhook signature verification failed
+    at cA.unmarshal (.next/server/app/api/paddle-webhook/route.js:1:75470)
+    at async B (.next/server/app/api/paddle-webhook/route.js:1:9863)
+    at async k (.next/server/app/api/paddle-webhook/route.js:1:12973)
+    at async g (.next/server/app/api/paddle-webhook/route.js:1:13976)
+    at async H (.next/server/app/api/paddle-webhook/route.js:1:15098)
+[WARNING] 2025-12-03 00:25:20 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: 
+[ERROR] 2025-12-03 00:25:05 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: [Paddle Webhook] Signature Verification Failed: Error: [Paddle] Webhook signature verification failed
+    at cA.unmarshal (.next/server/app/api/paddle-webhook/route.js:1:75470)
+    at async B (.next/server/app/api/paddle-webhook/route.js:1:9863)
+    at async k (.next/server/app/api/paddle-webhook/route.js:1:12973)
+    at async g (.next/server/app/api/paddle-webhook/route.js:1:13976)
+    at async H (.next/server/app/api/paddle-webhook/route.js:1:15098)
+[WARNING] 2025-12-03 00:25:05 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: 
+[ERROR] 2025-12-03 00:24:07 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: [Paddle Webhook] Signature Verification Failed: Error: [Paddle] Webhook signature verification failed
+    at cA.unmarshal (.next/server/app/api/paddle-webhook/route.js:1:75470)
+    at async B (.next/server/app/api/paddle-webhook/route.js:1:9863)
+    at async k (.next/server/app/api/paddle-webhook/route.js:1:12973)
+    at async g (.next/server/app/api/paddle-webhook/route.js:1:13976)
+    at async H (.next/server/app/api/paddle-webhook/route.js:1:15098)
+[WARNING] 2025-12-03 00:24:07 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: 
+[ERROR] 2025-12-03 00:23:45 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: [Paddle Webhook] Signature Verification Failed: Error: [Paddle] Webhook signature verification failed
+    at cA.unmarshal (.next/server/app/api/paddle-webhook/route.js:1:75470)
+    at async B (.next/server/app/api/paddle-webhook/route.js:1:9863)
+    at async k (.next/server/app/api/paddle-webhook/route.js:1:12973)
+    at async g (.next/server/app/api/paddle-webhook/route.js:1:13976)
+    at async H (.next/server/app/api/paddle-webhook/route.js:1:15098)
+[WARNING] 2025-12-03 00:23:45 - podslice-ai-synthesis-staged.vercel.app/api/paddle-webhook: 

@@ -32,16 +32,14 @@ export function EmailLayout({ title, previewText, children }: EmailLayoutProps) 
 					padding: 0,
 					backgroundColor: "#f8fafc",
 					fontFamily,
-				}}
-			>
+				}}>
 				<Container
 					style={{
 						maxWidth: `${maxWidth}px`,
 						margin: "0 auto",
 						backgroundColor,
 						padding: `${paddingVertical}px ${paddingHorizontal}px`,
-					}}
-				>
+					}}>
 					<EmailHeader />
 					{children}
 				</Container>

@@ -125,7 +125,7 @@ export function BundleDetailsClient({ bundle: initialBundle }: BundleDetailsClie
 	return (
 		<div className="flex episode-card-wrapper mt-0 flex-col md:flex-row justify-center min-w-full gap-4">
 			<div className=" min-w-[300px] flex flex-col">
-				<div className="flex w-full items-center flex-col gap-1 justify-start overflow-hidden rounded-3xl bg-[#4a2ea867] border-1 border-[#042f30e5] px-5 py-9 h-fit  shadow-[0_8px_14px_1px]  shadow-slate-950/30 ">
+				<div className="flex w-full items-center flex-col gap-1 justify-start overflow-hidden rounded-3xl bg-[#4a2ea867] border border-[#042f30e5] px-5 py-9 h-fit  shadow-[0_8px_14px_1px]  shadow-slate-950/30 ">
 					<div className="flex w-full flex-col items-start justify-start gap-1 rounded-2xl pb-8">
 						{" "}
 						<Badge variant={bundle.is_active ? "default" : "secondary"}>

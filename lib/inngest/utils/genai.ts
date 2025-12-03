@@ -1,6 +1,5 @@
 // Shared Gemini client + helpers (migrated to @google/genai)
 import { GoogleGenAI } from "@google/genai";
-import { templateLiteral } from "zod/v4";
 
 let _client: GoogleGenAI | null = null;
 
@@ -34,27 +33,39 @@ export interface AudioGenerateOptions {
 	model?: string;
 }
 
-export async function generateTtsAudio(text: string, opts?: AudioGenerateOptions): Promise<Buffer> {
+export async function generateTtsAudio(
+	text: string,
+	opts?: AudioGenerateOptions
+): Promise<Buffer> {
 	const client = getClient();
-	const model = opts?.model || process.env.GEMINI_TTS_MODEL || "gemini-2.5-flash-preview-tts";
+	const model =
+		opts?.model || process.env.GEMINI_TTS_MODEL || "gemini-2.5-flash-preview-tts";
 	const voiceName = opts?.voiceName || process.env.GEMINI_TTS_VOICE || "Sulafat";
 
 	const response = await client.models.generateContentStream({
 		model,
-		
-		config: { temperature: 1.1, responseModalities: ["audio"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName } } } },
+
+		config: {
+			temperature: 1.1,
+			responseModalities: ["audio"],
+			speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName } } },
+		},
 		contents: [{ role: "user", parts: [{ text }] }],
 	});
 	let audio: Buffer | null = null;
 	for await (const chunk of response) {
-		const inlineData = chunk.candidates?.[0]?.content?.parts?.find((p: { inlineData?: { data?: string } }) => p.inlineData)?.inlineData;
+		const inlineData = chunk.candidates?.[0]?.content?.parts?.find(
+			(p: { inlineData?: { data?: string } }) => p.inlineData
+		)?.inlineData;
 		if (inlineData?.data) audio = Buffer.from(inlineData.data, "base64");
 	}
 	if (!audio) throw new Error("No audio produced");
 	return audio;
 }
 
-export function extractTextFromResponse(response: { candidates?: Array<{ content: { parts: Array<{ text?: string }> } }> }): string {
+export function extractTextFromResponse(response: {
+	candidates?: Array<{ content: { parts: Array<{ text?: string }> } }>;
+}): string {
 	return (
 		response?.candidates?.[0]?.content?.parts
 			?.map((p: { text?: string }) => p.text)

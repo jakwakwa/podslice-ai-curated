@@ -8,22 +8,28 @@ type DurationIndicatorProps = {
 };
 
 function formatDuration(totalSeconds?: number | null): string {
-	if (totalSeconds == null || Number.isNaN(totalSeconds) || totalSeconds <= 0) return "n/a";
+	if (totalSeconds == null || Number.isNaN(totalSeconds) || totalSeconds <= 0)
+		return "n/a";
 	const hours = Math.floor(totalSeconds / 3600);
 	const minutes = Math.floor((totalSeconds % 3600) / 60);
 	const seconds = Math.floor(totalSeconds % 60);
-	if (hours > 0) return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+	if (hours > 0)
+		return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 	return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
-export default function DurationIndicator({ seconds, size = "sm" }: DurationIndicatorProps): React.ReactElement {
+export default function DurationIndicator({
+	seconds,
+	size = "sm",
+}: DurationIndicatorProps): React.ReactElement {
 	const sizeClasses = {
 		xs: "text-[0.5rem]",
 		sm: "text-[0.4rem]",
-	}
-	const duration = formatDuration(seconds)
+	};
+	const duration = formatDuration(seconds);
 	return (
-		<div className={` inline py-0  px-1 h-auto leading-none ${sizeClasses[size]} no-wrap text-primary-foreground tracking-tight  font-mono font-medium text-[0.6rem]`}>
+		<div
+			className={` inline py-0  px-1 h-auto leading-none ${sizeClasses[size]} no-wrap text-primary-foreground tracking-tight  font-mono font-medium text-[0.6rem]`}>
 			{duration ? `${duration}` : "0:00"}
 		</div>
 	);

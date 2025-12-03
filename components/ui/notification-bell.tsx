@@ -2,19 +2,19 @@
 
 import { formatDistanceToNow } from "date-fns";
 import {
+	AlertTriangle,
 	Bell,
 	Calendar,
+	CheckCircle,
+	CreditCard,
 	EyeIcon,
 	Podcast,
-	CreditCard,
-	AlertTriangle,
-	CheckCircle,
-	TrendingUp,
 	TrendingDown,
+	TrendingUp,
 	XCircle,
 	XCircleIcon,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -23,56 +23,23 @@ import {
 	DropdownMenuContent,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useNotificationStore } from "@/lib/stores";
+import { useNotifications } from "@/hooks/use-notifications";
 import { cn } from "@/lib/utils";
 import { Typography } from "./typography";
 
 export function NotificationBell() {
 	const [isOpen, setIsOpen] = useState(false);
-
-	const {
-		notifications,
-		unreadCount,
-		isLoading,
-		loadNotifications,
-		markAsRead,
-		markAllAsRead,
-		deleteNotification,
-		clearAll,
-		startPolling,
-		stopPolling,
-		restartPolling,
-		pausedUntilSubmission,
-	} = useNotificationStore();
-
-	// Start polling when component mounts, stop when it unmounts
-	useEffect(() => {
-		if (!pausedUntilSubmission) {
-			startPolling();
-		}
-		return () => {
-			stopPolling();
-		};
-	}, [startPolling, stopPolling, pausedUntilSubmission]);
-
-	// Restart polling when user opens the dropdown (in case auth was restored)
-	useEffect(() => {
-		if (isOpen) {
-			// Try to restart polling when user interacts with notifications
-			restartPolling();
-		}
-	}, [isOpen, restartPolling]);
-
-	// Fetch when the dropdown opens (in case polling missed recent updates)
-	useEffect(() => {
-		if (isOpen) {
-			void loadNotifications();
-		}
-	}, [isOpen, loadNotifications]);
+	const { notifications, unreadCount, isLoading, mutate } = useNotifications();
 
 	const handleMarkAsRead = async (notificationId: string) => {
 		try {
-			await markAsRead(notificationId);
+			const response = await fetch(`/api/notifications/${notificationId}/read`, {
+				method: "PATCH",
+			});
+			if (!response.ok) throw new Error("Failed to mark as read");
+
+			// Optimistically update the UI
+			await mutate();
 		} catch {
 			toast.error("Failed to mark notification as read");
 		}
@@ -80,7 +47,13 @@ export function NotificationBell() {
 
 	const handleMarkAllAsRead = async () => {
 		try {
-			await markAllAsRead();
+			const unread = notifications.filter(n => !n.is_read);
+			await Promise.all(
+				unread.map(notif =>
+					fetch(`/api/notifications/${notif.notification_id}/read`, { method: "PATCH" })
+				)
+			);
+			await mutate();
 			toast.success("All notifications marked as read");
 		} catch {
 			toast.error("Failed to mark all as read");
@@ -89,7 +62,12 @@ export function NotificationBell() {
 
 	const handleDeleteNotification = async (notificationId: string) => {
 		try {
-			await deleteNotification(notificationId);
+			const response = await fetch(`/api/notifications/${notificationId}`, {
+				method: "DELETE",
+			});
+			if (!response.ok) throw new Error("Failed to delete");
+
+			await mutate();
 			toast.success("Notification deleted");
 		} catch {
 			toast.error("Failed to delete notification");
@@ -98,7 +76,12 @@ export function NotificationBell() {
 
 	const handleClearAll = async () => {
 		try {
-			await clearAll();
+			await Promise.all(
+				notifications.map(notif =>
+					fetch(`/api/notifications/${notif.notification_id}`, { method: "DELETE" })
+				)
+			);
+			await mutate();
 			toast.success("All notifications cleared");
 			setIsOpen(false);
 		} catch {
@@ -172,7 +155,7 @@ export function NotificationBell() {
 					/>
 					{unreadCount > 0 && (
 						<span className="absolute top-1 right-2 bg-destructive-foreground p-1 h-3 w-3 rounded-full text-[0.9rem]  flex items-center animate-pulse justify-center text-destructive-foreground">
-							2
+							{unreadCount}
 						</span>
 					)}
 				</Button>

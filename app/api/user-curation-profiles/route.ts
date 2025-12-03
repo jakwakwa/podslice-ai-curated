@@ -1,7 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
-import { PlanGate } from "@prisma/client";
+import { PlanGate, type Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import type { Podcast } from "@/lib/types";
 
 // Plan gate validation function
 function resolveAllowedGates(plan: string | null | undefined): PlanGate[] {
@@ -15,12 +16,26 @@ function resolveAllowedGates(plan: string | null | undefined): PlanGate[] {
 
 	// Handle various plan type formats that might be stored in the database
 	if (normalized === "curate_control" || normalized === "curate control") {
-		return [PlanGate.NONE, PlanGate.FREE_SLICE, PlanGate.CASUAL_LISTENER, PlanGate.CURATE_CONTROL];
+		return [
+			PlanGate.NONE,
+			PlanGate.FREE_SLICE,
+			PlanGate.CASUAL_LISTENER,
+			PlanGate.CURATE_CONTROL,
+		];
 	}
-	if (normalized === "casual_listener" || normalized === "casual listener" || normalized === "casual") {
+	if (
+		normalized === "casual_listener" ||
+		normalized === "casual listener" ||
+		normalized === "casual"
+	) {
 		return [PlanGate.NONE, PlanGate.FREE_SLICE, PlanGate.CASUAL_LISTENER];
 	}
-	if (normalized === "free_slice" || normalized === "free slice" || normalized === "free" || normalized === "freeslice") {
+	if (
+		normalized === "free_slice" ||
+		normalized === "free slice" ||
+		normalized === "free" ||
+		normalized === "freeslice"
+	) {
 		return [PlanGate.NONE, PlanGate.FREE_SLICE];
 	}
 	// Default: NONE plan or no plan
@@ -36,17 +51,31 @@ export async function GET(_request: Request) {
 			return new NextResponse("Unauthorized", { status: 401 });
 		}
 
-		const userCurationProfile = await prisma.userCurationProfile.findFirst({
-			where: { user_id: userId, is_active: true },
+		type UserCurationProfileWithRelations = Prisma.UserCurationProfileGetPayload<{
 			include: {
-				episodes: true,
+				episodes: true;
 				selectedBundle: {
 					include: {
-						bundle_podcast: { include: { podcast: true } },
+						bundle_podcast: {
+							include: { podcast: true };
+						};
+					};
+				};
+			};
+		}>;
+
+		const userCurationProfile: UserCurationProfileWithRelations | null =
+			await prisma.userCurationProfile.findFirst({
+				where: { user_id: userId, is_active: true },
+				include: {
+					episodes: true,
+					selectedBundle: {
+						include: {
+							bundle_podcast: { include: { podcast: true } },
+						},
 					},
 				},
-			},
-		});
+			});
 
 		if (!userCurationProfile) {
 			console.log("User curation profiles API: No profile found, returning null");
@@ -54,9 +83,18 @@ export async function GET(_request: Request) {
 		}
 
 		// Compute bundle episodes by podcast membership (podcast-centric model)
-		let computedBundleEpisodes: unknown[] = [];
+		type EpisodeWithRelations = Prisma.EpisodeGetPayload<{
+			include: {
+				podcast: true;
+				userProfile: true;
+			};
+		}>;
+
+		let computedBundleEpisodes: EpisodeWithRelations[] = [];
 		if (userCurationProfile.selectedBundle) {
-			const podcastIds = userCurationProfile.selectedBundle.bundle_podcast.map((bp: { podcast_id: string }) => bp.podcast_id);
+			const podcastIds: string[] = userCurationProfile.selectedBundle.bundle_podcast.map(
+				bp => bp.podcast_id
+			);
 			if (podcastIds.length > 0) {
 				computedBundleEpisodes = await prisma.episode.findMany({
 					where: { podcast_id: { in: podcastIds } },
@@ -69,12 +107,43 @@ export async function GET(_request: Request) {
 			}
 		}
 
+		// Extract scalar fields from podcasts, excluding relations
+		const podcasts: Podcast[] = userCurationProfile.selectedBundle
+			? userCurationProfile.selectedBundle.bundle_podcast.map(bp => {
+					// bp.podcast is the full Prisma Podcast type with relations from the include
+					// Extract only scalar fields
+					const podcast = bp.podcast;
+					const {
+						podcast_id,
+						name,
+						description,
+						url,
+						image_url,
+						category,
+						is_active,
+						owner_user_id,
+						created_at,
+					} = podcast;
+					return {
+						podcast_id,
+						name,
+						description,
+						url,
+						image_url,
+						category,
+						is_active,
+						owner_user_id,
+						created_at,
+					} as Podcast;
+				})
+			: [];
+
 		const transformedProfile = {
 			...userCurationProfile,
 			selectedBundle: userCurationProfile.selectedBundle
 				? {
 						...userCurationProfile.selectedBundle,
-						podcasts: userCurationProfile.selectedBundle.bundle_podcast.map((bp: { podcast: unknown }) => bp.podcast),
+						podcasts,
 						episodes: computedBundleEpisodes,
 					}
 				: null,
@@ -94,35 +163,49 @@ export async function POST(request: Request) {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		const body = await request.json();
+		const body = (await request.json()) as {
+			name?: string;
+			isBundleSelection?: boolean;
+			selectedBundleId?: string;
+			selectedPodcasts?: string[];
+		};
 		const { name, isBundleSelection, selectedBundleId, selectedPodcasts } = body;
 
 		// Validate required fields
 		if (!name || typeof isBundleSelection !== "boolean") {
-			return NextResponse.json({ error: "Name and isBundleSelection are required" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Name and isBundleSelection are required" },
+				{ status: 400 }
+			);
 		}
 
 		// Check if user already has an active profile
-		const existingProfile = await prisma.userCurationProfile.findFirst({
-			where: { user_id: userId, is_active: true },
-		});
+		const existingProfile: Prisma.$UserCurationProfilePayload["scalars"] | null =
+			await prisma.userCurationProfile.findFirst({
+				where: { user_id: userId, is_active: true },
+			});
 
 		if (existingProfile) {
-			return NextResponse.json({ error: "User already has an active profile" }, { status: 409 });
+			return NextResponse.json(
+				{ error: "User already has an active profile" },
+				{ status: 409 }
+			);
 		}
 
 		// Get user's subscription plan
-		const subscription = await prisma.subscription.findFirst({
-			where: { user_id: userId },
-			orderBy: { updated_at: "desc" },
-		});
-		const userPlan = subscription?.plan_type ?? null;
+		const subscription: Prisma.$SubscriptionPayload["scalars"] | null =
+			await prisma.subscription.findFirst({
+				where: { user_id: userId },
+				orderBy: { updated_at: "desc" },
+			});
+		const userPlan: string | null = subscription?.plan_type ?? null;
 
 		// Validate bundle selection if applicable
 		if (isBundleSelection && selectedBundleId) {
-			const bundle = await prisma.bundle.findUnique({
-				where: { bundle_id: selectedBundleId },
-			});
+			const bundle: Prisma.$BundlePayload["scalars"] | null =
+				await prisma.bundle.findUnique({
+					where: { bundle_id: selectedBundleId },
+				});
 
 			if (!bundle) {
 				return NextResponse.json({ error: "Bundle not found" }, { status: 404 });
@@ -130,7 +213,9 @@ export async function POST(request: Request) {
 
 			// Check plan gate access
 			const allowedGates = resolveAllowedGates(userPlan);
-			const canInteract = allowedGates.some(allowedGate => allowedGate === bundle.min_plan);
+			const canInteract = allowedGates.some(
+				allowedGate => allowedGate === bundle.min_plan
+			);
 			if (!canInteract) {
 				return NextResponse.json(
 					{
@@ -144,15 +229,33 @@ export async function POST(request: Request) {
 
 		// Validate podcast selection if applicable
 		if (!isBundleSelection && (!selectedPodcasts || selectedPodcasts.length === 0)) {
-			return NextResponse.json({ error: "At least one podcast must be selected for custom profiles" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "At least one podcast must be selected for custom profiles" },
+				{ status: 400 }
+			);
 		}
 
 		if (!isBundleSelection && selectedPodcasts && selectedPodcasts.length > 5) {
-			return NextResponse.json({ error: "Maximum 5 podcasts allowed for custom profiles" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Maximum 5 podcasts allowed for custom profiles" },
+				{ status: 400 }
+			);
 		}
 
 		// Create the profile
-		const profile = await prisma.userCurationProfile.create({
+		type CreatedProfile = Prisma.UserCurationProfileGetPayload<{
+			include: {
+				selectedBundle: {
+					include: {
+						bundle_podcast: {
+							include: { podcast: true };
+						};
+					};
+				};
+			};
+		}>;
+
+		const profile: CreatedProfile = await prisma.userCurationProfile.create({
 			data: {
 				name,
 				user_id: userId,
@@ -169,13 +272,44 @@ export async function POST(request: Request) {
 			},
 		});
 
+		// Extract scalar fields from podcasts, excluding relations
+		const podcasts: Podcast[] = profile.selectedBundle
+			? profile.selectedBundle.bundle_podcast.map(bp => {
+					// bp.podcast is the full Prisma Podcast type with relations from the include
+					// Extract only scalar fields
+					const podcast = bp.podcast;
+					const {
+						podcast_id,
+						name,
+						description,
+						url,
+						image_url,
+						category,
+						is_active,
+						owner_user_id,
+						created_at,
+					} = podcast;
+					return {
+						podcast_id,
+						name,
+						description,
+						url,
+						image_url,
+						category,
+						is_active,
+						owner_user_id,
+						created_at,
+					} as Podcast;
+				})
+			: [];
+
 		// Transform the response
 		const transformedProfile = {
 			...profile,
 			selectedBundle: profile.selectedBundle
 				? {
 						...profile.selectedBundle,
-						podcasts: profile.selectedBundle.bundle_podcast.map((bp: { podcast: unknown }) => bp.podcast),
+						podcasts,
 					}
 				: null,
 		};

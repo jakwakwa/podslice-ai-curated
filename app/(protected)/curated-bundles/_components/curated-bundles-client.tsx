@@ -1,11 +1,13 @@
 "use client";
 
 import { AlertCircle, Lock } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
+import SectionHeader from "@/components/section-header";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,7 +16,6 @@ import { H3, Typography } from "@/components/ui/typography";
 import { ONE_HOUR, SEVEN_DAYS } from "@/lib/swr";
 import type { Bundle, Podcast } from "@/lib/types";
 import { BundleSelectionDialog } from "./bundle-selection-dialog";
-import SectionHeader from "@/components/section-header";
 
 type BundleWithAccess = Bundle & {
 	podcasts: Podcast[];
@@ -262,14 +263,14 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 				prev =>
 					prev
 						? {
-							...prev,
-							...(isSelectingSharedBundle
-								? { selected_shared_bundle_id: actualBundleId }
-								: { selected_bundle_id: actualBundleId }),
-							selectedBundle: {
-								name: selectedBundle?.name || "",
-							},
-						}
+								...prev,
+								...(isSelectingSharedBundle
+									? { selected_shared_bundle_id: actualBundleId }
+									: { selected_bundle_id: actualBundleId }),
+								selectedBundle: {
+									name: selectedBundle?.name || "",
+								},
+							}
 						: null,
 				{ revalidate: false }
 			);
@@ -321,8 +322,8 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 	if (isFetchingBundles) {
 		return (
 			<div className="mb-8">
-				<div className="h-8 w-64 bg-[#2f4383]/30 animate-pulse rounded mb-4 px-2 md:px-12 xl:px-[40px]" />
-				<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 xl:grid-cols-3 xl:px-[40px] xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark lg:p-[40px] rounded-3xl border-1 border-[#513f8bfc] shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]">
+				<div className="h-8 w-64 bg-[#2f4383]/30 animate-pulse rounded mb-4 px-2 md:px-12 xl:px-10" />
+				<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 xl:grid-cols-3 xl:px-10 xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark  rounded-3xl border border-[#513f8bfc] shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]">
 					<div className="bg-[#2f4383]/40 h-[500px] w-full animate-pulse rounded-lg" />
 					<div className="bg-[#2f4383]/40 h-[500px] w-full animate-pulse rounded-lg" />
 					<div className="bg-[#2f4383]/40 h-[500px] w-full animate-pulse rounded-lg" />
@@ -331,8 +332,6 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 			</div>
 		);
 	}
-
-
 
 	// Separate bundles by type
 	const curatedBundles = bundleList.filter(b => b.bundleType === "curated");
@@ -356,11 +355,12 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 			{/* Curated Bundles Section */}
 
 			{curatedBundles.length > 0 && (
-
 				<div className=" mb-8 px-4">
-					<SectionHeader title="Subscribe to a Channel" description="Subscribe to channels. New audio and text summaries will appear in your feed automatically weekly or daily" />
+					<SectionHeader
+						title="Subscribe to a Channel"
+						description="Subscribe to channels. New audio and text summaries will appear in your feed automatically weekly or daily"
+					/>
 					<div className="episode-card-wrapper-dark relative transition-all duration-200 text-card-foreground gap-4 p-0 px-2 md:px-4 md:py-5 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-3 xl:p-[40px]   lg:px-8 xl:justify-evenly items-start lg:gap-5 xl:gap-6 h-fit xl:px-[40px] rounded-3xl  backdrop-blur-[3px]">
-
 						{curatedBundles.map(bundle => {
 							const planMeta = PLAN_GATE_META[bundle.min_plan];
 							const canInteract = bundle.canInteract;
@@ -400,7 +400,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 														<Badge
 															variant="outline"
 															className="text-secondary-foreground
-                             border-1  border-sidebar bg-emerald-500/0 text-[0.6rem] font-semibold px-2 py-0.5">
+                             border  border-sidebar bg-emerald-500/0 text-[0.6rem] font-semibold px-2 py-0.5">
 															{planMeta.statusLabel}
 														</Badge>
 													) : (
@@ -460,8 +460,9 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 
 											<div className="flex items-start gap-2 text-sm font-normal tracking-wide w-full">
 												<div className="relative my-2 border-2  border-teal-300 rounded-lg outline-0 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
-													{!failedBundleImages.has(bundle?.bundle_id || "") && bundle?.bundle_id ? (
-														<img
+													{!failedBundleImages.has(bundle?.bundle_id || "") &&
+													bundle?.bundle_id ? (
+														<Image
 															className="w-full object-cover"
 															src={`/api/bundles/${bundle.bundle_id}/image`}
 															alt={bundle.name}
@@ -472,9 +473,11 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 														/>
 													) : (
 														<div className="w-full h-[110px] bg-muted flex items-center justify-center">
-															<img
+															<Image
 																src="/generic-news-placeholder2.png"
 																alt={bundle.name}
+																width={190}
+																height={110}
 																className="w-full h-full object-cover"
 															/>
 														</div>
@@ -496,7 +499,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 					<H3 className="text-[1.2rem] text-[#d1a7e7] font-bold font-sans mb-4 px-2 md:px-12 xl:px-[40px]">
 						🎁 Shared by Community
 					</H3>
-					<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-2 xl:px-[40px] xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark  lg:px-[40px] rounded-3xl border-1 border-[#a497cdfc] backdrop-blur-[3px]">
+					<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-2 xl:px-[40px] xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark  lg:px-[40px] rounded-3xl border border-[#a497cdfc] backdrop-blur-[3px]">
 						{sharedBundles.map(bundle => {
 							const planMeta = PLAN_GATE_META[bundle.min_plan];
 							const canInteract = bundle.canInteract;
@@ -606,19 +609,24 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 
 											<div className="flex items-start gap-2 text-sm font-normal tracking-wide w-full">
 												<div className="relative my-2 rounded-lg outline-2 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
-													{!failedBundleImages.has(bundle?.bundle_id || "") && bundle?.bundle_id ? (
-														<img
+													{!failedBundleImages.has(bundle?.bundle_id || "") &&
+													bundle?.bundle_id ? (
+														<Image
 															className="w-full object-cover"
 															src={`/api/bundles/${bundle.bundle_id}/image`}
 															alt={bundle.name}
+															width={190}
+															height={110}
 															style={{ width: "100%", height: "auto" }}
 															onError={() => handleImageError(bundle.bundle_id || "")}
 														/>
 													) : (
 														<div className="w-full h-[110px] bg-muted flex items-center justify-center">
-															<img
+															<Image
 																src="/generic-news-placeholder2.png"
 																alt={bundle.name}
+																width={190}
+																height={110}
 																className="w-full h-full object-cover"
 															/>
 														</div>

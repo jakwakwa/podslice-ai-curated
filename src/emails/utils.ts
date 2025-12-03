@@ -65,6 +65,7 @@ export const EMAIL_CONSTANTS = {
 		},
 	},
 	TYPOGRAPHY: {
-		fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+		fontFamily:
+			"-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
 	},
 } as const;

@@ -26,14 +26,23 @@ export async function GET(request: Request) {
 		}
 
 		const details = await getYouTubeVideoDetails(parsed.data.url);
-		console.log("[DEBUG] YouTube metadata API: getYouTubeVideoDetails returned:", details);
+		console.log(
+			"[DEBUG] YouTube metadata API: getYouTubeVideoDetails returned:",
+			details
+		);
 
 		if (!details) {
 			console.log("[DEBUG] YouTube metadata API: No details returned");
-			return new NextResponse("Could not retrieve video details. Please check the URL and ensure the API key is valid.", { status: 404 });
+			return new NextResponse(
+				"Could not retrieve video details. Please check the URL and ensure the API key is valid.",
+				{ status: 404 }
+			);
 		}
 
-		console.log("[DEBUG] YouTube metadata API: Returning details with duration:", details.duration);
+		console.log(
+			"[DEBUG] YouTube metadata API: Returning details with duration:",
+			details.duration
+		);
 		return NextResponse.json(details);
 	} catch (error) {
 		console.error("[DEBUG] YouTube metadata API error:", error);

@@ -18,7 +18,12 @@ function getRuntimeEnv(): "production" | "preview" | "development" {
 
 function looksLikeJson(value: string): boolean {
 	const t = value.trim();
-	return t.startsWith("{") || t.startsWith("[") || t.includes('"type"') || t.includes('"client_email"');
+	return (
+		t.startsWith("{") ||
+		t.startsWith("[") ||
+		t.includes('"type"') ||
+		t.includes('"client_email"')
+	);
 }
 
 export function ensureGoogleCredentialsForADC(): void {
@@ -48,7 +53,7 @@ export function ensureGoogleCredentialsForADC(): void {
 			const normalized = JSON.stringify(parsed);
 			const tmpPath = "/tmp/podslice-gcp-credentials.json";
 			// Write synchronously to avoid race conditions in cold starts
-			require("fs").writeFileSync(tmpPath, normalized, { encoding: "utf8" });
+			require("node:fs").writeFileSync(tmpPath, normalized, { encoding: "utf8" });
 			process.env.GOOGLE_APPLICATION_CREDENTIALS = tmpPath;
 			cachedPath = tmpPath;
 			didInitialize = true;

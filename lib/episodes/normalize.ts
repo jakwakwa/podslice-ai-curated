@@ -31,6 +31,8 @@ export interface NormalizedEpisode {
 	subtitle?: string | null;
 	/** Original episode data for advanced use cases */
 	original: Episode | UserEpisode;
+	/** Whether this is a news episode */
+	isNews?: boolean;
 }
 
 /** Formats the news sources string into a human-friendly label */
@@ -56,7 +58,10 @@ export type EpisodeSubtitleContext = {
 /**
  * Returns a consistent subtitle string for an episode
  */
-export function getEpisodeSubtitle(episode: Episode | UserEpisode, ctx: EpisodeSubtitleContext = {}): string {
+export function getEpisodeSubtitle(
+	episode: Episode | UserEpisode,
+	ctx: EpisodeSubtitleContext = {}
+): string {
 	// Bundle episode: prefer relation name, then provided podcastName, otherwise generic label
 	if (isBundleEpisode(episode)) {
 		const e = episode as unknown as { podcast?: { name?: string } };
@@ -99,12 +104,40 @@ export function normalizeEpisode(episode: Episode | UserEpisode): NormalizedEpis
 	if (isUserEpisode(episode)) {
 		// News episodes have youtube_url set to 'news' and should not trigger YouTube lookups
 		const isNews = (episode.youtube_url || "").toLowerCase() === "news";
-		const sources = isNews && episode.news_sources ? `Sources: ${formatNewsSources(episode.news_sources)}` : null;
+		const sources =
+			isNews && episode.news_sources
+				? `Sources: ${formatNewsSources(episode.news_sources)}`
+				: null;
+
+		// Determine the playable audio URL
+		// 1. Prefer signedAudioUrl if available (runtime property)
+		// 2. Use public_gcs_audio_url if available
+		// 3. Use gcs_audio_url only if it's not a gs:// URI (which browsers can't play)
+		const withSigned = episode as UserEpisode & { signedAudioUrl?: string | null };
+		let audioUrl = withSigned.signedAudioUrl || null;
+
+		if (!audioUrl && episode.public_gcs_audio_url) {
+			audioUrl = episode.public_gcs_audio_url;
+		}
+
+		if (
+			!audioUrl &&
+			episode.gcs_audio_url &&
+			!episode.gcs_audio_url.startsWith("gs://")
+		) {
+			audioUrl = episode.gcs_audio_url;
+		}
+
+		// Enforce COMPLETED status for playback
+		if (episode.status !== "COMPLETED") {
+			audioUrl = null;
+		}
+
 		return {
 			id: episode.episode_id,
 			title: episode.episode_title || "Untitled Episode",
 			source: "user",
-			audioUrl: episode.gcs_audio_url || null,
+			audioUrl,
 			artworkUrl: null, // YouTube channel image will be fetched separately
 			durationSeconds: episode.duration_seconds ?? null,
 			publishedAt: episode.created_at,
@@ -112,6 +145,7 @@ export function normalizeEpisode(episode: Episode | UserEpisode): NormalizedEpis
 			youtubeUrl: isNews ? null : (episode.youtube_url ?? null),
 			subtitle: sources,
 			original: episode,
+			isNews,
 		};
 	}
 
@@ -127,13 +161,17 @@ export function normalizeEpisode(episode: Episode | UserEpisode): NormalizedEpis
 		permalink: `/episodes/${episode.episode_id}`,
 		youtubeUrl: null,
 		original: episode,
+		isNews: false,
 	};
 }
 
 /**
  * Gets the artwork URL for an episode, with fallback logic
  */
-export function getArtworkUrlForEpisode(episode: Episode | UserEpisode, youtubeChannelImage?: string | null): string | null {
+export function getArtworkUrlForEpisode(
+	episode: Episode | UserEpisode,
+	youtubeChannelImage?: string | null
+): string | null {
 	if (isBundleEpisode(episode)) {
 		return episode.image_url || null;
 	}
@@ -149,6 +187,8 @@ export function getArtworkUrlForEpisode(episode: Episode | UserEpisode, youtubeC
 /**
  * Batch normalizes an array of episodes
  */
-export function normalizeEpisodes(episodes: (Episode | UserEpisode)[]): NormalizedEpisode[] {
+export function normalizeEpisodes(
+	episodes: (Episode | UserEpisode)[]
+): NormalizedEpisode[] {
 	return episodes.map(normalizeEpisode);
 }

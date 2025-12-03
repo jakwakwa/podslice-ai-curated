@@ -1,14 +1,24 @@
-"use client"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import type { UserCurationProfile } from "@/lib/types"
+"use client";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+	Card,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import type { UserCurationProfile } from "@/lib/types";
 
-export function SavedCollectionCard({ userCurationProfile }: { userCurationProfile: UserCurationProfile }) {
+export function SavedCollectionCard({
+	userCurationProfile,
+}: {
+	userCurationProfile: UserCurationProfile;
+}) {
 	const formatDate = (date: Date | null | undefined) => {
-		if (!date) return "N/A"
-		return new Date(date).toLocaleString()
-	}
+		if (!date) return "N/A";
+		return new Date(date).toLocaleString();
+	};
 
 	return (
 		<Card>
@@ -26,5 +36,5 @@ export function SavedCollectionCard({ userCurationProfile }: { userCurationProfi
 				</Link>
 			</CardFooter>
 		</Card>
-	)
+	);
 }

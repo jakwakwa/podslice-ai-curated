@@ -11,7 +11,9 @@ function getEnvironment(): "development" | "production" | "preview" {
 		return env;
 	}
 	// Throw an error for unknown environments to avoid unsafe defaults
-	throw new Error(`Unknown environment value: "${env}". Expected "development", "production", or "preview".`);
+	throw new Error(
+		`Unknown environment value: "${env}". Expected "development", "production", or "preview".`
+	);
 }
 
 export function ensureBucketName(): string {
@@ -55,7 +57,9 @@ function initStorageClients(): { storageUploader: Storage; storageReader: Storag
 		if (!readerRaw) missing.push("GCS_READER_KEY_PATH");
 
 		if (missing.length > 0) {
-			throw new Error(`Missing Google Cloud credentials for development environment: ${missing.join(", ")}`);
+			throw new Error(
+				`Missing Google Cloud credentials for development environment: ${missing.join(", ")}`
+			);
 		}
 
 		try {
@@ -65,7 +69,9 @@ function initStorageClients(): { storageUploader: Storage; storageReader: Storag
 			storageUploader = new Storage({ keyFilename: uploaderRaw });
 			storageReader = new Storage({ keyFilename: readerRaw });
 		} catch (_error) {
-			throw new Error("Failed to initialize Google Cloud Storage clients with key file paths");
+			throw new Error(
+				"Failed to initialize Google Cloud Storage clients with key file paths"
+			);
 		}
 	} else {
 		// Production/Preview: only support JSON variables
@@ -76,14 +82,18 @@ function initStorageClients(): { storageUploader: Storage; storageReader: Storag
 		if (!readerRaw) missing.push("GCS_READER_KEY_JSON");
 
 		if (missing.length > 0) {
-			throw new Error(`Missing Google Cloud credentials for ${environment} environment: ${missing.join(", ")}`);
+			throw new Error(
+				`Missing Google Cloud credentials for ${environment} environment: ${missing.join(", ")}`
+			);
 		}
 
 		try {
 			storageUploader = new Storage({ credentials: JSON.parse(uploaderRaw!) });
 			storageReader = new Storage({ credentials: JSON.parse(readerRaw!) });
 		} catch (_error) {
-			throw new Error("Failed to initialize Google Cloud Storage clients with JSON credentials");
+			throw new Error(
+				"Failed to initialize Google Cloud Storage clients with JSON credentials"
+			);
 		}
 	}
 
@@ -98,7 +108,13 @@ export function getStorageReader(): Storage {
 	return initStorageClients().storageReader;
 }
 
-export async function uploadToGCS(storage: Storage, bucketName: string, fileName: string, data: Buffer, options?: { contentType?: string }): Promise<void> {
+export async function uploadToGCS(
+	storage: Storage,
+	bucketName: string,
+	fileName: string,
+	data: Buffer,
+	options?: { contentType?: string }
+): Promise<void> {
 	const bucket = storage.bucket(bucketName);
 	const file = bucket.file(fileName);
 	await file.save(data, {
@@ -118,17 +134,30 @@ export function parseGcsUri(uri: string): { bucket: string; object: string } | n
 	return { bucket, object };
 }
 
-export async function storeUrlInGCS(url: string, destinationObjectName: string, contentTypeHint?: string): Promise<string> {
+export async function storeUrlInGCS(
+	url: string,
+	destinationObjectName: string,
+	contentTypeHint?: string
+): Promise<string> {
 	const uploader = getStorageUploader();
 	const bucketName = ensureBucketName();
 	const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
 	if (!res.ok) {
 		const body = await res.text().catch(() => "");
-		throw new Error(`Failed to download source. status=${res.status} body=${body.slice(0, 500)}`);
+		throw new Error(
+			`Failed to download source. status=${res.status} body=${body.slice(0, 500)}`
+		);
 	}
 	const buf = Buffer.from(await res.arrayBuffer());
-	const contentType = (res.headers.get("content-type") || contentTypeHint || "audio/mpeg").split(";")[0];
-	await uploader.bucket(bucketName).file(destinationObjectName).save(buf, { contentType, public: true });
+	const contentType = (
+		res.headers.get("content-type") ||
+		contentTypeHint ||
+		"audio/mpeg"
+	).split(";")[0];
+	await uploader
+		.bucket(bucketName)
+		.file(destinationObjectName)
+		.save(buf, { contentType, public: true });
 	return `https://storage.googleapis.com/${bucketName}/${encodeURIComponent(destinationObjectName)}`;
 }
 

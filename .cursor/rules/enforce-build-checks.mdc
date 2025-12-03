@@ -2,4 +2,4 @@
 alwaysApply: false
 ---
 # CRITICAL:
-- After changes, ensure `bun run build` and `bun run lint` pass before merging.
+- BEFORE presenting solutions or changes, make sure you can run`bun run build` and there is no errors. Fix the errors and run builds until no more exist. THEN present a summary to the user

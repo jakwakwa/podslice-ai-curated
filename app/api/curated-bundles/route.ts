@@ -146,33 +146,58 @@ export async function GET(_request: NextRequest) {
 		});
 
 		// Transform shared bundles - available to FREE_SLICE, CASUAL_LISTENER, and CURATE_CONTROL
-		const transformedSharedBundles = sharedBundles.map(bundle => {
-			// Shared bundles available to all plans except NONE
-			const canInteract = allowedGates.some(gate => gate !== PlanGateEnum.NONE);
-			const lockReason = canInteract ? null : "Shared bundles require a paid plan.";
-
-			return {
-				bundle_id: bundle.shared_bundle_id,
-				shared_bundle_id: bundle.shared_bundle_id,
-				name: bundle.name,
-				description: bundle.description,
-				image_url: null, // Shared bundles don't have images yet
-				is_active: bundle.is_active,
-				created_at: bundle.created_at,
-				min_plan: PlanGateEnum.FREE_SLICE, // Shared bundles require at least FREE_SLICE
-				episodes: bundle.episodes.map(ep => ({
-					episode_id: ep.userEpisode.episode_id,
-					episode_title: ep.userEpisode.episode_title,
-					duration_seconds: ep.userEpisode.duration_seconds,
-				})),
-				episode_count: bundle.episodes.length,
-				owner: bundle.owner,
-				podcasts: [], // Shared bundles don't have podcasts, they have episodes
-				canInteract,
-				lockReason,
-				bundleType: "shared" as const,
+		type SharedBundleWithEpisodes = Prisma.SharedBundleGetPayload<{
+			include: {
+				episodes: {
+					include: {
+						userEpisode: {
+							select: {
+								episode_id: true;
+								episode_title: true;
+								duration_seconds: true;
+								created_at: true;
+							};
+						};
+					};
+				};
+				owner: {
+					select: {
+						user_id: true;
+						name: true;
+					};
+				};
 			};
-		});
+		}>;
+
+		const transformedSharedBundles = sharedBundles.map(
+			(bundle: SharedBundleWithEpisodes) => {
+				// Shared bundles available to all plans except NONE
+				const canInteract = allowedGates.some(gate => gate !== PlanGateEnum.NONE);
+				const lockReason = canInteract ? null : "Shared bundles require a paid plan.";
+
+				return {
+					bundle_id: bundle.shared_bundle_id,
+					shared_bundle_id: bundle.shared_bundle_id,
+					name: bundle.name,
+					description: bundle.description,
+					image_url: null, // Shared bundles don't have images yet
+					is_active: bundle.is_active,
+					created_at: bundle.created_at,
+					min_plan: PlanGateEnum.FREE_SLICE, // Shared bundles require at least FREE_SLICE
+					episodes: bundle.episodes.map(ep => ({
+						episode_id: ep.userEpisode.episode_id,
+						episode_title: ep.userEpisode.episode_title,
+						duration_seconds: ep.userEpisode.duration_seconds,
+					})),
+					episode_count: bundle.episodes.length,
+					owner: bundle.owner,
+					podcasts: [], // Shared bundles don't have podcasts, they have episodes
+					canInteract,
+					lockReason,
+					bundleType: "shared" as const,
+				};
+			}
+		);
 
 		// Combine both types of bundles
 		const allBundles = [...transformedAdminBundles, ...transformedSharedBundles];

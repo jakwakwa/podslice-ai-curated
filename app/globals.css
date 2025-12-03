@@ -322,7 +322,7 @@
 	--dialog-card: var(--beduk-9);
 	--dialog-overlay: var(--swak-1);
 
-	--background: var(--swak-10);
+	--background: var(--kwak-1);
 	--foreground: var(--swak-9);
 	--popover: var(--color-cyan-950);
 	--popover-foreground: var(--swak-1);
@@ -339,7 +339,7 @@
 	--accent: var(--beduk-1);
 	--accent-foreground: var(--kwak-9);
 	--destructive: var(--wyn-5);
-	--border: var(--color-gray-800);
+	--border: var(--kwak-3);
 	--input: var(--swak-5);
 	--ring: var(--kwak-5);
 	--chart-1: var(--kwak-3);

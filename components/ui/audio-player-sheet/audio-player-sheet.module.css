@@ -53,7 +53,7 @@
 }
 
 .transcriptContent {
-  @apply overflow-y-auto pl-8 pr-4 py-5 lg:p-[12px] text-[12px] lg:text-[14px] bg-[#1f1f328b] backdrop-blur-3xl text-[var(--audio-sheet-foreground)]/80 transition-all lg:px-10 lg:py-7;
+  @apply overflow-y-auto pl-8 pr-4 py-5 lg:p-3  text-[12px] lg:text-[14px] bg-[#1f1f328b] backdrop-blur-3xl text-[var(--audio-sheet-foreground)]/80 transition-all lg:px-10 lg:py-7;
 }
 
 .transcriptContentExpanded {

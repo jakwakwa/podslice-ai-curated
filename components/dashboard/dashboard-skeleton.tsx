@@ -15,16 +15,16 @@ export function SummarySkeleton() {
 					<div className="h-8 w-24 ml-0  animate-pulse rounded my-2" />
 					<div className="mb-4 flex flex-col">
 						<div className="h-4 w-32  animate-pulse rounded mb-2" />
-						<div className="flex w-full px-2 md:px-2 py-1 rounded md:border-1 gap-3">
+						<div className="flex w-full px-2 md:px-2 py-1 rounded md:border gap-3">
 							<div className="h-6 w-full md:animate-pulse rounded" />
 						</div>
 					</div>
 				</div>
 			</div>
 			<div className="mt-0 w-full overflow-hidden shadow-md">
-				<div className="md:bg-[#2F438335]/30 border-t-0 overflow-hidden rounded-b-2xl border-1 px-4 p-4">
+				<div className="md:bg-[#2F438335]/30 border-t-0 overflow-hidden rounded-b-2xl border px-4 p-4">
 					<div className="h-4 w-20 md:bg-[#2F438335]/30 animate-pulse rounded mb-2" />
-					<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full md:border-1 md:border-gray-800 rounded-md overflow-hidden pt-0">
+					<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full md:border md:border-gray-800 rounded-md overflow-hidden pt-0">
 						<div className="flex flex-row justify-between gap-1 items-center h-9 w-full md:bg-black/10 py-3 px-2">
 							<div className="h-4 w-32 md:bg-[#2F438335]/30 animate-pulse rounded" />
 							<div className="h-4 w-8 md:bg-[#2F438335]/30 animate-pulse rounded" />
@@ -64,7 +64,7 @@ export function RecentListSkeleton() {
 
 export function BundleFeedSkeleton() {
 	return (
-		<div className="w-full flex flex-col gap-0 justify-center items-baseline shadow-md shadow-stone-950/20 mt-0 md:mt-4 md:m-0 xl:flex-row md:gap-4 pt-0 md:mb-0 border-1 md:rounded-3xl overflow-hidden">
+		<div className="w-full flex flex-col gap-0 justify-center items-baseline shadow-md shadow-stone-950/20 mt-0 md:mt-4 md:m-0 xl:flex-row md:gap-4 pt-0 md:mb-0 border md:rounded-3xl overflow-hidden">
 			<div className="w-full pt-0 mt-0 flex flex-col lg:flex-row">
 				<SummarySkeleton />
 				<LatestEpisodeSkeleton />
@@ -72,4 +72,3 @@ export function BundleFeedSkeleton() {
 		</div>
 	);
 }
-

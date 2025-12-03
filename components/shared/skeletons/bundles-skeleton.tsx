@@ -11,22 +11,22 @@ export function BundleCardSkeleton() {
 			<div className="flex flex-col gap-3">
 				{/* Image placeholder */}
 				<Skeleton className="bg-[#1f2d5f]/50 h-[180px] w-full rounded-lg" />
-				
+
 				{/* Title */}
 				<Skeleton className="bg-[#1f2d5f]/50 h-6 w-3/4" />
-				
+
 				{/* Description lines */}
 				<div className="flex flex-col gap-2">
 					<Skeleton className="bg-[#1f2d5f]/50 h-4 w-full" />
 					<Skeleton className="bg-[#1f2d5f]/50 h-4 w-5/6" />
 				</div>
-				
+
 				{/* Badge/metadata */}
 				<div className="flex gap-2 items-center">
 					<Skeleton className="bg-[#1f2d5f]/50 h-5 w-20 rounded-full" />
 					<Skeleton className="bg-[#1f2d5f]/50 h-5 w-24 rounded-full" />
 				</div>
-				
+
 				{/* Button */}
 				<Skeleton className="bg-[#1f2d5f]/50 h-10 w-full rounded-lg mt-2" />
 			</div>
