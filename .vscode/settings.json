@@ -10,7 +10,7 @@
         }
     },
     "[typescriptreact]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features",
+        "editor.defaultFormatter": "biomejs.biome",
         "editor.codeActionsOnSave": {
             "quickfix.biome": "always",
             "source.organizeImports.biome": "explicit",
