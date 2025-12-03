@@ -42,7 +42,6 @@ const RETRYABLE_ERROR_PATTERNS = [
 	/Connection terminated unexpectedly/i,
 	/Temporary failure in name resolution/i,
 ];
-
 export class ProcessWebhook {
 	/**
 	 * Logs webhook processing snapshots for debugging
@@ -183,7 +182,7 @@ export class ProcessWebhook {
 		}
 
 		// Deterministic user resolution: lookup by customer ID
-		let user: Awaited<
+		const user: Awaited<
 			ReturnType<
 				typeof prisma.user.findFirst<{
 					where: { paddle_customer_id: string };
@@ -353,9 +352,8 @@ export class ProcessWebhook {
 
 		const trial_start =
 			d.trial_end_at || status === "trialing"
-				? (current_period_start ?? (d.started_at ? new Date(d.started_at) : null))
+				? current_period_start ?? (d.started_at ? new Date(d.started_at) : null)
 				: null;
-
 		const updateData = {
 			paddle_price_id: priceId,
 			plan_type: newPlanType ?? undefined,
@@ -960,7 +958,8 @@ export class ProcessWebhook {
 		try {
 			return await operation();
 		} catch (error) {
-			const shouldRetry = this.isTransientError(error) && attempt < MAX_OPERATION_RETRIES;
+			const shouldRetry =
+				this.isTransientError(error) && attempt < MAX_OPERATION_RETRIES;
 			this.logWebhookSnapshot("operation_failure", {
 				operationName,
 				attempt,
