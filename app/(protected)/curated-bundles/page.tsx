@@ -133,15 +133,44 @@ export default async function CuratedBundlesPage({
 		});
 
 		// Transform curated bundles
-		const transformedCuratedBundles: BundleWithPodcasts[] = curatedBundles.map(b => ({
+		type BundleWithPodcastsRelation = Prisma.BundleGetPayload<{
+			include: {
+				bundle_podcast: {
+					include: { podcast: true };
+				};
+			};
+		}>;
+
+		const transformedCuratedBundles: BundleWithPodcasts[] = curatedBundles.map((b: BundleWithPodcastsRelation) => ({
 			...(b as unknown as Bundle),
 			podcasts: b.bundle_podcast.map(bp => bp.podcast as unknown as Podcast),
 			bundleType: "curated" as const,
 		}));
 
 		// Transform shared bundles to match Bundle interface
-		// @ts-ignore
-		const transformedSharedBundles: BundleWithPodcasts[] = sharedBundles.map(sb => ({
+		type SharedBundleWithEpisodes = Prisma.SharedBundleGetPayload<{
+			include: {
+				episodes: {
+					include: {
+						userEpisode: {
+							select: {
+								episode_id: true;
+								episode_title: true;
+								duration_seconds: true;
+							};
+						};
+					};
+				};
+				owner: {
+					select: {
+						user_id: true;
+						name: true;
+					};
+				};
+			};
+		}>;
+
+		const transformedSharedBundles: BundleWithPodcasts[] = sharedBundles.map((sb: SharedBundleWithEpisodes) => ({
 			// Map shared bundle fields to Bundle interface
 			bundle_id: sb.shared_bundle_id, // Use shared_bundle_id as bundle_id for display
 			name: sb.name,
@@ -157,7 +186,7 @@ export default async function CuratedBundlesPage({
 			podcasts: [], // Shared bundles don't have podcasts, they have episodes
 			bundleType: "shared" as const,
 			shared_bundle_id: sb.shared_bundle_id,
-			episodes: sb.episodes.map(e => ({
+			episodes: sb.episodes.map((e: SharedBundleWithEpisodes["episodes"][number]) => ({
 				episode_id: e.userEpisode.episode_id,
 				episode_title: e.userEpisode.episode_title,
 				duration_seconds: e.userEpisode.duration_seconds,

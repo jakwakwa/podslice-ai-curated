@@ -146,7 +146,30 @@ export async function GET(_request: NextRequest) {
 		});
 
 		// Transform shared bundles - available to FREE_SLICE, CASUAL_LISTENER, and CURATE_CONTROL
-		const transformedSharedBundles = sharedBundles.map(bundle => {
+		type SharedBundleWithEpisodes = Prisma.SharedBundleGetPayload<{
+			include: {
+				episodes: {
+					include: {
+						userEpisode: {
+							select: {
+								episode_id: true;
+								episode_title: true;
+								duration_seconds: true;
+								created_at: true;
+							};
+						};
+					};
+				};
+				owner: {
+					select: {
+						user_id: true;
+						name: true;
+					};
+				};
+			};
+		}>;
+
+		const transformedSharedBundles = sharedBundles.map((bundle: SharedBundleWithEpisodes) => {
 			// Shared bundles available to all plans except NONE
 			const canInteract = allowedGates.some(gate => gate !== PlanGateEnum.NONE);
 			const lockReason = canInteract ? null : "Shared bundles require a paid plan.";

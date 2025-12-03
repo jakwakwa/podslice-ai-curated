@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { z } from "zod";
+import type { Prisma } from "@prisma/client";
 import EpisodeHeader from "@/components/features/episodes/episode-header";
 import EpisodeShell from "@/components/features/episodes/episode-shell";
 import KeyTakeaways from "@/components/features/episodes/key-takeaways";
@@ -58,11 +59,19 @@ async function getEpisodeWithAccess(id: string, currentUserId: string): Promise<
 
 	if (episode) {
 		// Authorization: owned by user or included in user's active bundle
-		const profile = await prisma.userCurationProfile.findFirst({
+		type UserCurationProfileWithBundle = Prisma.UserCurationProfileGetPayload<{
+			include: {
+				selectedBundle: {
+					include: { bundle_podcast: true };
+				};
+			};
+		}>;
+
+		const profile: UserCurationProfileWithBundle | null = await prisma.userCurationProfile.findFirst({
 			where: { user_id: currentUserId, is_active: true },
 			include: { selectedBundle: { include: { bundle_podcast: true } } },
 		});
-		const podcastIdsInSelectedBundle = profile?.selectedBundle?.bundle_podcast.map(bp => bp.podcast_id) ?? [];
+		const podcastIdsInSelectedBundle = profile?.selectedBundle?.bundle_podcast.map((bp: NonNullable<UserCurationProfileWithBundle["selectedBundle"]>["bundle_podcast"][number]) => bp.podcast_id) ?? [];
 		const selectedBundleId = profile?.selectedBundle?.bundle_id ?? null;
 
 		const isOwnedByUser = episode.userProfile?.user_id === currentUserId;

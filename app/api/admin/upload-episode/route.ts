@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { requireAdminMiddleware } from "@/lib/admin-middleware";
 import { ensureBucketName, getStorageUploader } from "../../../../lib/inngest/utils/gcs";
 import { prisma } from "../../../../lib/prisma";
@@ -128,7 +129,10 @@ export async function POST(request: Request) {
 
 		// If both bundle and podcast provided, ensure membership
 		if (bundle && providedPodcastId) {
-			const isMember = bundle.bundle_podcast.some(bp => bp.podcast_id === providedPodcastId);
+			type BundleWithPodcasts = Prisma.BundleGetPayload<{
+				include: { bundle_podcast: { include: { podcast: true } } };
+			}>;
+			const isMember = (bundle as BundleWithPodcasts).bundle_podcast.some((bp: BundleWithPodcasts["bundle_podcast"][number]) => bp.podcast_id === providedPodcastId);
 			if (!isMember) {
 				return NextResponse.json({ message: "Selected podcast is not in the chosen bundle" }, { status: 400 });
 			}

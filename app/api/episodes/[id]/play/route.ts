@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
 import { prisma } from "@/lib/prisma";
 
@@ -45,12 +46,20 @@ export async function GET(_request: Request, { params }: RouteParams) {
 		}
 
 		// Load the user's active profile and selected bundle (for authorization)
-		const profile = await prisma.userCurationProfile.findFirst({
+		type UserCurationProfileWithBundle = Prisma.UserCurationProfileGetPayload<{
+			include: {
+				selectedBundle: {
+					include: { bundle_podcast: true };
+				};
+			};
+		}>;
+
+		const profile: UserCurationProfileWithBundle | null = await prisma.userCurationProfile.findFirst({
 			where: { user_id: userId, is_active: true },
 			include: { selectedBundle: { include: { bundle_podcast: true } } },
 		});
 
-		const podcastIdsInSelectedBundle = profile?.selectedBundle?.bundle_podcast.map(bp => bp.podcast_id) ?? [];
+		const podcastIdsInSelectedBundle = profile?.selectedBundle?.bundle_podcast.map((bp: NonNullable<UserCurationProfileWithBundle["selectedBundle"]>["bundle_podcast"][number]) => bp.podcast_id) ?? [];
 		const selectedBundleId = profile?.selectedBundle?.bundle_id ?? null;
 
 		const isOwnedByUser = episode.userProfile?.user_id === userId;

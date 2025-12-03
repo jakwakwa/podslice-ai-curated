@@ -12,6 +12,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
 import { prisma } from "@/lib/prisma";
 import type { Episode, UserCurationProfileWithRelations, UserEpisode } from "@/lib/types";
+import type { Prisma } from "@prisma/client";
 import { userIsActive } from "@/lib/usage";
 import { dashboardCopy } from "./content";
 import { LatestBundleEpisode } from "@/components/dashboard/latest-bundle-episode";
@@ -206,6 +207,24 @@ async function fetchUserEpisodes(userId: string): Promise<UserEpisodeWithSignedU
 		}
 
 		// Fetch episodes from Prisma
+		type UserEpisodeSelect = Prisma.UserEpisodeGetPayload<{
+			select: {
+				episode_id: true;
+				user_id: true;
+				episode_title: true;
+				youtube_url: true;
+				gcs_audio_url: true;
+				duration_seconds: true;
+				status: true;
+				summary: true;
+				summary_length: true;
+				news_sources: true;
+				news_topic: true;
+				created_at: true;
+				updated_at: true;
+			};
+		}>;
+
 		const episodes = await prisma.userEpisode.findMany({
 			where: { user_id: userId },
 			// Only include fields that are needed by RecentEpisodesList and audio player
@@ -230,7 +249,7 @@ async function fetchUserEpisodes(userId: string): Promise<UserEpisodeWithSignedU
 		// Generate signed URLs
 		const storageReader = getStorageReader();
 		const episodesWithSignedUrls = await Promise.all(
-			episodes.map(async episode => {
+			episodes.map(async (episode: UserEpisodeSelect) => {
 				let signedAudioUrl: string | null = null;
 				if (episode.gcs_audio_url) {
 					const parsed = parseGcsUri(episode.gcs_audio_url);

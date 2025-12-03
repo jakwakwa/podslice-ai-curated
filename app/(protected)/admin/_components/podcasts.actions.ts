@@ -3,6 +3,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { requireAdmin } from "@/lib/admin"
 import { prisma } from "@/lib/prisma"
+import type { Prisma } from "@prisma/client"
 
 export async function createPodcastAction(formData: FormData) {
 	await requireAdmin()
@@ -66,13 +67,27 @@ export async function deletePodcastAction(podcastId: string) {
 	await requireAdmin()
 	if (!podcastId) throw new Error("Podcast ID is required")
 
-	const podcast = await prisma.podcast.findUnique({
+	type PodcastWithBundles = Prisma.PodcastGetPayload<{
+		include: {
+			bundle_podcast: {
+				include: {
+					bundle: {
+						include: {
+							user_curation_profile: { where: { is_active: true } };
+						};
+					};
+				};
+			};
+		};
+	}>;
+
+	const podcast: PodcastWithBundles | null = await prisma.podcast.findUnique({
 		where: { podcast_id: podcastId },
 		include: { bundle_podcast: { include: { bundle: { include: { user_curation_profile: { where: { is_active: true } } } } } } },
 	})
 	if (!podcast) throw new Error("Podcast not found")
 
-	const activeUsage = podcast.bundle_podcast.some(bp => bp.bundle.user_curation_profile.length > 0)
+	const activeUsage = podcast.bundle_podcast.some((bp: PodcastWithBundles["bundle_podcast"][number]) => bp.bundle.user_curation_profile.length > 0)
 	if (activeUsage) throw new Error("Cannot delete podcast; it is used by active user profiles. Consider deactivating instead.")
 
 	await prisma.bundlePodcast.deleteMany({ where: { podcast_id: podcastId } })

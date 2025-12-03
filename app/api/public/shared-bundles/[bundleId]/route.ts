@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { userIsActive } from "@/lib/usage";
 
@@ -59,6 +60,21 @@ export async function GET(_request: Request, { params }: { params: Promise<{ bun
 		}
 
 		// Return bundle with metadata
+		type SharedBundleWithEpisodes = Prisma.SharedBundleGetPayload<{
+			include: {
+				episodes: {
+					include: {
+						userEpisode: true;
+					};
+				};
+				owner: {
+					select: {
+						name: true;
+					};
+				};
+			};
+		}>;
+
 		return NextResponse.json({
 			shared_bundle_id: bundle.shared_bundle_id,
 			name: bundle.name,
@@ -67,7 +83,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ bun
 			owner: {
 				name: bundle.owner.name,
 			},
-			episodes: bundle.episodes.map(ep => ({
+			episodes: (bundle as SharedBundleWithEpisodes).episodes.map((ep: SharedBundleWithEpisodes["episodes"][number]) => ({
 				episode_id: ep.episode_id,
 				display_order: ep.display_order,
 				episode_title: ep.userEpisode.episode_title,
