@@ -3,6 +3,15 @@ import { NextResponse } from "next/server";
 import { ensureBucketName, getStorageReader } from "@/lib/inngest/utils/gcs";
 import { prisma } from "@/lib/prisma";
 import { calculateWeightedUsage } from "@/lib/types/summary-length";
+import { z } from "zod";
+
+const createUserEpisodeSchema = z.object({
+	episode_title: z.string().min(1, "Episode title is required"),
+	youtube_url: z.string().url("Invalid YouTube URL"),
+	transcript: z.string().optional().nullable(),
+	summary: z.string().optional().nullable(),
+	gcs_audio_url: z.string().optional().nullable(),
+});
 
 export async function GET(request: Request) {
 	try {
@@ -110,15 +119,21 @@ export async function POST(request: Request) {
 		}
 
 		const body = await request.json();
-		const { episode_title, transcript, summary, gcs_audio_url, youtube_url } = body;
+		const parseResult = createUserEpisodeSchema.safeParse(body);
+
+		if (!parseResult.success) {
+			return new NextResponse(parseResult.error.message, { status: 400 });
+		}
+
+		const { episode_title, transcript, summary, gcs_audio_url, youtube_url } = parseResult.data;
 
 		const userEpisode = await prisma.userEpisode.create({
 			data: {
 				episode_title,
 				youtube_url,
-				transcript,
-				summary,
-				gcs_audio_url,
+				transcript: transcript ?? undefined,
+				summary: summary ?? undefined,
+				gcs_audio_url: gcs_audio_url ?? undefined,
 				user_id: userId,
 			},
 		});
