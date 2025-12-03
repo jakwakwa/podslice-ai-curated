@@ -196,12 +196,12 @@ export const generateUserEpisode = inngest.createFunction(
 				const lastQuestion = truncatedScript.lastIndexOf("?");
 				const lastExclamation = truncatedScript.lastIndexOf("!");
 				const lastSentenceEnd = Math.max(lastPeriod, lastQuestion, lastExclamation);
-				
-				if (lastSentenceEnd > truncatedScript.length * 0.8) {
-					// If we can end on a sentence boundary without losing too much, do it
+
+				if (lastSentenceEnd >= 0) {
+					// Always end on a sentence boundary if possible to ensure natural flow
 					truncatedScript = truncatedScript.substring(0, lastSentenceEnd + 1);
 				}
-				
+
 				return truncatedScript;
 			}
 

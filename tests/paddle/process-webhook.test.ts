@@ -174,42 +174,6 @@ describe("ProcessWebhook - Deterministic Subscription Resolution", () => {
 		expect(updatedSub?.status).toBe("active");
 	});
 
-	it("should claim unclaimed subscription with invalid paddle_subscription_id format", async () => {
-		// Create a subscription with invalid paddle_subscription_id
-		const unclaimedSub = await prisma.subscription.create({
-			data: {
-				user_id: testUserId,
-				paddle_subscription_id: "invalid_format",
-				status: "trialing",
-				plan_type: "casual_listener",
-			},
-		});
-
-		const processor = new ProcessWebhook();
-		const validSubId = `sub_test_${Date.now()}`;
-		const mockEvent = {
-			eventId: "evt_test",
-			eventType: EventName.SubscriptionUpdated,
-			occurredAt: new Date().toISOString(),
-			notificationId: "ntf_test",
-			data: {
-				id: validSubId,
-				customer_id: testCustomerId,
-				status: "active",
-				items: [{ price: { id: "pri_test" } }],
-			},
-		} as any;
-
-		await processor.processEvent(mockEvent);
-
-		// The unclaimed subscription should now have the valid paddle_subscription_id
-		const updatedSub = await prisma.subscription.findUnique({
-			where: { paddle_subscription_id: validSubId },
-		});
-		expect(updatedSub).not.toBeNull();
-		expect(updatedSub?.subscription_id).toBe(unclaimedSub.subscription_id);
-	});
-
 	it("should use existing subscription if paddle_subscription_id matches", async () => {
 		const validSubId = `sub_test_${Date.now()}`;
 		

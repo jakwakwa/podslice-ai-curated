@@ -175,6 +175,12 @@ export class ProcessWebhook {
 					userId: user.user_id,
 				});
 
+				// Claim the subscription in the database immediately so the subsequent upsert works
+				await prisma.subscription.update({
+					where: { subscription_id: unclaimedSub.subscription_id },
+					data: { paddle_subscription_id: externalId },
+				});
+
 				existingSubscription = {
 					subscription_id: unclaimedSub.subscription_id,
 					user_id: user.user_id,
