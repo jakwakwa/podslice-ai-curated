@@ -388,9 +388,49 @@ describe("ProcessWebhook - Payment Failed Handling", () => {
 			where: { subscription_id: subscriptionId },
 		});
 		expect(updatedSubscription?.status).toBe("past_due");
+
+		const notifications = await prisma.notification.findMany({
+			where: { user_id: testUserId, type: "payment_failed" },
+			orderBy: { created_at: "desc" },
+		});
+
+		expect(notifications.length).toBe(1);
+		expect(notifications[0]?.message).toContain("card_declined");
+		expect(notifications[0]?.message).toContain("$15.00");
+	});
+
+	it("still emits a notification when another failure occurs while past_due", async () => {
+		await prisma.subscription.update({
+			where: { subscription_id: subscriptionId },
+			data: { status: "past_due" },
+		});
+
+		const processor = new ProcessWebhook();
+		const mockEvent = {
+			eventId: "evt_payment_failed_repeat",
+			eventType: EventName.TransactionPaymentFailed,
+			occurredAt: new Date().toISOString(),
+			notificationId: "ntf_payment_failed_repeat",
+			data: {
+				customer_id: testCustomerId,
+				subscription_id: paddleSubscriptionId,
+				failure_reason: "insufficient_funds",
+				amount: "22.00",
+				currency_code: "USD",
+			},
+		} as any;
+
+		await processor.processEvent(mockEvent);
+
+		const notifications = await prisma.notification.findMany({
+			where: { user_id: testUserId, type: "payment_failed" },
+			orderBy: { created_at: "desc" },
+		});
+
+		expect(notifications.length).toBe(1);
+		expect(notifications[0]?.message).toContain("insufficient_funds");
 	});
 });
-
 describe("ProcessWebhook - Logging", () => {
 	it("should log webhook snapshots in non-production environment", () => {
 		const originalEnv = process.env.NODE_ENV;

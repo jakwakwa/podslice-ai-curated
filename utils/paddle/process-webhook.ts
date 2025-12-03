@@ -42,7 +42,6 @@ const RETRYABLE_ERROR_PATTERNS = [
 	/Connection terminated unexpectedly/i,
 	/Temporary failure in name resolution/i,
 ];
-
 export class ProcessWebhook {
 	/**
 	 * Logs webhook processing snapshots for debugging
@@ -183,7 +182,7 @@ export class ProcessWebhook {
 		}
 
 		// Deterministic user resolution: lookup by customer ID
-		let user: Awaited<
+		const user: Awaited<
 			ReturnType<
 				typeof prisma.user.findFirst<{
 					where: { paddle_customer_id: string };
@@ -353,9 +352,8 @@ export class ProcessWebhook {
 
 		const trial_start =
 			d.trial_end_at || status === "trialing"
-				? (current_period_start ?? (d.started_at ? new Date(d.started_at) : null))
+				? current_period_start ?? (d.started_at ? new Date(d.started_at) : null)
 				: null;
-
 		const updateData = {
 			paddle_price_id: priceId,
 			plan_type: newPlanType ?? undefined,
@@ -433,9 +431,44 @@ export class ProcessWebhook {
 		const paymentAttemptId =
 			this.extractString(data.payment_attempt_id) ||
 			this.extractString(details?.payment_attempt_id);
+	private async createSubscriptionNotifications(
+		params: {
+			userId: string;
+			isNewSubscription: boolean;
+			status: string;
+			statusChanged: boolean;
+			planChanged: boolean;
+			oldStatus?: string;
+			newPlanType?: string;
+			oldPlanType?: string;
+			cancelAtPeriodEnd: boolean;
+			currentPeriodEnd?: Date;
+		},
+		paymentFailureContext?: PaymentFailureContext
+	) {
+		const {
+			userId,
+			isNewSubscription,
+			status,
+			statusChanged,
+			planChanged,
+			oldStatus,
+			newPlanType,
+			oldPlanType,
+			cancelAtPeriodEnd,
+			currentPeriodEnd,
+		} = params;
 
 		if (!(amount || currencyCode || failureReason || nextRetryAt || paymentAttemptId)) {
 			return undefined;
+		// New subscription activated
+		if (isNewSubscription && status === "active") {
+			await this.dispatchNotification({
+				user_id: userId,
+				type: "subscription_activated",
+				message: `Your ${this.formatPlanName(newPlanType)} subscription is now active!`,
+			});
+			return;
 		}
 
 		return {
@@ -446,11 +479,29 @@ export class ProcessWebhook {
 			paymentAttemptId,
 		};
 	}
+		// Subscription renewed
+		if (statusChanged && oldStatus === "past_due" && status === "active") {
+			await this.dispatchNotification({
+				user_id: userId,
+				type: "subscription_renewed",
+				message: "Your subscription has been successfully renewed.",
+			});
+			return;
+		}
 
 	private extractAmountValue(values: unknown[]): string | number | null {
 		for (const value of values) {
 			if (typeof value === "number" && Number.isFinite(value)) return value;
 			if (typeof value === "string" && value.trim().length > 0) return value;
+		// Subscription cancelled (status changed to canceled)
+		if (statusChanged && status === "canceled") {
+			await this.dispatchNotification({
+				user_id: userId,
+				type: "subscription_cancelled",
+				message:
+					"Your subscription has been cancelled. You'll retain access until the end of your billing period.",
+			});
+			return;
 		}
 		return null;
 	}
@@ -458,8 +509,41 @@ export class ProcessWebhook {
 	private extractString(value: unknown): string | null {
 		if (typeof value === "string" && value.trim().length > 0) {
 			return value;
+		// Payment failed (trigger if status changed or explicit payment failure context provided)
+		const shouldNotifyPastDue =
+			status === "past_due" && (statusChanged || Boolean(paymentFailureContext));
+		if (shouldNotifyPastDue) {
+			const message = this.buildPaymentFailureMessage(paymentFailureContext);
+			await this.dispatchNotification({
+				user_id: userId,
+				type: "payment_failed",
+				message,
+			});
+			return;
 		}
 		return null;
+
+		// Plan upgraded/downgraded
+		if (planChanged && newPlanType && oldPlanType) {
+			const isUpgrade = this.isUpgrade(oldPlanType, newPlanType);
+			await this.dispatchNotification({
+				user_id: userId,
+				type: isUpgrade ? "subscription_upgraded" : "subscription_downgraded",
+				message: `Your plan has been ${isUpgrade ? "upgraded" : "changed"} to ${this.formatPlanName(newPlanType)}.`,
+			});
+			return;
+		}
+
+		// Scheduled cancellation (cancel_at_period_end set without status change yet)
+		if (cancelAtPeriodEnd && currentPeriodEnd && !statusChanged) {
+			const endDate = currentPeriodEnd.toLocaleDateString();
+			await this.dispatchNotification({
+				user_id: userId,
+				type: "subscription_ending",
+				message: `Your subscription will end on ${endDate}. You can reactivate it anytime before then.`,
+			});
+			return;
+		}
 	}
 
 	private parseDate(value: string | null): Date | null {
@@ -469,6 +553,75 @@ export class ProcessWebhook {
 		return new Date(parsed);
 	}
 
+	private isUpgrade(oldPlan: string, newPlan: string): boolean {
+		const planHierarchy = ["casual_listener", "regular_listener", "power_listener"];
+		const oldIndex = planHierarchy.indexOf(oldPlan);
+		const newIndex = planHierarchy.indexOf(newPlan);
+		return newIndex > oldIndex;
+	}
+	private buildPaymentFailureMessage(context?: PaymentFailureContext): string {
+		if (!context) {
+			return "We couldn't process your payment. Please update your payment method to continue your subscription.";
+		}
+
+		const segments: string[] = ["We couldn't process your payment."];
+		const amountDisplay = this.formatAmountDisplay(context.amount, context.currencyCode);
+		if (amountDisplay) {
+			segments.push(`Amount: ${amountDisplay}.`);
+		}
+		if (context.failureReason) {
+			segments.push(`Reason: ${context.failureReason}.`);
+		}
+		if (context.nextRetryAt) {
+			segments.push(`We'll retry on ${context.nextRetryAt.toLocaleString()}.`);
+		}
+		segments.push("Please update your payment method to avoid service interruption.");
+
+		return segments.join(" ");
+	}
+
+	private formatAmountDisplay(
+		amount?: string | number | null,
+		currencyCode?: string | null
+	): string | null {
+		if (amount === undefined || amount === null) return null;
+		const currency = currencyCode?.toUpperCase() || "USD";
+		const numericAmount =
+			typeof amount === "number"
+				? amount
+				: Number.isNaN(Number.parseFloat(amount))
+					? null
+					: Number.parseFloat(amount);
+
+		if (numericAmount === null) {
+			return `${currency} ${amount}`.trim();
+		}
+
+		try {
+			return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(
+				numericAmount
+			);
+		} catch {
+			return `${currency} ${numericAmount.toFixed(2)}`.trim();
+		}
+	}
+
+	private async dispatchNotification(data: {
+		user_id: string;
+		type: string;
+		message: string;
+	}) {
+		await this.executeWithRetry("notification_create", () =>
+			prisma.notification.create({ data })
+		);
+	}
+
+	private parseDate(value: string | null): Date | null {
+		if (!value) return null;
+		const parsed = Date.parse(value);
+		if (Number.isNaN(parsed)) return null;
+		return new Date(parsed);
+	}
 	private async handleSubscriptionCancellation(userId: string) {
 		const episodes: Awaited<
 			ReturnType<typeof prisma.userEpisode.findMany<{ where: { user_id: string } }>>
@@ -586,6 +739,10 @@ export class ProcessWebhook {
 				this.logWebhookSnapshot("payment_success_renewal_logged", {
 					userId: user.user_id,
 					subscriptionId: parsed.data.subscription_id,
+				await this.dispatchNotification({
+					user_id: user.user_id,
+					type: "payment_successful",
+					message: "Your payment was processed successfully. Thank you!",
 				});
 			}
 		}
@@ -664,6 +821,12 @@ export class ProcessWebhook {
 			return;
 		}
 
+		this.logWebhookSnapshot("payment_failed_status_updated", {
+			userId: user.user_id,
+			subscriptionId: subscription.subscription_id,
+			statusChanged,
+			failureContext,
+		});
 		const subscriptionByPaddle: Awaited<
 			ReturnType<
 				typeof prisma.subscription.findUnique<{
@@ -763,12 +926,21 @@ export class ProcessWebhook {
 			);
 		}
 
-		this.logWebhookSnapshot("payment_failed_status_updated", {
-			userId: user.user_id,
-			subscriptionId: subscription.subscription_id,
-			statusChanged,
-			failureContext,
-		});
+		await this.createSubscriptionNotifications(
+			{
+				userId: user.user_id,
+				isNewSubscription: false,
+				status: "past_due",
+				statusChanged,
+				planChanged: false,
+				oldStatus: subscription.status,
+				newPlanType: subscription.plan_type,
+				oldPlanType: subscription.plan_type,
+				cancelAtPeriodEnd: Boolean(subscription.cancel_at_period_end),
+				currentPeriodEnd: subscription.current_period_end ?? undefined,
+			},
+			failureContext
+		);
 
 		this.logWebhookSnapshot("payment_failed_processed", {
 			customerId,
@@ -786,7 +958,8 @@ export class ProcessWebhook {
 		try {
 			return await operation();
 		} catch (error) {
-			const shouldRetry = this.isTransientError(error) && attempt < MAX_OPERATION_RETRIES;
+			const shouldRetry =
+				this.isTransientError(error) && attempt < MAX_OPERATION_RETRIES;
 			this.logWebhookSnapshot("operation_failure", {
 				operationName,
 				attempt,
