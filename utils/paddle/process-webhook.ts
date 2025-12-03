@@ -190,24 +190,20 @@ export class ProcessWebhook {
 		}
 
 		// Deterministic user resolution: lookup by customer ID
-<<<<<<< HEAD
-		const user: Awaited<
-			ReturnType<
-				typeof prisma.user.findFirst<{
-					where: { paddle_customer_id: string };
-					select: { user_id: true; paddle_customer_id: true };
-				}>
-			>
-		> = await this.executeWithRetry("subscription_user_lookup", () =>
-=======
+
+		let user = await prisma.user.findFirst({
+			where: { paddle_customer_id: customerId },
+			select: { user_id: true, paddle_customer_id: true },
+		});
+
 		const user = await this.executeWithRetry("subscription_user_lookup", () =>
->>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
 			prisma.user.findFirst({
 				where: { paddle_customer_id: customerId },
 				select: { user_id: true, paddle_customer_id: true },
 			})
 		);
 <<<<<<< HEAD
+
 
 		// Fallback: if user not found by customer ID, try to fetch customer email from Paddle and link by email
 		// This handles race conditions where subscription event arrives before customer event or during simulation
@@ -254,6 +250,7 @@ export class ProcessWebhook {
 		}
 =======
 >>>>>>> 299d51d13 (feat: Add webhook processing and payment failure handling)
+
 
 		if (!user) {
 			this.logWebhookSnapshot("user_not_found_for_customer", {
