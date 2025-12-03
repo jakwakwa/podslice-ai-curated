@@ -340,7 +340,13 @@ Instructions:
 				providerOptions: {
 					google: {
 						// Thinking tokens (reasoning) for compatible Gemini models
-						thinkingConfig: { includeThoughts: true },
+						thinking: {
+							// The SDK calls it 'budgetTokens', Google receives it as 'thinkingBudget'
+							budgetTokens: 1024,
+
+							// This was the setting causing the error because the budget above was missing
+							includeThoughts: true,
+						},
 					},
 				},
 				prompt: constraintText,
