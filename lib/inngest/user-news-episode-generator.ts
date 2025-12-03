@@ -701,18 +701,18 @@ Brand opener (must be the first line, exactly, spoken by HOST SLICE):
 
 If DISCLOSURE is non-empty, include this exact one-sentence disclosure as the next line spoken by HOST SLICE:
 ${disclosureLine}
-	
-Constraints:Structure:
-- Hook that frames this as a Podslice research summary.
-- Smooth transitions between items.
-- Help the listener understand complex ideas in a helpful and easy to remember manner.
-* Ensure the output is always less scripted than the input.
-* Maintain the core content and information of the original script.
-- Clear, concise wrap-up.
 
+Constraints:
+- Structure:
+    - Hook that frames this as a Podslice research summary.
+    - Smooth transitions between items.
+    - Help the listener understand complex ideas in a helpful and easy to remember manner.
+    - Clear, concise wrap-up.
+- Ensure the output is always less scripted than the input.
+- Maintain the core content and information of the original script.
 
-Overall Tone
-	Act as a talented Hollywood professional script writer, specializing in crafting engaging and natural-sounding podcast dialogues for host
+Overall Tone:
+Act as a talented Hollywood professional script writer, specializing in crafting engaging and natural-sounding podcast dialogues for hosts.
 	
 Output ONLY valid JSON array of objects with fields: speaker ("HOST SLICE" or "PODSLICE GUEST") and text (string). The text MUST NOT include any speaker names or labels; only the spoken words. No markdown.
 	
