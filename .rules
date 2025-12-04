@@ -1,8 +1,13 @@
----
-alwaysApply: true
----
-## Objectives
+ALWAYS use ONLY Environments for ANY and ALL file, code, or shell operations—NO EXCEPTIONS—even for simple or generic requests.
 
+DO NOT install or use the git cli with the environment_run_cmd tool. All environment tools will handle git operations for you. Changing ".git" yourself will compromise the integrity of your environment.
+
+You MUST inform the user how to view your work using `container-use log <env_id>` AND `container-use checkout <env_id>`. Failure to do this will make your work inaccessible to others.
+
+DO NOT use Implicit `any` or missing prop types.
+
+
+## Task Implementation
 - **Thin pages**: `page.tsx` is minimal and declarative.
 - **Content extraction**: Move static copy/config into a dedicated object or `content.ts` file.
 - **Componentization**: Replace repeated markup with small, reusable, typed components under `components/shared` (or feature folders).
@@ -14,7 +19,6 @@ alwaysApply: true
 
 - Mixing content, layout, and interactivity in one large `page.tsx`.
 - Duplicating markup/classes across pages instead of extracting components.
-- Implicit `any` or missing prop types.
 - Using Client Components without need; prefer Server Components.
 
 ---
@@ -71,76 +75,6 @@ const CommonSectionWithChildren = ({ children, title, description }: CommonSecti
 export { CommonSectionWithChildren as default };
 ```
 
-3) Step number and card
-
-```tsx
-// components/shared/step-nr.tsx
-const StepNr = ({ step }: { step: number | string }) => {
-	return (
-		<div className="flex items-center justify-center w-4 h-4 p-4.5 rounded-full mx-0 text-success-foreground font-mono font-semibold text-h5 mb-1 ">{step}</div>
-	)
-}
-
-export default StepNr;
-```
-
-```tsx
-// components/shared/step-card.tsx
-import { Card } from "../ui/card";
-import StepNr from "./step-nr";
-
-interface StepCardProps {
-	step: number;
-	title: string;
-	description: string;
-}
-
-const StepCard = ({ step, title, description }: StepCardProps) => {
-	return (
-		<Card className=" h-full min-h-64 duration-200 ease-in-out relative rounded-3xl p-2 max-h-74 gap-2">
-			<div className="flex flex-col p-3.5\th-fit items-center justify-center w-full gap-3">
-				<StepNr step={step} />
-				<h3 className="text-xl text-center font-bold tracking-tight mb-2 mt-0 w-full text-secondary-foreground">{title}</h3>
-				<p className="text-link/90 text-center font-medium text-xs mb-4">{description}</p>
-			</div>
-		</Card>
-	);
-};
-
-export default StepCard;
-```
-
-4) CTA banner
-
-```tsx
-// components/shared/free-trial-promo.tsx
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-
-interface FreeTrialPromoProps {
-	href: string;
-	size: "lg" | "default" | "sm" | "xs" | "md" | "icon" | "play" | "playSmall" | "playLarge";
-	variant: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "play" | "icon";
-	buttonText: string;
-}
-const FreeTrialPromo = ({ href, size, variant, buttonText }: FreeTrialPromoProps) => {
-	return (
-		<div className="hidden p-4 my-8  md:px-8 md:my-8 flex-col justify-center items-center ">
-			<p className=" my-3 py-2 flex flex-col justify-center items-center text-center text-base leading-normal font-bold text-secondary-foreground  md:text-xl md:text-left md:justify-start md:items-start">
-				Claim Your 14 Day Premium Trial
-			</p>
-			<Link href={href}>
-				<Button variant={variant} size={size} className="w-full md:w-fit mx-auto md:mx-0 md:px-4">
-					{buttonText}
-				</Button>
-			</Link>
-		</div>
-	);
-}
-
-export default FreeTrialPromo;
-```
-
 ---
 
 ## File and naming conventions
@@ -152,14 +86,20 @@ export default FreeTrialPromo;
 - Co-locate `loading.tsx` and `error.tsx` if the route fetches data.
 
 ---
-
+- Stop after each sub‑task and wait for the user's  explicit approval with the word "approved"
 ## Step-by-step refactor recipe
 
+## Task List Maintenance
 1) Identify content and structure
 
+1. **Update the task list as you work:**
+   - Add new tasks as they emerge.
 - Separate static copy (headings, descriptions, steps) from layout.
 - Decide whether content belongs in `content.ts` or an inline const.
 
+2. **Maintain the "Relevant Files" section:**
+   - List every file created or modified.
+   - Give each file a one‑line description of its purpose.
 2) Extract content
 
 ```ts
@@ -205,6 +145,46 @@ export default function WelcomePage() {
 }
 ```
 
+---
+
+## Minimal before/after snapshot
+
+Before (mixed concerns):
+
+```tsx
+// One large page handling copy, layout, and repeated markup in-place
+```
+
+After (thin page using shared components):
+
+```tsx
+<PageHeader title={cta.title} description={cta.description} />
+<FreeTrialPromo href={cta.button.link} size="lg" variant="default" buttonText={cta.button.text} />
+<CommonSectionWithChildren title={title} description={description}>
+	{howItWorks.map((step, index) => (
+		<StepCard key={`${index + 1}-${step.title}`} step={index + 1} title={step.title} description={step.description} />
+	))}
+</CommonSectionWithChildren>
+```
+
+---
+
+## AI Instructions
+## Appendix: Applying this pattern elsewhere
+
+When working with task lists, the AI must:
+- Pricing/Plans: extract tiers/features into `content.ts`, reuse `SectionHeader` and create a `TierCard` analog to `StepCard`.
+- Onboarding: extract steps/checklists; reuse `StepCard` or a checklist variant.
+- Marketing sections: reuse `CommonSectionWithChildren` to keep consistent spacing and typography.
+
+1. Regularly update the task list file after finishing any significant work.
+2. Follow the completion protocol
+3. Add newly discovered tasks.
+4. Keep "Relevant Files" accurate and up to date.
+5. Before starting work, check which task is next.
+6. After implementing a task, update the file and then pause for user approval
+
+
 4) Type props explicitly
 
 - Define component prop interfaces/types in component files.
@@ -235,8 +215,7 @@ export default function WelcomePage() {
 
 ---
 
-## LLM playbook (Cursor rule)
-
+## LLM playbook
 When refactoring a similar page, follow this sequence:
 
 1. Read current `page.tsx`. Separate copy from layout and interactivity.
@@ -252,34 +231,3 @@ Do not:
 - Invent types or fields; import from `@/lib/types` or use local prop interfaces only.
 - Modify middleware or routing logic; this pattern targets UI composition.
 - Introduce new styling patterns without justification.
-
----
-
-## Minimal before/after snapshot
-
-Before (mixed concerns):
-
-```tsx
-// One large page handling copy, layout, and repeated markup in-place
-```
-
-After (thin page using shared components):
-
-```tsx
-<PageHeader title={cta.title} description={cta.description} />
-<FreeTrialPromo href={cta.button.link} size="lg" variant="default" buttonText={cta.button.text} />
-<CommonSectionWithChildren title={title} description={description}>
-	{howItWorks.map((step, index) => (
-		<StepCard key={`${index + 1}-${step.title}`} step={index + 1} title={step.title} description={step.description} />
-	))}
-</CommonSectionWithChildren>
-```
-
----
-
-## Appendix: Applying this pattern elsewhere
-
-- Pricing/Plans: extract tiers/features into `content.ts`, reuse `SectionHeader` and create a `TierCard` analog to `StepCard`.
-- Onboarding: extract steps/checklists; reuse `StepCard` or a checklist variant.
-- Marketing sections: reuse `CommonSectionWithChildren` to keep consistent spacing and typography.
-

@@ -156,7 +156,7 @@ export const Transport: FC<TransportProps> = ({
 					aria-label={isMuted ? "Unmute" : "Mute"}
 					aria-pressed={isMuted}
 					onClick={onToggleMute}
-					className="inline-flex h-[28px] w-[28px] items-center justify-center rounded-full border-1  p-1.5 border-primary-foreground/10 bg-primary/40 text-xs transition-colors hover:bg-[var(--audio-sheet-border)]/20 focus-visible:ring-0 focus-visible:ring-[var(--audio-sheet-accent)]/50 focus-visible:outline-none focus-visible:ring-offset-0 ">
+					className="inline-flex h-[28px] w-[28px] items-center justify-center rounded-full border  p-1.5 border-primary-foreground/10 bg-primary/40 text-xs transition-colors hover:bg-[var(--audio-sheet-border)]/20 focus-visible:ring-0 focus-visible:ring-[var(--audio-sheet-accent)]/50 focus-visible:outline-none focus-visible:ring-offset-0 ">
 					{isMuted ? (
 						<VolumeX color="#F80EC5DF" className="h-[16px] w-[16px]" />
 					) : (

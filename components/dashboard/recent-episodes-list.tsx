@@ -34,7 +34,7 @@ export function RecentEpisodesList({
 		.slice(0, 3);
 
 	return (
-		<div className="bg-bigcard w-full flex flex-col gap-0 justify-start mb-0 items-start shadow-xl shadow-indigo/30 mt-0 md:m-0 xl:flex-col md:gap-4 py-8 p-1 md:mt-4 md:mb-0 border-1 md:rounded-3xl lg:pb-8  lg:pt-0 overflow-hidden md:p-0 md:justify-start align-start lg:mb-8">
+		<div className="bg-bigcard w-full flex flex-col gap-0 justify-start mb-0 items-start shadow-xl shadow-indigo/30 mt-0 md:m-0 xl:flex-col md:gap-4 py-8 p-1 md:mt-4 md:mb-0 border md:rounded-3xl lg:pb-8  lg:pt-0 overflow-hidden md:p-0 md:justify-start align-start lg:mb-8">
 			<div className="pt-0 px-5 md:pl-8 md:mt-8 w-full	 flex flex-col items-start justify-items-start">
 				<p className="w-full mx-0 px-0 text-secondary-foreground md:px-0 text-base font-bold mb-4">
 					{sections.recentEpisodes.title}

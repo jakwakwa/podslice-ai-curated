@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { requireAdminMiddleware } from "@/lib/admin-middleware";
 import { getTemplateBySlug } from "@/emails";
 import { renderEmail } from "@/emails/render";
 
@@ -8,6 +9,12 @@ import { renderEmail } from "@/emails/render";
  */
 export async function GET(request: NextRequest) {
 	try {
+		// Check admin permissions
+		const adminCheck = await requireAdminMiddleware();
+		if (adminCheck) {
+			return adminCheck;
+		}
+
 		const searchParams = request.nextUrl.searchParams;
 		const slug = searchParams.get("slug");
 

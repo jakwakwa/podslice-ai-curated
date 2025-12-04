@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -358,12 +358,12 @@ export default function BundlesPanelClient({
 								{createImagePreview && (
 									<div className="mt-2">
 										<Image
-								src={createImagePreview}
-								alt="Preview"
-								width={80}
-								height={80}
-								className="object-cover rounded"
-							/>
+											src={createImagePreview}
+											alt="Preview"
+											width={80}
+											height={80}
+											className="object-cover rounded"
+										/>
 									</div>
 								)}
 							</div>
@@ -447,13 +447,13 @@ export default function BundlesPanelClient({
 								<div className="flex items-start gap-2 justify-between mb-0 w-full">
 									{bundle.bundle_id && !failedBundleImages.has(bundle.bundle_id) ? (
 										<Image
-									src={`/api/bundles/${bundle.bundle_id}/image`}
-									alt={bundle.name}
-									width={64}
-									height={64}
-									className="object-cover rounded mr-3"
-									onError={() => handleImageError(bundle.bundle_id)}
-								/>
+											src={`/api/bundles/${bundle.bundle_id}/image`}
+											alt={bundle.name}
+											width={64}
+											height={64}
+											className="object-cover rounded mr-3"
+											onError={() => handleImageError(bundle.bundle_id)}
+										/>
 									) : (
 										<div className="w-16 h-16 bg-muted rounded mr-3 flex items-center justify-center">
 											<span className="text-muted-foreground text-xs">No Image</span>
@@ -483,13 +483,13 @@ export default function BundlesPanelClient({
 											<Button
 												variant="outline"
 												size="sm"
-												className="border-border border-1 outline-1 outline-white/20"
+												className="border-border border outline-1 outline-white/20"
 												onClick={cancelEdit}>
 												Cancel
 											</Button>
 											<Button
 												variant="default"
-												className="border-border border-1 outline-1 outline-white/20"
+												className="border-border border outline-1 outline-white/20"
 												size="sm"
 												onClick={saveEdit}
 												disabled={isPending || !editForm.name.trim()}>
@@ -541,16 +541,16 @@ export default function BundlesPanelClient({
 													bundle.bundle_id) ? (
 													<div className="mt-2">
 														<Image
-										src={
-											editImagePreview ||
-											`/api/bundles/${bundle.bundle_id}/image`
-										}
-										alt="Current"
-										width={80}
-										height={80}
-										className="object-cover rounded"
-										onError={() => handleImageError(bundle.bundle_id)}
-									/>
+															src={
+																editImagePreview ||
+																`/api/bundles/${bundle.bundle_id}/image`
+															}
+															alt="Current"
+															width={80}
+															height={80}
+															className="object-cover rounded"
+															onError={() => handleImageError(bundle.bundle_id)}
+														/>
 													</div>
 												) : null}
 											</div>

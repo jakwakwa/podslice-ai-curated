@@ -15,7 +15,7 @@ const buttonVariants = cva(
 				outline:
 					"border-[1.5px] border-border/50 bg-gray-900/50 disabled:bg-[#6B6791C8] text-primary-foreground font-bold disabled:text-[#A1B7F4D4] shadow-md shadow-slate-950/20 px-0 overflow-hidden w-[36px] px-4 w-fit max-w-full rounded-xl  disabled:bg-[#000] text-primary-foreground-muted",
 				secondary:
-					"btn-secondary disabled:bg-[#5E5C6FC8]  rounded-lg border-1 border-[#86D2F5] text-slate-300/80 shadow-[0px_4px_rgba(26, 40, 46, 0.9)] w-full md:max-w-fit px-4 text-[1rem] hover:text-secondary-foreground hover:text-secondary-foreground shadow-lborder-cyan-300 shadow-black shadow-slate-950/20 h-8",
+					"btn-secondary disabled:bg-[#5E5C6FC8]  rounded-lg border border-[#86D2F5] text-slate-300/80 shadow-[0px_4px_rgba(26, 40, 46, 0.9)] w-full md:max-w-fit px-4 text-[1rem] hover:text-secondary-foreground hover:text-secondary-foreground shadow-lborder-cyan-300 shadow-black shadow-slate-950/20 h-8",
 				ghost: "text-secondary-foreground h-6 ",
 				link: "text-secondary-foreground underline-offset-4 text-slate-100 hover:underline h-6",
 				play: "p-0 m-0 h-8",

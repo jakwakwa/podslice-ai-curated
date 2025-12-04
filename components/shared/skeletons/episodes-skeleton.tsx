@@ -31,7 +31,7 @@ export function EpisodesListSkeleton({ count = 5 }: { count?: number }) {
 
 export function EpisodesPageSkeleton() {
 	return (
-		<div className="px-6 py-14 md:px-8 md:pt-12 md:mt-4 border-1 border-border rounded-4xl mx-auto bg-big-card">
+		<div className="px-6 py-14 md:px-8 md:pt-12 md:mt-4 border border-border rounded-4xl mx-auto bg-big-card">
 			<div className="flex flex-col gap-4">
 				<EpisodesFilterSkeleton />
 				<EpisodesListSkeleton />

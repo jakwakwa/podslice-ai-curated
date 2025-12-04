@@ -69,7 +69,7 @@ export function EpisodeList({
 	// Reset to page 1 when filter changes
 	useEffect(() => {
 		setCurrentPage(1);
-	}, []);
+	}, [filter]);
 
 	// If we arrived via deep link, fetch the single episode immediately to avoid showing stale progress
 	useEffect(() => {
@@ -211,7 +211,7 @@ export function EpisodeList({
 	);
 
 	return (
-		<div className="border-1 bg-[var(--kwak-1)]/80 border-[rgba(227,114,244,0.14)] rounded-none overflow-hidden mb-0 p-0 mt-0 md:mt-0 md:m-0 md:px-1 outline-0 md:rounded-4xl md:shadow-xl">
+		<div className="border bg-[var(--kwak-1)]/80 border-[rgba(227,114,244,0.14)] rounded-none overflow-hidden mb-0 p-0 mt-0 md:mt-0 md:m-0 md:px-1 outline-0 md:rounded-4xl md:shadow-xl">
 			<div className="text-left md:pt-0 rounded-none my-0 py-0 md:mb-5 md:pb-0 overflow-hidden md:rounded-4xl md:py-0 min-w-full min-h-full lg:pl-12 bg-episode-card-wrapper">
 				<div className="mx-4">
 					<SectionHeader

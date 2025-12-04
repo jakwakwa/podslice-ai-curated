@@ -1,4 +1,5 @@
 ---
+globs: lib/inngest/**/*.ts
 alwaysApply: false
 ---
 # Core Project Rules
