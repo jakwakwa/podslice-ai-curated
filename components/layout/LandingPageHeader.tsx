@@ -30,7 +30,7 @@ export function LandingPageHeader() {
 								variant="default"
 								size="md"
 								className="text-[0.9rem] px-5 font-bold">
-								Log in
+								Log ins
 							</Button>
 						</Link>
 					</div>

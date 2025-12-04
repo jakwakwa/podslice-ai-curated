@@ -51,9 +51,7 @@ export function Header() {
 					</a>
 				</nav>
 				<Link href={getClerkSignInUrl()}>
-					<Button
-						variant="default"
-						className="bg-white text-gray-900 hover:bg-gray-100 rounded-full px-6">
+					<Button variant="default" className="rounded-full px-6">
 						Log in
 					</Button>
 				</Link>

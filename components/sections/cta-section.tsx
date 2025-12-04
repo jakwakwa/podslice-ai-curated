@@ -60,7 +60,7 @@ export function CTASection({ isActive }: SectionProps) {
 					<Button
 						variant="default"
 						size="lg"
-						className="bg-white text-purple-700 hover:bg-gray-100 rounded-full px-10 py-6 text-lg font-semibold shadow-2xl hover:scale-105 transition-transform">
+						className="bg-white hover:bg-gray-100 rounded-full px-10 py-6 text-lg font-semibold shadow-2xl hover:scale-105 transition-transform">
 						Start Your Free Trial
 					</Button>
 				</div>
