@@ -1,8 +1,11 @@
-import LandingPageContent from "@/components/containers/landing-page-content"
+import { Header } from "@/components/header";
+import { HeroCarousel } from "@/components/hero-carousel";
 
-export default async function LandingPage() {
-	// Public landing page - no auth checking needed
-	// Users can navigate to login/signup from here
-	return <LandingPageContent />
-
+export default function Home() {
+	return (
+		<main className="relative">
+			<Header />
+			<HeroCarousel />
+		</main>
+	);
 }
