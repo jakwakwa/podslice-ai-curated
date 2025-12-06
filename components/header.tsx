@@ -9,11 +9,25 @@ export function Header() {
 	const [scrolled, setScrolled] = useState(false);
 
 	useEffect(() => {
+		// The scroll container is inside HeroCarousel, not the window
+		const scrollContainer = document.querySelector(".h-screen.overflow-y-auto");
+
 		const handleScroll = () => {
-			setScrolled(window.scrollY > 50);
+			if (scrollContainer) {
+				setScrolled(scrollContainer.scrollTop > 50);
+			}
 		};
-		window.addEventListener("scroll", handleScroll);
-		return () => window.removeEventListener("scroll", handleScroll);
+
+		if (scrollContainer) {
+			scrollContainer.addEventListener("scroll", handleScroll);
+			handleScroll();
+		}
+
+		return () => {
+			if (scrollContainer) {
+				scrollContainer.removeEventListener("scroll", handleScroll);
+			}
+		};
 	}, []);
 
 	return (
