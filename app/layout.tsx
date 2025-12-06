@@ -1,3 +1,4 @@
+import { ClerkProvider } from "@clerk/nextjs";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import type React from "react";
@@ -52,12 +53,14 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
-			<body
-				className={`${geist.variable} ${geistMono.variable} ${sourceSerif4.variable} font-sans antialiased`}>
-				{children}
-				<Analytics />
-			</body>
-		</html>
+		<ClerkProvider>
+			<html lang="en">
+				<body
+					className={`${geist.variable} ${geistMono.variable} ${sourceSerif4.variable} font-sans antialiased`}>
+					{children}
+					<Analytics />
+				</body>
+			</html>
+		</ClerkProvider>
 	);
 }

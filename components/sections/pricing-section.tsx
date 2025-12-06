@@ -123,7 +123,7 @@ export function PricingSection({ isActive }: SectionProps) {
 								variant="default"
 								className={`w-full mt-8 rounded-full ${
 									plan.highlighted
-										? "bg-white text-purple-600 hover:bg-gray-100"
+										? "bg-white text-purple-100 hover:bg-gray-100"
 										: "bg-gray-900 text-white hover:bg-gray-800"
 								}`}>
 								Get Started
