@@ -70,7 +70,7 @@ export default function LandingPageContent() {
 				{/* <div className={`${styles.herobg} max-w-full w-screen md:w-full flex flex-col justify-center items-center content-center mx-auto px-8 md:px-0 pb-4 md:py-0  gap-0 mb-0`} /> */}
 
 				{/* Hero Section */}
-				<section className={`${styles.heroSection} w-full min-w-screen  `}>
+				<section className={`${styles.hetealction} w-full min-w-screen  `}>
 					<div
 						className={`flex flex-col content-center justify-center items-center h-[70vh]`}>
 						<motion.div

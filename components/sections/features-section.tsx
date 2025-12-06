@@ -84,7 +84,7 @@ export function FeaturesSection({ isActive }: SectionProps) {
 								mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 							}`}
 							style={{ transitionDelay: `${150 + index * 100}ms` }}>
-							<feature.icon className="w-8 h-8 text-pink-400 mb-4" />
+							<feature.icon className="w-8 h-8 text-violet-400 mb-4" />
 							<h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
 							<p className="text-gray-400 text-sm leading-relaxed">
 								{feature.description}

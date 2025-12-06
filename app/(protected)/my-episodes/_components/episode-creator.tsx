@@ -334,7 +334,7 @@ export function EpisodeCreator() {
 					"We're processing your episode and will email you when it's ready.",
 					{
 						duration: Infinity,
-						action: { label: "Dismiss", onClick: () => { } },
+						action: { label: "Dismiss", onClick: () => {} },
 					}
 				);
 				resumeAfterSubmission();
@@ -386,7 +386,7 @@ export function EpisodeCreator() {
 			if (!res.ok) throw new Error(await res.text());
 			toast.message("We're processing your episode and will email you when it's ready.", {
 				duration: Infinity,
-				action: { label: "Dismiss", onClick: () => { } },
+				action: { label: "Dismiss", onClick: () => {} },
 			});
 			resumeAfterSubmission();
 			router.push("/dashboard?from=generate");
@@ -396,8 +396,8 @@ export function EpisodeCreator() {
 			);
 			toast.error(
 				(err instanceof Error ? err.message : "Failed to start episode generation.") ||
-				"",
-				{ duration: Infinity, action: { label: "Dismiss", onClick: () => { } } }
+					"",
+				{ duration: Infinity, action: { label: "Dismiss", onClick: () => {} } }
 			);
 		} finally {
 			setIsCreating(false);
@@ -567,16 +567,16 @@ export function EpisodeCreator() {
 													Confirm the video details below are correct
 												</span>
 											</div>
-											<div className="bg-red-950/20 my-3 md:col-span-2 py-3 px-4 rounded-sm outline-1 outline-pink-900 shadow-sm max-w-sm  ">
-												<p className=" font-normal text-pink-300 flex text-[0.6rem] items-center gap-2 py-1">
-													<VideoIcon width={14} height={14} color="pink" />
+											<div className="bg-red-950/20 my-3 md:col-span-2 py-3 px-4 rounded-sm outline-1 outline-purple-900 shadow-sm max-w-sm  ">
+												<p className=" font-normal text-purple-300 flex text-[0.6rem] items-center gap-2 py-1">
+													<VideoIcon width={14} height={14} color="purple" />
 													Youtube Video Link:
 												</p>
 												<p className="text-violet-200/70 font-light text-[0.79rem] leading-tight">
 													{videoTitle}
 												</p>
 												{videoDuration !== null && (
-													<p className="text-[0.6rem] py-1 font-mono text-pink-400">
+													<p className="text-[0.6rem] py-1 font-mono text-purple-400">
 														{Math.floor(videoDuration / 60)}m {videoDuration % 60}s
 													</p>
 												)}
@@ -713,7 +713,7 @@ export function EpisodeCreator() {
 														</span>
 													</li>
 													<li className="flex my-1 content-center gap-2">
-														<span className="text-orange-500">⏱️</span>
+														<span className="text-cyan-500">⏱️</span>
 														<span>
 															<strong className="text-cyan-300 ">
 																For videos over 2 hours:
@@ -937,7 +937,7 @@ export function EpisodeCreator() {
 				}}
 			/>
 
-			<Dialog open={showRestrictionDialog} onOpenChange={() => { }} modal={true}>
+			<Dialog open={showRestrictionDialog} onOpenChange={() => {}} modal={true}>
 				<DialogContent
 					className="sm:max-w-md"
 					onInteractOutside={e => e.preventDefault()}

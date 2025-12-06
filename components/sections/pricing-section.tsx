@@ -80,12 +80,12 @@ export function PricingSection({ isActive }: SectionProps) {
 							key={plan.name}
 							className={`relative p-8 rounded-3xl transition-all duration-700 ${
 								plan.highlighted
-									? "bg-linear-to-br from-pink-500 to-purple-600 text-white shadow-2xl scale-105"
+									? "bg-linear-to-br from-purple-500 to-purple-600 text-white shadow-2xl scale-105"
 									: "bg-white border border-gray-200 text-gray-900"
 							} ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
 							style={{ transitionDelay: `${200 + index * 150}ms` }}>
 							{plan.highlighted && (
-								<div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-pink-600 px-4 py-1 rounded-full text-sm font-medium shadow-lg">
+								<div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-purple-600 px-4 py-1 rounded-full text-sm font-medium shadow-lg">
 									Most Popular
 								</div>
 							)}
@@ -110,7 +110,7 @@ export function PricingSection({ isActive }: SectionProps) {
 								{plan.features.map(feature => (
 									<li key={feature} className="flex items-center gap-3">
 										<Check
-											className={`w-5 h-5 ${plan.highlighted ? "text-white" : "text-pink-500"}`}
+											className={`w-5 h-5 ${plan.highlighted ? "text-white" : "text-purple-500"}`}
 										/>
 										<span
 											className={`text-sm ${plan.highlighted ? "text-white/90" : "text-gray-600"}`}>

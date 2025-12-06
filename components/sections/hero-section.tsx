@@ -8,7 +8,7 @@ interface SectionProps {
 	isActive: boolean;
 }
 
-export function HeroSection({ isActive }: SectionProps) {
+export function Hetealction({ isActive }: SectionProps) {
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {

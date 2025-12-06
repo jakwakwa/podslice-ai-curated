@@ -2,15 +2,15 @@
 
 import { formatDistanceToNow } from "date-fns";
 import {
+	AlertTriangle,
 	Bell,
 	Calendar,
+	CheckCircle,
+	CreditCard,
 	EyeIcon,
 	Podcast,
-	CreditCard,
-	AlertTriangle,
-	CheckCircle,
-	TrendingUp,
 	TrendingDown,
+	TrendingUp,
 	XCircle,
 	XCircleIcon,
 } from "lucide-react";
@@ -274,7 +274,7 @@ export function NotificationBell() {
 											onClick={() =>
 												handleDeleteNotification(notification.notification_id)
 											}
-											className="border  shadow-black/30 shadow-md  rounded-4xl text-xs text-pink-200  h-6 px-3"
+											className="border  shadow-black/30 shadow-md  rounded-4xl text-xs text-purple-200  h-6 px-3"
 											disabled={isLoading}>
 											clear
 											<XCircleIcon size={2} className="w-2 h-2" />

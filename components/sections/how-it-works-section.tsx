@@ -7,9 +7,9 @@ import {
 	FileText,
 	Mic,
 	Search,
-	Sparkles,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { HiOutlineSparkles } from "react-icons/hi2";
 
 interface SectionProps {
 	isActive: boolean;
@@ -25,11 +25,11 @@ const steps = [
 		bgColor: "bg-blue-50",
 	},
 	{
-		icon: Sparkles,
+		icon: HiOutlineSparkles,
 		title: "AI Analysis",
 		description:
 			"Our advanced AI (powered by Google's Gemini) instantly analyzes the content, identifies the key points, and understands the main arguments.",
-		color: "from-purple-500 to-pink-500",
+		color: "from-purple-500 to-purple-500",
 		bgColor: "bg-purple-50",
 	},
 	{
@@ -37,8 +37,8 @@ const steps = [
 		title: "Smart Summaries & Scripts",
 		description:
 			"It then writes a detailed, structured text summary and generates a script for a conversational, mini-podcast.",
-		color: "from-orange-500 to-red-500",
-		bgColor: "bg-orange-50",
+		color: "from-cyan-500 to-red-500",
+		bgColor: "bg-cyan-50",
 	},
 	{
 		icon: Mic,
@@ -53,8 +53,8 @@ const steps = [
 		title: "Ready For You",
 		description:
 			"Your new summary lands in your personal feed, complete with its own structured text page and the polished audio episode.",
-		color: "from-pink-500 to-rose-500",
-		bgColor: "bg-pink-50",
+		color: "from-purple-500 to-teal-500",
+		bgColor: "bg-purple-50",
 	},
 ];
 
@@ -95,7 +95,7 @@ export function HowItWorksSection({ isActive }: SectionProps) {
 	const canScrollRight = currentIndex < steps.length - 1;
 
 	return (
-		<div className="relative h-full w-full bg-gradient-to-b from-rose-50 to-white overflow-hidden">
+		<div className="relative h-full w-full bg-gradient-to-b from-teal-violet to-cyan-50 overflow-hidden">
 			<div className="relative z-10 h-full flex flex-col justify-center">
 				{/* Header */}
 				<div className="px-6 md:px-12 lg:px-24 max-w-7xl mx-auto w-full mb-8">
@@ -104,10 +104,10 @@ export function HowItWorksSection({ isActive }: SectionProps) {
 							mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 						}`}>
 						<div className="flex items-center gap-2 mb-4">
-							<Sparkles className="w-6 h-6 text-pink-500" />
-							<span className="text-pink-500 font-medium">The AI Magic</span>
+							<HiOutlineSparkles className="w-10 h-10 text-cyan-400" />
+							<span className="text-cyan-700 font-medium">AI Magic</span>
 						</div>
-						<h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-gray-900 text-balance">
+						<h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-900 text-balance">
 							How It Works
 						</h2>
 					</div>
@@ -168,9 +168,6 @@ export function HowItWorksSection({ isActive }: SectionProps) {
 										</div>
 
 										{/* Step number badge */}
-										<div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-sm font-semibold text-gray-700">
-											{index + 1}
-										</div>
 									</div>
 
 									{/* Text content */}
@@ -196,7 +193,7 @@ export function HowItWorksSection({ isActive }: SectionProps) {
 								onClick={() => scrollToIndex(index)}
 								className={`w-2 h-2 rounded-full transition-all duration-300 ${
 									index === currentIndex
-										? "w-6 bg-pink-500"
+										? "w-6 bg-purple-500"
 										: "bg-gray-300 hover:bg-gray-400"
 								}`}
 							/>
