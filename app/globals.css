@@ -1,16 +1,66 @@
-/* ============================================= */
-/* IMPORTS                     */
-/* ============================================= */
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Vend+Sans:wght@500&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "@clerk/themes/shadcn.css";
 @import "./theme-color-palette.css";
 
-@custom-variant dark (&:is(.dark *));
+@layer base {
+  * {
+    @apply border-border;
+  }
 
+  body {
+    @apply text-foreground bg-background;
+    width: 100vw !important;
+    background: var(--swak-1) !important;
+    ;
+    max-width: 100vw !important;
+    background-color: oklch(94.9% 0.0156 276.7);
+    margin: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: scroll !important;
+    color: var(--foreground);
+    padding: 0 !important;
+    text-align: left;
+    height: auto;
+  }
 
+  ::selection {
+    color: hsla(255.87 73.46% 58.63% / 0.9) !important;
+    background-color: oklch(17.17% 0.10343 276.516 / 5%) !important;
+  }
 
+  button {
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20000 !important;
+  }
+
+  label {
+    opacity: 0.8;
+    font-size: 0.85rem !important;
+    font-weight: 400 !important;
+
+    /* padding-bottom: 10px !important; */
+    color: var(--kwak-8) !important;
+    text-transform: initial !important;
+    letter-spacing: 0.3px;
+    text-transform: uppercase !important;
+  }
+
+  .main-layouts {
+    inset: 0;
+  }
+
+  /* --- Backdrop Blur --- */
+}
 
 @theme inline {
 
@@ -219,11 +269,11 @@
   --border: var(--color-slate-700);
   --input: var(--swak-5);
   --ring: var(--kwak-5);
-  --chart-1: var(--swak-10);
-  --chart-2: var(--swak-9);
-  --chart-3: var(--swak-8);
-  --chart-4: var(--swak-7);
-  --chart-5: var(--swak-6);
+  --chart-1: var(--kwak-3);
+  --chart-2: var(--kwak-2);
+  --chart-3: var(--kwak-5);
+  --chart-4: var(--kwak-5);
+  --chart-5: var(--kwak-5);
   --sidebar: var(--swak-1);
   --sidebar-foreground: var(--kwak-5);
   --sidebar-primary: var(--beduk-8);
@@ -289,11 +339,11 @@
   --border: var(--color-gray-800);
   --input: var(--swak-5);
   --ring: var(--kwak-5);
-  --chart-1: var(--kwak-10);
-  --chart-2: var(--kwak-4);
-  --chart-3: var(--kwak-8);
-  --chart-4: var(--kwak-9);
-  --chart-5: var(--kwak-10);
+  --chart-1: var(--kwak-3);
+  --chart-2: var(--kwak-2);
+  --chart-3: var(--kwak-5);
+  --chart-4: var(--kwak-5);
+  --chart-5: var(--kwak-5);
   --sidebar: var(--color-gray-900);
   --sidebar-foreground: var(--kwak-5);
   --sidebar-primary: var(--beduk-8);
@@ -766,63 +816,6 @@
 
 
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply text-foreground bg-background;
-    width: 100vw !important;
-    background: var(--swak-1) !important;
-    ;
-    max-width: 100vw !important;
-    background-color: oklch(94.9% 0.0156 276.7);
-    margin: 0 !important;
-    overflow-x: hidden !important;
-    overflow-y: scroll !important;
-    color: var(--foreground);
-    padding: 0 !important;
-    text-align: left;
-    height: auto;
-  }
-
-  ::selection {
-    color: hsla(255.87 73.46% 58.63% / 0.9) !important;
-    background-color: oklch(17.17% 0.10343 276.516 / 5%) !important;
-  }
-
-  button {
-    font-size: 0.9rem;
-    cursor: pointer;
-  }
-
-  header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 20000 !important;
-  }
-
-  label {
-    opacity: 0.8;
-    font-size: 0.85rem !important;
-    font-weight: 400 !important;
-
-    /* padding-bottom: 10px !important; */
-    color: var(--kwak-8) !important;
-    text-transform: initial !important;
-    letter-spacing: 0.3px;
-    text-transform: uppercase !important;
-  }
-
-  .main-layouts {
-    inset: 0;
-  }
-
-  /* --- Backdrop Blur --- */
-}
 
 
 

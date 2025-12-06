@@ -21,40 +21,40 @@ const steps = [
 		title: "You Find Content",
 		description:
 			"Simply provide a YouTube link you don't have time to watch or select a news topic you want to catch up on.",
-		color: "from-blue-500 to-cyan-500",
-		bgColor: "bg-blue-50",
+		color: "from-teal-400 to-cyan-700",
+		bgColor: "bg-cyan-100",
 	},
 	{
 		icon: HiOutlineSparkles,
 		title: "AI Analysis",
 		description:
 			"Our advanced AI (powered by Google's Gemini) instantly analyzes the content, identifies the key points, and understands the main arguments.",
-		color: "from-purple-500 to-purple-500",
-		bgColor: "bg-purple-50",
+		color: "from-pink-400 to-violet-900",
+		bgColor: "bg-pink-50",
 	},
 	{
 		icon: FileText,
 		title: "Smart Summaries & Scripts",
 		description:
 			"It then writes a detailed, structured text summary and generates a script for a conversational, mini-podcast.",
-		color: "from-cyan-500 to-red-500",
-		bgColor: "bg-cyan-50",
+		color: "from-teal-500 to-cyan-800",
+		bgColor: "bg-teal-50",
 	},
 	{
 		icon: Mic,
 		title: "Natural Audio",
 		description:
 			"We use a high-quality, natural-sounding AI voice to turn that script into a polished podcast episode.",
-		color: "from-green-500 to-emerald-500",
-		bgColor: "bg-green-50",
+		color: "from-amber-500 to-emerald-900",
+		bgColor: "bg-amber-50",
 	},
 	{
 		icon: CheckCircle,
 		title: "Ready For You",
 		description:
 			"Your new summary lands in your personal feed, complete with its own structured text page and the polished audio episode.",
-		color: "from-purple-500 to-teal-500",
-		bgColor: "bg-purple-50",
+		color: "from-pink-600 to-teal-950",
+		bgColor: "bg-violet-50",
 	},
 ];
 
@@ -95,7 +95,7 @@ export function HowItWorksSection({ isActive }: SectionProps) {
 	const canScrollRight = currentIndex < steps.length - 1;
 
 	return (
-		<div className="relative h-full w-full bg-gradient-to-b from-teal-violet to-cyan-50 overflow-hidden">
+		<div className="relative h-full w-full bg-gradient-to-b from-teal-50 to-cyan-50 overflow-hidden">
 			<div className="relative z-10 h-full flex flex-col justify-center">
 				{/* Header */}
 				<div className="px-6 md:px-12 lg:px-24 max-w-7xl mx-auto w-full mb-8">
@@ -163,7 +163,7 @@ export function HowItWorksSection({ isActive }: SectionProps) {
 
 										{/* Icon display */}
 										<div
-											className={`relative w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center shadow-xl`}>
+											className={`relative w-24 h-24 md:w-34 md:h-34 rounded-2xl bg-linear-to-br ${step.color} flex items-center justify-center shadow-indigo-950/40 shadow-lg`}>
 											<step.icon className="w-12 h-12 md:w-14 md:h-14 text-white" />
 										</div>
 

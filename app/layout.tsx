@@ -1,7 +1,12 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import { Analytics } from "@vercel/analytics/next";
+import { dark, shadesOfPurple } from "@clerk/themes";
+import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import type React from "react";
+import { Toaster } from "sonner";
+import { GlobalAudioPlayerSheet } from "@/components/ui/global-audio-player-sheet";
+import { GlobalProgressBar } from "@/components/ui/global-progress-bar";
+import { ClientProviders } from "./client-providers";
 import "./globals.css";
 
 import { Geist_Mono, Inria_Serif, Poppins } from "next/font/google";
@@ -22,6 +27,11 @@ const sourceSerif4 = Inria_Serif({
 	weight: ["300", "400", "700"],
 	variable: "--font-serif",
 });
+
+const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+if (!clerkPublishableKey) {
+	throw new Error("NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is not set");
+}
 
 export const metadata: Metadata = {
 	title: "Podslice - Turn Information Overload Into Actionable Insight",
@@ -53,14 +63,32 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<ClerkProvider>
-			<html lang="en">
-				<body
-					className={`${geist.variable} ${geistMono.variable} ${sourceSerif4.variable} font-sans antialiased`}>
-					{children}
-					<Analytics />
-				</body>
-			</html>
-		</ClerkProvider>
+		<html lang="en" suppressHydrationWarning>
+			<body
+				className={`${geist.variable} ${geistMono.variable} ${sourceSerif4.variable} font-sans antialiased`}>
+				<GlobalProgressBar />
+				<ClerkProvider
+					publishableKey={clerkPublishableKey || ""}
+					appearance={{
+						baseTheme: [dark, shadesOfPurple],
+						variables: { colorPrimary: "aqua" },
+						signIn: {
+							baseTheme: [shadesOfPurple],
+							variables: { colorPrimary: "lightseagreen" },
+						},
+						signUp: {
+							baseTheme: [shadesOfPurple],
+							variables: { colorPrimary: "lightseagreen" },
+						},
+					}}>
+					<ClientProviders>
+						{children}
+						<Toaster closeButton />
+						<GlobalAudioPlayerSheet />
+					</ClientProviders>
+				</ClerkProvider>
+				<Analytics />
+			</body>
+		</html>
 	);
 }
