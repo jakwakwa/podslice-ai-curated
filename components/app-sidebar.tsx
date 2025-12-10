@@ -1,15 +1,10 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import {
-	BoxesIcon,
-	Home,
-	PlayCircleIcon,
-	Radio,
-	SettingsIcon,
-	WandSparkles,
-} from "lucide-react";
+import { IconAutomation } from "@tabler/icons-react";
+import { Home, PlayCircleIcon, Radio, SparklesIcon } from "lucide-react";
 import type * as React from "react";
+import { RiCompassDiscoverLine } from "react-icons/ri";
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
 import { Sidebar, SidebarContent, SidebarFooter } from "@/components/ui/sidebar";
@@ -21,38 +16,48 @@ export const navItems = [
 		icon: Home,
 	},
 	{
-		title: "Content Preferences",
-		url: "/content-preferences",
-		icon: SettingsIcon,
-	},
-	{
 		title: "Discover Feeds",
 		url: "/curated-bundles",
-		icon: Radio,
+		icon: RiCompassDiscoverLine,
 	},
 	{
 		title: "Your Channel Feeds",
 		url: "/episodes",
-		icon: BoxesIcon,
+		icon: Radio,
 	},
 	{
-		title: "Create Custom Ai summaries",
-		url: "#",
-		icon: WandSparkles,
-		hasSubitems: true,
-		subItems: [
-			{
-				name: "Create an Ai Summary",
-				url: "/generate-my-episodes",
-				icon: WandSparkles,
-			},
-			{
-				name: "Your Ai Summaries",
-				url: "/my-episodes",
-				icon: PlayCircleIcon,
-			},
-		],
+		title: "Create an Ai Summary",
+		url: "/generate-my-episodes",
+		icon: SparklesIcon,
 	},
+	{
+		title: "Your Ai Summaries",
+		url: "/my-episodes",
+		icon: PlayCircleIcon,
+	},
+	{
+		title: "Content Preferences",
+		url: "/content-preferences",
+		icon: IconAutomation,
+	},
+	// {
+	// 	title: "Create Custom Ai summaries",
+	// 	url: "#",
+	// 	icon: WandSparkles,
+	// 	hasSubitems: true,
+	// 	subItems: [
+	// 		{
+	// 			name: "Create an Ai Summary",
+	// 			url: "/generate-my-episodes",
+	// 			icon: WandSparkles,
+	// 		},
+	// 		{
+	// 			name: "Your Ai Summaries",
+	// 			url: "/my-episodes",
+	// 			icon: PlayCircleIcon,
+	// 		},
+	// 	],
+	// },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -71,7 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		<Sidebar
 			collapsible="icon"
 			{...props}
-			className="border-1 border-l-0 border-b-0 border-r-sidebar-border text-sidebar-foreground bg-sidebar shadow-[0px_0px_5px_5px_#261c4b5b]  backdrop-blur-[3px]  w-[var(--sidebar-width)]  data-[state=collapsed]:w-[--sidebar-collapsed-width] duration-300 ease-linear  ">
+			className="border border-l-0 border-b-0 border-r-sidebar-border text-sidebar-foreground bg-sidebar shadow-[0px_0px_5px_5px_#261c4b5b]  backdrop-blur-[3px]  w-(--sidebar-width)  data-[state=collapsed]:w-[--sidebar-collapsed-width] duration-300 ease-linear  ">
 			<SidebarContent>
 				<NavMain items={navItems} />
 			</SidebarContent>

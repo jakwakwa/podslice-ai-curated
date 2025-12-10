@@ -195,7 +195,7 @@ export function ContentPreferencesClient({ content }: ContentPreferencesClientPr
 	}
 
 	return (
-		<div className="px-4 md:px-8 pb-8 space-y-6">
+		<div className="px-4 md:px-8 py-8 space-y-6">
 			{/* Topics Section */}
 			<Card className="p-6">
 				<div className="space-y-4">
