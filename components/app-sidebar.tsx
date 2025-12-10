@@ -9,7 +9,21 @@ import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
 import { Sidebar, SidebarContent, SidebarFooter } from "@/components/ui/sidebar";
 
-export const navItems = [
+export type NavSubItem = {
+	name: string;
+	url: string;
+	icon?: React.ComponentType<{ className?: string }>;
+};
+
+export type NavItem = {
+	title: string;
+	url: string;
+	icon: React.ComponentType<{ className?: string }>;
+	hasSubitems?: boolean;
+	subItems?: NavSubItem[];
+};
+
+export const navItems: NavItem[] = [
 	{
 		title: "Dashboard",
 		url: "/dashboard",
