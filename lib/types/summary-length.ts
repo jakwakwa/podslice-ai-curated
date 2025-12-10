@@ -8,21 +8,21 @@
 export const SUMMARY_LENGTH_OPTIONS = {
 	SHORT: {
 		minutes: [1, 2] as const,
-		words: [280, 540] as const,
+		words: [150, 300] as const,
 		label: "Quick Slice (1-2 mins)",
 		description: "Perfect for a quick overview",
 		usageCount: 1,
 	},
 	MEDIUM: {
 		minutes: [3, 4] as const,
-		words: [700, 1260] as const,
+		words: [450, 600] as const,
 		label: "Standard Summary (3-4 mins)",
 		description: "Balanced depth and brevity",
 		usageCount: 1,
 	},
 	LONG: {
 		minutes: [5, 7] as const,
-		words: [980, 1800] as const,
+		words: [750, 1050] as const,
 		label: "Deep Dive (5-7 mins)",
 		description: "Comprehensive coverage",
 		usageCount: 2,
