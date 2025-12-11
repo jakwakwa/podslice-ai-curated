@@ -91,8 +91,6 @@
 		"motion": "^12.23.13",
 		"music-metadata": "^11.8.3",
 		"next": "15.5.7",
-		"next-themes": "^0.4.6",
-		"openai": "^5.15.0",
 		"react": "19.2.1",
 		"react-day-picker": "^9.11.3",
 		"react-dom": "19.2.1",
