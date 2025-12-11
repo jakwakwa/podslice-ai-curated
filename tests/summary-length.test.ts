@@ -34,23 +34,23 @@ describe("lib/types/summary-length - Pure Utility Functions (No DB Required)", (
 			expect(option).toHaveProperty("usageCount");
 		});
 
-		it("should have SHORT option with 1 usage count", () => {
-			expect(SUMMARY_LENGTH_OPTIONS.SHORT.usageCount).toBe(1);
-			expect(SUMMARY_LENGTH_OPTIONS.SHORT.minutes).toEqual([1, 2]);
-			expect(SUMMARY_LENGTH_OPTIONS.SHORT.words).toEqual([150, 300]);
-		});
+	it("should have SHORT option with 1 usage count", () => {
+		expect(SUMMARY_LENGTH_OPTIONS.SHORT.usageCount).toBe(1);
+		expect(SUMMARY_LENGTH_OPTIONS.SHORT.minutes).toEqual([1, 2]);
+		expect(SUMMARY_LENGTH_OPTIONS.SHORT.words).toEqual([100, 200]);
+	});
 
-		it("should have MEDIUM option with 1 usage count", () => {
-			expect(SUMMARY_LENGTH_OPTIONS.MEDIUM.usageCount).toBe(1);
-			expect(SUMMARY_LENGTH_OPTIONS.MEDIUM.minutes).toEqual([3, 4]);
-			expect(SUMMARY_LENGTH_OPTIONS.MEDIUM.words).toEqual([450, 600]);
-		});
+	it("should have MEDIUM option with 1 usage count", () => {
+		expect(SUMMARY_LENGTH_OPTIONS.MEDIUM.usageCount).toBe(1);
+		expect(SUMMARY_LENGTH_OPTIONS.MEDIUM.minutes).toEqual([3, 4]);
+		expect(SUMMARY_LENGTH_OPTIONS.MEDIUM.words).toEqual([250, 400]);
+	});
 
-		it("should have LONG option with 2 usage count", () => {
-			expect(SUMMARY_LENGTH_OPTIONS.LONG.usageCount).toBe(2);
-			expect(SUMMARY_LENGTH_OPTIONS.LONG.minutes).toEqual([5, 7]);
-			expect(SUMMARY_LENGTH_OPTIONS.LONG.words).toEqual([750, 1050]);
-		});
+	it("should have LONG option with 2 usage count", () => {
+		expect(SUMMARY_LENGTH_OPTIONS.LONG.usageCount).toBe(2);
+		expect(SUMMARY_LENGTH_OPTIONS.LONG.minutes).toEqual([5, 7]);
+		expect(SUMMARY_LENGTH_OPTIONS.LONG.words).toEqual([450, 650]);
+	});
 	});
 
 	describe("getSummaryLengthConfig", () => {
