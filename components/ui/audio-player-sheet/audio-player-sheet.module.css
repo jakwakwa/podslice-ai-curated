@@ -1,6 +1,6 @@
 /* Audio Player Sheet Styles */
 
-.heroSection {
+.hetealction {
   @apply items-center flex-col align-middle h-full max-h-[600px] justify-center content-center backdrop-blur-sm bg-[#1f1a285c] p-6 pt-8 gap-4;
 }
 
@@ -37,7 +37,7 @@
 }
 
 .episodeSubtitle {
-  @apply text-[13.69px] text-primary-foreground-muted  leading-[1.72857] mt-1 tracking-[0.05142em] uppercase text-[#a484da] text-center text-shadow-md text-shadow-black/20;
+  @apply text-[13.69px] text-primary-foreground-muted leading-[1.72857] mt-1 tracking-[0.05142em] uppercase text-[#a484da] text-center text-shadow-md text-shadow-black/20;
 }
 
 .transcriptToggle {

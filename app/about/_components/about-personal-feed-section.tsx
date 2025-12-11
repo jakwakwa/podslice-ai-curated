@@ -9,7 +9,9 @@ export default function AboutPersonalFeedSection() {
 				<div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-6">
 					<Radio className="w-7 h-7 text-violet-400" />
 				</div>
-				<h3 className="text-2xl font-bold text-cyan-400 mb-4">Curated for You</h3>
+				<h3 className="text-2xl font-bold text-cyan-400 mb-4">
+					Curated<span>FOR YOU</span> for You
+				</h3>
 				<p className="text-foreground leading-relaxed">
 					Get summaries from popular shows and channels we've already curated for you.
 					Just subscribe to our "Bundles" (e.g., "Tech Today," "Wellness Weekly," or

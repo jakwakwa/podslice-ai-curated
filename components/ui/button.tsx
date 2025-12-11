@@ -9,7 +9,7 @@ const buttonVariants = cva(
 		variants: {
 			variant: {
 				default:
-					"bg-linear-to-br from-[#886FCD] to-violet-700 text-slate-100/80 hover:text-cyan-100 shadow-md text-shadow-black/20 text-shadow-md  md:min-w-[100px] px-4 text-lg leading-0 disabled:bg-[#000] text-[0.95rem] shadow-[0_2px_4px_1px]  shadow-slate-950/70 rounded-xl  shadow-md shadow-slate-900/30 h-12",
+					"bg-linear-to-br from-[#886FCD] to-violet-700 text-slate-100 hover:text-cyan-100 shadow-md text-shadow-black/20 text-shadow-md  md:min-w-[100px] px-4 text-lg leading-0 disabled:bg-[#000] text-[0.95rem] shadow-[0_2px_4px_1px]  shadow-slate-950/70 rounded-xl  shadow-md shadow-slate-900/30 h-12",
 				destructive:
 					"bg-[#2909129B] border-2 border-[#763751] text-[#C67E98] shadow-[0_2px_4px_1px] shadow-slate-900/40 rounded-full px-0 w-10 h-14 shadow-lg shadow-slate-950/10 text-slate-300/80",
 				outline:
@@ -44,7 +44,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
 	extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-	VariantProps<typeof buttonVariants> {
+		VariantProps<typeof buttonVariants> {
 	asChild?: boolean;
 }
 
@@ -58,24 +58,24 @@ function Button({
 	...props
 }: React.ComponentProps<"button"> & {
 	variant:
-	| "default"
-	| "destructive"
-	| "outline"
-	| "secondary"
-	| "ghost"
-	| "link"
-	| "play"
-	| "icon";
+		| "default"
+		| "destructive"
+		| "outline"
+		| "secondary"
+		| "ghost"
+		| "link"
+		| "play"
+		| "icon";
 	size?:
-	| "default"
-	| "sm"
-	| "xs"
-	| "md"
-	| "lg"
-	| "playLarge"
-	| "playSmall"
-	| "play"
-	| "icon";
+		| "default"
+		| "sm"
+		| "xs"
+		| "md"
+		| "lg"
+		| "playLarge"
+		| "playSmall"
+		| "play"
+		| "icon";
 	asChild?: boolean;
 	icon?: React.ReactNode;
 }) {
