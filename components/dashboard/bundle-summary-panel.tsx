@@ -1,5 +1,6 @@
 "use client";
 import { Edit, Podcast, UserIcon } from "lucide-react";
+import { useEffect } from "react";
 import { dashboardCopy } from "@/app/(protected)/dashboard/content";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +12,8 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { Typography } from "@/components/ui/typography";
+import { PRICING_TIER } from "@/config/paddle-config";
+import { useUserEpisodesStore } from "@/lib/stores/user-episodes-store";
 import type { Episode, UserCurationProfileWithRelations } from "@/lib/types";
 
 interface SubscriptionInfo {
@@ -36,6 +39,26 @@ export function BundleSummaryPanel({
 	bundleEpisodes = [],
 }: BundleSummaryPanelProps) {
 	const { sections } = dashboardCopy;
+
+	// 1. Get usage actions and state from the store
+	const fetchCompletedEpisodeCount = useUserEpisodesStore(
+		state => state.fetchCompletedEpisodeCount
+	);
+	const completedEpisodeCount = useUserEpisodesStore(
+		state => state.completedEpisodeCount
+	);
+
+	// 2. Fetch the latest count on mount
+	useEffect(() => {
+		fetchCompletedEpisodeCount();
+	}, [fetchCompletedEpisodeCount]);
+
+	// 3. Determine the plan limit based on the subscription
+	// We normalize the plan_type to matching the PRICING_TIER config keys (e.g., "CURATE_CONTROL")
+	const currentPlanId = (subscription?.plan_type || "").toUpperCase();
+	const planConfig = PRICING_TIER.find(tier => tier.planId === currentPlanId);
+	// Default to 0 or a safe fallback if no plan is found
+	const monthlyLimit = planConfig?.episodeLimit ?? 0;
 
 	const hasValidBundle =
 		userCurationProfile?.is_bundle_selection && userCurationProfile?.selectedBundle;
@@ -74,38 +97,32 @@ export function BundleSummaryPanel({
 							{sections.bundleFeed.updateButton}
 						</Button>
 						<div className="mb-4 flex flex-col">
-							<p className="text-[0.65rem] w-full uppercase tracking-wide font-mono font-bold text-primary-foreground-muted md:text-primary-foreground-muted  md:not-italic p-0 mb-2">
-								{sections.bundleFeed.activeBundleLabel}
+							<p className="text-[0.65rem] w-full uppercase tracking-wide font-mono font-bold text-primary-foreground-muted p-0 mb-2">
+								User/Curated Feeds
 							</p>
 
-							<div className="bg-card flex  py-2 px-3 md:px-2 md:py-1 md:rounded-sm border-1 border-sidebar-border/50 shadow-sm shadow-indigo-950/90 rounded-md gap-3">
-								<Typography className="flex w-full text-sm font-bold items-center gap-2">
+							<div className="bg-card flex  py-2 px-3 md:px-2 md:py-1 md:rounded-sm border border-sidebar-border/50 shadow-sm shadow-indigo-950/90 rounded-md gap-3">
+								<Typography className="flex w-full text-sm font-light items-center gap-2">
 									<Podcast
 										size={16}
 										className="text-ring md:text-accent-foreground text-2xl"
 									/>
-									<span
-										className="Your Content Profile:
-
-">
-										{/*{userCurationProfile.selectedBundle?.name}*/}
-										Active Channel Overview:
-									</span>
+									Active Channel Overview:
 								</Typography>
 							</div>
 						</div>
 					</div>
 
 					<div className=" md:inline mt-0 w-full">
-						<div className="bg-[#393247]/30 border-t-0 overflow-hidden rounded-b-md border-1 border-[#51516500] px-0 p-0">
-							<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full border-1 border-gray-800/30 rounded-md overflow-hidden pt-0">
+						<div className="bg-(--kwak-2) border-t-0 overflow-hidden rounded-b-md border border-[#51516500] px-0 p-0">
+							<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full border border-gray-800/30 rounded-md overflow-hidden pt-0">
 								<Table>
 									<TableHeader>
 										<TableRow>
 											<TableHead className="text-foreground/60" colSpan={3}>
-												Active Channel:
+												Feed Subscription:
 											</TableHead>
-											<TableHead className="text-right uppercase font-black">
+											<TableHead className="text-right uppercase font-bold text-violet-400">
 												{userCurationProfile.selectedBundle?.name}
 											</TableHead>
 										</TableRow>
@@ -120,16 +137,7 @@ export function BundleSummaryPanel({
 
 											<TableCell className="text-right font-mono">
 												{" "}
-												{bundleEpisodes?.length || 0}
-											</TableCell>
-										</TableRow>
-										<TableRow>
-											<TableCell colSpan={3} className="font-medium text-foreground/60">
-												{sections.bundleFeed.planLabel}
-											</TableCell>
-
-											<TableCell className="text-right capitalize">
-												{getPlanDisplay()}
+												{bundleEpisodes?.length || "Pending"}
 											</TableCell>
 										</TableRow>
 									</TableBody>
@@ -143,44 +151,32 @@ export function BundleSummaryPanel({
 								{sections.bundleFeed.personalFeedLabel}
 							</p>
 
-							<div className="bg-card flex  py-2 px-3 md:px-2 md:py-1 md:rounded-sm border-1 border-sidebar-border/50 shadow-sm shadow-indigo-950/90 rounded-md gap-3">
-								<Typography className="flex w-full text-sm font-bold items-center gap-2">
+							<div className="bg-card flex  py-2 px-3 md:px-2 md:py-1.5 md:rounded-sm border-1 border-sidebar-border/50 shadow-sm shadow-indigo-950/90 rounded-md gap-3 font-sans">
+								<Typography className="flex w-full text-sm font-light items-center gap-2">
 									<UserIcon size={16} className="text-ring md:text-accent-foreground" />
-									<span className="text-sm text-foreground gap-3 font-sans text-left font-bold">
+									<span className="text-sm text-foreground gap-3 font-sans text-left font-light">
 										{sections.bundleFeed.pesdonalFeedTitle}
 									</span>
 								</Typography>
 							</div>
 						</div>{" "}
-						<div className="bg-[#393247]/40 border-t-0 overflow-hidden rounded-md border-1 border-[#51516500] px-0 p-0">
+						<div className="bg-(--kwak-2) border-t-0 overflow-hidden rounded-md border-1 border-[#51516500] px-0 p-0">
 							<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full border-0  border-gray-800/30 rounded-md overflow-hidden pt-0">
 								<Table>
 									<TableHeader>
 										<TableRow>
 											<TableHead colSpan={3} className="text-foreground/60">
 												{" "}
-												Summary Usage:
-												{/*{sections.bundleFeed.activeBundleLabel}*/}
+												{sections.bundleFeed.activeBundleLabel}
 											</TableHead>
 											<TableHead className="text-right uppercase font-mono">
-												10
-												<span className="font-bold">/20</span>
+												{completedEpisodeCount}
+												<span className="font-bold">/{monthlyLimit}</span>
 											</TableHead>
 										</TableRow>
 									</TableHeader>
 									<TableBody>
 										{/*{sections.bundleFeed.map(invoice => (*/}
-
-										<TableRow>
-											<TableCell colSpan={3} className="font-medium text-foreground/60">
-												Shared Summmaries:
-											</TableCell>
-
-											<TableCell className="text-right font-mono">
-												{" "}
-												{bundleEpisodes?.length || 0}
-											</TableCell>
-										</TableRow>
 										<TableRow>
 											<TableCell
 												colSpan={3}

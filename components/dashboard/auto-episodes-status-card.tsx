@@ -59,7 +59,8 @@ export async function AutoEpisodesStatusCard() {
 	);
 
 	return (
-		<div className="bg-bigcard w-full flex flex-col gap-0 justify-start mb-0 items-start shadow-xl shadow-indigo/30 mt-0 md:m-0 xl:flex-col md:gap-4 py-8 p-1 md:mt-4 md:mb-0 outline-1 outline-primary md:rounded-3xl lg:pb-8 lg:pt-0 overflow-hidden md:p-0 md:justify-start align-start lg:mb-0">
+		// TODO: FEATURE FLAG:AUTOMATED EPISODES - TEMPORARILY DISABLED
+		<div className="bg-bigcard hidden w-full flex-col gap-0 justify-start mb-0 items-start shadow-xl shadow-indigo/30 mt-0 md:m-0 xl:flex-col md:gap-4 py-8 p-1 md:mt-4 md:mb-0 outline-1 outline-primary md:rounded-3xl lg:pb-8 lg:pt-0 overflow-hidden md:p-0 md:justify-start align-start lg:mb-0">
 			<div className="pt-0 px-5 md:pl-8 md:mt-8 w-full flex flex-col items-start justify-items-start">
 				<div className="flex items-start justify-between w-full mb-4">
 					<div className="space-y-2 flex-1">
@@ -93,7 +94,7 @@ export async function AutoEpisodesStatusCard() {
 						</p>
 						<Link
 							href="/content-preferences"
-							className="text-primary hover:underline inline-flex items-center gap-1">
+							className="text-primary-foreground-muted hover:underline inline-flex items-center gap-1">
 							Configure Now →
 						</Link>
 					</div>
