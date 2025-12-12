@@ -1,7 +1,6 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { IconAutomation } from "@tabler/icons-react";
 import { Home, PlayCircleIcon, Radio, SparklesIcon } from "lucide-react";
 import type * as React from "react";
 import { RiCompassDiscoverLine } from "react-icons/ri";
@@ -49,11 +48,11 @@ export const navItems: NavItem[] = [
 		url: "/my-episodes",
 		icon: PlayCircleIcon,
 	},
-	{
-		title: "Content Preferences",
-		url: "/content-preferences",
-		icon: IconAutomation,
-	},
+	// {
+	// 	title: "Content Preferences",
+	// 	url: "/content-preferences",
+	// 	icon: IconAutomation,
+	// },
 	// {
 	// 	title: "Create Custom Ai summaries",
 	// 	url: "#",
