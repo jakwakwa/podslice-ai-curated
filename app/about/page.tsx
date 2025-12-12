@@ -41,58 +41,56 @@ export default function AboutPage() {
                 {/* What is Podslice Section */}
 
                 {/* How It Works Section */}
-                <AboutSection title="How It Works (The AI Magic)" className="py-20">
-                    <AboutHowItWorksSection />
-                </AboutSection>
+                <AboutSection title="How It Works (The AI Magic)" className="py-20" children={<AboutHowItWorksSection />} />
 
                 {/* Your Personal Feed Section */}
                 <AboutSection
                     title="Personalized Feed"
-                    className="bg-gradient-to-br from-[var(--swak-1)] via-[var(--swak-1)] to-[var(--swak-1)]">
-                    <AboutPersonalFeedSection />
-                </AboutSection>
+                    className="bg-gradient-to-br from-[var(--swak-1)] via-[var(--swak-1)] to-[var(--swak-1)]"
+                    children={<AboutPersonalFeedSection />}
+                />
 
                 {/* Features Section */}
-                <AboutSection title="Features at a Glance" className="py-20">
-                    <AboutFeaturesSection />
-                </AboutSection>
+                <AboutSection title="Features at a Glance" className="py-20" children={<AboutFeaturesSection />} />
 
                 {/* Plans Section */}
                 <AboutSection
                     title="Find Your Perfect Plan"
-                    className="bg-gradient-to-br from-[var(--swak-2)] via-[var(--swak-1)] to-[var(--swak-1)]">
-                    <div className="max-w-4xl mx-auto">
-                        <p className="text-lg text-foreground leading-relaxed text-center mb-12">
-                            Podslice has a plan for every type of listener.
-                        </p>
-                        <div className="space-y-6">
-                            {[
-                                {
-                                    name: "Free Slice",
-                                    description: "Get started for free and listen to our curated bundles.",
-                                },
-                                {
-                                    name: "Casual Listener",
-                                    description: "Unlock more content and features.",
-                                },
-                                {
-                                    name: "Curate Control",
-                                    description:
-                                        "Get the full Podslice experience with the power to create your own summaries from YouTube links and news feeds.",
-                                },
-                            ].map(plan => (
-                                <div
-                                    key={plan.name}
-                                    className="p-6 rounded-xl border border-border hover:border-primary transition-all duration-300">
-                                    <h3 className="text-xl font-bold text-primary-foreground-muted mb-2">
-                                        {plan.name}
-                                    </h3>
-                                    <p className="text-secondary-foreground">{plan.description}</p>
-                                </div>
-                            ))}
+                    className="bg-gradient-to-br from-[var(--swak-2)] via-[var(--swak-1)] to-[var(--swak-1)]"
+                    children={
+                        <div className="max-w-4xl mx-auto">
+                            <p className="text-lg text-foreground leading-relaxed text-center mb-12">
+                                Podslice has a plan for every type of listener.
+                            </p>
+                            <div className="space-y-6">
+                                {[
+                                    {
+                                        name: "Free Slice",
+                                        description: "Get started for free and listen to our curated bundles.",
+                                    },
+                                    {
+                                        name: "Casual Listener",
+                                        description: "Unlock more content and features.",
+                                    },
+                                    {
+                                        name: "Curate Control",
+                                        description:
+                                            "Get the full Podslice experience with the power to create your own summaries from YouTube links and news feeds.",
+                                    },
+                                ].map(plan => (
+                                    <div
+                                        key={plan.name}
+                                        className="p-6 rounded-xl border border-border hover:border-primary transition-all duration-300">
+                                        <h3 className="text-xl font-bold text-primary-foreground-muted mb-2">
+                                            {plan.name}
+                                        </h3>
+                                        <p className="text-secondary-foreground">{plan.description}</p>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                </AboutSection>
+                    }
+                />
 
                 {/* CTA Section */}
                 <AboutCTASection />
