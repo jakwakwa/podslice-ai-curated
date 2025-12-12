@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { inngest } from "@/lib/inngest/client";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { inngest } from "@/lib/inngest/client";
+import { prisma } from "@/lib/prisma";
 
 const ExternalSyncSchema = z.object({
 	podcast: z.object({
 		name: z.string(),
-		url: z.string().url(),
+		url: z.string().min(1),
 		imageUrl: z.string().optional(),
 		description: z.string().optional(),
 	}),
@@ -80,4 +80,3 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
 	}
 }
-
