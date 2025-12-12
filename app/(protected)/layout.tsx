@@ -115,7 +115,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 					className={` flex flex-col flex-grow transition-all duration-300 ease-in-out px-0 md:px-0 mt-8 md:mt-0 mb-2 m-0 p-0 h-screen ${state === "expanded" ? "ml-0 w-full md:ml-0 md:p-0  " : "ml-0 md:ml-0 w-full md:min-w-[100vw]"}`}>
 					<div className={"bg-pattern layout-inset"} />
 					<div
-						className={`  w-screen md:min-w-none animated-gradient   mx-0  p-0 flex flex-col my-0 md:flex-row pt-6 md:p-3 md:py-16 md:mx-0 pl-0  md:my-0   ${state === "expanded" ? "m-0 md:ml-0 md:p-0  lg:px-2 lg:pb-8 max-w-full" : "md:pl-12 pr-0 md:pr-24 md:ml-0  min-w-screen  "}`}>
+						className={`  w-screen md:min-w-none animated-gradient  backdrop-blur-[3px]  mx-0  p-0 flex flex-col my-0 md:flex-row pt-6 md:p-3 md:py-16 md:mx-0 pl-0  md:my-0   ${state === "expanded" ? "m-0 md:ml-0 md:p-0  lg:px-2 lg:pb-8 max-w-full" : "md:pl-12 pr-0 md:pr-24 md:ml-0  min-w-screen  "}`}>
 						{children}
 					</div>
 					<Footer />
