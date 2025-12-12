@@ -29,11 +29,10 @@ export interface CardVariantProps extends React.HTMLAttributes<HTMLDivElement> {
 export const cardVariants = cva("", {
 	variants: {
 		variant: {
-			default: "bg-card backdrop-filter-sm rounded-xl border text-card-foreground px-4",
+			default: "bg-card backdrop-filter-2xl rounded-xl border text-card-foreground px-4",
 			glass:
-				"md:bg-background/80 md:backdrop-blur-[4px] border text-card-foreground px-4",
-			dunk:
-				"bg-dunk border-2 border-bundle-card-border w-full transition-shadow duration-200 gap-3 bundle-card-hover xl:min-w-[70vw]  xl:overflow-hidden rounded-4xl ease-in-out text-shadow-sm shadow-[0_4px_4px_1px_#0506062c] relative",
+				"md:bg-background/80 md:backdrop-blur-[44px] border text-card-foreground px-4",
+			dunk: "bg-dunk border-2 border-bundle-card-border w-full transition-shadow duration-200 gap-3 bundle-card-hover xl:min-w-[70vw]  xl:overflow-hidden rounded-4xl ease-in-out text-shadow-sm shadow-[0_4px_4px_1px_#0506062c] relative",
 			transparent: "main-card",
 			bundle:
 				"bg-card  border-2 border-bundle-card-border w-full transition-shadow duration-200 gap-3 bundle-card-hover xl:max-w-[500px]  xl:overflow-hidden rounded-xl ease-in-out text-shadow-sm shadow-[0_4px_4px_1px_#0506062c]",
@@ -83,7 +82,7 @@ export const inputVariants = cva(" ", {
 			default:
 				"bg-[#2a1f3d] border-[var(--color-form-border)] text-[var(--color-form-input-text)] placeholder:text-[var(--color-form-placeholder)] focus:border-[var(--color-form-border-focus)] focus:ring-[3px] focus:ring-[var(--color-form-focus-ring)] active:border-[var(--color-form-border-active)] disabled:bg-[var(--color-form-bg-disabled)] disabled:border-[var(--color-form-border-disabled)] disabled:text-[var(--color-form-text-disabled)] disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-[var(--color-form-error-border)] aria-invalid:ring-[3px] aria-invalid:ring-[var(--color-form-error-ring)]",
 			glass:
-				"bg-[var(--color-form-input-bg)]/50 backdrop-blur-sm border-white/20 text-[var(--color-form-input-text)] placeholder:text-[var(--color-form-placeholder)] focus:border-[var(--color-form-border-focus)] focus:ring-[3px] focus:ring-[var(--color-form-focus-ring)]",
+				"bg-[var(--color-form-input-bg)]/50 backdrop-blur-lg border-white/20 text-[var(--color-form-input-text)] placeholder:text-[var(--color-form-placeholder)] focus:border-[var(--color-form-border-focus)] focus:ring-[3px] focus:ring-[var(--color-form-focus-ring)]",
 		},
 		size: {
 			default: "h-9 px-3 md:px-4 py-2 text-sm",
