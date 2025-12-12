@@ -11,8 +11,8 @@ const ExternalSyncSchema = z.object({
 		description: z.string().optional(),
 	}),
 	episode: z.object({
-		videoUrl: z.string().url(),
-		transcript: z.string(),
+		videoUrl: z.string().min(1),
+		transcript: z.string().min(1),
 		title: z.string().optional(),
 		description: z.string().optional(),
 		imageUrl: z.string().optional(),
@@ -32,6 +32,11 @@ export async function POST(req: NextRequest) {
 		const result = ExternalSyncSchema.safeParse(body);
 
 		if (!result.success) {
+			console.error(
+				"[EXTERNAL_SYNC] Validation failed:",
+				JSON.stringify(result.error.format(), null, 2)
+			);
+			console.error("[EXTERNAL_SYNC] Received body:", JSON.stringify(body, null, 2));
 			return NextResponse.json(
 				{ error: "Invalid request body", details: result.error.format() },
 				{ status: 400 }
