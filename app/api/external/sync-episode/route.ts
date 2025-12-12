@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 const ExternalSyncSchema = z.object({
 	podcast: z.object({
 		name: z.string(),
-		url: z.string().min(1),
+		url: z.string(), // Empty strings will be handled by fallback logic
 		imageUrl: z.string().optional(),
 		description: z.string().optional(),
 	}),
@@ -45,16 +45,26 @@ export async function POST(req: NextRequest) {
 
 		const { podcast, episode } = result.data;
 
+		// Handle empty podcast URL by generating a fallback identifier
+		const podcastUrl =
+			podcast.url.trim() ||
+			`podcast-${podcast.name.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`;
+		if (!podcast.url.trim()) {
+			console.warn(
+				`[EXTERNAL_SYNC] Empty podcast URL provided, using fallback: ${podcastUrl}`
+			);
+		}
+
 		// 1. Find or Create Podcast
 		let podcastRecord = await prisma.podcast.findUnique({
-			where: { url: podcast.url },
+			where: { url: podcastUrl },
 		});
 
 		if (!podcastRecord) {
 			podcastRecord = await prisma.podcast.create({
 				data: {
 					name: podcast.name,
-					url: podcast.url,
+					url: podcastUrl,
 					description: podcast.description,
 					image_url: podcast.imageUrl,
 					is_active: true,

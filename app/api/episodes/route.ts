@@ -78,8 +78,8 @@ export async function GET(request: Request) {
 					},
 					orderBy: { created_at: "desc" },
 					cacheStrategy: {
-						swr: 600, // refresh in background hourly
-						ttl: 43200, // 12 hours
+						swr: 60, // refresh in background hourly
+						ttl: 90, // 10 minutes
 						tags: [`user_profile_${userId}`, "curated_episodes"],
 					},
 				})

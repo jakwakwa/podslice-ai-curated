@@ -1,6 +1,6 @@
 "use client";
 
-import { Lock, Sparkles } from "lucide-react";
+import { Lock, RefreshCw, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -35,6 +35,7 @@ export default function EpisodeGenerationPanelClient({
 	const [selectedPodcastId, setSelectedPodcastId] = useState<string>("");
 	const [youtubeUrl, setYoutubeUrl] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
+	const [isBackfilling, setIsBackfilling] = useState(false);
 
 	const selectedBundle = bundles.find(b => b.bundle_id === selectedBundleId);
 	const selectedPodcast = selectedBundle?.podcasts.find(
@@ -108,6 +109,29 @@ export default function EpisodeGenerationPanelClient({
 			toast.error(error instanceof Error ? error.message : "Failed to start generation");
 		} finally {
 			setIsLoading(false);
+		}
+	};
+
+	const backfillEpisodeBundles = async () => {
+		setIsBackfilling(true);
+		try {
+			const resp = await fetch("/api/admin/backfill-episode-bundles", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+			});
+			if (!resp.ok) {
+				const errorText = await resp.text();
+				throw new Error(errorText || "Failed to backfill episodes");
+			}
+			const result = await resp.json();
+			toast.success(
+				`Backfill complete: ${result.updated} updated, ${result.skipped} skipped`
+			);
+		} catch (error) {
+			console.error("Failed to backfill episodes:", error);
+			toast.error(error instanceof Error ? error.message : "Failed to backfill episodes");
+		} finally {
+			setIsBackfilling(false);
 		}
 	};
 
@@ -269,6 +293,40 @@ export default function EpisodeGenerationPanelClient({
 					</CardContent>
 				</Card>
 			)}
+
+			{/* Episode Management Utilities */}
+			<Card variant="dunk">
+				<PanelHeader
+					title="Episode Management"
+					description="Utility tools for managing existing episodes"
+				/>
+				<CardContent className="p-4 space-y-4">
+					<div className="space-y-2">
+						<p className="text-sm text-muted-foreground">
+							Backfill episode bundle assignments: Updates all episodes without a
+							bundle_id to automatically assign them to bundles based on their podcast's
+							bundle membership.
+						</p>
+						<Button
+							onClick={backfillEpisodeBundles}
+							disabled={isBackfilling}
+							variant="outline"
+							className="w-full">
+							{isBackfilling ? (
+								<>
+									<AppSpinner size="sm" color="default" className="mr-2" />
+									Backfilling...
+								</>
+							) : (
+								<>
+									<RefreshCw className="w-4 h-4 mr-2" />
+									Backfill Episode Bundle Assignments
+								</>
+							)}
+						</Button>
+					</div>
+				</CardContent>
+			</Card>
 		</div>
 	);
 }
