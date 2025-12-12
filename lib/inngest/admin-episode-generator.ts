@@ -20,6 +20,9 @@ interface AdminEpisodeEventDataSimplified {
 	youtubeUrl: string; // authoritative source
 	podcastId: string;
 	adminUserId: string;
+	transcript?: string;
+	title?: string;
+	imageUrl?: string;
 }
 
 interface LegacyAdminEpisodeEventData {
@@ -47,16 +50,27 @@ export const generateAdminEpisode = inngest.createFunction(
 			console.warn("[ADMIN_EP_GEN] Received legacy event without youtubeUrl. Skipping.");
 			return { message: "Skipped legacy admin generation event lacking youtubeUrl" };
 		}
-		const { youtubeUrl, podcastId } = event.data as AdminEpisodeEventDataSimplified;
+		const { youtubeUrl, podcastId, transcript: providedTranscript, title: providedTitle, imageUrl: providedImage } = event.data as AdminEpisodeEventDataSimplified;
 
 		// 1. Fetch YouTube metadata (title, description, thumbnail)
 		const videoDetails = await step.run("fetch-video-details", async () => {
+			if (providedTitle && providedImage) {
+				return {
+					title: providedTitle,
+					description: "", // Description not strictly needed if we have transcript, or we can add it to event data if needed
+					thumbnailUrl: providedImage,
+					channelTitle: "",
+					publishedAt: new Date().toISOString(),
+					duration: 0,
+				};
+			}
 			const { getYouTubeVideoDetails } = await import("@/lib/inngest/utils/youtube");
 			return await getYouTubeVideoDetails(youtubeUrl);
 		});
 
 		// 2. Fetch transcript (best-effort) – if not available we still continue using the description
 		const transcript = await step.run("fetch-transcript", async () => {
+			if (providedTranscript) return providedTranscript;
 			try {
 				const { getYouTubeTranscript } = await import("@/lib/client-youtube-transcript");
 				const result = await getYouTubeTranscript(youtubeUrl);
