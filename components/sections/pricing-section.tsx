@@ -12,38 +12,27 @@ const plans = [
 	{
 		name: "Free Slice",
 		description: "Get started for free and listen to our curated bundles.",
-		price: "$0",
-		features: [
-			"Access to curated bundles",
-			"Limited audio summaries",
-			"Basic text breakdowns",
-		],
+		price: "$0 (7 FREE day trial)",
+		features: ["7 free day Curate Control membership then $4,5"],
 		highlighted: false,
 	},
 	{
 		name: "Casual Listener",
 		description: "Unlock more content and features.",
-		price: "$9",
-		features: [
-			"Everything in Free",
-			"Unlimited audio summaries",
-			"Full text breakdowns",
-			"Priority processing",
-		],
-		highlighted: true,
+		price: "$2",
+		features: ["All Feeds Access", "Full text breakdowns", "Priority processing"],
+		highlighted: false,
 	},
 	{
 		name: "Curate Control",
 		description: "Get the full Podslice experience with custom summaries.",
-		price: "$19",
+		price: "$4,5",
 		features: [
 			"Everything in Casual",
-			"YouTube link summaries",
-			"News feed summaries",
-			"Custom bundles",
-			"Early access features",
+			"YouTube Video summaries",
+			"Personalised Newsfeed summaries",
 		],
-		highlighted: false,
+		highlighted: true,
 	},
 ];
 
