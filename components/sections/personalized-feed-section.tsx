@@ -1,6 +1,5 @@
 "use client";
 
-import { LucideSmilePlus } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface SectionProps {
@@ -28,11 +27,10 @@ export function PersonalizedFeedSection({ isActive }: SectionProps) {
 					className={`transition-all duration-1000 ${
 						mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 					}`}>
-					<LucideSmilePlus className="w-14 h-14 text-purple-500 mb-5" />
 					<h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-gray-900 text-balance leading-tight">
 						Personalized Feed.
 						<br />
-						<span className="text-gray-400">Curated for you.</span>
+						<span className="text-cyan-400">Curated for you.</span>
 					</h2>
 				</div>
 
@@ -43,7 +41,7 @@ export function PersonalizedFeedSection({ isActive }: SectionProps) {
 						}`}
 						style={{ transitionDelay: "200ms" }}>
 						<h3 className="text-2xl font-semibold text-gray-900 mb-4">
-							Curated <span className="text-cyan-500">FOR YOU</span>
+							Curated <span className="text-gray-400">FOR YOU</span>
 						</h3>
 						<p className="text-gray-600 leading-relaxed text-lg">
 							Get summaries from popular shows and channels we've already curated for you.
@@ -59,7 +57,7 @@ export function PersonalizedFeedSection({ isActive }: SectionProps) {
 						}`}
 						style={{ transitionDelay: "400ms" }}>
 						<h3 className="text-2xl font-semibold text-gray-900 mb-4">
-							Controlled <span className="text-teal-400">BY YOU</span>
+							Controlled <span className="text-gray-400">BY YOU</span>
 						</h3>
 						<p className="text-gray-600 leading-relaxed text-lg">
 							This is where the real power lies. Found a 2-hour interview or lecture on

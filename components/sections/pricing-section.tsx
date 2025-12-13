@@ -12,9 +12,9 @@ const plans = [
 	{
 		name: "Free Slice",
 		description: "Get started for free and listen to our curated bundles.",
-		price: "$0 (7 FREE day trial)",
+		price: "FREE TRIAL",
 		features: ["7 free day Curate Control membership then $4,5"],
-		highlighted: false,
+		highlighted: true,
 	},
 	{
 		name: "Casual Listener",
@@ -32,7 +32,7 @@ const plans = [
 			"YouTube Video summaries",
 			"Personalised Newsfeed summaries",
 		],
-		highlighted: true,
+		highlighted: false,
 	},
 ];
 
@@ -75,7 +75,7 @@ export function PricingSection({ isActive }: SectionProps) {
 							style={{ transitionDelay: `${200 + index * 150}ms` }}>
 							{plan.highlighted && (
 								<div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-purple-600 px-4 py-1 rounded-full text-sm font-medium shadow-lg">
-									Most Popular
+									7 days free
 								</div>
 							)}
 							<h3
@@ -92,7 +92,7 @@ export function PricingSection({ isActive }: SectionProps) {
 									{plan.price}
 								</span>
 								<span className={plan.highlighted ? "text-white/80" : "text-gray-600"}>
-									/month
+									{!plan.highlighted ? "/month" : null}
 								</span>
 							</div>
 							<ul className="mt-6 space-y-3">
