@@ -1,15 +1,10 @@
 "use client";
 
-import {
-	CheckCircle,
-	ChevronLeft,
-	ChevronRight,
-	FileText,
-	Mic,
-	Search,
-} from "lucide-react";
+import { IconChecklist } from "@tabler/icons-react";
+import { Brain, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { HiOutlineSparkles } from "react-icons/hi2";
+import { RiSearchEyeLine, RiVoiceAiLine } from "react-icons/ri";
 
 interface SectionProps {
 	isActive: boolean;
@@ -17,10 +12,10 @@ interface SectionProps {
 
 const steps = [
 	{
-		icon: Search,
-		title: "You Find Content",
+		icon: RiSearchEyeLine,
+		title: "Analyze Content",
 		description:
-			"Simply provide a YouTube link you don't have time to watch or select a news topic you want to catch up on.",
+			"Simply provide a Youtube Video you don't have time to watch or select a News topic you want to catch up on.",
 		color: "from-teal-400 to-cyan-700",
 		bgColor: "bg-cyan-100",
 	},
@@ -33,7 +28,7 @@ const steps = [
 		bgColor: "bg-pink-50",
 	},
 	{
-		icon: FileText,
+		icon: Brain,
 		title: "Smart Summaries & Scripts",
 		description:
 			"It then writes a detailed, structured text summary and generates a script for a conversational, mini-podcast.",
@@ -41,7 +36,7 @@ const steps = [
 		bgColor: "bg-teal-50",
 	},
 	{
-		icon: Mic,
+		icon: RiVoiceAiLine,
 		title: "Natural Audio",
 		description:
 			"We use a high-quality, natural-sounding AI voice to turn that script into a polished podcast episode.",
@@ -49,7 +44,7 @@ const steps = [
 		bgColor: "bg-amber-50",
 	},
 	{
-		icon: CheckCircle,
+		icon: IconChecklist,
 		title: "Ready For You",
 		description:
 			"Your new summary lands in your personal feed, complete with its own structured text page and the polished audio episode.",
@@ -105,7 +100,7 @@ export function HowItWorksSection({ isActive }: SectionProps) {
 						}`}>
 						<div className="flex items-center gap-2 mb-4">
 							<HiOutlineSparkles className="w-10 h-10 text-cyan-400" />
-							<span className="text-cyan-700 font-medium">AI Magic</span>
+							<span className="text-cyan-400 font-medium text-xl">AI Inside</span>
 						</div>
 						<h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-900 text-balance">
 							How It Works

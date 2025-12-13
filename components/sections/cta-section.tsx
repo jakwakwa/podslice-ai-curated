@@ -68,7 +68,7 @@ export function CTASection({ isActive }: SectionProps) {
 				<p
 					className={`mt-6 text-white/60 text-sm transition-all duration-1000 ${mounted ? "opacity-100" : "opacity-0"}`}
 					style={{ transitionDelay: "600ms" }}>
-					No credit card required • Cancel anytime
+					PayPal, Google Pay, Apple Pay, Credit Card available
 				</p>
 			</div>
 		</div>

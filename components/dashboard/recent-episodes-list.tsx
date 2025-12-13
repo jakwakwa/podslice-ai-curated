@@ -34,7 +34,7 @@ export function RecentEpisodesList({
 		.slice(0, 3);
 
 	return (
-		<div className="bg-bigcard w-full flex flex-col gap-0 justify-start mb-0 items-start shadow-xl shadow-indigo/30 mt-0 md:m-0 xl:flex-col md:gap-4 py-8 p-1 md:mt-4 md:mb-0 border-1 md:rounded-3xl lg:pb-8  lg:pt-0 overflow-hidden md:p-0 md:justify-start align-start lg:mb-8">
+		<div className="bg-bigcard w-full flex flex-col gap-0 justify-start mb-0 items-start shadow-xl shadow-indigo/30 mt-0 md:m-0 xl:flex-col md:gap-4 py-8 p-1 md:mt-4 md:mb-0 border md:rounded-3xl lg:pb-8  lg:pt-0 overflow-hidden md:p-0 md:justify-start align-start lg:mb-8 backdrop-blur-3xl">
 			<div className="pt-0 px-5 md:pl-8 md:mt-8 w-full	 flex flex-col items-start justify-items-start">
 				<p className="w-full mx-0 px-0 text-secondary-foreground md:px-0 text-base font-bold mb-4">
 					{sections.recentEpisodes.title}
@@ -77,31 +77,31 @@ export function RecentEpisodesList({
 										episode.status === "COMPLETED" &&
 										episode.signedAudioUrl && (
 											<PlayButton
-											onClick={() => {
-												// Create a normalized episode for the audio player
-												const normalizedEpisode: UserEpisode = {
-													episode_id: episode.episode_id,
-													episode_title: episode.episode_title,
-													gcs_audio_url: episode.signedAudioUrl,
-													summary: episode.summary,
-													summary_length: episode.summary_length,
-													created_at: episode.created_at,
-													updated_at: episode.updated_at,
-													user_id: episode.user_id,
-													youtube_url: episode.youtube_url,
-													transcript: episode.transcript,
-													status: episode.status,
-													progress_message: episode.progress_message ?? null,
-													duration_seconds: episode.duration_seconds,
-													news_sources: episode.news_sources ?? null,
-													news_topic: episode.news_topic ?? null,
-													is_public: false,
-													public_gcs_audio_url: null,
-													auto_generated: episode.auto_generated ?? false,
-												};
+												onClick={() => {
+													// Create a normalized episode for the audio player
+													const normalizedEpisode: UserEpisode = {
+														episode_id: episode.episode_id,
+														episode_title: episode.episode_title,
+														gcs_audio_url: episode.signedAudioUrl,
+														summary: episode.summary,
+														summary_length: episode.summary_length,
+														created_at: episode.created_at,
+														updated_at: episode.updated_at,
+														user_id: episode.user_id,
+														youtube_url: episode.youtube_url,
+														transcript: episode.transcript,
+														status: episode.status,
+														progress_message: episode.progress_message ?? null,
+														duration_seconds: episode.duration_seconds,
+														news_sources: episode.news_sources ?? null,
+														news_topic: episode.news_topic ?? null,
+														is_public: false,
+														public_gcs_audio_url: null,
+														auto_generated: episode.auto_generated ?? false,
+													};
 
-												playEpisode(normalizedEpisode);
-											}}
+													playEpisode(normalizedEpisode);
+												}}
 												aria-label={`Play ${episode.episode_title}`}
 												className="m-0"
 											/>
