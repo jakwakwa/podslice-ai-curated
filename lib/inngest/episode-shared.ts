@@ -169,11 +169,6 @@ export function combineAndUploadWavChunks(
 
 // Single-speaker audio generation (Gemini TTS) with truncation logic.
 export async function generateSingleSpeakerTts(script: string): Promise<Buffer> {
-	// Force backup test via environment variable
-	if (process.env.FORCE_TTS_BACKUP_TEST === "true") {
-		throw new Error("Forced TTS backup test triggered via FORCE_TTS_BACKUP_TEST=true");
-	}
-
 	const maxLength = aiConfig.useShortEpisodes ? 1000 : 4000;
 	const episodeType = aiConfig.useShortEpisodes ? "1-minute" : "3-minute";
 	if (script.length > maxLength) {
