@@ -1,3 +1,4 @@
+import { generateElevenLabsTts } from "@/lib/inngest/utils/elevenlabs";
 import { generateText as genText } from "@/lib/inngest/utils/genai";
 import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
 import {
@@ -235,7 +236,24 @@ export const generateUserEpisode = inngest.createFunction(
 					},
 				});
 
-				const buf = await generateSingleSpeakerTts(scriptParts[i]!);
+				let buf: Buffer;
+				try {
+					buf = await generateSingleSpeakerTts(scriptParts[i]!);
+				} catch (error) {
+					console.warn(
+						`[TTS] Gemini TTS failed for chunk ${i + 1}/${scriptParts.length}. Attempting backup with ElevenLabs...`,
+						error
+					);
+					try {
+						buf = await generateElevenLabsTts(scriptParts[i]!);
+					} catch (backupError) {
+						console.error(
+							`[TTS] Backup ElevenLabs TTS also failed for chunk ${i + 1}/${scriptParts.length}`,
+							backupError
+						);
+						throw backupError; // Fail the step to trigger Inngest retries
+					}
+				}
 				// Upload immediately to GCS, return only the URL
 				const chunkFileName = `${tempPath}/chunk-${i}.wav`;
 				const gcsUrl = await uploadBufferToPrimaryBucket(buf, chunkFileName);

@@ -169,6 +169,11 @@ export function combineAndUploadWavChunks(
 
 // Single-speaker audio generation (Gemini TTS) with truncation logic.
 export async function generateSingleSpeakerTts(script: string): Promise<Buffer> {
+	// Force backup test via environment variable
+	if (process.env.FORCE_TTS_BACKUP_TEST === "true") {
+		throw new Error("Forced TTS backup test triggered via FORCE_TTS_BACKUP_TEST=true");
+	}
+
 	const maxLength = aiConfig.useShortEpisodes ? 1000 : 4000;
 	const episodeType = aiConfig.useShortEpisodes ? "1-minute" : "3-minute";
 	if (script.length > maxLength) {
@@ -198,8 +203,12 @@ export function ensureNodeBuffer(value: unknown): Buffer {
 }
 
 export function sanitizeSpeakerLabels(input: string): string {
-  let cleaned = input.replace(/^\s*(?:HOST\s*SLICE|PODSLICE\s*GUEST|HOST|GUEST|A|B)\s*[:\-–]\s*/i, "").trim();
-  // Remove inline references like "A.", "B.", etc.
-  cleaned = cleaned.replace(/\b(?:HOST\s*SLICE|PODSLICE\s*GUEST|HOST|GUEST|A|B)\.(?=\s|$)/gi, "").trim();
-  return cleaned;
+	let cleaned = input
+		.replace(/^\s*(?:HOST\s*SLICE|PODSLICE\s*GUEST|HOST|GUEST|A|B)\s*[:\-–]\s*/i, "")
+		.trim();
+	// Remove inline references like "A.", "B.", etc.
+	cleaned = cleaned
+		.replace(/\b(?:HOST\s*SLICE|PODSLICE\s*GUEST|HOST|GUEST|A|B)\.(?=\s|$)/gi, "")
+		.trim();
+	return cleaned;
 }
