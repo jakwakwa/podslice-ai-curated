@@ -45,7 +45,6 @@ export const generateUserEpisode = inngest.createFunction(
 	{
 		id: "generate-user-episode-workflow",
 		name: "Generate User Episode Workflow",
-		retries: 2,
 		onFailure: async ({ error: _error, event, step }) => {
 			const { userEpisodeId } = (
 				event as unknown as { data: { event: { data: { userEpisodeId: string } } } }
