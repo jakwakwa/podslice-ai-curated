@@ -1,10 +1,10 @@
 // Shared helper utilities for both user and admin episode generation workflows.
 // Keep this file minimal and pure (no DB access) to allow reuse across Inngest functions.
+
+import { MPEGDecoder } from "mpg123-decoder";
 import { aiConfig } from "@/config/ai";
-import { extractAudioDuration } from "@/lib/inngest/utils/audio-metadata";
 import { ensureBucketName, getStorageUploader } from "@/lib/inngest/utils/gcs";
 import { generateTtsAudio } from "@/lib/inngest/utils/genai";
-import { MPEGDecoder } from "mpg123-decoder";
 
 const DEFAULT_TTS_CHUNK_WORDS = 120;
 
@@ -71,7 +71,8 @@ function isMp3(buffer: Buffer): boolean {
 	// Simple MP3 detection: check for ID3 tag or sync word (0xFFE0)
 	if (buffer.length < 3) return false;
 	if (buffer.toString("ascii", 0, 3) === "ID3") return true;
-	if (buffer.length >= 2 && buffer[0] === 0xff && (buffer[1]! & 0xe0) === 0xe0) return true;
+	if (buffer.length >= 2 && buffer[0] === 0xff && (buffer[1]! & 0xe0) === 0xe0)
+		return true;
 	return false;
 }
 
@@ -126,7 +127,7 @@ function resamplePcm(
 	const ratio = sourceRate / targetRate;
 	const newLength = Math.round(input.length / ratio);
 	const output = new Float32Array(newLength);
-	
+
 	for (let i = 0; i < newLength; i++) {
 		const pos = i * ratio;
 		const index = Math.floor(pos);
@@ -151,9 +152,13 @@ function float32ToInt16Buffer(float32: Float32Array): Buffer {
 export async function combineAndUploadWavChunks(
 	base64Chunks: string[],
 	destinationFileName: string
-): Promise<{ finalBuffer: Buffer; durationSeconds: number; destinationFileName: string }> {
+): Promise<{
+	finalBuffer: Buffer;
+	durationSeconds: number;
+	destinationFileName: string;
+}> {
 	if (base64Chunks.length === 0) throw new Error("No audio chunks provided");
-	
+
 	// Default to Gemini (24kHz, 16-bit Mono)
 	const targetSampleRate = 24000;
 	const targetChannels = 1;
@@ -173,7 +178,9 @@ export async function combineAndUploadWavChunks(
 				const opts = extractWavOptions(buf);
 				if (opts.sampleRate !== targetSampleRate) {
 					// TODO: Add wav resampling if needed, for now assuming matching or raw PCM
-					console.warn(`[COMBINE] WAV sample rate mismatch: ${opts.sampleRate} vs ${targetSampleRate}`);
+					console.warn(
+						`[COMBINE] WAV sample rate mismatch: ${opts.sampleRate} vs ${targetSampleRate}`
+					);
 				}
 				pcmParts.push(getPcmData(buf));
 			} else if (isMp3(buf)) {

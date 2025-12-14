@@ -2,7 +2,6 @@ import { z } from "zod";
 import { getEpisodeTargetMinutes } from "@/lib/env";
 import {
 	combineAndUploadWavChunks,
-	getTtsChunkWordLimit,
 	sanitizeSpeakerLabels,
 	uploadBufferToPrimaryBucket,
 } from "@/lib/inngest/episode-shared";
@@ -168,31 +167,34 @@ ${summary}`
 		});
 
 		// 4. TTS for all dialogue lines - Upload chunks to GCS immediately
-		const lineChunkUrls = await step.run("generate-and-upload-dialogue-audio", async () => {
-			const urls: string[] = [];
-			const tempPath = `podcasts/${podcastId}/temp-dialogue-chunks/${Date.now()}`;
+		const lineChunkUrls = await step.run(
+			"generate-and-upload-dialogue-audio",
+			async () => {
+				const urls: string[] = [];
+				const tempPath = `podcasts/${podcastId}/temp-dialogue-chunks/${Date.now()}`;
 
-			for (let i = 0; i < duetLines.length; i++) {
-				const line = duetLines[i];
-				console.log(
-					`[TTS] Generating and uploading admin dialogue line ${i + 1}/${duetLines.length} (Speaker ${line?.speaker})`
-				);
+				for (let i = 0; i < duetLines.length; i++) {
+					const line = duetLines[i];
+					console.log(
+						`[TTS] Generating and uploading admin dialogue line ${i + 1}/${duetLines.length} (Speaker ${line?.speaker})`
+					);
 
-				if (!line) {
-					console.warn(`[TTS] Skipping undefined line at index ${i}`);
-					continue;
+					if (!line) {
+						console.warn(`[TTS] Skipping undefined line at index ${i}`);
+						continue;
+					}
+					const voice = line.speaker === "A" ? DEFAULT_VOICE_A : DEFAULT_VOICE_B;
+					const sanitizedText = sanitizeSpeakerLabels(line.text);
+					const audio = await ttsWithVoice(sanitizedText, voice);
+					const chunkFileName = `${tempPath}/line-${i}.wav`;
+					const gcsUrl = await uploadBufferToPrimaryBucket(audio, chunkFileName);
+					urls.push(gcsUrl);
 				}
-				const voice = line.speaker === "A" ? DEFAULT_VOICE_A : DEFAULT_VOICE_B;
-				const sanitizedText = sanitizeSpeakerLabels(line.text);
-				const audio = await ttsWithVoice(sanitizedText, voice);
-				const chunkFileName = `${tempPath}/line-${i}.wav`;
-				const gcsUrl = await uploadBufferToPrimaryBucket(audio, chunkFileName);
-				urls.push(gcsUrl);
-			}
 
-			console.log(`[TTS] Uploaded ${urls.length} admin dialogue chunks to GCS`);
-			return urls;
-		});
+				console.log(`[TTS] Uploaded ${urls.length} admin dialogue chunks to GCS`);
+				return urls;
+			}
+		);
 
 		// 5. Download, combine, and upload final audio
 		const { gcsAudioUrl, durationSeconds } = await step.run(
@@ -201,7 +203,9 @@ ${summary}`
 				const { getStorageReader, parseGcsUri } = await import("@/lib/inngest/utils/gcs");
 				const storageReader = getStorageReader();
 
-				console.log(`[COMBINE] Downloading ${lineChunkUrls.length} admin dialogue chunks from GCS`);
+				console.log(
+					`[COMBINE] Downloading ${lineChunkUrls.length} admin dialogue chunks from GCS`
+				);
 				const lineAudioBase64: string[] = [];
 
 				for (const gcsUrl of lineChunkUrls) {
