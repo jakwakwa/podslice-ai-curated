@@ -45,6 +45,7 @@ export const generateUserEpisode = inngest.createFunction(
 	{
 		id: "generate-user-episode-workflow",
 		name: "Generate User Episode Workflow",
+		retries: 0, // Disable all retries to allow immediate fallback logic (Gemini → ElevenLabs)
 		onFailure: async ({ error: _error, event, step }) => {
 			const { userEpisodeId } = (
 				event as unknown as { data: { event: { data: { userEpisodeId: string } } } }
@@ -250,7 +251,7 @@ export const generateUserEpisode = inngest.createFunction(
 							`[TTS] Backup ElevenLabs TTS also failed for chunk ${i + 1}/${scriptParts.length}`,
 							backupError
 						);
-						throw backupError; // Fail the step to trigger Inngest retries
+						throw backupError; // Fail the entire workflow since both providers failed
 					}
 				}
 				// Upload immediately to GCS, return only the URL
