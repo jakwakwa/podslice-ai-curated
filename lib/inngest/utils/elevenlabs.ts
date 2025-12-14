@@ -1,14 +1,14 @@
 import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
 
-let _client: ElevenLabsClient | null = null;
+let client: ElevenLabsClient | null = null;
 
 function getClient(): ElevenLabsClient {
-	if (!_client) {
+	if (!client) {
 		const apiKey = process.env.ELEVENLABS_API_KEY;
 		if (!apiKey) throw new Error("ELEVENLABS_API_KEY is not set");
-		_client = new ElevenLabsClient({ apiKey });
+		client = new ElevenLabsClient({ apiKey });
 	}
-	return _client;
+	return client;
 }
 
 /**
@@ -17,21 +17,17 @@ function getClient(): ElevenLabsClient {
  *
  * Uses voice: Adam (pNInz6obpgDQGcFmaJgB)
  * Model: eleven_flash_v2_5
+ * Output: Raw PCM 24kHz (compatible with Gemini TTS chunks)
  */
 export async function generateElevenLabsTts(text: string): Promise<Buffer> {
 	const client = getClient();
 
-	// Using "Adam" voice ID hardcoded for now as a generic narrator,
-	// or we could allow passing it in if needed.
-	// const voiceId = "pNInz6obpgDQGcFmaJgB";
-	// Actually, let's use a widely compatible one or the one from the prompt.
-	// The prompt used pNInz6obpgDQGcFmaJgB (Adam).
 	const voiceId = "pNInz6obpgDQGcFmaJgB";
 
 	const audioStream = await client.textToSpeech.convert(voiceId, {
 		modelId: "eleven_flash_v2_5",
 		text,
-		outputFormat: "mp3_44100_128",
+		outputFormat: "pcm_24000",
 	});
 
 	const chunks: Uint8Array[] = [];
