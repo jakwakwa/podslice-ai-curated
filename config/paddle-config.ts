@@ -35,7 +35,7 @@ const PRICING_TIER: PlanTier[] = [
 		],
 		description:
 			"Stay in control with the ability to create fully personalised Ai powered generated audio summaries",
-		episodeLimit: 20,
+		episodeLimit: 120,
 		featured: true,
 	},
 ];
