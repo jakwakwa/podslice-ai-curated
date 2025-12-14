@@ -17,7 +17,7 @@ function getClient(): ElevenLabsClient {
  *
  * Uses voice: Adam (pNInz6obpgDQGcFmaJgB)
  * Model: eleven_flash_v2_5
- * Output: Raw PCM 24kHz (compatible with Gemini TTS chunks)
+ * Output: MP3 44.1kHz 128kbps (Default)
  */
 export async function generateElevenLabsTts(text: string): Promise<Buffer> {
 	const client = getClient();
@@ -27,7 +27,7 @@ export async function generateElevenLabsTts(text: string): Promise<Buffer> {
 	const audioStream = await client.textToSpeech.convert(voiceId, {
 		modelId: "eleven_flash_v2_5",
 		text,
-		outputFormat: "pcm_24000",
+		outputFormat: "mp3_44100_128",
 	});
 
 	const chunks: Uint8Array[] = [];

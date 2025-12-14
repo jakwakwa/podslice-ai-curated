@@ -296,7 +296,7 @@ export const generateUserEpisode = inngest.createFunction(
 
 				console.log(`[COMBINE] Downloaded ${audioChunkBase64.length} chunks, combining`);
 				const fileName = `user-episodes/${userEpisodeId}-${Date.now()}.wav`;
-				const { finalBuffer, durationSeconds } = combineAndUploadWavChunks(
+				const { finalBuffer, durationSeconds } = await combineAndUploadWavChunks(
 					audioChunkBase64,
 					fileName
 				);

@@ -4,6 +4,7 @@ import { aiConfig } from "@/config/ai";
 import { extractAudioDuration } from "@/lib/inngest/utils/audio-metadata";
 import { ensureBucketName, getStorageUploader } from "@/lib/inngest/utils/gcs";
 import { generateTtsAudio } from "@/lib/inngest/utils/genai";
+import { MPEGDecoder } from "mpg123-decoder";
 
 const DEFAULT_TTS_CHUNK_WORDS = 120;
 
@@ -66,6 +67,14 @@ function isWav(buffer: Buffer): boolean {
 	);
 }
 
+function isMp3(buffer: Buffer): boolean {
+	// Simple MP3 detection: check for ID3 tag or sync word (0xFFE0)
+	if (buffer.length < 3) return false;
+	if (buffer.toString("ascii", 0, 3) === "ID3") return true;
+	if (buffer.length >= 2 && buffer[0] === 0xff && (buffer[1]! & 0xe0) === 0xe0) return true;
+	return false;
+}
+
 function extractWavOptions(buffer: Buffer): WavConversionOptions {
 	const numChannels = buffer.readUInt16LE(22);
 	const sampleRate = buffer.readUInt32LE(24);
@@ -107,63 +116,95 @@ export function splitScriptIntoChunks(text: string, approxWordsPerChunk = 130): 
 	return chunks;
 }
 
-export function combineAndUploadWavChunks(
+// Linear resampling from sourceRate to targetRate (mono)
+function resamplePcm(
+	input: Float32Array,
+	sourceRate: number,
+	targetRate: number
+): Float32Array {
+	if (sourceRate === targetRate) return input;
+	const ratio = sourceRate / targetRate;
+	const newLength = Math.round(input.length / ratio);
+	const output = new Float32Array(newLength);
+	
+	for (let i = 0; i < newLength; i++) {
+		const pos = i * ratio;
+		const index = Math.floor(pos);
+		const frac = pos - index;
+		const val1 = input[index] || 0;
+		const val2 = input[index + 1] || val1; // Clamping to end
+		output[i] = val1 + (val2 - val1) * frac;
+	}
+	return output;
+}
+
+// Convert Float32Array (-1.0 to 1.0) to Int16 Buffer
+function float32ToInt16Buffer(float32: Float32Array): Buffer {
+	const int16 = new Int16Array(float32.length);
+	for (let i = 0; i < float32.length; i++) {
+		const s = Math.max(-1, Math.min(1, float32[i]!));
+		int16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+	}
+	return Buffer.from(int16.buffer);
+}
+
+export async function combineAndUploadWavChunks(
 	base64Chunks: string[],
 	destinationFileName: string
-): { finalBuffer: Buffer; durationSeconds: number; destinationFileName: string } {
-	// If first chunk already looks like a WAV (after decoding), assume all are WAV fragments.
-	// Otherwise treat them as raw Linear PCM (Gemini TTS returns raw audio bytes w/out RIFF header).
+): Promise<{ finalBuffer: Buffer; durationSeconds: number; destinationFileName: string }> {
 	if (base64Chunks.length === 0) throw new Error("No audio chunks provided");
-	const buffers = base64Chunks.map(b64 => Buffer.from(b64, "base64"));
+	
+	// Default to Gemini (24kHz, 16-bit Mono)
+	const targetSampleRate = 24000;
+	const targetChannels = 1;
+	const targetBits = 16;
 
-	let finalWav: Buffer;
-	let durationSeconds = 0;
-	const first = buffers[0]!;
-	if (isWav(first)) {
-		finalWav = concatenateWavs(buffers);
-		const durationSecondsRaw = extractAudioDuration(finalWav, "audio/wav");
-		durationSeconds =
-			typeof durationSecondsRaw === "number" && !Number.isNaN(durationSecondsRaw)
-				? durationSecondsRaw
-				: 0;
-		return { finalBuffer: finalWav, durationSeconds, destinationFileName };
+	const buffers = base64Chunks.map(b64 => Buffer.from(b64, "base64"));
+	const pcmParts: Buffer[] = [];
+
+	// Decoder instance for MP3
+	const decoder = new MPEGDecoder();
+	await decoder.ready;
+
+	try {
+		for (const buf of buffers) {
+			if (isWav(buf)) {
+				// Existing WAV handling (unlikely for Gemini/ElevenLabs mix, but robust)
+				const opts = extractWavOptions(buf);
+				if (opts.sampleRate !== targetSampleRate) {
+					// TODO: Add wav resampling if needed, for now assuming matching or raw PCM
+					console.warn(`[COMBINE] WAV sample rate mismatch: ${opts.sampleRate} vs ${targetSampleRate}`);
+				}
+				pcmParts.push(getPcmData(buf));
+			} else if (isMp3(buf)) {
+				// Decode MP3 to PCM -> Resample to 24kHz
+				const { channelData, sampleRate } = decoder.decode(buf);
+				const leftChannel = channelData[0]; // Float32Array
+				if (!leftChannel) throw new Error("MP3 decode failed: no channel data");
+
+				const resampled = resamplePcm(leftChannel, sampleRate, targetSampleRate);
+				pcmParts.push(float32ToInt16Buffer(resampled));
+			} else {
+				// Assume raw PCM (Gemini) - 24kHz 16-bit Mono
+				pcmParts.push(buf);
+			}
+		}
+	} finally {
+		decoder.free();
 	}
 
-	// Raw PCM path
-	const rawMime = process.env.TTS_RAW_MIME_TYPE || "audio/L16; rate=24000"; // default guess (24kHz linear16)
-	const { sampleRate, bitsPerSample } = (() => {
-		try {
-			const [type, ...params] = rawMime.split(";").map(s => s.trim());
-			const [, fmt] = type!.split("/");
-			let sr: number | undefined;
-			let bps: number | undefined;
-			if (fmt?.startsWith("L")) {
-				const bits = parseInt(fmt.slice(1), 10);
-				if (!Number.isNaN(bits)) bps = bits;
-			}
-			for (const p of params) {
-				const [k, v] = p.split("=").map(s => s.trim());
-				if (k === "rate") {
-					const parsed = parseInt(v!, 10);
-					if (!Number.isNaN(parsed)) sr = parsed;
-				}
-			}
-			return { sampleRate: sr || 24000, bitsPerSample: bps || 16 };
-		} catch {
-			return { sampleRate: 24000, bitsPerSample: 16 };
-		}
-	})();
-	const numChannels = 1;
-	const totalPcmLength = buffers.reduce((acc, b) => acc + b.length, 0);
+	const totalPcmLength = pcmParts.reduce((acc, b) => acc + b.length, 0);
 	const header = createWavHeader(totalPcmLength, {
-		numChannels,
-		sampleRate,
-		bitsPerSample,
+		numChannels: targetChannels,
+		sampleRate: targetSampleRate,
+		bitsPerSample: targetBits,
 	});
-	finalWav = Buffer.concat([header, ...buffers]);
-	const bytesPerSample = bitsPerSample / 8;
-	const totalSamples = totalPcmLength / (bytesPerSample * numChannels);
-	durationSeconds = totalSamples / sampleRate;
+
+	const finalWav = Buffer.concat([header, ...pcmParts]);
+	const bytesPerSample = targetBits / 8;
+	const totalSamples = totalPcmLength / (bytesPerSample * targetChannels);
+	const durationSeconds = totalSamples / targetSampleRate;
+
 	return { finalBuffer: finalWav, durationSeconds, destinationFileName };
 }
 

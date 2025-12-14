@@ -213,7 +213,7 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 
 			console.log(`[COMBINE] Downloaded ${lineAudioBase64.length} chunks, combining`);
 			const fileName = `user-episodes/${userEpisodeId}-duet-${Date.now()}.wav`;
-			const { finalBuffer, durationSeconds } = combineAndUploadWavChunks(lineAudioBase64, fileName);
+			const { finalBuffer, durationSeconds } = await combineAndUploadWavChunks(lineAudioBase64, fileName);
 			const gcsUrl = await uploadBufferToPrimaryBucket(finalBuffer, fileName);
 
 			// Clean up temporary chunk files

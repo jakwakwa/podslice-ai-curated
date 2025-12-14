@@ -216,7 +216,7 @@ ${summary}`
 
 				console.log(`[COMBINE] Downloaded ${lineAudioBase64.length} chunks, combining`);
 				const fileName = `podcasts/${podcastId}/admin-duet-${Date.now()}.wav`;
-				const { finalBuffer, durationSeconds } = combineAndUploadWavChunks(
+				const { finalBuffer, durationSeconds } = await combineAndUploadWavChunks(
 					lineAudioBase64,
 					fileName
 				);
