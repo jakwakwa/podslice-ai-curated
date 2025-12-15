@@ -17,7 +17,7 @@ export default async function GenerateMyEpisodesPage() {
 	const content = {
 		title: "Create an Ai Powered Summary",
 		description:
-			"This is where the real power lies. If you find long interviews, 2-hour podcast episodes or lectures on YouTube then you simply need to copy the youtube link found by clicking on the youtube share button and paste it over here. Or enter a research topic for the Ai to summarise into easily digestable short intelligently analysed summaries for your convenience",
+			"Summarise long-form podcasts, lectures or tutorials from youtube into concise, AI produced and analysed, generated audio and text summaries.",
 	} as const;
 
 	return (

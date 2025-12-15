@@ -17,8 +17,8 @@ import { inngest } from "./client";
 // Uses multi-speaker (duet) format by default
 
 // Default voices for admin episodes (matching user episode defaults)
-const DEFAULT_VOICE_A = "Rasalgethi";
-const DEFAULT_VOICE_B = "Sulafat";
+const DEFAULT_VOICE_A = "Leda";
+const DEFAULT_VOICE_B = "Orus";
 
 // Use shared generateTtsAudio directly for multi-speaker; voice selection via param
 async function ttsWithVoice(text: string, voiceName: string): Promise<Buffer> {

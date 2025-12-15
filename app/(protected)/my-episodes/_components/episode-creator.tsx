@@ -107,8 +107,8 @@ export function EpisodeCreator() {
 	const [selectedTopic, setSelectedTopic] = useState("");
 	// Generation options
 	const [generationMode, setGenerationMode] = useState<"single" | "multi">("single");
-	const [voiceA, setVoiceA] = useState<string>("Rasalgethi");
-	const [voiceB, setVoiceB] = useState<string>("Sulafat");
+	const [voiceA, setVoiceA] = useState<string>("Leda");
+	const [voiceB, setVoiceB] = useState<string>("Orus");
 	const [isPlaying, setIsPlaying] = useState<string | null>(null);
 	const [isLoadingSample, setIsLoadingSample] = useState<string | null>(null);
 	const [audioUrlCache, setAudioUrlCache] = useState<Record<string, string>>({});
@@ -449,22 +449,22 @@ export function EpisodeCreator() {
 	const handleGoBack = () => router.back();
 
 	return (
-		<div className="w-full h-auto mb-0 px-8 py-0 md:px-8 md:pt-8 lg:px-10 mr-0 lg:pb-12 lg:mb-0 rounded-none shadow-lg rounded-b-md overflow-hidden">
+		<div className="w-full h-auto mb-0 px-3 py-0 md:px-8 md:pt-8 lg:px-10 mr-0 lg:pb-12 lg:mb-0 rounded-none shadow-lg rounded-b-md overflow-hidden">
 			<SectionHeader
 				title="Generate your summary"
-				description="Summarise long-form podcasts, lectures or tutorials from youtube into concise, AI produced and analysed, generated audio and text summaries. Our Ai will help you understand the core concepts with an easy-to-listen to audible overview and text summary with a list of important key concepts"
+				description="Our Ai will help you understand the core concepts with an easy-to-listen to audible overview and text summary with a list of important key concepts"
 			/>
 			<div className="w-full flex flex-col gap-3 md:gap-8 md:w-full  p-0 md:min-w-full md:max-w-full">
-				<div className="w-full py-8 px-0 md:p-0 ">
+				<div className="w-full md:py-8 px-0 md:p-0 ">
 					{/* <ComponentSpinner isLabel={false} /> */}
 
 					<div className="w-full flex flex-col px-0 md:px-4  gap-4">
-						<div className="border-1 border-border bg-sidebar/20 rounded-3xl text-xs shadow-md p-8">
+						<div className="bg-bigcard border-1 border-border bg-sidebar/20 rounded-3xl text-[10px] shadow-md p-5 md:p-8">
 							<Label className="mb-2 md:mb-4">Pick a Summary Type:</Label>
 							{creatorMode === "youtube"
 								? "Instructions: To find the youtube link, go to the video, click the share button below the video, copy the link that pop-up and paste it over here."
 								: "Want to catch up on the latest news? Select your desired sources and topics. Our AI will get to work and create a custom summary (both audio and text) just for you."}
-							<div className="w-[300px] mt-5 flex flex-row items-center justify-start gap-2 ">
+							<div className="md:w-[300px] mt-5 flex flex-col md:flex-row items-start justify-start gap-2 ">
 								<Button
 									type="button"
 									variant={creatorMode === "youtube" ? "default" : "outline"}
@@ -495,8 +495,8 @@ export function EpisodeCreator() {
 								void handleCreate();
 							}}>
 							{creatorMode === "youtube" && (
-								<div className=" my-8 gap-4 mx-0 md:mx-0 border-1 border-border rounded-3xl  shadow-md p-8">
-									<div className="space-y-2 md:w-full md:min-w-fit">
+								<div className="">
+									<div className="space-y-2 md:w-ful overflow-hidden bg-card p-5 my-8 gap-4 mx-0 md:mx-0 border-1 border-border rounded-3xl  shadow-md p-8l md:min-w-fit">
 										<Label htmlFor="youtubeUrl">
 											Link to podcast episode ( YouTube only )
 										</Label>
@@ -587,9 +587,20 @@ export function EpisodeCreator() {
 							)}
 
 							{creatorMode === "news" && (
-								<div className="flex flex-row flex-wrap my-8 gap-4 mx-2 md:mx-4 min-w-full md:gap-4 ">
-									<div className="border-1 border-border rounded-3xl  shadow-md p-8 space-y-2 md:col-span-2 lg:min-w-full text-sm">
-										<Label>Sources</Label>
+								<div className="bg-(--swak-2) m-0 p-0 rounded-3xl flex flex-row flex-wrap md:my-8 gap-0 mx-0 px-0 md:mx-0 min-w-full md:gap-4 ">
+									<div className="mt-0 md:col-span-2 lg:min-w-full w-full border border-border rounded-t-3xl bg-bigcard  shadow-md p-8">
+										<Label htmlFor="selectedTopicId">Topic</Label>
+										<Input
+											placeholder="Research any topic..."
+											id="selectedTopicId"
+											onChange={e => setSelectedTopic(e.target.value)}
+											value={selectedTopic}
+											disabled={isBusy}
+											required
+										/>
+									</div>
+									<div className="border border-border rounded-3xl  shadow-md py-3 px-5 md:p-8 space-y-2 md:col-span-2 lg:min-w-full text-sm">
+										<Label className="font-extrabold">Sources</Label>
 										<span className="text-foreground/70">
 											Pick your sources, or leave it to the Ai to decide
 										</span>
@@ -597,9 +608,8 @@ export function EpisodeCreator() {
 											{NEWS_SOURCES.map(s => {
 												const active = selectedSources.includes(s.id);
 												return (
-													<div key={s.id}>
+													<div key={s.id} className="flex items-center gap-2">
 														<Button
-															key={s.id}
 															type="button"
 															variant={active ? "outline" : "default"}
 															onClick={() =>
@@ -610,40 +620,31 @@ export function EpisodeCreator() {
 															disabled={isBusy}
 															className="px-3 py-1 my-1">
 															{s.label}
-
-															<Tooltip>
-																<TooltipTrigger asChild>
-																	<span className="inline-flex items-center">
-																		<InfoIcon
-																			className="text-xs  top-7 md:top-3 right-4"
-																			size={16}
-																		/>
-																		<span className="hidden">Hover</span>
-																	</span>
-																</TooltipTrigger>
-																<TooltipContent className="bg-background">
-																	<p className="text-sm text-black cursor-default ">
-																		{s?.tip}
-																	</p>
-																</TooltipContent>
-															</Tooltip>
 														</Button>
+														<Tooltip>
+															<TooltipTrigger asChild>
+																<button
+																	type="button"
+																	className="inline-flex items-center">
+																	<InfoIcon
+																		className="text-xs text-muted-foreground hover:text-foreground"
+																		size={16}
+																	/>
+																	<span className="sr-only">
+																		More info about {s.label}
+																	</span>
+																</button>
+															</TooltipTrigger>
+															<TooltipContent className="bg-background">
+																<p className="text-sm text-black cursor-default">
+																	{s?.tip}
+																</p>
+															</TooltipContent>
+														</Tooltip>
 													</div>
 												);
 											})}
 										</div>
-									</div>
-
-									<div className="mt-4 md:col-span-2 lg:min-w-full w-full border-1 border-border rounded-3xl  shadow-md p-8">
-										<Label htmlFor="selectedTopicId">Topic</Label>
-										<Input
-											placeholder="Research any topic..."
-											id="selectedTopicId"
-											onChange={e => setSelectedTopic(e.target.value)}
-											value={selectedTopic}
-											disabled={isBusy}
-											required
-										/>
 									</div>
 								</div>
 							)}
@@ -661,7 +662,7 @@ export function EpisodeCreator() {
 								</div>
 							</div>
 
-							<div className="space-y-6 border-1 rounded-xl md:rounded-4xl w-full md:max-w-full shadow-md px-0 md:px-10 pt-8 pb-12 bg-[#110d1712] md:min-w-full ">
+							<div className="bg-card mt-4 space-y-6 border-1 rounded-xl md:rounded-4xl w-full md:max-w-full shadow-md px-0 md:px-10 pt-8 pb-12 bg-[#110d1712] md:min-w-full ">
 								<div className="py-0 px-4 md:p-0 ">
 									<div className="w-[250px] flex flex-col gap-0 md:min-w-full ">
 										<Label>Voice Settings</Label>
@@ -902,7 +903,7 @@ export function EpisodeCreator() {
 							</div>
 
 							{/* Summary Length Selector */}
-							<div className=" border-1 rounded-xl md:rounded-4xl w-full md:max-w-full shadow-md px-4 md:px-10 pt-8 pb-12 bg-[#110d1712] md:min-w-full mt-6">
+							<div className="bg-card border-1 rounded-xl md:rounded-4xl w-full md:max-w-full shadow-md px-4 md:px-10 pt-8 pb-12 bg-[#110d1712] md:min-w-full mt-6">
 								<SummaryLengthSelector
 									value={summaryLength}
 									onChange={setSummaryLength}
@@ -911,7 +912,7 @@ export function EpisodeCreator() {
 								/>
 							</div>
 
-							<div className="flex  w-fit mt-6 flex-col px-0 md:px-4 border-1 border-gray-900/9	0 rounded-3xl  shadow-md p-0 md:p-3 gap-4">
+							<div className="flex my-12  w-fit flex-col px-0 md:px-4 border-1 border-gray-900/9	0 rounded-3xl  shadow-md p-0 md:p-3 gap-4">
 								<Button
 									type="submit"
 									variant="secondary"

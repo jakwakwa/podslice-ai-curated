@@ -40,7 +40,7 @@ export async function generateTtsAudio(
 	const client = getClient();
 	const model =
 		opts?.model || process.env.GEMINI_TTS_MODEL || "gemini-2.5-flash-preview-tts";
-	const voiceName = opts?.voiceName || process.env.GEMINI_TTS_VOICE || "Sulafat";
+	const voiceName = opts?.voiceName || process.env.GEMINI_TTS_VOICE || "Orus";
 
 	const response = await client.models.generateContentStream({
 		model,

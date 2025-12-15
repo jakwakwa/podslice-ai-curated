@@ -45,14 +45,15 @@
 
 	label {
 		opacity: 0.8;
-		font-size: 0.85rem !important;
-		font-weight: 400 !important;
+		font-size: 0.95rem !important;
+		font-weight: 700 !important;
 
 		/* padding-bottom: 10px !important; */
 		color: var(--kwak-8) !important;
 		text-transform: initial !important;
 		letter-spacing: 0.3px;
 		text-transform: uppercase !important;
+		margin-bottom: 5px !important;
 	}
 
 	.main-layouts {
