@@ -6,7 +6,12 @@ import {
 	sanitizeSpeakerLabels,
 	uploadBufferToPrimaryBucket,
 } from "@/lib/inngest/episode-shared";
+import { generateElevenLabsTts } from "@/lib/inngest/utils/elevenlabs";
 import { generateTtsAudio, generateText as genText } from "@/lib/inngest/utils/genai";
+import {
+	generateObjectiveSummaryWithOpenAI,
+	generateTextWithOpenAI,
+} from "@/lib/inngest/utils/openai";
 import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
 import { prisma } from "@/lib/prisma";
 import {
@@ -149,7 +154,28 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 			});
 
 			const modelName = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
-			const text = await generateObjectiveSummary(transcript, { modelName });
+			let text: string;
+			try {
+				text = await generateObjectiveSummary(transcript, { modelName });
+			} catch (error) {
+				console.warn(
+					"[FALLBACK] Gemini summary generation failed, attempting OpenAI fallback...",
+					error
+				);
+				try {
+					await prisma.userEpisode.update({
+						where: { episode_id: userEpisodeId },
+						data: {
+							progress_message:
+								"Using backup service to analyze content and extract key insights...",
+						},
+					});
+					text = await generateObjectiveSummaryWithOpenAI(transcript);
+				} catch (backupError) {
+					console.error("[FALLBACK] OpenAI summary generation also failed", backupError);
+					throw backupError; // Fail the entire workflow since both providers failed
+				}
+			}
 			await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
 				data: { summary: text },
@@ -172,11 +198,32 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 			const [minWords, maxWords] = lengthConfig.words;
 			const [minMinutes, maxMinutes] = lengthConfig.minutes;
 
-			const text = await genText(
-				modelName2,
-				`Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) two-host podcast conversation where Podslice hosts A and B explain the highlights to listeners. Alternate speakers naturally.\n\nIdentity & framing:\n- Hosts are from Podslice and are commenting on someone else's content.\n- They do NOT reenact or impersonate the original speakers.\n- They present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly, spoken by A):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken dialogue only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as “the video” or “the episode.”\n- Do not include any speaker names, labels, or direct addresses in the text (e.g., no 'A', 'B', 'Hey Host', 'What do you think?'). The hosts should discuss the content without referencing each other by name or label.\n\nOutput ONLY valid JSON array of objects with fields: speaker ("A" or "B") and text (string). The text MUST NOT include any speaker names or labels; only the spoken words. No markdown.\n\nSUMMARY:\n${summary}`
-			);
-			return coerceJsonArray(text);
+			const scriptPrompt = `Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) two-host podcast conversation where Podslice hosts A and B explain the highlights to listeners. Alternate speakers naturally.\n\nIdentity & framing:\n- Hosts are from Podslice and are commenting on someone else's content.\n- They do NOT reenact or impersonate the original speakers.\n- They present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly, spoken by A):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken dialogue only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as "the video" or "the episode."\n- Do not include any speaker names, labels, or direct addresses in the text (e.g., no 'A', 'B', 'Hey Host', 'What do you think?'). The hosts should discuss the content without referencing each other by name or label.\n\nOutput ONLY valid JSON array of objects with fields: speaker ("A" or "B") and text (string). The text MUST NOT include any speaker names or labels; only the spoken words. No markdown.\n\nSUMMARY:\n${summary}`;
+
+			let rawScript: string;
+			try {
+				rawScript = await genText(modelName2, scriptPrompt);
+			} catch (error) {
+				console.warn(
+					"[FALLBACK] Gemini script generation failed, attempting OpenAI fallback...",
+					error
+				);
+				try {
+					await prisma.userEpisode.update({
+						where: { episode_id: userEpisodeId },
+						data: {
+							progress_message: "Using backup service to write your script...",
+						},
+					});
+					rawScript = await generateTextWithOpenAI(scriptPrompt, {
+						temperature: 0.7,
+					});
+				} catch (backupError) {
+					console.error("[FALLBACK] OpenAI script generation also failed", backupError);
+					throw backupError; // Fail the entire workflow since both providers failed
+				}
+			}
+			return coerceJsonArray(rawScript);
 		});
 
 		// TTS for all dialogue lines - Upload chunks to GCS immediately
@@ -207,17 +254,37 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 						},
 					});
 
-					if (!line) {
-						console.warn(`[TTS] Skipping undefined line at index ${i}`);
-						continue;
-					}
-					const voice = line.speaker === "A" ? voiceA : voiceB;
-					const sanitizedText = sanitizeSpeakerLabels(line.text);
-					const audio = await ttsWithVoice(sanitizedText, voice);
-					const chunkFileName = `${tempPath}/line-${i}.wav`;
-					const gcsUrl = await uploadBufferToPrimaryBucket(audio, chunkFileName);
-					urls.push(gcsUrl);
+				if (!line) {
+					console.warn(`[TTS] Skipping undefined line at index ${i}`);
+					continue;
 				}
+				const sanitizedText = sanitizeSpeakerLabels(line.text);
+				let audio: Buffer;
+				try {
+					const voice = line.speaker === "A" ? voiceA : voiceB;
+					audio = await ttsWithVoice(sanitizedText, voice);
+				} catch (error) {
+					console.warn(
+						`[TTS] Gemini TTS failed for line ${i + 1}/${duetLines.length} (Speaker ${line.speaker}). Attempting backup with ElevenLabs...`,
+						error
+					);
+					try {
+						// Map speaker to ElevenLabs voice ID
+						const elevenLabsVoiceId =
+							line.speaker === "A" ? "vDchjyOZZytffNeZXfZK" : "ucgJ8SdlW1CZr9MIm8BP";
+						audio = await generateElevenLabsTts(sanitizedText, elevenLabsVoiceId);
+					} catch (backupError) {
+						console.error(
+							`[TTS] Backup ElevenLabs TTS also failed for line ${i + 1}/${duetLines.length}`,
+							backupError
+						);
+						throw backupError; // Fail the entire workflow since both providers failed
+					}
+				}
+				const chunkFileName = `${tempPath}/line-${i}.wav`;
+				const gcsUrl = await uploadBufferToPrimaryBucket(audio, chunkFileName);
+				urls.push(gcsUrl);
+			}
 
 				console.log(`[TTS] Uploaded ${urls.length} dialogue chunks to GCS`);
 				return urls;

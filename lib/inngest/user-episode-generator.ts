@@ -10,6 +10,10 @@ import {
 } from "@/lib/inngest/episode-shared";
 import { generateElevenLabsTts } from "@/lib/inngest/utils/elevenlabs";
 import { generateText as genText } from "@/lib/inngest/utils/genai";
+import {
+	generateObjectiveSummaryWithOpenAI,
+	generateTextWithOpenAI,
+} from "@/lib/inngest/utils/openai";
 import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
 // (No direct GCS import; handled in shared helpers)
 import { prisma } from "@/lib/prisma";
@@ -156,7 +160,28 @@ export const generateUserEpisode = inngest.createFunction(
 			});
 
 			const modelName = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
-			const text = await generateObjectiveSummary(transcript, { modelName });
+			let text: string;
+			try {
+				text = await generateObjectiveSummary(transcript, { modelName });
+			} catch (error) {
+				console.warn(
+					"[FALLBACK] Gemini summary generation failed, attempting OpenAI fallback...",
+					error
+				);
+				try {
+					await prisma.userEpisode.update({
+						where: { episode_id: userEpisodeId },
+						data: {
+							progress_message:
+								"Using backup service to analyze content and extract key insights...",
+						},
+					});
+					text = await generateObjectiveSummaryWithOpenAI(transcript);
+				} catch (backupError) {
+					console.error("[FALLBACK] OpenAI summary generation also failed", backupError);
+					throw backupError; // Fail the entire workflow since both providers failed
+				}
+			}
 			await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
 				data: { summary: text },
@@ -173,10 +198,31 @@ export const generateUserEpisode = inngest.createFunction(
 			const [minWords, maxWords] = lengthConfig.words;
 			const [minMinutes, maxMinutes] = lengthConfig.minutes;
 
-			const rawScript = await genText(
-				modelName2,
-				`Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) single-narrator podcast segment where a Podslice host explains the highlights to listeners.\n\nIdentity & framing:\n- The speaker is a Podslice host summarizing someone else's content.\n- Do NOT reenact or impersonate the original speakers.\n- Present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken words only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as “the video” or “the episode.”\n\nStructure:\n- Hook that frames this as a Podslice summary.\n- Smooth transitions between highlight clusters.\n- Clear, concise wrap-up.\n\nSUMMARY:\n${summary}`
-			);
+			const scriptPrompt = `Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) single-narrator podcast segment where a Podslice host explains the highlights to listeners.\n\nIdentity & framing:\n- The speaker is a Podslice host summarizing someone else's content.\n- Do NOT reenact or impersonate the original speakers.\n- Present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken words only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as "the video" or "the episode."\n\nStructure:\n- Hook that frames this as a Podslice summary.\n- Smooth transitions between highlight clusters.\n- Clear, concise wrap-up.\n\nSUMMARY:\n${summary}`;
+
+			let rawScript: string;
+			try {
+				rawScript = await genText(modelName2, scriptPrompt);
+			} catch (error) {
+				console.warn(
+					"[FALLBACK] Gemini script generation failed, attempting OpenAI fallback...",
+					error
+				);
+				try {
+					await prisma.userEpisode.update({
+						where: { episode_id: userEpisodeId },
+						data: {
+							progress_message: "Using backup service to write your script...",
+						},
+					});
+					rawScript = await generateTextWithOpenAI(scriptPrompt, {
+						temperature: 0.7,
+					});
+				} catch (backupError) {
+					console.error("[FALLBACK] OpenAI script generation also failed", backupError);
+					throw backupError; // Fail the entire workflow since both providers failed
+				}
+			}
 
 			// Validate and enforce word count limit to ensure episodes stay within target duration
 			const words = rawScript.split(/\s+/).filter(Boolean);

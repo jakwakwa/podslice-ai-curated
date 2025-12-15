@@ -15,16 +15,20 @@ function getClient(): ElevenLabsClient {
  * Generates audio using ElevenLabs "Flash" model (low latency, cost effective)
  * serving as a backup for Gemini TTS.
  *
- * Uses voice: Adam (pNInz6obpgDQGcFmaJgB)
+ * @param text - The text to convert to speech
+ * @param voiceId - Optional voice ID. Defaults to "ucgJ8SdlW1CZr9MIm8BP" (Adam) if not provided.
  * Model: eleven_flash_v2_5
  * Output: MP3 44.1kHz 128kbps (Default)
  */
-export async function generateElevenLabsTts(text: string): Promise<Buffer> {
+export async function generateElevenLabsTts(
+	text: string,
+	voiceId?: string
+): Promise<Buffer> {
 	const client = getClient();
 
-	const voiceId = "ucgJ8SdlW1CZr9MIm8BP";
+	const finalVoiceId = voiceId || "ucgJ8SdlW1CZr9MIm8BP";
 
-	const audioStream = await client.textToSpeech.convert(voiceId, {
+	const audioStream = await client.textToSpeech.convert(finalVoiceId, {
 		modelId: "eleven_flash_v2_5",
 		text,
 		outputFormat: "mp3_44100_128",
