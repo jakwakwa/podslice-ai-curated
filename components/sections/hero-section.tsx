@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -89,7 +90,9 @@ export function Hetealction({ isActive }: SectionProps) {
 						variant="default"
 						size="lg"
 						className="bg-white hover:bg-gray-100 rounded-full px-8 py-6 text-lg font-medium">
-						Start Your Free Trial
+						<Link href="/sign-in" className="text-white">
+							Start Your Free Trial
+						</Link>
 					</Button>
 				</div>
 			</div>

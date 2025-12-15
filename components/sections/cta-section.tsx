@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -61,7 +62,9 @@ export function CTASection({ isActive }: SectionProps) {
 						variant="default"
 						size="lg"
 						className="bg-white hover:bg-gray-100 rounded-full px-10 py-6 text-lg font-semibold shadow-2xl hover:scale-105 transition-transform">
-						Start Your Free Trial
+						<Link href="/sign-in" className="text-white">
+							Start Your Free Trial
+						</Link>
 					</Button>
 				</div>
 
