@@ -22,7 +22,7 @@ function getClient(): ElevenLabsClient {
 export async function generateElevenLabsTts(text: string): Promise<Buffer> {
 	const client = getClient();
 
-	const voiceId = "pNInz6obpgDQGcFmaJgB";
+	const voiceId = "ucgJ8SdlW1CZr9MIm8BP";
 
 	const audioStream = await client.textToSpeech.convert(voiceId, {
 		modelId: "eleven_flash_v2_5",

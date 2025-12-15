@@ -1,14 +1,3 @@
-import { generateElevenLabsTts } from "@/lib/inngest/utils/elevenlabs";
-import { generateText as genText } from "@/lib/inngest/utils/genai";
-import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
-import {
-	getSummaryLengthConfig,
-	SUMMARY_LENGTH_OPTIONS,
-	type SummaryLengthOption,
-} from "@/lib/types/summary-length";
-
-// TODO: Consider switching to Google Cloud Text-to-Speech API for stable TTS
-
 import { extractUserEpisodeDuration } from "@/app/(protected)/admin/audio-duration/duration-extractor";
 // aiConfig consumed indirectly via shared helpers
 // Shared helpers
@@ -19,8 +8,16 @@ import {
 	splitScriptIntoChunks,
 	uploadBufferToPrimaryBucket,
 } from "@/lib/inngest/episode-shared";
+import { generateElevenLabsTts } from "@/lib/inngest/utils/elevenlabs";
+import { generateText as genText } from "@/lib/inngest/utils/genai";
+import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
 // (No direct GCS import; handled in shared helpers)
 import { prisma } from "@/lib/prisma";
+import {
+	getSummaryLengthConfig,
+	SUMMARY_LENGTH_OPTIONS,
+	type SummaryLengthOption,
+} from "@/lib/types/summary-length";
 import { inngest } from "./client";
 
 // All uploads use the primary bucket defined by GOOGLE_CLOUD_STORAGE_BUCKET_NAME
