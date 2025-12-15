@@ -30,10 +30,10 @@ const BubbleBackground = React.forwardRef<HTMLDivElement, BubbleBackgroundProps>
 			colors = {
 				first: "18,113,255",
 				second: "221,74,255",
-				third: "0,220,255",
+				third: "18,113,255",
 				fourth: "200,50,50",
-				fifth: "180,180,50",
-				sixth: "140,100,255",
+				fifth: "18,113,255",
+				sixth: "200,50,50",
 			},
 			...props
 		},
