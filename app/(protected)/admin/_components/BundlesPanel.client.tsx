@@ -313,7 +313,7 @@ export default function BundlesPanelClient({
 		bundles.length === 0 ? "Add your first bundle" : "Add Another Bundle";
 
 	return (
-		<Card variant="glass">
+		<Card>
 			<PanelHeader
 				title="Bundle Management"
 				description="Create new bundles and manage existing ones"

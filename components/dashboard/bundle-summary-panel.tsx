@@ -90,7 +90,7 @@ export function BundleSummaryPanel({
 						<Button
 							className="inline-flex text-sm md:text-xs justify-end w-full px-0 mb-2 text-foreground"
 							variant="ghost"
-							size="xs"
+							size="sm"
 							onClick={onUpdateBundle}
 							aria-label="Update bundle selection">
 							<Edit className="text-ring" />

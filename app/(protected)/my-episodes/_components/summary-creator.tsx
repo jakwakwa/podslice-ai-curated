@@ -1,5 +1,6 @@
 "use client";
 
+import { useUser } from "@clerk/nextjs";
 import {
 	ChevronDown,
 	ChevronRight,
@@ -19,6 +20,7 @@ import { useDebounce } from "use-debounce";
 import { type AssetSuggestion, detectRelevantAssets } from "@/app/actions/detect-assets";
 import { LongEpisodeWarningDialog } from "@/components/features/episode-generation/long-episode-warning-dialog";
 import { SummaryLengthSelector } from "@/components/features/episode-generation/summary-length-selector";
+import { AddAssetDialog } from "@/components/research-vault/add-asset-dialog";
 import { Button } from "@/components/ui/button";
 import ComponentSpinner from "@/components/ui/component-spinner";
 import {
@@ -75,8 +77,9 @@ function isYouTubeUrl(url: string): boolean {
 	}
 }
 
-export function EpisodeCreator() {
+export default function SummaryCreator() {
 	const router = useRouter();
+	const { user } = useUser();
 	const { resumeAfterSubmission } = useNotificationStore();
 
 	// Mode toggle
@@ -729,9 +732,16 @@ export function EpisodeCreator() {
 									title="Research Lab Context">
 									<div className="space-y-4 pt-2">
 										<div className="space-y-2">
-											<Label htmlFor="referenceDocUrl">
-												Reference Document URL (PDF/Whitepaper)
-											</Label>
+											<div className="flex flex-row justify-between items-center">
+												<Label htmlFor="referenceDocUrl">
+													Reference Document URL (PDF/Whitepaper)
+												</Label>
+												{user?.id && (
+													<div className="scale-75 origin-right">
+														<AddAssetDialog userId={user.id} />
+													</div>
+												)}
+											</div>
 											<Input
 												id="referenceDocUrl"
 												placeholder="https://example.com/whitepaper.pdf"

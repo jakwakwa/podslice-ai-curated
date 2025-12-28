@@ -153,7 +153,7 @@ export default function EmailManagementClient({
 
 	return (
 		<div className="space-y-6">
-			<Card variant="glass">
+			<Card>
 				<CardHeader>
 					<CardTitle>Bundle Email Management</CardTitle>
 				</CardHeader>

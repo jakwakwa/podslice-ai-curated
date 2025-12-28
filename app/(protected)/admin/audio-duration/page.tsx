@@ -76,7 +76,7 @@ export default function AudioDurationPage() {
 			</div>
 
 			<div className="grid gap-6 md:grid-cols-2">
-				<Card variant="glass">
+				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
 							<Music className="h-5 w-5" />
@@ -89,7 +89,7 @@ export default function AudioDurationPage() {
 					</CardHeader>
 					<CardContent>
 						<Button
-							variant="icon"
+							variant="outline"
 							onClick={() => extractDurations("user-episodes")}
 							disabled={isLoading}
 							className="w-full">
@@ -110,7 +110,7 @@ export default function AudioDurationPage() {
 					</CardContent>
 				</Card>
 
-				<Card variant="glass">
+				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
 							<Music className="h-5 w-5" />
@@ -124,7 +124,7 @@ export default function AudioDurationPage() {
 					</CardHeader>
 					<CardContent>
 						<Button
-							variant="icon"
+							variant="outline"
 							onClick={() => extractDurations("episodes")}
 							disabled={isLoading}
 							className="w-full">
@@ -161,7 +161,7 @@ export default function AudioDurationPage() {
 				</Alert>
 			)}
 
-			<Card variant="glass">
+			<Card>
 				<CardHeader>
 					<CardTitle>Usage Notes</CardTitle>
 				</CardHeader>

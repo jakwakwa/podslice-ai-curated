@@ -366,14 +366,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 							const isShared = bundle.bundleType === "shared";
 
 							return (
-								<Card
-									variant="default"
-									hoverable={canInteract}
-									selected={
-										selectedBundle ? selectedBundle.bundle_id === bundle.bundle_id : false
-									}
-									key={bundle.bundle_id}
-									onClick={() => handleBundleClick(bundle)}>
+								<Card key={bundle.bundle_id} onClick={() => handleBundleClick(bundle)}>
 									<CardHeader className="w-full py-4 px-2">
 										<div className="w-full flex flex-col-reverse xl:flex-col-reverse gap-3">
 											<div className="flex items-start gap-3 text-sm font-normal tracking-wide flex-col w-full">
@@ -503,14 +496,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 							const isShared = bundle.bundleType === "shared";
 
 							return (
-								<Card
-									variant="default"
-									hoverable={canInteract}
-									selected={
-										selectedBundle ? selectedBundle.bundle_id === bundle.bundle_id : false
-									}
-									key={bundle.bundle_id}
-									onClick={() => handleBundleClick(bundle)}>
+								<Card key={bundle.bundle_id} onClick={() => handleBundleClick(bundle)}>
 									<CardHeader className="w-full">
 										<div className="w-full flex flex-col-reverse xl:flex-col-reverse gap-6">
 											<div className="flex items-start gap-3 text-sm font-normal tracking-wide flex-col w-full md:max-w-[240px]">

@@ -94,20 +94,20 @@ export default function PlayAndShare({
 				<Button
 					type="button"
 					className="outline-amber-400 outline-1 max-h-10"
-					variant="play"
-					size="playSmall"
+					variant="default"
+					size="sm"
 					onClick={onPlay}
-					disabled={!canPlay}
-					icon={<Play className="text-amber-300" />}>
+					disabled={!canPlay}>
+					<Play className="text-amber-300 mr-2" />
 					Play
 				</Button>
 				<Button
 					type="button"
 					className="outline-indigo-400 outline-1 max-h-10"
-					variant="play"
-					size="playSmall"
-					onClick={onShare}
-					icon={<Share2 className="text-indigo-300 max-h-7" />}>
+					variant="default"
+					size="sm"
+					onClick={onShare}>
+					<Share2 className="text-indigo-300 max-h-7 mr-2" />
 					Share
 				</Button>
 			</div>

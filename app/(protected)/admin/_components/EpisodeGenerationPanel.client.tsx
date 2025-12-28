@@ -61,7 +61,7 @@ export default function EpisodeGenerationPanelClient({
 	if (!hasBundles) {
 		return (
 			<div className="p-6">
-				<Card variant="glass">
+				<Card>
 					<PanelHeader
 						title="No bundles found"
 						description="Create a bundle before generating or uploading episodes."
@@ -138,7 +138,7 @@ export default function EpisodeGenerationPanelClient({
 	return (
 		<div className="flex flex-col gap-6 mt-6 space-y-6">
 			{/* Step 1: Select bundle (always visible) */}
-			<Card variant="glass">
+			<Card>
 				<PanelHeader
 					title={
 						<div className="flex items-center gap-2 my-4">
@@ -190,7 +190,7 @@ export default function EpisodeGenerationPanelClient({
 
 			{/* Step 1.5: Select podcast (only when a bundle is selected) */}
 			{selectedBundleId && selectedBundle && (
-				<Card variant="glass">
+				<Card>
 					<PanelHeader
 						title={
 							<div className="flex items-center gap-2">
@@ -228,7 +228,7 @@ export default function EpisodeGenerationPanelClient({
 
 			{/* Step 3: Method + contextual fields (only when a bundle is selected) */}
 			{selectedBundleId && (
-				<Card variant="glass">
+				<Card>
 					<PanelHeader
 						title={
 							<div className="flex items-center gap-2">
@@ -295,7 +295,7 @@ export default function EpisodeGenerationPanelClient({
 			)}
 
 			{/* Episode Management Utilities */}
-			<Card variant="glass">
+			<Card>
 				<PanelHeader
 					title="Episode Management"
 					description="Utility tools for managing existing episodes"

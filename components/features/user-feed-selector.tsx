@@ -210,7 +210,7 @@ function UserFeedSelectorWizard() {
 									fetchBundles();
 								}}
 								variant="default"
-								size="md"
+								size="default"
 								className="w-full md:max-w-[40%] min-h-12 h-auto mt-4">
 								Choose a bundle
 							</Button>
@@ -333,7 +333,7 @@ function UserFeedSelectorWizard() {
 						<Button
 							variant="outline"
 							className="p-4"
-							size="md"
+							size="default"
 							onClick={() => setStep(1)}>
 							Back
 						</Button>
@@ -401,7 +401,7 @@ function UserFeedSelectorWizard() {
 								<Button
 									variant="outline"
 									className="p-4"
-									size="md"
+									size="default"
 									onClick={() => setStep(2)}>
 									Back
 								</Button>

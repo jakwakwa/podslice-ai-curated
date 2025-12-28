@@ -27,9 +27,7 @@ interface PodcastCardProps {
  */
 export function PodcastCard({ episode, onPlayEpisode }: PodcastCardProps) {
 	return (
-		<Card
-			variant="glass"
-			className="flex flex-col w-full bg-gradient-to-br from-gray-900 to-gray-800">
+		<Card className="flex flex-col w-full bg-gradient-to-br from-gray-900 to-gray-800">
 			<CardHeader>
 				<CardTitle className="text-xl font-semibold leading-7 tracking-tight">
 					{episode.title}

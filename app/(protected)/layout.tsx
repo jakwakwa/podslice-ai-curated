@@ -76,7 +76,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 						<SidebarTrigger
 							className="hidden md:block md:w-[px] w-0 h-0 md:h-[14px] border border-[#50647a0] border-none shadow-none"
-							size={"xs"}
+							size="sm"
 							variant="outline"
 						/>
 					</div>

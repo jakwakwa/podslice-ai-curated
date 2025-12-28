@@ -5,7 +5,7 @@ export default function AdminIndexPage() {
 	return (
 		<div className="container mx-auto p-6 max-w-4xl space-y-6">
 			<h1 className="text-2xl font-semibold">Admin Portal</h1>
-			<Card variant="glass">
+			<Card>
 				<CardHeader>
 					<CardTitle>Manage</CardTitle>
 				</CardHeader>

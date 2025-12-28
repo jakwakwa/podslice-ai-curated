@@ -356,7 +356,7 @@ export default function PodcastsPanelClient({ podcasts }: { podcasts: Podcast[] 
 										<DialogFooter>
 											<Button
 												variant="outline"
-												size="md"
+												size="sm"
 												onClick={() => setEditOpen(false)}>
 												Cancel
 											</Button>

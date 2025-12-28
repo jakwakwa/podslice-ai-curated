@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import CommonSectionWithChildren from "@/components/shared/section-common";
 import { PageHeader } from "@/components/ui/page-header";
-import { EpisodeCreator } from "../my-episodes/_components/episode-creator";
+import SummaryCreator from "../my-episodes/_components/summary-creator";
 import { UsageDisplay } from "../my-episodes/_components/usage-display";
 
 export const revalidate = 3600;
@@ -26,7 +26,9 @@ export default async function GenerateMyEpisodesPage() {
 			<CommonSectionWithChildren title={content.title} description={content.description}>
 				<div className="flex flex-col-reverse lg:flex-row-reverse gap-0 md:gap-0 px-0 mx-0 md:mx-0 md:mb-0">
 					<UsageDisplay />
-					<EpisodeCreator />
+					<div className="mx-auto w-full max-w-4xl">
+						<SummaryCreator />
+					</div>
 				</div>
 			</CommonSectionWithChildren>
 		</div>

@@ -18,12 +18,18 @@ const buttonVariants = cva(
 					"bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
 				ghost: "hover:bg-accent hover:text-accent-foreground",
 				link: "text-primary underline-offset-4 hover:underline",
+				play: "bg-amber-500 text-primary-foreground shadow hover:bg-amber-600/90 rounded-full",
+				icon: "hover:bg-accent hover:text-accent-foreground p-0", // Added icon variant // Added play variant
 			},
 			size: {
 				default: "h-9 px-4 py-2",
 				sm: "h-8 rounded-md px-3 text-xs",
 				lg: "h-10 rounded-md px-8",
 				icon: "h-9 w-9",
+				xs: "h-6 rounded-md px-2 text-xs", // Added xs size
+				md: "h-9 px-4 py-2", // Added md size (same as default)
+				playSmall: "h-8 w-8 p-0", // Added playSmall
+				playLarge: "h-12 w-12 p-0", // Added playLarge
 			},
 		},
 		defaultVariants: {

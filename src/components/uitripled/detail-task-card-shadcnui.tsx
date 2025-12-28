@@ -62,26 +62,32 @@ const priorityMap: Record<
 	Priority,
 	{ label: string; badge: string; dot: string; description: string }
 > = {
-	high: {
-		label: "High",
+	Crypto: {
+		label: "Crypto",
 		badge:
 			"border border-destructive/40 bg-destructive/20 text-destructive dark:text-red-400",
 		dot: "bg-destructive",
-		description: "Requires immediate focus and dedicated resources",
+		description: " Cryptocurrency related documents",
 	},
-	medium: {
-		label: "Medium",
+	"White Paper": {
+		label: "White Paper",
 		badge:
 			"border border-amber-500/30 bg-amber-500/20 text-amber-600 dark:text-amber-400",
 		dot: "bg-amber-500",
-		description: "Important but not blocking other work",
+		description: "Technical or academic papers",
 	},
-	low: {
-		label: "Low",
+	"Earnings Report": {
+		label: "Earnings Report",
 		badge:
 			"border border-emerald-500/30 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400",
 		dot: "bg-emerald-500",
-		description: "Nice-to-have improvements to schedule later",
+		description: "quarterly earnings reports",
+	},
+	Other: {
+		label: "Other",
+		badge: "border border-blue-500/30 bg-blue-500/20 text-blue-600 dark:text-blue-400",
+		dot: "bg-blue-500",
+		description: "General documents",
 	},
 };
 
@@ -90,7 +96,7 @@ const maxDescriptionLength = 50;
 
 export function DetailTaskCard() {
 	const [title, setTitle] = useState("Edit Design System");
-	const [priority, setPriority] = useState<Priority>("high");
+	const [priority, setPriority] = useState<Priority>("Crypto");
 	const [assignees, setAssignees] = useState<TeamMember[]>(allMembers.slice(0, 3));
 	const [description, setDescription] = useState(defaultDescription);
 	const [_reminderEnabled, setReminderEnabled] = useState(true);
@@ -111,13 +117,14 @@ export function DetailTaskCard() {
 
 	const handleAddPerson = () => {
 		if (availableMembers.length === 0) return;
-		const [nextMember] = availableMembers;
+		const nextMember = availableMembers[0];
+		if (!nextMember) return;
 		setAssignees(prev => [...prev, nextMember]);
 	};
 
 	const handleReset = () => {
 		setTitle("Edit Design System");
-		setPriority("high");
+		setPriority("Crypto");
 		setAssignees(allMembers.slice(0, 3));
 		setDescription(defaultDescription);
 		setReminderEnabled(true);

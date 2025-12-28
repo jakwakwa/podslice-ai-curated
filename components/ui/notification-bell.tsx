@@ -191,7 +191,7 @@ export function NotificationBell() {
 							{unreadCount > 0 && (
 								<Button
 									variant="ghost"
-									size="xs"
+									size="sm"
 									onClick={handleMarkAllAsRead}
 									disabled={isLoading}
 									className="text-xs px-2 py-1 h-auto text-white">
@@ -201,7 +201,7 @@ export function NotificationBell() {
 							)}
 							<Button
 								variant="outline"
-								size="xs"
+								size="sm"
 								onClick={handleClearAll}
 								className="text-xs px-2 py-1 h-auto text-primary-foreground ">
 								<XCircleIcon size={14} />
@@ -260,7 +260,7 @@ export function NotificationBell() {
 										{!notification.is_read && (
 											<Button
 												variant="ghost"
-												size="xs"
+												size="sm"
 												onClick={() => handleMarkAsRead(notification.notification_id)}
 												disabled={isLoading}
 												className="border  shadow-black/30 shadow-md  rounded-4xl text-amber-300 text-xs py-0 h-6 px-3">
@@ -270,7 +270,7 @@ export function NotificationBell() {
 										)}
 										<Button
 											variant="ghost"
-											size="xs"
+											size="sm"
 											onClick={() =>
 												handleDeleteNotification(notification.notification_id)
 											}
