@@ -1,5 +1,6 @@
 // Shared Gemini client + helpers (migrated to @google/genai)
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, type Part } from "@google/genai";
+export type { Part };
 
 let _client: GoogleGenAI | null = null;
 
@@ -12,11 +13,29 @@ function getClient(): GoogleGenAI {
 	return _client;
 }
 
-export async function generateText(model: string, prompt: string): Promise<string> {
+export interface GenerateOptions {
+	tools?: Array<{ googleSearch?: {} }>;
+	systemInstruction?: string;
+}
+
+export async function generateText(
+	model: string,
+	prompt: string | Part[],
+	opts?: GenerateOptions
+): Promise<string> {
 	const client = getClient();
+	const contents =
+		typeof prompt === "string"
+			? [{ role: "user", parts: [{ text: prompt }] }]
+			: [{ role: "user", parts: prompt }];
+
 	const result = await client.models.generateContent({
 		model,
-		contents: [{ role: "user", parts: [{ text: prompt }] }],
+		contents,
+		config: {
+			tools: opts?.tools,
+			systemInstruction: opts?.systemInstruction,
+		},
 	});
 	return (
 		result.candidates?.[0]?.content?.parts
@@ -79,21 +98,29 @@ export { getClient as getGenAIClient };
 
 export async function generateJSON(
 	model: string,
-	prompt: string,
-	schema?: any
+	prompt: string | Part[],
+	schema?: any,
+	opts?: GenerateOptions
 ): Promise<any> {
 	const client = getClient();
 	const generationConfig: any = {
 		responseMimeType: "application/json",
+		tools: opts?.tools,
+		systemInstruction: opts?.systemInstruction,
 	};
 
 	if (schema) {
 		generationConfig.responseSchema = schema;
 	}
 
+	const contents =
+		typeof prompt === "string"
+			? [{ role: "user", parts: [{ text: prompt }] }]
+			: [{ role: "user", parts: prompt }];
+
 	const result = await client.models.generateContent({
 		model,
-		contents: [{ role: "user", parts: [{ text: prompt }] }],
+		contents,
 		config: generationConfig,
 	});
 

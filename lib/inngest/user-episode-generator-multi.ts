@@ -156,7 +156,79 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 				},
 			});
 
-			const analysis = await generateFinancialAnalysis(transcript);
+			// Fetch reference doc URL
+			const epData = await prisma.userEpisode.findUnique({
+				where: { episode_id: userEpisodeId },
+				select: { reference_doc_url: true },
+			});
+
+			let referenceDoc: { content: Buffer; mimeType: string } | string | undefined;
+			let enableSearchFallback = false;
+
+			if (epData?.reference_doc_url) {
+				try {
+					console.log(`[ANALYSIS] Found reference doc URL: ${epData.reference_doc_url}`);
+
+					// Check if it's a ResearchAsset to get cached content first (optional optimization)
+					// For now, we rely on the multimodal PDF download for robustness.
+
+					const { getStorageReader } = await import("@/lib/inngest/utils/gcs");
+					const storageReader = getStorageReader();
+
+					let bucket: string | undefined;
+					let object: string | undefined;
+
+					// Parse URL
+					if (epData.reference_doc_url.startsWith("https://storage.googleapis.com/")) {
+						const parts = epData.reference_doc_url
+							.replace("https://storage.googleapis.com/", "")
+							.split("/");
+						bucket = parts[0];
+						object = parts.slice(1).join("/");
+					} else if (epData.reference_doc_url.startsWith("gs://")) {
+						const parts = epData.reference_doc_url.replace("gs://", "").split("/");
+						bucket = parts[0];
+						object = parts.slice(1).join("/");
+					}
+
+					if (bucket && object) {
+						const decodedObject = decodeURIComponent(object);
+						console.log(
+							`[ANALYSIS] Downloading reference doc from GCS: ${bucket}/${decodedObject}`
+						);
+						const [fileBuffer] = await storageReader
+							.bucket(bucket)
+							.file(decodedObject)
+							.download();
+						const [metadata] = await storageReader
+							.bucket(bucket)
+							.file(decodedObject)
+							.getMetadata();
+
+						referenceDoc = {
+							content: fileBuffer,
+							mimeType: metadata.contentType || "application/pdf",
+						};
+					} else {
+						console.warn(
+							`[ANALYSIS] Could not parse GCS URL: ${epData.reference_doc_url}. Enabling search fallback.`
+						);
+						enableSearchFallback = true;
+					}
+				} catch (err) {
+					console.error(
+						"[ANALYSIS] Failed to download reference doc (enabling search fallback)",
+						err
+					);
+					enableSearchFallback = true;
+				}
+			}
+
+			const analysis = await generateFinancialAnalysis(
+				transcript,
+				referenceDoc,
+				enableSearchFallback
+			);
 
 			// Format trade recommendations as markdown list
 			const tradeRecsMd =

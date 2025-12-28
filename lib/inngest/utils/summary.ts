@@ -1,4 +1,4 @@
-import { generateText } from "@/lib/inngest/utils/genai";
+import { generateText, type Part } from "@/lib/inngest/utils/genai";
 
 /**
  * Generate an objective summary (bullets + narrative recap) for a potentially large transcript.
@@ -100,13 +100,18 @@ export interface FinancialResponse {
 
 export async function generateFinancialAnalysis(
 	transcript: string,
-	referenceDocContent?: string
+	referenceDoc?: { content: Buffer; mimeType: string } | string,
+	enableSearchFallback = false
 ): Promise<FinancialResponse> {
 	const modelName = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
 
-	const hasReferenceDoc = !!referenceDocContent;
+	const hasReferenceDoc = !!referenceDoc;
+	const isBinaryDoc =
+		typeof referenceDoc === "object" &&
+		referenceDoc !== null &&
+		"content" in referenceDoc;
 
-	const systemPrompt = `Role: You are a Senior Investment Analyst at a multi-strategy hedge fund.
+	let systemPrompt = `Role: You are a Senior Investment Analyst at a multi-strategy hedge fund.
 Target Audience: Boutique investment firms, crypto professionals, equity researchers, and advanced individual investors who pay $50-100/month for actionable intelligence—not summaries.
 
 MISSION:
@@ -124,7 +129,13 @@ RULES FOR CONDITIONAL SECTIONS:
 - For "variantView": If the speaker's view aligns with consensus, return null.
 - For "sectorRotation": If no capital flow pattern is discussed, return null.
 - For "tradeRecommendations": If no actionable trades emerge, return empty array [].
-${hasReferenceDoc ? '- For "documentContradictions": Flag any discrepancies between speaker claims and reference doc. If none, return empty array [].' : '- For "documentContradictions": Return empty array [] (no reference document provided).'}
+${
+	hasReferenceDoc
+		? '- For "documentContradictions": Flag any discrepancies between speaker claims and reference doc. If none, return empty array [].'
+		: enableSearchFallback
+			? '- For "documentContradictions": Use Google Search to verify questionable claims. If contradictions found, list them. If none, return empty array [].'
+			: '- For "documentContradictions": Return empty array [] (no reference document provided).'
+}
 
 BE UNBIASED AND FACT-DRIVEN:
 - Do NOT inflate importance or add fluff
@@ -157,7 +168,7 @@ OUTPUT JSON SCHEMA:
     "documentContradictions": [
       {
         "claim": "What the speaker claimed",
-        "groundTruth": "What the reference document states",
+        "groundTruth": "What the reference document (or search result) states",
         "severity": "CRITICAL" | "NOTABLE" | "MINOR"
       }
     ]
@@ -171,16 +182,44 @@ OUTPUT JSON SCHEMA:
    - DO NOT include "Host:" or "Speaker:" prefixes.)
 }`;
 
-	const userContent = `TRANSCRIPT:
-${transcript.slice(0, 50000)}
+	if (enableSearchFallback) {
+		systemPrompt += `\n\nSEARCH FALLBACK ENABLED:\nUse the provided Google Search tool to ground your analysis, verify specific metrics, or check for recent developments that contradict the speaker if the reference document is missing or insufficient.`;
+	}
 
-${hasReferenceDoc ? `REFERENCE DOCUMENT (GROUND TRUTH - use for contradiction detection):\n${referenceDocContent}` : "NO REFERENCE DOCUMENT PROVIDED - return empty documentContradictions array."}`;
+	const textPrompt = `${systemPrompt}\n\nTRANSCRIPT:\n${transcript.slice(0, 50000)}`;
 
-	const prompt = `${systemPrompt}\n\n${userContent}`;
+	let prompt: string | Part[] = textPrompt;
 
 	// We use the generateJSON helper
 	const { generateJSON } = await import("@/lib/inngest/utils/genai");
-	const response = await generateJSON(modelName, prompt);
+
+	if (hasReferenceDoc) {
+		if (isBinaryDoc) {
+			const docBuffer = (referenceDoc as { content: Buffer }).content;
+			const mimeType = (referenceDoc as { mimeType: string }).mimeType;
+			// Multimodal
+			const docPart: Part = {
+				inlineData: {
+					data: docBuffer.toString("base64"),
+					mimeType: mimeType,
+				},
+			};
+			const docInstructions: Part = {
+				text: "\n\nREFERENCE DOCUMENT PROVIDED. Use this as GROUND TRUTH for contradiction detection.",
+			};
+			const systemPart: Part = { text: textPrompt };
+			prompt = [docPart, docInstructions, systemPart];
+		} else {
+			// Text
+			prompt = `${textPrompt}\n\nREFERENCE DOCUMENT (GROUND TRUTH):\n${referenceDoc}`;
+		}
+	} else {
+		prompt = `${textPrompt}\n\nNO REFERENCE DOCUMENT PROVIDED - return empty documentContradictions array unless you find contradictions via Google Search.`;
+	}
+
+	const tools = enableSearchFallback ? [{ googleSearch: {} }] : undefined;
+
+	const response = await generateJSON(modelName, prompt, undefined, { tools });
 
 	return response as FinancialResponse;
 }
