@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
+import { type AssetSuggestion, detectRelevantAssets } from "@/app/actions/detect-assets";
 import { LongEpisodeWarningDialog } from "@/components/features/episode-generation/long-episode-warning-dialog";
 import { SummaryLengthSelector } from "@/components/features/episode-generation/summary-length-selector";
 import { Button } from "@/components/ui/button";
@@ -111,6 +112,24 @@ export function EpisodeCreator() {
 
 	const [selectedSources, setSelectedSources] = useState<string[]>([]);
 	const [selectedTopic, setSelectedTopic] = useState("");
+
+	// Smart Suggestions State
+	const [suggestedAssets, setSuggestedAssets] = useState<AssetSuggestion[]>([]);
+
+	// Effect to trigger detection when metadata is loaded
+	useEffect(() => {
+		if (videoTitle && creatorMode === "youtube") {
+			const detect = async () => {
+				// Debounce or just run once when title is set
+				const assets = await detectRelevantAssets(videoTitle, ""); // Description not available in metadata yet?
+				if (assets.length > 0) {
+					setSuggestedAssets(assets);
+				}
+			};
+			detect();
+		}
+	}, [videoTitle, creatorMode]);
+
 	// Generation options
 	const [generationMode, setGenerationMode] = useState<"single" | "multi">("single");
 	const [voiceA, setVoiceA] = useState<string>("Leda");
@@ -596,6 +615,49 @@ export function EpisodeCreator() {
 											</div>
 										</>
 									)}
+								</div>
+							)}
+
+							{/* Smart Suggestion UI - Phase 4 Integration */}
+							{suggestedAssets.length > 0 && (
+								<div className="mt-4 border border-indigo-500/30 bg-indigo-500/10 rounded-xl p-4 animate-in fade-in slide-in-from-top-2">
+									<div className="flex items-center gap-2 mb-3">
+										<SparklesIcon className="w-4 h-4 text-indigo-400" />
+										<span className="text-sm font-medium text-indigo-200">
+											Smart Suggestions Found
+										</span>
+									</div>
+									<p className="text-xs text-muted-foreground mb-3">
+										We found relevant documents in your Research Vault. Apply one to
+										ground your episode?
+									</p>
+									<div className="flex flex-col gap-2">
+										{suggestedAssets.map(asset => (
+											<div
+												key={asset.id}
+												className="flex items-center justify-between bg-background/50 p-2 rounded-lg border border-border/50">
+												<div className="flex flex-col">
+													<span className="text-xs font-medium text-foreground">
+														{asset.title}
+													</span>
+													<span className="text-[10px] text-muted-foreground capitalize">
+														{asset.assetType.toLowerCase().replace("_", " ")}
+													</span>
+												</div>
+												<Button
+													size="sm"
+													variant="secondary"
+													className="h-7 text-xs"
+													onClick={() => {
+														setReferenceDocUrl(asset.sourceUrl);
+														setSuggestedAssets([]); // Hide suggestions after selection
+														toast.success(`Applied ${asset.title}`);
+													}}>
+													Apply
+												</Button>
+											</div>
+										))}
+									</div>
 								</div>
 							)}
 
