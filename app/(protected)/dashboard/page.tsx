@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { Suspense } from "react";
+import { AutoEpisodesStatusCard } from "@/components/dashboard/auto-episodes-status-card";
 import { BundleFeedSection } from "@/components/dashboard/bundle-feed-section";
 import { DashboardClientWrapper } from "@/components/dashboard/dashboard-client-wrapper";
 import {
@@ -7,16 +8,16 @@ import {
 	RecentListSkeleton,
 } from "@/components/dashboard/dashboard-skeleton";
 import { EpisodeStatusTable } from "@/components/dashboard/episode-status-table";
-import { RecentEpisodesList } from "@/components/dashboard/recent-episodes-list";
+import { LatestBundleEpisode } from "@/components/dashboard/latest-bundle-episode";
+import { MarketPulseTable } from "@/components/dashboard/market-pulse-table";
+import { TickerTape } from "@/components/dashboard/ticker-tape";
 import { PageHeader } from "@/components/ui/page-header";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
 import { prisma } from "@/lib/prisma";
 import type { Episode, UserCurationProfileWithRelations, UserEpisode } from "@/lib/types";
 import { userIsActive } from "@/lib/usage";
 import { dashboardCopy } from "./content";
-import { LatestBundleEpisode } from "@/components/dashboard/latest-bundle-episode";
-import { AutoEpisodesStatusCard } from "@/components/dashboard/auto-episodes-status-card";
-import { Skeleton } from "@/components/ui/skeleton";
 
 type UserEpisodeWithSignedUrl = UserEpisode & { signedAudioUrl: string | null };
 
@@ -50,9 +51,10 @@ export default async function DashboardPage() {
 
 	const hasProfile = !!userCurationProfile;
 	const isBundleSelection = hasProfile && userCurationProfile.is_bundle_selection;
-	const hasBundle = isBundleSelection && !!latestBundleEpisode;
-	const hasCurateControl = (subscription?.plan_type || "").toLowerCase() === "curate_control";
-	const showCurateControlButton = hasCurateControl;
+	const _hasBundle = isBundleSelection && !!latestBundleEpisode;
+	const hasCurateControl =
+		(subscription?.plan_type || "").toLowerCase() === "curate_control";
+	const _showCurateControlButton = hasCurateControl;
 
 	return (
 		<div className="h-full rounded-none  px-0 mx-0 md:mx-3 flex flex-col lg:rounded-3xl md:rounded-4xl md:mt-0 md:p-8 md:w-full md:gap-y-4">
@@ -61,27 +63,24 @@ export default async function DashboardPage() {
 				description={dashboardCopy.header.description}
 			/>
 
-		{/* Episode Generation Status - Real-time updates */}
-		<EpisodeStatusTable defaultExpanded={true} />
+			{/* Episode Generation Status - Real-time updates */}
+			<EpisodeStatusTable defaultExpanded={true} />
 
-		{/* Auto-Generated Episodes Status Card - Only for Curate Control users */}
-		{hasCurateControl && (
-			<Suspense fallback={<Skeleton className="h-[300px] w-full" />}>
-				<AutoEpisodesStatusCard />
-			</Suspense>
-		)}
+			{/* Auto-Generated Episodes Status Card - Only for Curate Control users */}
+			{hasCurateControl && (
+				<Suspense fallback={<Skeleton className="h-[300px] w-full" />}>
+					<AutoEpisodesStatusCard />
+				</Suspense>
+			)}
 
-		{/* Bundle Feed Section */}
+			{/* Bundle Feed Section */}
 
-
-		{/* Empty state and modals */}
-		<DashboardClientWrapper
-			hasProfile={hasProfile}
-			userCurationProfile={userCurationProfile}
-		/>
-		<div className="flex flex-col md:flex-col xl:flex-row w-full   gap-4">
-
-
+			{/* Empty state and modals */}
+			<DashboardClientWrapper
+				hasProfile={hasProfile}
+				userCurationProfile={userCurationProfile}
+			/>
+			<div className="flex flex-col md:flex-col xl:flex-row w-full   gap-4">
 				{/* Recent Episodes Section */}
 				<Suspense fallback={<RecentListSkeleton />}>
 					{/* Bundle Feed Section */}
@@ -94,15 +93,18 @@ export default async function DashboardPage() {
 									bundleEpisodes={bundleEpisodes}
 								/>
 								{latestBundleEpisode && (
-									<LatestBundleEpisode episode={latestBundleEpisode} bundleName={userCurationProfile?.selectedBundle?.name || ""} />
+									<LatestBundleEpisode
+										episode={latestBundleEpisode}
+										bundleName={userCurationProfile?.selectedBundle?.name || ""}
+									/>
 								)}
 							</div>
 						</Suspense>
 					) : null}
-					<RecentEpisodesList
-						episodes={userEpisodes}
-						showCurateControlButton={showCurateControlButton}
-					/>
+					<div className="flex flex-col gap-4 w-full">
+						<TickerTape />
+						<MarketPulseTable episodes={userEpisodes} />
+					</div>
 				</Suspense>
 			</div>
 		</div>
@@ -133,17 +135,24 @@ async function fetchUserCurationProfile(
 
 		// Shape selectedBundle to exclude binary fields and expose a simple podcasts[] array
 		const rawSelected = (profile as unknown as Record<string, unknown>)
-			.selectedBundle as unknown as (Record<string, unknown> & {
-				bundle_podcast?: Array<{ podcast: unknown }>
-				image_url?: unknown
-				image_type?: unknown
-			}) | null;
+			.selectedBundle as unknown as
+			| (Record<string, unknown> & {
+					bundle_podcast?: Array<{ podcast: unknown }>;
+					image_url?: unknown;
+					image_type?: unknown;
+			  })
+			| null;
 
 		if (!rawSelected) {
 			return profile as unknown as UserCurationProfileWithRelations;
 		}
 
-		const { image_data: _imgData, image_type: _imgType, bundle_podcast, ...rest } = rawSelected;
+		const {
+			image_data: _imgData,
+			image_type: _imgType,
+			bundle_podcast,
+			...rest
+		} = rawSelected;
 		const podcasts = Array.isArray(bundle_podcast)
 			? bundle_podcast.map(bp => bp.podcast as unknown)
 			: [];
@@ -155,7 +164,8 @@ async function fetchUserCurationProfile(
 
 		return {
 			...(profile as unknown as UserCurationProfileWithRelations),
-			selectedBundle: shapedSelectedBundle as unknown as UserCurationProfileWithRelations["selectedBundle"],
+			selectedBundle:
+				shapedSelectedBundle as unknown as UserCurationProfileWithRelations["selectedBundle"],
 		};
 	} catch (error) {
 		console.error("Failed to fetch user curation profile:", error);
@@ -181,10 +191,7 @@ async function fetchBundleEpisodes(userId: string): Promise<Episode[]> {
 
 		const episodes = await prisma.episode.findMany({
 			where: { bundle_id: profile.selected_bundle_id },
-			orderBy: [
-				{ published_at: "desc" },
-				{ created_at: "desc" },
-			],
+			orderBy: [{ published_at: "desc" }, { created_at: "desc" }],
 		});
 
 		return episodes as Episode[];
@@ -221,6 +228,12 @@ async function fetchUserEpisodes(userId: string): Promise<UserEpisodeWithSignedU
 				summary_length: true,
 				news_sources: true,
 				news_topic: true,
+				// B2B Intelligence
+				sentiment: true,
+				sentiment_score: true,
+				mentioned_assets: true,
+				voice_archetype: true,
+
 				created_at: true,
 				updated_at: true,
 			},
@@ -230,7 +243,7 @@ async function fetchUserEpisodes(userId: string): Promise<UserEpisodeWithSignedU
 		// Generate signed URLs
 		const storageReader = getStorageReader();
 		const episodesWithSignedUrls = await Promise.all(
-			episodes.map(async episode => {
+			episodes.map(async (episode: any) => {
 				let signedAudioUrl: string | null = null;
 				if (episode.gcs_audio_url) {
 					const parsed = parseGcsUri(episode.gcs_audio_url);
@@ -246,7 +259,7 @@ async function fetchUserEpisodes(userId: string): Promise<UserEpisodeWithSignedU
 						signedAudioUrl = url;
 					}
 				}
-				return { ...episode, signedAudioUrl } as UserEpisodeWithSignedUrl;
+				return { ...episode, signedAudioUrl } as unknown as UserEpisodeWithSignedUrl;
 			})
 		);
 

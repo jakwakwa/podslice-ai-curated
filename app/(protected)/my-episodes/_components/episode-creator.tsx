@@ -37,6 +37,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { PRICING_TIER } from "@/config/paddle-config";
 import { VOICE_OPTIONS } from "@/lib/constants/voices";
@@ -90,6 +91,11 @@ export function EpisodeCreator() {
 
 	const [podcastName, setPodcastName] = useState("");
 
+	// Research Lab State
+	// Research Lab State
+	const [referenceDocUrl, setReferenceDocUrl] = useState("");
+	const [contextWeight, setContextWeight] = useState([50]); // Default 50%
+
 	// News input state
 	const NEWS_SOURCES = [
 		{ id: "global", label: "Global", tip: "Guardian, BBC, Reuters, Al Jazeera" }, ///Guardian, BBC, Reuters, Al Jazeera"
@@ -119,7 +125,7 @@ export function EpisodeCreator() {
 	const [isLoadingUsage, setIsLoadingUsage] = useState(true);
 
 	// Restriction dialog state
-	const [showRestrictionDialog, setShowRestrictionDialog] = useState(false);
+	const [_showRestrictionDialog, setShowRestrictionDialog] = useState(false);
 
 	// Tips visibility state
 	const [showTips, setShowTips] = useState(false);
@@ -377,6 +383,10 @@ export function EpisodeCreator() {
 				voiceA,
 				voiceB,
 				summaryLength,
+				// B2B Research Lab
+				referenceDocUrl: referenceDocUrl || undefined,
+				contextWeight: referenceDocUrl ? contextWeight[0] / 100 : undefined,
+				voiceArchetype: voiceA, // Use selected voice mapping
 			};
 			const res = await fetch("/api/user-episodes/create-from-metadata", {
 				method: "POST",
@@ -445,8 +455,8 @@ export function EpisodeCreator() {
 	}
 
 	// const hasReachedLimit = usage.count >= usage.limit;
-	const handleUpgradeMembership = () => router.push("/manage-membership");
-	const handleGoBack = () => router.back();
+	const _handleUpgradeMembership = () => router.push("/manage-membership");
+	const _handleGoBack = () => router.back();
 
 	return (
 		<div className="w-full h-auto mb-0 px-3 py-0 md:px-8 md:pt-8 lg:px-10 mr-0 lg:pb-12 lg:mb-0 rounded-none shadow-lg rounded-b-md overflow-hidden">
@@ -646,6 +656,52 @@ export function EpisodeCreator() {
 											})}
 										</div>
 									</div>
+								</div>
+							)}
+
+							{creatorMode === "youtube" && (
+								<div className="space-y-4 pt-4 border-t border-border mt-4">
+									<h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+										Research Lab Context
+									</h3>
+
+									<div className="space-y-2">
+										<Label htmlFor="referenceDocUrl">
+											Reference Document URL (PDF/Whitepaper)
+										</Label>
+										<Input
+											id="referenceDocUrl"
+											placeholder="https://example.com/whitepaper.pdf"
+											value={referenceDocUrl}
+											onChange={e => setReferenceDocUrl(e.target.value)}
+											disabled={isBusy}
+										/>
+										<p className="text-[0.7rem] text-muted-foreground">
+											Provide a technical document to ground the analysis.
+										</p>
+									</div>
+
+									{referenceDocUrl && (
+										<div className="space-y-4 bg-muted/30 p-4 rounded-lg border border-border/50">
+											<div className="flex justify-between items-center">
+												<Label className="text-xs font-bold">Context Weighting</Label>
+												<span className="text-xs font-mono bg-primary/20 px-2 py-0.5 rounded text-primary">
+													{contextWeight[0]}% Document
+												</span>
+											</div>
+											<Slider
+												value={contextWeight}
+												onValueChange={setContextWeight}
+												max={100}
+												step={5}
+												className="py-4"
+											/>
+											<div className="flex justify-between text-[0.6rem] text-muted-foreground uppercase font-bold px-1">
+												<span>Podcast Audio</span>
+												<span>Reference Doc</span>
+											</div>
+										</div>
+									)}
 								</div>
 							)}
 
@@ -932,13 +988,16 @@ export function EpisodeCreator() {
 				open={showLongWarning}
 				onOpenChange={setShowLongWarning}
 				remainingCredits={usage.limit - usage.count}
-				onConfirm={() => {
-					setSummaryLength("LONG");
+				onConfirm={(length: "SHORT" | "MEDIUM" | "LONG") => {
+					setSummaryLength(length);
 					setShowLongWarning(false);
 				}}
 			/>
 
-			<Dialog open={showRestrictionDialog} onOpenChange={() => {}} modal={true}>
+			<Dialog
+				open={_showRestrictionDialog}
+				onOpenChange={setShowRestrictionDialog}
+				modal={true}>
 				<DialogContent
 					className="sm:max-w-md"
 					onInteractOutside={e => e.preventDefault()}
@@ -960,13 +1019,17 @@ export function EpisodeCreator() {
 					</DialogHeader>
 					<div className="flex flex-col gap-3 mt-6">
 						<Button
-							onClick={handleUpgradeMembership}
+							onClick={_handleUpgradeMembership}
 							className="w-full"
 							size="lg"
-							variant={"link"}>
+							variant="default">
 							Upgrade Membership
 						</Button>
-						<Button onClick={handleGoBack} variant="outline" className="w-full" size="lg">
+						<Button
+							onClick={_handleGoBack}
+							variant="outline"
+							className="w-full"
+							size="lg">
 							Go Back
 						</Button>
 					</div>

@@ -1,29 +1,18 @@
 export const VOICE_OPTIONS = [
 	{
-		name: "Leda",
-		label: "Leda — Youthful",
-		sample: "This is a quick voice sample for your episode.",
+		name: "Strategist",
+		label: "The Strategist (Deep/Steady)",
+		sample: "Market signals are aligning with long-term macroeconomic trends.",
 	},
 	{
-		name: "Sulafat",
-		label: "Sulafat — Warm Middle Pitch",
-		sample: "What idea do you want to bring to life?",
-	},
-	{ name: "Orus", label: "Orus — Firm", sample: "What's a skill you'd like to develop?" },
-	{
-		name: "Rasalgethi",
-		label: "Rasalgethi — Informative",
-		sample: "Ready to learn something awesome today?",
+		name: "TechnicalLead",
+		label: "The Technical Lead (Precise/Clear)",
+		sample: "Bitcoin's hash rate distribution shows significant resilience.",
 	},
 	{
-		name: "Achird",
-		label: "Achird — Friendly",
-		sample: "Howdy! Let's dive into some key insights",
-	},
-	{
-		name: "Aoede",
-		label: "Aoede — Breezy",
-		sample: "What kind of problem could we solve?",
+		name: "Newsroom",
+		label: "The Newsroom (Fast/Daily)",
+		sample: "Breaking news: Major institutional inflow into spot ETFs today.",
 	},
 ] as const;
 
