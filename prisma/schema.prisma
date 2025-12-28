@@ -89,6 +89,7 @@ model UserEpisode {
   voice_archetype      String?               @map("voice_archetype")
   reference_doc_url    String?               @map("reference_doc_url")
   context_weight       Float?                @map("context_weight")
+  intelligence         Json?                 @map("intelligence") // Stores { sentiment, assets, risks }
   
   created_at           DateTime              @default(now()) @map("created_at")
   updated_at           DateTime              @updatedAt @map("updated_at")

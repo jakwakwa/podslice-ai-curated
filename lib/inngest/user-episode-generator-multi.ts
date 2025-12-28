@@ -10,14 +10,8 @@ import {
 } from "@/lib/inngest/episode-shared";
 import { generateElevenLabsTts } from "@/lib/inngest/utils/elevenlabs";
 import { generateTtsAudio, generateText as genText } from "@/lib/inngest/utils/genai";
-import {
-	generateObjectiveSummaryWithOpenAI,
-	generateTextWithOpenAI,
-} from "@/lib/inngest/utils/openai";
-import {
-	generateFinancialAnalysis,
-	generateObjectiveSummary,
-} from "@/lib/inngest/utils/summary";
+import { generateTextWithOpenAI } from "@/lib/inngest/utils/openai";
+import { generateFinancialAnalysis } from "@/lib/inngest/utils/summary";
 import { prisma } from "@/lib/prisma";
 import {
 	getSummaryLengthConfig,
@@ -152,65 +146,36 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 
 		const _isShort = useShortEpisodesOverride ?? aiConfig.useShortEpisodes;
 
-		const summary = await step.run("generate-summary", async () => {
+		// Step 2: Generate Financial Analysis & Content (Single Source of Truth)
+		const summary = await step.run("generate-financial-analysis", async () => {
 			await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
-				data: { progress_message: "Analyzing content and extracting key insights..." },
+				data: {
+					progress_message:
+						"Analyzing content, extracting insights, and writing script...",
+				},
 			});
 
-			const modelName = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
-			let text: string;
-			try {
-				text = await generateObjectiveSummary(transcript, { modelName });
-			} catch (error) {
-				console.warn(
-					"[FALLBACK] Gemini summary generation failed, attempting OpenAI fallback...",
-					error
-				);
-				try {
-					await prisma.userEpisode.update({
-						where: { episode_id: userEpisodeId },
-						data: {
-							progress_message:
-								"Using backup service to analyze content and extract key insights...",
-						},
-					});
-					text = await generateObjectiveSummaryWithOpenAI(transcript);
-				} catch (backupError) {
-					console.error("[FALLBACK] OpenAI summary generation also failed", backupError);
-					throw backupError; // Fail the entire workflow since both providers failed
-				}
-			}
+			const analysis = await generateFinancialAnalysis(transcript);
+
+			// Format summary as Markdown
+			const summaryMarkdown = `## Executive Brief
+${analysis.writtenContent.executiveBrief}
+
+## Investment Implications
+${analysis.writtenContent.investmentImplications}`;
+
 			await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
-				data: { summary: text },
+				data: {
+					summary: summaryMarkdown,
+					intelligence: analysis.structuredData as unknown as Prisma.InputJsonValue,
+					sentiment_score: analysis.structuredData.sentimentScore,
+					// sentiment and mentioned_assets are deprecated for B2B but we keep the score for basic sorting if needed
+				},
 			});
-			return text;
-		});
 
-		// Step 2.5: Generate Financial Analysis
-		await step.run("generate-financial-intelligence", async () => {
-			// Don't block the main flow if this fails
-			try {
-				await prisma.userEpisode.update({
-					where: { episode_id: userEpisodeId },
-					data: { progress_message: "Extracting financial intelligence..." },
-				});
-				const analysis = await generateFinancialAnalysis(transcript);
-				await prisma.userEpisode.update({
-					where: { episode_id: userEpisodeId },
-					data: {
-						sentiment: analysis.sentiment,
-						sentiment_score: analysis.sentimentScore,
-						mentioned_assets:
-							analysis.mentionedAssets as unknown as Prisma.InputJsonValue,
-					},
-				});
-				return analysis;
-			} catch (error) {
-				console.error("[FINANCIAL_ANALYSIS_MULTI] Failed", error);
-				return null;
-			}
+			return summaryMarkdown;
 		});
 
 		const duetLines = await step.run("generate-duet-script", async () => {

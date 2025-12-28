@@ -12,18 +12,9 @@ import {
 	uploadBufferToPrimaryBucket,
 } from "@/lib/inngest/episode-shared";
 import { generateElevenLabsTts } from "@/lib/inngest/utils/elevenlabs";
-import { generateText as genText } from "@/lib/inngest/utils/genai";
-import {
-	generateObjectiveSummaryWithOpenAI,
-	generateTextWithOpenAI,
-} from "@/lib/inngest/utils/openai";
-import {
-	generateFinancialAnalysis,
-	generateObjectiveSummary,
-} from "@/lib/inngest/utils/summary";
+import { generateFinancialAnalysis } from "@/lib/inngest/utils/summary";
 import { prisma } from "@/lib/prisma";
 import {
-	getSummaryLengthConfig,
 	SUMMARY_LENGTH_OPTIONS,
 	type SummaryLengthOption,
 } from "@/lib/types/summary-length";
@@ -157,134 +148,43 @@ export const generateUserEpisode = inngest.createFunction(
 
 		const transcript = transcriptContext.transcript;
 
-		// Step 2: Generate TRUE neutral summary (chunked if large)
-		const summary = await step.run("generate-summary", async () => {
+		// Step 2: Generate Financial Analysis & Content (Single Source of Truth)
+		const { audioScript } = await step.run("generate-financial-analysis", async () => {
 			await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
-				data: { progress_message: "Analyzing content and extracting key insights..." },
+				data: {
+					progress_message:
+						"Analyzing content, extracting insights, and writing script...",
+				},
 			});
 
-			const modelName = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
-			let text: string;
-			try {
-				text = await generateObjectiveSummary(transcript, { modelName });
-			} catch (error) {
-				console.warn(
-					"[FALLBACK] Gemini summary generation failed, attempting OpenAI fallback...",
-					error
-				);
-				try {
-					await prisma.userEpisode.update({
-						where: { episode_id: userEpisodeId },
-						data: {
-							progress_message:
-								"Using backup service to analyze content and extract key insights...",
-						},
-					});
-					text = await generateObjectiveSummaryWithOpenAI(transcript);
-				} catch (backupError) {
-					console.error("[FALLBACK] OpenAI summary generation also failed", backupError);
-					throw backupError; // Fail the entire workflow since both providers failed
-				}
-			}
+			// Call the unified function
+			const analysis = await generateFinancialAnalysis(transcript);
+
+			// Format summary as Markdown
+			const summaryMarkdown = `## Executive Brief
+${analysis.writtenContent.executiveBrief}
+
+## Investment Implications
+${analysis.writtenContent.investmentImplications}`;
+
+			// Save everything to DB
 			await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
-				data: { summary: text },
-			});
-			return text;
-		});
-
-		// Step 2.5: Generate Financial Analysis (B2B Logic)
-		await step.run("generate-financial-intelligence", async () => {
-			await prisma.userEpisode.update({
-				where: { episode_id: userEpisodeId },
-				data: { progress_message: "Extracting financial intelligence..." },
+				data: {
+					summary: summaryMarkdown,
+					intelligence: analysis.structuredData as unknown as Prisma.InputJsonValue,
+					// Basic mapping for backward compatibility (optional, but good for safety if UI uses these)
+					sentiment_score: analysis.structuredData.sentimentScore,
+					// We don't map tickers to mentioned_assets because the schema changed significantly behavior-wise
+				},
 			});
 
-			try {
-				const analysis = await generateFinancialAnalysis(transcript);
-				// Save intelligence data
-				await prisma.userEpisode.update({
-					where: { episode_id: userEpisodeId },
-					data: {
-						sentiment: analysis.sentiment,
-						sentiment_score: analysis.sentimentScore,
-						// Use any cast if specific JSON typing is strict, but Prisma Json handles objects/arrays
-						mentioned_assets:
-							analysis.mentionedAssets as unknown as Prisma.InputJsonValue,
-						// technical_contradictions not in schema yet
-					},
-				});
-				return analysis;
-			} catch (error) {
-				console.error("[FINANCIAL_ANALYSIS] Failed to extract intelligence", error);
-				// Non-blocking failure; just continue
-				return null;
-			}
+			return { audioScript: analysis.audioScript };
 		});
 
-		// Step 3: Generate Podslice-hosted script (commentary over summary)
-		const script = await step.run("generate-script", async () => {
-			const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
-
-			// Get word/minute targets based on selected length
-			const lengthConfig = getSummaryLengthConfig(resolvedSummaryLength);
-			const [minWords, maxWords] = lengthConfig.words;
-			const [minMinutes, maxMinutes] = lengthConfig.minutes;
-
-			const scriptPrompt = `Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) single-narrator podcast segment where a Podslice host explains the highlights to listeners.\n\nIdentity & framing:\n- The speaker is a Podslice host summarizing someone else's content.\n- Do NOT reenact or impersonate the original speakers.\n- Present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken words only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as "the video" or "the episode."\n\nStructure:\n- Hook that frames this as a Podslice summary.\n- Smooth transitions between highlight clusters.\n- Clear, concise wrap-up.\n\nSUMMARY:\n${summary}`;
-
-			let rawScript: string;
-			try {
-				rawScript = await genText(modelName2, scriptPrompt);
-			} catch (error) {
-				console.warn(
-					"[FALLBACK] Gemini script generation failed, attempting OpenAI fallback...",
-					error
-				);
-				try {
-					await prisma.userEpisode.update({
-						where: { episode_id: userEpisodeId },
-						data: {
-							progress_message: "Using backup service to write your script...",
-						},
-					});
-					rawScript = await generateTextWithOpenAI(scriptPrompt, {
-						temperature: 0.7,
-					});
-				} catch (backupError) {
-					console.error("[FALLBACK] OpenAI script generation also failed", backupError);
-					throw backupError; // Fail the entire workflow since both providers failed
-				}
-			}
-
-			// Validate and enforce word count limit to ensure episodes stay within target duration
-			const words = rawScript.split(/\s+/).filter(Boolean);
-			const wordCount = words.length;
-
-			if (wordCount > maxWords) {
-				console.log(
-					`⚠️ Script exceeds target word count: ${wordCount} words (max: ${maxWords} for ${resolvedSummaryLength}). Truncating to ${maxWords} words.`
-				);
-				// Truncate to maxWords, preserving sentence boundaries where possible
-				const truncatedWords = words.slice(0, maxWords);
-				// Try to end on a sentence boundary
-				let truncatedScript = truncatedWords.join(" ");
-				const lastPeriod = truncatedScript.lastIndexOf(".");
-				const lastQuestion = truncatedScript.lastIndexOf("?");
-				const lastExclamation = truncatedScript.lastIndexOf("!");
-				const lastSentenceEnd = Math.max(lastPeriod, lastQuestion, lastExclamation);
-
-				if (lastSentenceEnd >= 0) {
-					// Always end on a sentence boundary if possible to ensure natural flow
-					truncatedScript = truncatedScript.substring(0, lastSentenceEnd + 1);
-				}
-
-				return truncatedScript;
-			}
-
-			return rawScript;
-		});
+		// Skip old Step 3 (script generation) since we have audioScript now.
+		const script = audioScript;
 
 		// Step 4: Convert to Audio - Upload chunks to GCS immediately to avoid memory/opcode limits
 		const chunkUrls = await step.run("generate-and-upload-tts-chunks", async () => {

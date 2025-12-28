@@ -110,6 +110,7 @@ export function EpisodeList({
 						voice_archetype: ep.voice_archetype ?? null,
 						reference_doc_url: ep.reference_doc_url ?? null,
 						context_weight: ep.context_weight ?? null,
+						intelligence: ep.intelligence ?? null,
 					};
 					playEpisode(normalizedEpisode);
 				}
@@ -152,6 +153,7 @@ export function EpisodeList({
 			voice_archetype: match.voice_archetype ?? null,
 			reference_doc_url: match.reference_doc_url ?? null,
 			context_weight: match.context_weight ?? null,
+			intelligence: match.intelligence ?? null,
 		};
 		// Ensure we always set fresh episode on deep link
 		playEpisode(normalizedEpisode);

@@ -80,6 +80,7 @@ export function SharedBundleView({ bundle, bundleId }: SharedBundleViewProps) {
 				voice_archetype: null,
 				reference_doc_url: null,
 				context_weight: null,
+				intelligence: null,
 			};
 
 			setEpisode(normalizedEpisode as unknown as UserEpisode);

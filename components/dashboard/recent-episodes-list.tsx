@@ -104,6 +104,7 @@ export function RecentEpisodesList({
 														voice_archetype: episode.voice_archetype ?? null,
 														reference_doc_url: episode.reference_doc_url ?? null,
 														context_weight: episode.context_weight ?? null,
+														intelligence: episode.intelligence ?? null,
 													};
 
 													playEpisode(normalizedEpisode);
