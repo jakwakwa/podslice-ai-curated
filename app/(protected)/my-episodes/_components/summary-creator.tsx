@@ -21,6 +21,7 @@ import { type AssetSuggestion, detectRelevantAssets } from "@/app/actions/detect
 import { LongEpisodeWarningDialog } from "@/components/features/episode-generation/long-episode-warning-dialog";
 import { SummaryLengthSelector } from "@/components/features/episode-generation/summary-length-selector";
 import { AddAssetDialog } from "@/components/research-vault/add-asset-dialog";
+import { SelectAssetDialog } from "@/components/research-vault/select-asset-dialog";
 import { Button } from "@/components/ui/button";
 import ComponentSpinner from "@/components/ui/component-spinner";
 import {
@@ -97,7 +98,10 @@ export default function SummaryCreator() {
 
 	// Research Lab State
 	// Research Lab State
+	const [_referenceDocUrl, _setReferenceDocUrl] = useState("");
+	// Research Lab State
 	const [referenceDocUrl, setReferenceDocUrl] = useState("");
+	const [selectedAssetTitle, setSelectedAssetTitle] = useState<string | null>(null);
 	const [contextWeight, setContextWeight] = useState([50]); // Default 50%
 
 	// News input state
@@ -621,48 +625,7 @@ export default function SummaryCreator() {
 								</div>
 							)}
 
-							{/* Smart Suggestion UI - Phase 4 Integration */}
-							{suggestedAssets.length > 0 && (
-								<div className="mt-4 border border-indigo-500/30 bg-indigo-500/10 rounded-xl p-4 animate-in fade-in slide-in-from-top-2">
-									<div className="flex items-center gap-2 mb-3">
-										<SparklesIcon className="w-4 h-4 text-indigo-400" />
-										<span className="text-sm font-medium text-indigo-200">
-											Smart Suggestions Found
-										</span>
-									</div>
-									<p className="text-xs text-muted-foreground mb-3">
-										We found relevant documents in your Research Vault. Apply one to
-										ground your episode?
-									</p>
-									<div className="flex flex-col gap-2">
-										{suggestedAssets.map(asset => (
-											<div
-												key={asset.id}
-												className="flex items-center justify-between bg-background/50 p-2 rounded-lg border border-border/50">
-												<div className="flex flex-col">
-													<span className="text-xs font-medium text-foreground">
-														{asset.title}
-													</span>
-													<span className="text-[10px] text-muted-foreground capitalize">
-														{asset.assetType.toLowerCase().replace("_", " ")}
-													</span>
-												</div>
-												<Button
-													size="sm"
-													variant="secondary"
-													className="h-7 text-xs"
-													onClick={() => {
-														setReferenceDocUrl(asset.sourceUrl);
-														setSuggestedAssets([]); // Hide suggestions after selection
-														toast.success(`Applied ${asset.title}`);
-													}}>
-													Apply
-												</Button>
-											</div>
-										))}
-									</div>
-								</div>
-							)}
+							{/* Smart Suggestion UI - Phase 4 Integration -> Moved to Research Lab Context */}
 
 							{creatorMode === "news" && (
 								<div className="bg-(--swak-2) m-0 p-0 rounded-3xl flex flex-row flex-wrap md:my-8 gap-0 mx-0 px-0 md:mx-0 min-w-full md:gap-4 ">
@@ -731,27 +694,78 @@ export default function SummaryCreator() {
 									className="my-8"
 									title="Research Lab Context">
 									<div className="space-y-4 pt-2">
-										<div className="space-y-2">
+										<div className="flex flex-col gap-4">
 											<div className="flex flex-row justify-between items-center">
-												<Label htmlFor="referenceDocUrl">
-													Reference Document URL (PDF/Whitepaper)
-												</Label>
-												{user?.id && (
-													<div className="scale-75 origin-right">
-														<AddAssetDialog userId={user.id} />
-													</div>
+												<Label>Context Source</Label>
+												{/* Suggestion Badge/Button */}
+												{suggestedAssets.length > 0 && !referenceDocUrl && (
+													<Button
+														variant="secondary"
+														size="sm"
+														className="h-7 gap-2 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/20 border border-indigo-500/30 animate-pulse"
+														onClick={() => {
+															const asset = suggestedAssets[0];
+															if (!asset) return;
+															setReferenceDocUrl(asset.sourceUrl);
+															setSelectedAssetTitle(asset.title);
+															setSuggestedAssets([]);
+															toast.success(`Auto-linked: ${asset.title}`);
+														}}>
+														<SparklesIcon className="w-3 h-3" />
+														Quick Add: {suggestedAssets[0]?.title}
+													</Button>
 												)}
 											</div>
-											<Input
-												id="referenceDocUrl"
-												placeholder="https://example.com/whitepaper.pdf"
-												value={referenceDocUrl}
-												onChange={e => setReferenceDocUrl(e.target.value)}
-												disabled={isBusy}
-											/>
-											<p className="text-[0.6rem] py-1 italic text-muted-foreground/50">
-												Provide a technical document to ground the analysis.
-											</p>
+
+											{!referenceDocUrl ? (
+												<div className="flex gap-3">
+													<SelectAssetDialog
+														onSelect={asset => {
+															setReferenceDocUrl(asset.sourceUrl);
+															setSelectedAssetTitle(asset.title);
+														}}
+													/>
+													{user?.id && <AddAssetDialog userId={user.id} />}
+												</div>
+											) : (
+												<div className="rounded-lg border bg-card p-3 flex items-center justify-between gap-3">
+													<div className="flex items-center gap-3 overflow-hidden">
+														<div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/10">
+															<InfoIcon className="h-4 w-4 text-primary" />
+														</div>
+														<div className="flex flex-col overflow-hidden">
+															<span className="truncate text-sm font-medium">
+																{selectedAssetTitle || "Selected Document"}
+															</span>
+															<span className="truncate text-xs text-muted-foreground">
+																{referenceDocUrl}
+															</span>
+														</div>
+													</div>
+													<Button
+														variant="ghost"
+														size="icon"
+														className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
+														onClick={() => {
+															setReferenceDocUrl("");
+															setSelectedAssetTitle(null);
+														}}>
+														<span className="sr-only">Remove</span>
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															viewBox="0 0 24 24"
+															fill="none"
+															stroke="currentColor"
+															strokeWidth="2"
+															strokeLinecap="round"
+															strokeLinejoin="round"
+															className="h-4 w-4">
+															<path d="M18 6 6 18" />
+															<path d="m6 6 12 12" />
+														</svg>
+													</Button>
+												</div>
+											)}
 										</div>
 
 										{referenceDocUrl && (

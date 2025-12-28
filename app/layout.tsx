@@ -65,6 +65,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body
+				suppressHydrationWarning
 				className={`${geist.variable} ${geistMono.variable} ${sourceSerif4.variable} font-sans antialiased`}>
 				<GlobalProgressBar />
 				<ClerkProvider

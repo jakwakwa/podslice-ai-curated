@@ -62,3 +62,28 @@ export async function saveResearchAsset(formData: FormData) {
 		return { error: "Failed to save asset to database." };
 	}
 }
+
+import { auth } from "@clerk/nextjs/server";
+
+export async function getUserAssets() {
+	const { userId } = await auth();
+	if (!userId) return [];
+
+	try {
+		const assets = await prisma.researchAsset.findMany({
+			where: { userId },
+			orderBy: { createdAt: "desc" },
+			select: {
+				id: true,
+				title: true,
+				assetType: true,
+				sourceUrl: true,
+				createdAt: true,
+			},
+		});
+		return assets;
+	} catch (error) {
+		console.error("Failed to fetch user assets:", error);
+		return [];
+	}
+}

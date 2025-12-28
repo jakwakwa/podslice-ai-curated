@@ -1,8 +1,7 @@
 import { createVertex } from "@ai-sdk/google-vertex";
 import { generateObject } from "ai";
 import { z } from "zod";
-
-const vertex = createVertex();
+import { ensureGoogleCredentialsForADC } from "@/lib/google-credentials";
 
 interface AssetSummary {
 	id: string;
@@ -18,6 +17,25 @@ export async function findRelevantAssets(
 	userAssets: AssetSummary[]
 ): Promise<string[]> {
 	if (userAssets.length === 0) return [];
+
+	// Configuration
+	const modelId = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
+	const projectId = process.env.GOOGLE_CLOUD_PROJECT_ID;
+	const location = process.env.GOOGLE_CLOUD_LOCATION || "us-central1";
+
+	if (!projectId) {
+		console.error("GOOGLE_CLOUD_PROJECT_ID not set; skipping asset detection.");
+		return [];
+	}
+
+	// Ensure auth
+	ensureGoogleCredentialsForADC();
+
+	// Initialize Vertex
+	const vertex = createVertex({
+		project: projectId,
+		location: location,
+	});
 
 	const prompt = `
     You are a Research Librarian.
@@ -43,7 +61,7 @@ export async function findRelevantAssets(
 
 	try {
 		const { object } = await generateObject({
-			model: vertex("gemini-1.5-flash"),
+			model: vertex(modelId),
 			prompt: prompt,
 			schema: z.object({
 				relevantAssetIds: z.array(z.string()),
