@@ -422,18 +422,25 @@ export function EpisodeCreator() {
 
 			// If not cached, set loading state and fetch
 			if (!cached) {
-				setIsLoadingSample(voiceName);
-				const res = await fetch(
-					`/api/tts/voice-sample?voice=${encodeURIComponent(voiceName)}`
-				);
-				if (!res.ok) throw new Error(await res.text());
-				// Get the array buffer and explicitly create a blob with audio/wav MIME type
-				const arrayBuffer = await res.arrayBuffer();
-				const blob = new Blob([arrayBuffer], { type: "audio/wav" });
-				const newUrl = URL.createObjectURL(blob);
-				setAudioUrlCache(prev => ({ ...prev, [voiceName]: newUrl }));
-				setIsLoadingSample(null);
-				url = newUrl;
+				const voiceConfig = VOICE_OPTIONS.find(v => v.id === voiceName);
+
+				if (voiceConfig?.sampleUrl) {
+					url = voiceConfig.sampleUrl;
+					setAudioUrlCache(prev => ({ ...prev, [voiceName]: url }));
+				} else {
+					setIsLoadingSample(voiceName);
+					const res = await fetch(
+						`/api/tts/voice-sample?voice=${encodeURIComponent(voiceName)}`
+					);
+					if (!res.ok) throw new Error(await res.text());
+					// Get the array buffer and explicitly create a blob with audio/wav MIME type
+					const arrayBuffer = await res.arrayBuffer();
+					const blob = new Blob([arrayBuffer], { type: "audio/wav" });
+					const newUrl = URL.createObjectURL(blob);
+					setAudioUrlCache(prev => ({ ...prev, [voiceName]: newUrl }));
+					setIsLoadingSample(null);
+					url = newUrl;
+				}
 			} else {
 				url = cached;
 			}
