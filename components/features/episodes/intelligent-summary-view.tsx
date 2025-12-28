@@ -49,7 +49,7 @@ export default function IntelligentSummaryView({
 	intelligence,
 }: IntelligentSummaryViewProps) {
 	// Fallback for null/undefined intelligence
-	if (!(intelligence && intelligence.structuredData && intelligence.writtenContent)) {
+	if (!(intelligence?.structuredData && intelligence?.writtenContent)) {
 		return null;
 	}
 
@@ -172,8 +172,8 @@ export default function IntelligentSummaryView({
 						</h3>
 						<Card className="bg-indigo-50/30 dark:bg-indigo-950/20 border-indigo-100 dark:border-indigo-900/50">
 							<CardContent className="pt-6">
-								<div className="prose prose-sm prose-slate dark:prose-invert max-w-none prose-ul:list-disc prose-li:marker:text-indigo-500">
-									<ReactMarkdown className="[&>ul]:space-y-2 [&>ul>li]:pl-0">
+								<div className="prose prose-sm prose-slate dark:prose-invert max-w-none prose-ul:list-disc prose-li:marker:text-indigo-500 [&>ul]:space-y-2 [&>ul>li]:pl-0">
+									<ReactMarkdown>
 										{investmentImplications || "No specific implications extracted."}
 									</ReactMarkdown>
 								</div>
@@ -220,8 +220,8 @@ export default function IntelligentSummaryView({
 						</h3>
 						<Card className="bg-red-50/30 dark:bg-red-950/20 border-red-100 dark:border-red-900/50">
 							<CardContent className="pt-6">
-								<div className="prose prose-sm prose-slate dark:prose-invert max-w-none prose-ul:list-disc prose-li:marker:text-red-500">
-									<ReactMarkdown className="[&>ul]:space-y-2">
+								<div className="prose prose-sm prose-slate dark:prose-invert max-w-none prose-ul:list-disc prose-li:marker:text-red-500 [&>ul]:space-y-2">
+									<ReactMarkdown>
 										{risksAndRedFlags || "No material risks identified."}
 									</ReactMarkdown>
 								</div>
