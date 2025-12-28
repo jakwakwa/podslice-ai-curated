@@ -1,6 +1,8 @@
+import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { extractUserEpisodeDuration } from "@/app/(protected)/admin/audio-duration/duration-extractor";
 import { aiConfig } from "@/config/ai";
+import { getVoiceById } from "@/lib/constants/voices";
 import {
 	combineAndUploadWavChunks,
 	sanitizeSpeakerLabels,
@@ -200,7 +202,8 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 					data: {
 						sentiment: analysis.sentiment,
 						sentiment_score: analysis.sentimentScore,
-						mentioned_assets: analysis.mentionedAssets as any,
+						mentioned_assets:
+							analysis.mentionedAssets as unknown as Prisma.InputJsonValue,
 					},
 				});
 				return analysis;
@@ -296,9 +299,11 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 							error
 						);
 						try {
-							// Map speaker to ElevenLabs voice ID
+							// Look up voice config for dynamic ElevenLabs fallback
+							const selectedVoiceId = line.speaker === "A" ? voiceA : voiceB;
+							const voiceConfig = getVoiceById(selectedVoiceId);
 							const elevenLabsVoiceId =
-								line.speaker === "A" ? "vDchjyOZZytffNeZXfZK" : "ucgJ8SdlW1CZr9MIm8BP";
+								voiceConfig?.elevenLabsId ?? "ucgJ8SdlW1CZr9MIm8BP";
 							audio = await generateElevenLabsTts(sanitizedText, elevenLabsVoiceId);
 						} catch (backupError) {
 							console.error(

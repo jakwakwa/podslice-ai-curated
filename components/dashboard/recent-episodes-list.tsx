@@ -98,6 +98,12 @@ export function RecentEpisodesList({
 														is_public: false,
 														public_gcs_audio_url: null,
 														auto_generated: episode.auto_generated ?? false,
+														sentiment: episode.sentiment ?? null,
+														sentiment_score: episode.sentiment_score ?? null,
+														mentioned_assets: episode.mentioned_assets ?? null,
+														voice_archetype: episode.voice_archetype ?? null,
+														reference_doc_url: episode.reference_doc_url ?? null,
+														context_weight: episode.context_weight ?? null,
 													};
 
 													playEpisode(normalizedEpisode);

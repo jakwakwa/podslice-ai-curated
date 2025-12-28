@@ -803,7 +803,7 @@ export function EpisodeCreator() {
 													</SelectTrigger>
 													<SelectContent>
 														{VOICE_OPTIONS.map(v => (
-															<SelectItem key={v.name} value={v.name}>
+															<SelectItem key={v.id} value={v.id}>
 																<div className="flex items-center justify-between w-full gap-3">
 																	<span>{v.label}</span>
 																</div>
@@ -844,7 +844,7 @@ export function EpisodeCreator() {
 													</SelectTrigger>
 													<SelectContent>
 														{VOICE_OPTIONS.map(v => (
-															<SelectItem key={v.name} value={v.name}>
+															<SelectItem key={v.id} value={v.id}>
 																<div className="flex items-center justify-between w/full gap-3 ">
 																	<div className="flex flex-col">
 																		<span>{v.label}</span>
@@ -854,9 +854,9 @@ export function EpisodeCreator() {
 																		onMouseDown={e => e.preventDefault()}
 																		onClick={e => {
 																			e.stopPropagation();
-																			void playSample(v.name);
+																			void playSample(v.id);
 																		}}
-																		aria-label={`Play ${v.name} sample`}
+																		aria-label={`Play ${v.label} sample`}
 																		className="inline-flex items-center gap-1 text-xs opacity-80 hover:opacity-100 mt-3"></button>
 																</div>
 															</SelectItem>
@@ -890,7 +890,7 @@ export function EpisodeCreator() {
 													</SelectTrigger>
 													<SelectContent>
 														{VOICE_OPTIONS.map(v => (
-															<SelectItem key={v.name} value={v.name}>
+															<SelectItem key={v.id} value={v.id}>
 																<div className="flex items-center justify-between w/full gap-3">
 																	<div className="flex flex-col">
 																		<span>{v.label}</span>
@@ -900,9 +900,9 @@ export function EpisodeCreator() {
 																		onMouseDown={e => e.preventDefault()}
 																		onClick={e => {
 																			e.stopPropagation();
-																			void playSample(v.name);
+																			void playSample(v.id);
 																		}}
-																		aria-label={`Play ${v.name} sample`}
+																		aria-label={`Play ${v.label} sample`}
 																		className="inline-flex items-center gap-1 text-xs opacity-80 hover:opacity-100"></button>
 																</div>
 															</SelectItem>

@@ -104,6 +104,12 @@ export function EpisodeList({
 						is_public: ep.is_public ?? false,
 						public_gcs_audio_url: ep.public_gcs_audio_url ?? null,
 						auto_generated: ep.auto_generated ?? false,
+						sentiment: ep.sentiment ?? null,
+						sentiment_score: ep.sentiment_score ?? null,
+						mentioned_assets: ep.mentioned_assets ?? null,
+						voice_archetype: ep.voice_archetype ?? null,
+						reference_doc_url: ep.reference_doc_url ?? null,
+						context_weight: ep.context_weight ?? null,
 					};
 					playEpisode(normalizedEpisode);
 				}
@@ -140,6 +146,12 @@ export function EpisodeList({
 			is_public: match.is_public ?? false,
 			public_gcs_audio_url: match.public_gcs_audio_url ?? null,
 			auto_generated: match.auto_generated ?? false,
+			sentiment: match.sentiment ?? null,
+			sentiment_score: match.sentiment_score ?? null,
+			mentioned_assets: match.mentioned_assets ?? null,
+			voice_archetype: match.voice_archetype ?? null,
+			reference_doc_url: match.reference_doc_url ?? null,
+			context_weight: match.context_weight ?? null,
 		};
 		// Ensure we always set fresh episode on deep link
 		playEpisode(normalizedEpisode);
@@ -276,6 +288,12 @@ export function EpisodeList({
 															is_public: episode.is_public ?? false,
 															public_gcs_audio_url: episode.public_gcs_audio_url ?? null,
 															auto_generated: episode.auto_generated ?? false,
+															sentiment: episode.sentiment ?? null,
+															sentiment_score: episode.sentiment_score ?? null,
+															mentioned_assets: episode.mentioned_assets ?? null,
+															voice_archetype: episode.voice_archetype ?? null,
+															reference_doc_url: episode.reference_doc_url ?? null,
+															context_weight: episode.context_weight ?? null,
 														};
 														playEpisode(normalizedEpisode);
 													}}

@@ -1,4 +1,7 @@
+// (No direct GCS import; handled in shared helpers)
+import type { Prisma } from "@prisma/client";
 import { extractUserEpisodeDuration } from "@/app/(protected)/admin/audio-duration/duration-extractor";
+import { getDefaultVoice } from "@/lib/constants/voices";
 // aiConfig consumed indirectly via shared helpers
 // Shared helpers
 import {
@@ -18,7 +21,6 @@ import {
 	generateFinancialAnalysis,
 	generateObjectiveSummary,
 } from "@/lib/inngest/utils/summary";
-// (No direct GCS import; handled in shared helpers)
 import { prisma } from "@/lib/prisma";
 import {
 	getSummaryLengthConfig,
@@ -208,7 +210,8 @@ export const generateUserEpisode = inngest.createFunction(
 						sentiment: analysis.sentiment,
 						sentiment_score: analysis.sentimentScore,
 						// Use any cast if specific JSON typing is strict, but Prisma Json handles objects/arrays
-						mentioned_assets: analysis.mentionedAssets as any,
+						mentioned_assets:
+							analysis.mentionedAssets as unknown as Prisma.InputJsonValue,
 						// technical_contradictions not in schema yet
 					},
 				});
@@ -319,7 +322,9 @@ export const generateUserEpisode = inngest.createFunction(
 						error
 					);
 					try {
-						buf = await generateElevenLabsTts(scriptParts[i]!);
+						// Use default voice config for ElevenLabs fallback
+						const defaultVoice = getDefaultVoice();
+						buf = await generateElevenLabsTts(scriptParts[i]!, defaultVoice.elevenLabsId);
 					} catch (backupError) {
 						console.error(
 							`[TTS] Backup ElevenLabs TTS also failed for chunk ${i + 1}/${scriptParts.length}`,

@@ -10,14 +10,13 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { UserEpisode } from "@/lib/types";
-import type { MarketSentiment, MentionedAsset } from "@/lib/types/intelligence";
+import type { MentionedAsset } from "@/lib/types/intelligence";
 import { cn } from "@/lib/utils";
 import { useDashboardStore } from "@/store/dashboardStore";
 import { TickerBadge } from "./ticker-badge";
 
 // Extended type for component props (casting from Prisma result)
 type MarketPulseEpisode = UserEpisode & {
-	sentiment?: MarketSentiment | null;
 	sentiment_score?: number | null;
 	mentioned_assets?: MentionedAsset[] | unknown; // Prisma Json
 	voice_archetype?: string | null;
@@ -34,7 +33,7 @@ export function MarketPulseTable({ episodes }: MarketPulseTableProps) {
 		// Ticker Filter
 		if (selectedTicker) {
 			if (!(ep.mentioned_assets && Array.isArray(ep.mentioned_assets))) return false;
-			const assets = ep.mentioned_assets as MentionedAsset[];
+			const assets = ep.mentioned_assets as unknown as MentionedAsset[];
 			const hasTicker = assets.some(a => a.ticker === selectedTicker);
 			if (!hasTicker) return false;
 		}
@@ -68,9 +67,9 @@ export function MarketPulseTable({ episodes }: MarketPulseTableProps) {
 						</TableRow>
 					) : (
 						filteredEpisodes.map(episode => {
-							const assets = (
-								Array.isArray(episode.mentioned_assets) ? episode.mentioned_assets : []
-							) as MentionedAsset[];
+							const assets = (Array.isArray(episode.mentioned_assets)
+								? episode.mentioned_assets
+								: []) as unknown as MentionedAsset[];
 
 							// Calculate gradient color for sentiment bar
 							const score = episode.sentiment_score ?? 0; // -1 to 1
