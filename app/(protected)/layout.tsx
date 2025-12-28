@@ -27,8 +27,6 @@ import {
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSubscriptionInit } from "@/hooks/useSubscriptionInit";
-import { BubbleBackground } from "@/src/components/animate-ui/components/backgrounds/bubble";
-import { GravityStarsBackground } from "@/src/components/animate-ui/components/backgrounds/gravity-stars";
 import { Footer } from "./footer";
 
 function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
@@ -124,12 +122,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 							strokeColor="#000"
 							className="absolute inset-0 flex items-start justify-center   -z-1 top-0 opacity-40 backdrop-blur-2xl  size-250 w-screen md:min-w-none  mx-0  p-0  flex-col my-0 md:flex-row pt-6 md:p-3 md:py-16 md:mx-0 pl-0 md:my-0  "
 						/> */}
-						<BubbleBackground className="absolute inset-0 flex items-center justify-center rounded-xl -z-2 backdrop-blur-sm opacity-30" />
 
-						<GravityStarsBackground
-							mouseGravity={"attract"}
-							className="absolute -inset-y-220 inset-x-0 flex items-center  justify-center rounded-xl -z-1"
-						/>
 						{children}
 					</div>
 					<Footer />
