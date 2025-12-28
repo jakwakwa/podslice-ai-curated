@@ -20,7 +20,7 @@ export function FormAccordion({ value, title, children, className }: FormAccordi
 			type="single"
 			collapsible
 			className={cn(
-				"bg-[#110d1712] mt-6 rounded-xl md:rounded-4xl w-full shadow-md transition-all duration-200 hover:bg-[#110d171f]",
+				"bg-[#70614d44] mt-6 rounded-xl md:rounded-4xl w-full shadow-md transition-all duration-200 hover:bg-[#110d171f]",
 				className
 			)}>
 			<AccordionItem value={value} className="border-none">

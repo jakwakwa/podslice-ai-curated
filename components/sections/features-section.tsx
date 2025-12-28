@@ -62,7 +62,7 @@ export function FeaturesSection({ isActive }: SectionProps) {
 			{/* Subtle background circles */}
 			<div className="absolute inset-0">
 				<div className="absolute w-[500px] h-[500px] rounded-full bg-purple-500/5 -top-40 -right-40" />
-				<div className="absolute w-[600px] h-[600px] rounded-full bg-blue-500/5 bottom-0 -left-40" />
+				<div className="absolute w-[600px] h-[600px] rounded-full bg-amber-500/5 bottom-0 -left-40" />
 			</div>
 
 			<div className="relative z-10 h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
@@ -84,7 +84,7 @@ export function FeaturesSection({ isActive }: SectionProps) {
 								mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 							}`}
 							style={{ transitionDelay: `${150 + index * 100}ms` }}>
-							<feature.icon className="w-8 h-8 text-blue-400 mb-4" />
+							<feature.icon className="w-8 h-8 text-amber-400 mb-4" />
 							<h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
 							<p className="text-gray-400 text-sm leading-relaxed">
 								{feature.description}

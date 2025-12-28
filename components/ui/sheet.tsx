@@ -71,8 +71,8 @@ function SheetContent({
 				{children}
 				<SheetPrimitive.Close className="flex flex-col  top-[12vh] items-end gap-2 ring-offset-background focus:ring-ring data-[state=open]:bg-[#fff] absolute  right-6 rounded-xs opacity-90 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none text-[0.55rem] text-violet-100">
 					<XIcon
-						color={`var(--color-cyan-500)`}
-						className="size-6 border-[1.5px] border-cyan-800 text-cyan-500 rounded-full p-1"
+						color={`var(--color-amber-500)`}
+						className="size-6 border-[1.5px] border-amber-800 text-amber-500 rounded-full p-1"
 					/>
 					<span className="visually-hidden h-0  overflow-hidden">Close Player</span>
 				</SheetPrimitive.Close>

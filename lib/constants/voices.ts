@@ -31,7 +31,7 @@ export const VOICE_OPTIONS: readonly VoiceOption[] = [
 		label: "The Strategist (Deep/Steady)",
 		sample: "Market signals are aligning with long-term macroeconomic trends.",
 		googleVoiceName: "en-GB-Journey-D",
-		elevenLabsId: "JBFqnCBsd6RMkjVDRZzb", // Updated to 'George' (more authoritative)
+		elevenLabsId: "gs0tAILXbY5DNrJrsM6F", // Updated to 'George' (more authoritative)
 		// ADDED:
 		sampleUrl: "/gemini-sample.mp3",
 	},
@@ -40,7 +40,7 @@ export const VOICE_OPTIONS: readonly VoiceOption[] = [
 		label: "The Newsroom (Fast/Daily)",
 		sample: "Breaking news: Major institutional inflow into spot ETFs today.",
 		googleVoiceName: "en-US-Journey-F", // Note: Changed to Journey-F (Female) to match your previous setup or keep News-N
-		elevenLabsId: "FGY2WhTYq4uNrI2GM446", // Updated to 'Nicole' (News anchor style)
+		elevenLabsId: "zZLmKvCp1i04X8E0FJ8B", // Updated to 'Nicole' (News anchor style)
 		// ADDED:
 		sampleUrl: "/gemini-sample.mp3",
 	},
@@ -49,7 +49,7 @@ export const VOICE_OPTIONS: readonly VoiceOption[] = [
 		label: "The Technical Lead (Precise/Clear)",
 		sample: "Bitcoin's hash rate distribution shows significant resilience.",
 		googleVoiceName: "en-US-Journey-D",
-		elevenLabsId: "IKne3meq5aSn9XLyUdCD", // Updated to 'Charlie' (Conversational/Technical)
+		elevenLabsId: "kPzsL2i3teMYv0FxEYQ6", // Updated to 'Charlie' (Conversational/Technical)
 		// ADDED:
 		sampleUrl: "/gemini-sample.mp3",
 	},

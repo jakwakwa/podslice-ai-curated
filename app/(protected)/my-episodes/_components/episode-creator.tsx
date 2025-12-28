@@ -18,7 +18,6 @@ import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
 import { LongEpisodeWarningDialog } from "@/components/features/episode-generation/long-episode-warning-dialog";
 import { SummaryLengthSelector } from "@/components/features/episode-generation/summary-length-selector";
-import SectionHeader from "@/components/shared/section-header";
 import { Button } from "@/components/ui/button";
 import ComponentSpinner from "@/components/ui/component-spinner";
 import {
@@ -468,10 +467,6 @@ export function EpisodeCreator() {
 
 	return (
 		<div className="w-full h-auto mb-0 px-3 py-0 md:px-8 md:pt-8 lg:px-10 mr-0 lg:pb-12 lg:mb-0 rounded-none shadow-lg rounded-b-md overflow-hidden">
-			<SectionHeader
-				title="Generate your summary"
-				description="Our Ai will help you understand the core concepts with an easy-to-listen to audible overview and text summary with a list of important key concepts"
-			/>
 			<div className="w-full flex flex-col gap-3 md:gap-8 md:w-full  p-0 md:min-w-full md:max-w-full">
 				<div className="w-full md:py-8 px-0 md:p-0 ">
 					{/* <ComponentSpinner isLabel={false} /> */}
@@ -522,7 +517,7 @@ export function EpisodeCreator() {
 											<TooltipTrigger asChild>
 												<button
 													type="button"
-													className="flex text-xs flex-row items-center text-blue-200/80 py-1 gap-2">
+													className="flex text-xs flex-row items-center text-amber-200/80 py-1 gap-2">
 													<HelpCircle
 														color={"#3080ff"}
 														className="text-xs  top-7 md:top-3 right-4 text-white"
@@ -534,7 +529,7 @@ export function EpisodeCreator() {
 												</button>
 											</TooltipTrigger>
 											<span className="hidden">Hover</span>
-											<TooltipContent className="bg-teal-900 backdrop-blur-sm flex flex-col items-center justify-center shadow-lg shadow-gray-950/90">
+											<TooltipContent className="bg-amber-900 backdrop-blur-sm flex flex-col items-center justify-center shadow-lg shadow-gray-950/90">
 												<p className="text-sm text-whitw cursor-default font-bold">
 													Quick Guide: How to Find and Paste YouTube Link
 												</p>
@@ -577,11 +572,11 @@ export function EpisodeCreator() {
 											{" "}
 											<div className="flex mt-4 flex-row items-center gap-2">
 												<Eye
-													className="text-xs  top-7 md:top-3 right-4 text-blue-400"
+													className="text-xs  top-7 md:top-3 right-4 text-amber-400"
 													size={16}
 												/>
 												<span className="text-xs text-indigo-200">
-													<span className="font-bold text-blue-300">Quick Review:</span>{" "}
+													<span className="font-bold text-amber-300">Quick Review:</span>{" "}
 													Confirm the video details below are correct
 												</span>
 											</div>
@@ -606,7 +601,7 @@ export function EpisodeCreator() {
 
 							{creatorMode === "news" && (
 								<div className="bg-(--swak-2) m-0 p-0 rounded-3xl flex flex-row flex-wrap md:my-8 gap-0 mx-0 px-0 md:mx-0 min-w-full md:gap-4 ">
-									<div className="mt-0 md:col-span-2 lg:min-w-full w-full border border-border rounded-t-3xl bg-blue-700/20  shadow-md p-8">
+									<div className="mt-0 md:col-span-2 lg:min-w-full w-full border border-border rounded-t-3xl bg-amber-700/20  shadow-md p-8">
 										<Label htmlFor="selectedTopicId">Topic</Label>
 										<Input
 											placeholder="Research any topic..."
@@ -752,7 +747,7 @@ export function EpisodeCreator() {
 										<button
 											type="button"
 											onClick={() => setShowTips(!showTips)}
-											className="flex mt-4 w-32 h-1 items-center gap-2 font-medium text-blue-400/80 hover:text-foreground transition-colors mb-3 text-[0.7rem] py-4 uppercase ">
+											className="flex mt-4 w-32 h-1 items-center gap-2 font-medium text-amber-400/80 hover:text-foreground transition-colors mb-3 text-[0.7rem] py-4 uppercase ">
 											{showTips ? (
 												<ChevronDown className="h-4 w-4 md:max-10 " />
 											) : (

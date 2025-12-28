@@ -10,7 +10,7 @@ export function EpisodeTranscript({ transcript }: { transcript: string }) {
 		<div className="mt-4">
 			{!show ? (
 				<Button
-					className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+					className="px-4 py-2 rounded bg-amber-600 text-white hover:bg-amber-700"
 					onClick={() => setShow(true)}
 					variant="default">
 					Show transcript

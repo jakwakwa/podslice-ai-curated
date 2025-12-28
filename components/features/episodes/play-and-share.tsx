@@ -93,12 +93,12 @@ export default function PlayAndShare({
 			<div className="w-full max-w-[10vw] flex md:flex-row my-8 items-start gap-4">
 				<Button
 					type="button"
-					className="outline-teal-400 outline-1 max-h-10"
+					className="outline-amber-400 outline-1 max-h-10"
 					variant="play"
 					size="playSmall"
 					onClick={onPlay}
 					disabled={!canPlay}
-					icon={<Play className="text-teal-300" />}>
+					icon={<Play className="text-amber-300" />}>
 					Play
 				</Button>
 				<Button

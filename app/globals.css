@@ -17,7 +17,7 @@
 	--card-foreground: oklch(0.141 0.005 285.823);
 	--popover: oklch(1 0 0);
 	--popover-foreground: oklch(0.141 0.005 285.823);
-	--primary: oklch(0.488 0.243 264.376);
+	--primary: oklch(74.933% 0.15445 74.778);
 	--primary-foreground: oklch(0.97 0.014 254.604);
 	--secondary: oklch(0.967 0.001 286.375);
 	--secondary-foreground: oklch(0.21 0.006 285.885);
@@ -51,7 +51,7 @@
 	--card-foreground: oklch(0.985 0 0);
 	--popover: oklch(0.21 0.006 285.885);
 	--popover-foreground: oklch(0.985 0 0);
-	--primary: oklch(0.488 0.243 264.376);
+	--primary: oklch(44.852% 0.04035 82.516 / 0.509);
 	--primary-foreground: oklch(0.97 0.014 254.604);
 	--secondary: oklch(0.274 0.006 286.033);
 	--secondary-foreground: oklch(0.985 0 0);
@@ -85,6 +85,10 @@
 /* EPISODE CARDS                 */
 /* ============================================= */
 @layer utilities {
+
+	.bg-primary {
+		background-color: var(--primary) !important;
+	}
 
 	.border {
 		border: var(--border) !important;
@@ -243,7 +247,7 @@
 	/* ============================================= */
 
 	.bg-card {
-		background-color: #0f0f0f;
+		background-color: #3b322744;
 	}
 
 	.bg-bigcard {

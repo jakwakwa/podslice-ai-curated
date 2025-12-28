@@ -9,7 +9,7 @@ interface SectionProps {
 	isActive: boolean;
 }
 
-export function Hetealction({ isActive }: SectionProps) {
+export function Heamberction({ isActive }: SectionProps) {
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
@@ -21,23 +21,23 @@ export function Hetealction({ isActive }: SectionProps) {
 	}, [isActive]);
 
 	return (
-		<div className="relative h-full w-full bg-linear-to-br from-teal-950 via-purple-950 to-indigo-950 overflow-hidden">
+		<div className="relative h-full w-full bg-linear-to-br from-amber-950 via-purple-950 to-indigo-950 overflow-hidden">
 			{/* Animated circles - Apple Health style */}
 			<div className="absolute inset-0">
 				<div
-					className={`absolute w-[600px] h-[600px] rounded-full bg-blue-400/30 -top-20 -left-40 transition-all duration-2000 ease-out ${
+					className={`absolute w-[600px] h-[600px] rounded-full bg-amber-400/30 -top-20 -left-40 transition-all duration-2000 ease-out ${
 						mounted ? "scale-100 opacity-100" : "scale-50 opacity-0"
 					}`}
 					style={{ transitionDelay: "200ms" }}
 				/>
 				<div
-					className={`absolute w-[700px] h-[700px] rounded-full bg-cyan-400/20 top-1/4 right-[-200px] transition-all duration-2000 ease-out ${
+					className={`absolute w-[700px] h-[700px] rounded-full bg-amber-400/20 top-1/4 right-[-200px] transition-all duration-2000 ease-out ${
 						mounted ? "scale-100 opacity-100" : "scale-50 opacity-0"
 					}`}
 					style={{ transitionDelay: "400ms" }}
 				/>
 				<div
-					className={`absolute w-[500px] h-[500px] rounded-full bg-blue-300/25 bottom-[-100px] left-1/3 transition-all duration-2000 ease-out ${
+					className={`absolute w-[500px] h-[500px] rounded-full bg-amber-300/25 bottom-[-100px] left-1/3 transition-all duration-2000 ease-out ${
 						mounted ? "scale-100 opacity-100" : "scale-50 opacity-0"
 					}`}
 					style={{ transitionDelay: "600ms" }}

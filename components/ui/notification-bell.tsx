@@ -149,7 +149,7 @@ export function NotificationBell() {
 			case "subscription_ending":
 				return "text-amber-500";
 			case "subscription_upgraded":
-				return "text-blue-500";
+				return "text-amber-500";
 			case "subscription_downgraded":
 				return "text-gray-500";
 			default:
@@ -228,8 +228,8 @@ export function NotificationBell() {
 								variant="default"
 								key={notification.notification_id}
 								className={cn(
-									"bg-indigo-200/20 border transition-all duration-200 rounded-2xl hover:border-cyan-400/30 hover:shadow-sm mb-2 py-1",
-									!notification.is_read && "bg-cyan-300/20 border-3 border-cyan-300/20"
+									"bg-indigo-200/20 border transition-all duration-200 rounded-2xl hover:border-amber-400/30 hover:shadow-sm mb-2 py-1",
+									!notification.is_read && "bg-amber-300/20 border-3 border-amber-300/20"
 								)}>
 								<div className="py-1">
 									<div className="flex items-start justify-between mb-1">
@@ -263,7 +263,7 @@ export function NotificationBell() {
 												size="xs"
 												onClick={() => handleMarkAsRead(notification.notification_id)}
 												disabled={isLoading}
-												className="border  shadow-black/30 shadow-md  rounded-4xl text-blue-300 text-xs py-0 h-6 px-3">
+												className="border  shadow-black/30 shadow-md  rounded-4xl text-amber-300 text-xs py-0 h-6 px-3">
 												mark as read
 												<EyeIcon size={14} />
 											</Button>

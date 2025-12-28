@@ -22,7 +22,7 @@ export default function AboutFeatureCard({
 			transition={{ duration: 0.5 }}
 			className="p-6 rounded-xl bg-card border border-border hover:border-primary transition-all duration-300 hover:shadow-sm shadow-slate-950 group">
 			<div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-				<Icon className="w-6 h-6 text-cyan-500" />
+				<Icon className="w-6 h-6 text-amber-500" />
 			</div>
 			<h3 className="text-xl  font-bold text-foreground mb-3">{title}</h3>
 			<p className="text-foreground/70 leading-relaxed">{description}</p>

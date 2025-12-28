@@ -181,7 +181,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 										return (
 											<div className="space-y-6 ">
 												{summaryData.top_headlines && (
-													<div className="text-blue-400/70">
+													<div className="text-amber-400/70">
 														<h4 className="font-semibold text-lg mt-8 mb-4">
 															Top Headlines
 														</h4>
@@ -200,7 +200,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 																	{summaryData.topic.map((t: string, i: number) => (
 																		<span
 																			key={i}
-																			className="px-2 py-[0.5px] bg-cyan-900 text-cyan-400  font-light rounded-md text-sm capitalize">
+																			className="px-2 py-[0.5px] bg-amber-900 text-amber-400  font-light rounded-md text-sm capitalize">
 																			{t}
 																		</span>
 																	))}
@@ -218,7 +218,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 																		summaryData.sentiment.map((s: string, i: number) => (
 																			<span
 																				key={i}
-																				className="px-2 py-[0.5px] bg-cyan-900 text-gray-100 rounded-md text-sm capitalize">
+																				className="px-2 py-[0.5px] bg-amber-900 text-gray-100 rounded-md text-sm capitalize">
 																				{s}
 																			</span>
 																		))
@@ -232,7 +232,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 														)}
 													</div>
 													{summaryData.tags && summaryData.tags.length > 0 && (
-														<div className="text-cyan-800/70 hidden">
+														<div className="text-amber-800/70 hidden">
 															<h4 className="font-medium text-sm mt-0 mb-4 text-purple-300/90">
 																Tags
 															</h4>
@@ -240,7 +240,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 																{summaryData.tags.map((tag: string, i: number) => (
 																	<span
 																		key={i}
-																		className="px-2 bg-violet-950/80  text-blue-300/70 rounded-md text-sm shadow-md">
+																		className="px-2 bg-violet-950/80  text-amber-300/70 rounded-md text-sm shadow-md">
 																		#{tag}
 																	</span>
 																))}

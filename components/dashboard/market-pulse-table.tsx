@@ -102,7 +102,7 @@ export function MarketPulseTable({ episodes }: MarketPulseTableProps) {
 											</span>
 											<div className="h-1.5 w-12 bg-secondary rounded-full overflow-hidden">
 												<div
-													className="h-full bg-blue-400"
+													className="h-full bg-amber-400"
 													style={{ width: `${reliability}%` }}
 												/>
 											</div>

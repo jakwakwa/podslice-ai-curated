@@ -331,7 +331,7 @@ function HoleBackground({
 			<motion.div
 				className={cn(
 					"absolute top-[-71.5%] left-1/2 -z-10 w-[30%] h-[140%] rounded-b-full blur-3xl opacity-45 dark:mix-blend-plus-lighter mix-blend-plus-darker transform-[translate3d(-50%,0,0)] bg-position-[0%_100%] bg-size-[100%_200%]",
-					"dark:[background:linear-gradient(20deg,var(--color-cyan-400),var(color-cyan-600).5%,var(--color-teal-300), #fe848f20_49.5%,var(--color-gray-800)_66%,.5%,var(--color-cyan-500) var(--color-pink-300)_100%)_0_100%_/_100%_200%] [background:linear-gradient(20deg,var(--color-teal-700),var(--swak-2)_16.5%,var(--swak-1),var(--color-teal-600)_49.5%,var(--swak-2),var(--color-pink-300)_85.5%,var(--swak-1)_100%)_0_100%/100%_200%]"
+					"dark:[background:linear-gradient(20deg,var(--color-amber-400),var(color-amber-600).5%,var(--color-amber-300), #fe848f20_49.5%,var(--color-gray-800)_66%,.5%,var(--color-amber-500) var(--color-pink-300)_100%)_0_100%_/_100%_200%] [background:linear-gradient(20deg,var(--color-amber-700),var(--swak-2)_16.5%,var(--swak-1),var(--color-amber-600)_49.5%,var(--swak-2),var(--color-pink-300)_85.5%,var(--swak-1)_100%)_0_100%/100%_200%]"
 				)}
 				animate={{ backgroundPosition: "0% 300%" }}
 				transition={{ duration: 5, ease: "linear", repeat: Infinity }}

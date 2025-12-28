@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
+import SectionHeader from "@/components/section-header";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,6 @@ import { H3, Typography } from "@/components/ui/typography";
 import { ONE_HOUR, SEVEN_DAYS } from "@/lib/swr";
 import type { Bundle, Podcast } from "@/lib/types";
 import { BundleSelectionDialog } from "./bundle-selection-dialog";
-import SectionHeader from "@/components/section-header";
 
 type BundleWithAccess = Bundle & {
 	podcasts: Podcast[];
@@ -262,14 +262,14 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 				prev =>
 					prev
 						? {
-							...prev,
-							...(isSelectingSharedBundle
-								? { selected_shared_bundle_id: actualBundleId }
-								: { selected_bundle_id: actualBundleId }),
-							selectedBundle: {
-								name: selectedBundle?.name || "",
-							},
-						}
+								...prev,
+								...(isSelectingSharedBundle
+									? { selected_shared_bundle_id: actualBundleId }
+									: { selected_bundle_id: actualBundleId }),
+								selectedBundle: {
+									name: selectedBundle?.name || "",
+								},
+							}
 						: null,
 				{ revalidate: false }
 			);
@@ -332,8 +332,6 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 		);
 	}
 
-
-
 	// Separate bundles by type
 	const curatedBundles = bundleList.filter(b => b.bundleType === "curated");
 	const sharedBundles = bundleList.filter(b => b.bundleType === "shared");
@@ -356,11 +354,12 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 			{/* Curated Bundles Section */}
 
 			{curatedBundles.length > 0 && (
-
 				<div className=" mb-8 px-4">
-					<SectionHeader title="Subscribe to a Channel" description="Subscribe to channels. New audio and text summaries will appear in your feed automatically weekly or daily" />
+					<SectionHeader
+						title="Subscribe to a Channel"
+						description="Subscribe to channels. New audio and text summaries will appear in your feed automatically weekly or daily"
+					/>
 					<div className="episode-card-wrapper-dark relative transition-all duration-200 text-card-foreground gap-4 p-0 px-2 md:px-4 md:py-5 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-3 xl:p-[40px]   lg:px-8 xl:justify-evenly items-start lg:gap-5 xl:gap-6 h-fit xl:px-[40px] rounded-3xl  backdrop-blur-[3px]">
-
 						{curatedBundles.map(bundle => {
 							const planMeta = PLAN_GATE_META[bundle.min_plan];
 							const canInteract = bundle.canInteract;
@@ -459,8 +458,9 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 											</div>
 
 											<div className="flex items-start gap-2 text-sm font-normal tracking-wide w-full">
-												<div className="relative my-2 border-2  border-teal-300 rounded-lg outline-0 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
-													{!failedBundleImages.has(bundle?.bundle_id || "") && bundle?.bundle_id ? (
+												<div className="relative my-2 border-2  border-amber-300 rounded-lg outline-0 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
+													{!failedBundleImages.has(bundle?.bundle_id || "") &&
+													bundle?.bundle_id ? (
 														<img
 															className="w-full object-cover"
 															src={`/api/bundles/${bundle.bundle_id}/image`}
@@ -606,7 +606,8 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 
 											<div className="flex items-start gap-2 text-sm font-normal tracking-wide w-full">
 												<div className="relative my-2 rounded-lg outline-2 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
-													{!failedBundleImages.has(bundle?.bundle_id || "") && bundle?.bundle_id ? (
+													{!failedBundleImages.has(bundle?.bundle_id || "") &&
+													bundle?.bundle_id ? (
 														<img
 															className="w-full object-cover"
 															src={`/api/bundles/${bundle.bundle_id}/image`}

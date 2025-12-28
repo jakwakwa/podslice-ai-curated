@@ -3,13 +3,13 @@
 import { useRef, useState } from "react";
 import { CTASection } from "./sections/cta-section";
 import { FeaturesSection } from "./sections/features-section";
-import { Hetealction } from "./sections/hero-section";
+import { Heamberction } from "./sections/hero-section";
 import { HowItWorksSection } from "./sections/how-it-works-section";
 import { PersonalizedFeedSection } from "./sections/personalized-feed-section";
 import { PricingSection } from "./sections/pricing-section";
 
 const sections = [
-	{ id: "hero", component: Hetealction },
+	{ id: "hero", component: Heamberction },
 	{ id: "how-it-works", component: HowItWorksSection },
 	{ id: "personalized", component: PersonalizedFeedSection },
 	{ id: "features", component: FeaturesSection },

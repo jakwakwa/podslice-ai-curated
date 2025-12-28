@@ -16,8 +16,8 @@ const steps = [
 		title: "Analyze Content",
 		description:
 			"Simply provide a Youtube Video you don't have time to watch or select a News topic you want to catch up on.",
-		color: "from-teal-400 to-cyan-700",
-		bgColor: "bg-cyan-100",
+		color: "from-amber-400 to-amber-700",
+		bgColor: "bg-amber-100",
 	},
 	{
 		icon: HiOutlineSparkles,
@@ -32,8 +32,8 @@ const steps = [
 		title: "Smart Summaries & Scripts",
 		description:
 			"It then writes a detailed, structured text summary and generates a script for a conversational, mini-podcast.",
-		color: "from-teal-500 to-cyan-800",
-		bgColor: "bg-teal-50",
+		color: "from-amber-500 to-amber-800",
+		bgColor: "bg-amber-50",
 	},
 	{
 		icon: RiVoiceAiLine,
@@ -48,7 +48,7 @@ const steps = [
 		title: "Ready For You",
 		description:
 			"Your new summary lands in your personal feed, complete with its own structured text page and the polished audio episode.",
-		color: "from-pink-600 to-teal-950",
+		color: "from-pink-600 to-amber-950",
 		bgColor: "bg-violet-50",
 	},
 ];
@@ -90,7 +90,7 @@ export function HowItWorksSection({ isActive }: SectionProps) {
 	const canScrollRight = currentIndex < steps.length - 1;
 
 	return (
-		<div className="relative h-full w-full bg-gradient-to-b from-teal-50 to-cyan-50 overflow-hidden">
+		<div className="relative h-full w-full bg-gradient-to-b from-amber-50 to-amber-50 overflow-hidden">
 			<div className="relative z-10 h-full flex flex-col justify-center">
 				{/* Header */}
 				<div className="px-6 md:px-12 lg:px-24 max-w-7xl mx-auto w-full mb-8">
@@ -99,8 +99,8 @@ export function HowItWorksSection({ isActive }: SectionProps) {
 							mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 						}`}>
 						<div className="flex items-center gap-2 mb-4">
-							<HiOutlineSparkles className="w-10 h-10 text-cyan-400" />
-							<span className="text-cyan-400 font-medium text-xl">AI Inside</span>
+							<HiOutlineSparkles className="w-10 h-10 text-amber-400" />
+							<span className="text-amber-400 font-medium text-xl">AI Inside</span>
 						</div>
 						<h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-900 text-balance">
 							How It Works
