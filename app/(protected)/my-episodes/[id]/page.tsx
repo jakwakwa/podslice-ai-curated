@@ -5,9 +5,7 @@ import { z } from "zod";
 import EpisodeActionsWrapper from "@/components/features/episodes/episode-actions-wrapper";
 import EpisodeHeader from "@/components/features/episodes/episode-header";
 import EpisodeShell from "@/components/features/episodes/episode-shell";
-import IntelligentSummaryView, {
-	type FinancialIntelligence,
-} from "@/components/features/episodes/intelligent-summary-view";
+import IntelligentSummaryView from "@/components/features/episodes/intelligent-summary-view";
 import KeyTakeaways from "@/components/features/episodes/key-takeaways";
 import { Separator } from "@/components/ui/separator";
 import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
@@ -99,6 +97,29 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 	const _narrativeRecap = extractNarrativeRecap(episode.summary);
 	const _hasSummary = Boolean(episode.summary);
 
+	// Reshape flat intelligence data from DB to nested structure expected by component
+	// The Inngest function flattens structuredData + writtenContent into the root of the JSON
+	let mappedIntelligence = null;
+	if (episode.intelligence) {
+		const raw = episode.intelligence as any;
+		mappedIntelligence = {
+			structuredData: {
+				sentimentScore: raw.sentimentScore,
+				sentimentLabel: raw.sentimentLabel,
+				tickers: raw.tickers,
+				sectorRotation: raw.sectorRotation,
+			},
+			writtenContent: {
+				executiveBrief: raw.executiveBrief,
+				variantView: raw.variantView,
+				investmentImplications: raw.investmentImplications,
+				risksAndRedFlags: raw.risksAndRedFlags,
+				tradeRecommendations: raw.tradeRecommendations,
+				documentContradictions: raw.documentContradictions,
+			},
+		};
+	}
+
 	return (
 		<EpisodeShell>
 			<div>
@@ -125,10 +146,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 					/>
 
 					<Separator className="my-8" />
-					{episode.intelligence ? (
-						<IntelligentSummaryView
-							intelligence={episode.intelligence as unknown as FinancialIntelligence}
-						/>
+					{mappedIntelligence ? (
+						<IntelligentSummaryView intelligence={mappedIntelligence} />
 					) : (
 						<KeyTakeaways items={takeaways} />
 					)}
