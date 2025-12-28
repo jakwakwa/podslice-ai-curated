@@ -181,7 +181,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 										return (
 											<div className="space-y-6 ">
 												{summaryData.top_headlines && (
-													<div className="text-cyan-200/70">
+													<div className="text-blue-400/70">
 														<h4 className="font-semibold text-lg mt-8 mb-4">
 															Top Headlines
 														</h4>
@@ -240,7 +240,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 																{summaryData.tags.map((tag: string, i: number) => (
 																	<span
 																		key={i}
-																		className="px-2 bg-violet-950/80  text-violet-300/70 rounded-md text-sm shadow-md">
+																		className="px-2 bg-violet-950/80  text-blue-300/70 rounded-md text-sm shadow-md">
 																		#{tag}
 																	</span>
 																))}

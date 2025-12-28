@@ -49,7 +49,7 @@ export default function AboutHowItWorksSection() {
 					className="flex gap-4 items-start p-6 rounded-xl bg-card border border-border hover:border-primary transition-all duration-300 hover:shadow-lg">
 					<div className="flex-shrink-0">
 						<div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-							<step.icon className="w-6 h-6 text-violet-400" />
+							<step.icon className="w-6 h-6 text-blue-400" />
 						</div>
 					</div>
 					<div>

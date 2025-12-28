@@ -30,16 +30,16 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(
 		const _isPathAllowed = allowedPaths.includes(pathname);
 
 		return (
-			<div className="min-w-screen sm:ml-0 sm:pt-8 md:min-w-full md:mx-8s sm:-mt-4 pb-12 md:ml-0 my-0 pt-6 mx-0  px-5  md:px-8  h-fit lg:pt-6 lg:pb-0 shadow-sm bg-gray-800/30 outline-1 backdrop-blur-3xl outline-cyan-800/50 rounded-none  max-w-full w-screen  relative border-b-none md:rounded-xl md:border md:border-border/50 p-6 flex flex-col  justify-between gap-3 md:gap-8 md:w-full mb-0 md:mb-0 md:flex-row sm:pb-12   md:shadow-foreground-muted/80 lg:shadow-xl md:items-center md:justify-between lg:mb-0 xl:py-10 md:mt-2 md:py-8 md:pb-8">
+			<div className="min-w-screen sm:ml-0 sm:pt-8 md:min-w-full md:mx-8s sm:-mt-4 pb-12 md:ml-0 my-0 pt-6 mx-0  px-3  md:px-0  h-fit lg:pt-6 lg:pb-0 shadow-sm bg-neutral-900 backdrop-blur-3xl rounded-none  max-w-full w-screen border-neutral-200 outline-1 outline-black  relative md:rounded-xl  p-6 flex flex-col  justify-between gap-3 md:gap-8 md:w-full mb-0 md:mb-0 md:flex-row sm:pb-12 md:shadow-foreground-muted/80 lg:shadow-xl md:items-center md:justify-between lg:mb-0 xl:py-10 md:mt-2 md:py-8 md:pb-8">
 				<div className="flex flex-col justify-center w-auto mt-5 md:mt-0 gap-6 ml-2 lg:mx-6">
-					<h2 className="flex flex-col w-full text-2xl xl:text-2xl md:text-xl   lg:text-xl font-bold px-0 md:px-0 pt-0 pb-0 md:py-0  text-violet-300 leading-tight lg:max-w-2xl lg:my-0 title-case ">
+					<h2 className="flex flex-col w-full text-2xl xl:text-2xl md:text-xl   lg:text-xl font-bold px-0 md:px-0 pt-0 pb-0 md:py-0  text-blue-300 leading-tight lg:max-w-2xl lg:my-0 title-case ">
 						{title}
 					</h2>
 					{description && (
 						<Typography
 							as="p"
 							variant="body"
-							className="text-base font-medium md:text-[1rem] p-0  md:px-0  md:py-0  text-primary-foreground/75 leading-normal max-w-screen  w-full md:max-w-[97%] lg:text-base  lg:max-w-2xl lg:mb-2">
+							className="text-base hidden font-medium md:text-[1rem] p-0  md:px-0  md:py-0  text-primary-foreground/75 leading-normal max-w-screen  w-full md:max-w-[97%] lg:text-base  lg:max-w-2xl lg:mb-2">
 							{description}
 						</Typography>
 					)}

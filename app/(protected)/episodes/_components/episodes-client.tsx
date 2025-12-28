@@ -105,7 +105,7 @@ export function EpisodesClient({
 	const _sectionContent = getSectionContent();
 
 	return (
-		<div className="border-1 bg-[var(--kwak-1)]/80 border-[rgba(227,114,244,0.14)] rounded-none overflow-hidden mb-0 p-0 mt-0 md:mt-0 md:m-0 md:px-1 outline-0 md:rounded-4xl md:shadow-xl bg-episode-card-wrapper  lg:mt-6">
+		<div className=" mb-0 p-0 mt-0 md:mt-0 md:m-0 md:px-2  lg:mt-0">
 			<div className="text-left md:pt-0 rounded-none my-0 py-0 md:mb-0 md:pb-0 overflow-hidden md:rounded-4xl md:py-0 min-w-full min-h-full flex flex-col justify-between md:flex-row items-center mx-0 lg:w-full lg:px-6	lg:pb-0	">
 				<SectionHeader
 					title="Your Subscribed Channel Feed"

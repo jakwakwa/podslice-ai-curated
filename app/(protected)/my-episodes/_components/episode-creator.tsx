@@ -44,6 +44,7 @@ import { VOICE_OPTIONS } from "@/lib/constants/voices";
 import { getMaxDurationSeconds } from "@/lib/env";
 import { useNotificationStore } from "@/lib/stores";
 import type { SummaryLengthOption } from "@/lib/types/summary-length";
+import { FormAccordion } from "./form-accordion";
 
 const EPISODE_LIMIT = PRICING_TIER[2]?.episodeLimit ?? 30;
 const YT_MAX_DURATION_SECONDS = getMaxDurationSeconds();
@@ -505,7 +506,7 @@ export function EpisodeCreator() {
 								void handleCreate();
 							}}>
 							{creatorMode === "youtube" && (
-								<div className="">
+								<div className="p-0">
 									<div className="space-y-2 md:w-ful overflow-hidden bg-card p-5 my-8 gap-4 mx-0 md:mx-0 border border-border rounded-3xl  shadow-md p-8l md:min-w-fit">
 										<Label htmlFor="youtubeUrl">
 											Link to podcast episode ( YouTube only )
@@ -514,9 +515,9 @@ export function EpisodeCreator() {
 											<TooltipTrigger asChild>
 												<button
 													type="button"
-													className="flex text-xs flex-row items-center text-teal-200/80 py-1 gap-2">
+													className="flex text-xs flex-row items-center text-blue-200/80 py-1 gap-2">
 													<HelpCircle
-														color={"#39c0b5e2"}
+														color={"#3080ff"}
 														className="text-xs  top-7 md:top-3 right-4 text-white"
 														size={16}
 													/>
@@ -569,11 +570,11 @@ export function EpisodeCreator() {
 											{" "}
 											<div className="flex mt-4 flex-row items-center gap-2">
 												<Eye
-													className="text-xs  top-7 md:top-3 right-4 text-violet-400"
+													className="text-xs  top-7 md:top-3 right-4 text-blue-400"
 													size={16}
 												/>
 												<span className="text-xs text-indigo-200">
-													<span className="font-bold text-violet-300">Quick Review:</span>{" "}
+													<span className="font-bold text-blue-300">Quick Review:</span>{" "}
 													Confirm the video details below are correct
 												</span>
 											</div>
@@ -598,7 +599,7 @@ export function EpisodeCreator() {
 
 							{creatorMode === "news" && (
 								<div className="bg-(--swak-2) m-0 p-0 rounded-3xl flex flex-row flex-wrap md:my-8 gap-0 mx-0 px-0 md:mx-0 min-w-full md:gap-4 ">
-									<div className="mt-0 md:col-span-2 lg:min-w-full w-full border border-border rounded-t-3xl bg-bigcard  shadow-md p-8">
+									<div className="mt-0 md:col-span-2 lg:min-w-full w-full border border-border rounded-t-3xl bg-blue-700/20  shadow-md p-8">
 										<Label htmlFor="selectedTopicId">Topic</Label>
 										<Input
 											placeholder="Research any topic..."
@@ -630,27 +631,25 @@ export function EpisodeCreator() {
 															disabled={isBusy}
 															className="px-3 py-1 my-1">
 															{s.label}
+															<Tooltip>
+																<TooltipTrigger asChild>
+																	<div className="inline-flex items-center">
+																		<InfoIcon
+																			className="text-xs text-muted-foreground hover:text-foreground"
+																			size={16}
+																		/>
+																		<span className="sr-only">
+																			More info about {s.label}
+																		</span>
+																	</div>
+																</TooltipTrigger>
+																<TooltipContent className="bg-white">
+																	<p className="text-sm text-black cursor-default">
+																		{s?.tip}
+																	</p>
+																</TooltipContent>
+															</Tooltip>
 														</Button>
-														<Tooltip>
-															<TooltipTrigger asChild>
-																<button
-																	type="button"
-																	className="inline-flex items-center">
-																	<InfoIcon
-																		className="text-xs text-muted-foreground hover:text-foreground"
-																		size={16}
-																	/>
-																	<span className="sr-only">
-																		More info about {s.label}
-																	</span>
-																</button>
-															</TooltipTrigger>
-															<TooltipContent className="bg-background">
-																<p className="text-sm text-black cursor-default">
-																	{s?.tip}
-																</p>
-															</TooltipContent>
-														</Tooltip>
 													</div>
 												);
 											})}
@@ -660,49 +659,50 @@ export function EpisodeCreator() {
 							)}
 
 							{creatorMode === "youtube" && (
-								<div className="space-y-4 pt-4 border-t border-border mt-4">
-									<h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-										Research Lab Context
-									</h3>
-
-									<div className="space-y-2">
-										<Label htmlFor="referenceDocUrl">
-											Reference Document URL (PDF/Whitepaper)
-										</Label>
-										<Input
-											id="referenceDocUrl"
-											placeholder="https://example.com/whitepaper.pdf"
-											value={referenceDocUrl}
-											onChange={e => setReferenceDocUrl(e.target.value)}
-											disabled={isBusy}
-										/>
-										<p className="text-[0.7rem] text-muted-foreground">
-											Provide a technical document to ground the analysis.
-										</p>
-									</div>
-
-									{referenceDocUrl && (
-										<div className="space-y-4 bg-muted/30 p-4 rounded-lg border border-border/50">
-											<div className="flex justify-between items-center">
-												<Label className="text-xs font-bold">Context Weighting</Label>
-												<span className="text-xs font-mono bg-primary/20 px-2 py-0.5 rounded text-primary">
-													{contextWeight[0]}% Document
-												</span>
-											</div>
-											<Slider
-												value={contextWeight}
-												onValueChange={setContextWeight}
-												max={100}
-												step={5}
-												className="py-4"
+								<FormAccordion
+									value="research-lab"
+									className="my-8"
+									title="Research Lab Context">
+									<div className="space-y-4 pt-2">
+										<div className="space-y-2">
+											<Label htmlFor="referenceDocUrl">
+												Reference Document URL (PDF/Whitepaper)
+											</Label>
+											<Input
+												id="referenceDocUrl"
+												placeholder="https://example.com/whitepaper.pdf"
+												value={referenceDocUrl}
+												onChange={e => setReferenceDocUrl(e.target.value)}
+												disabled={isBusy}
 											/>
-											<div className="flex justify-between text-[0.6rem] text-muted-foreground uppercase font-bold px-1">
-												<span>Podcast Audio</span>
-												<span>Reference Doc</span>
-											</div>
+											<p className="text-[0.6rem] py-1 italic text-muted-foreground/50">
+												Provide a technical document to ground the analysis.
+											</p>
 										</div>
-									)}
-								</div>
+
+										{referenceDocUrl && (
+											<div className="space-y-4 bg-muted/30 p-4 rounded-lg border border-border/50">
+												<div className="flex justify-between items-center">
+													<Label className="text-xs font-bold">Context Weighting</Label>
+													<span className="text-xs font-mono bg-primary/20 px-2 py-0.5 rounded text-primary">
+														{contextWeight[0]}% Document
+													</span>
+												</div>
+												<Slider
+													value={contextWeight}
+													onValueChange={setContextWeight}
+													max={100}
+													step={5}
+													className="py-4"
+												/>
+												<div className="flex justify-between text-[0.6rem] text-muted-foreground uppercase font-bold px-1">
+													<span>Podcast Audio</span>
+													<span>Reference Doc</span>
+												</div>
+											</div>
+										)}
+									</div>
+								</FormAccordion>
 							)}
 
 							<div className="hidden not-only:grid-cols-1 gap-4 w-full">
@@ -718,10 +718,12 @@ export function EpisodeCreator() {
 								</div>
 							</div>
 
-							<div className="bg-card mt-4 space-y-6 borderounded-xl md:rounded-4xl w-full md:max-w-full shadow-md px-0 md:px-10 pt-8 pb-12 bg-[#110d1712] md:min-w-full ">
-								<div className="py-0 px-4 md:p-0 ">
+							<FormAccordion
+								value="voice-settings"
+								title="Voice Settings"
+								className="mt-4">
+								<div className="">
 									<div className="w-[250px] flex flex-col gap-0 md:min-w-full ">
-										<Label>Voice Settings</Label>
 										<div className="flex flex-row gap-3 mt-4">
 											<Button
 												type="button"
@@ -743,9 +745,9 @@ export function EpisodeCreator() {
 										<button
 											type="button"
 											onClick={() => setShowTips(!showTips)}
-											className="flex mt-4 items-center gap-2 font-medium text-cyan-200/80 hover:text-foreground transition-colors mb-3 text-[0.6rem] uppercase ">
+											className="flex mt-4 w-32 h-1 items-center gap-2 font-medium text-blue-400/80 hover:text-foreground transition-colors mb-3 text-[0.7rem] py-4 uppercase ">
 											{showTips ? (
-												<ChevronDown className="h-4 w-4 md:max-w-full " />
+												<ChevronDown className="h-4 w-4 md:max-10 " />
 											) : (
 												<ChevronRight className="h-4 w-4" />
 											)}
@@ -754,57 +756,26 @@ export function EpisodeCreator() {
 
 										{showTips && (
 											<div className="space-y-3 p-4 bg-secondary shadow-sm mb-4	 rounded-xl w-full min-w-full md:max-w-full md:min-w-full ">
-												<p className="text-xs font-semibold foreground/80">
-													Both options can handle 90% of any youtube URL you provide! The
-													quality of your generated episode depends on the content you
-													choose to upload. These tips can help you decide if you're
-													unsure:
-												</p>
 												<ul className="space-y-2 leading-relaxed text-primary-foreground text-xs mt-1 md:max-w-full ">
 													<li className="flex items-start gap-2">
-														<span className="text-indigo-300">💡</span>
 														<span>
-															<strong className="text-cyan-200">Pro tip:</strong> If
-															you're unsure, start with Single Speaker - it's our most
-															reliable option for any content type
-														</span>
-													</li>
-													<li className="flex my-1 content-center gap-2">
-														<span className="text-cyan-500">⏱️</span>
-														<span>
-															<strong className="text-cyan-300 ">
-																For videos over 2 hours:
-															</strong>{" "}
-															We recommend Single Speaker for faster processing and
-															guaranteed success
-														</span>
-													</li>
-													<li className="flex items-start gap-2">
-														<span className="text-blue-500">⚡</span>
-														<span>
-															<strong className="text-cyan-300">Single Speaker</strong>{" "}
-															processes faster and is ideal for solo presentations,
-															tutorials, or monologues
-														</span>
-													</li>
-													<li className="flex items-start gap-2">
-														<span className="text-green-200">🎙️</span>
-														<span>
-															<strong className="text-cyan-300">Multi Speaker</strong>{" "}
-															results will be generated into two speaker conversational
-															podcast syled episode. For more engaging information
-															consumption. May not be suite for all types of content.
+															<strong>Multi Speaker</strong> For more engaging information
+															consumption.
 														</span>
 													</li>
 
 													<li className="flex items-start gap-2">
-														<span className="text-purple-500">🎯</span>
 														<span>
-															<strong className="text-cyan-300">
-																Best results come from:
-															</strong>{" "}
-															Clear audio, minimal background noise, and well-structured
-															content
+															<strong>Best results come from:</strong> Clear audio,
+															minimal background noise, and well-structured content
+														</span>
+													</li>
+													<li className="flex items-start gap-2">
+														<span>💡</span>
+														<span>
+															<strong>Pro tip:</strong> If you're unsure, start with
+															Single Speaker - it's our most reliable option for any
+															content type
 														</span>
 													</li>
 													<li className="flex items-start gap-2">
@@ -821,7 +792,7 @@ export function EpisodeCreator() {
 									</div>
 
 									{generationMode === "single" && (
-										<div className="space-y-4 md:max-w-full ">
+										<div className="space-y-4 md:w-full ">
 											<div>
 												<div className="py-2 pl-2 uppercase font-bold text-secondary-foreground text-xs">
 													Voice
@@ -845,9 +816,10 @@ export function EpisodeCreator() {
 														type="button"
 														variant="outline"
 														size="sm"
+														className="text-[10px] p-0"
 														onClick={() => void playSample(voiceA)}
 														disabled={isBusy || isAudioBusy}>
-														<PlayCircle className="mr-2 h-4 w-4" />{" "}
+														<PlayCircle className="mr-1 h-2 w-2" />{" "}
 														{isLoadingSample === voiceA
 															? "Loading sample"
 															: isPlaying === voiceA
@@ -956,17 +928,21 @@ export function EpisodeCreator() {
 										</div>
 									)}
 								</div>
-							</div>
+							</FormAccordion>
 
 							{/* Summary Length Selector */}
-							<div className="bg-card borderounded-xl md:rounded-4xl w-full md:max-w-full shadow-md px-4 md:px-10 pt-8 pb-12 bg-[#110d1712] md:min-w-full mt-6">
+							{/* Summary Length Selector */}
+							<FormAccordion
+								value="summary-length"
+								title="Audio Summary Duration"
+								className="mt-6">
 								<SummaryLengthSelector
 									value={summaryLength}
 									onChange={setSummaryLength}
 									onLongOptionSelect={() => setShowLongWarning(true)}
 									disabled={isBusy}
 								/>
-							</div>
+							</FormAccordion>
 
 							<div className="flex my-12  w-fit flex-col px-0 md:px-4 border border-gray-900/9	0 rounded-3xl  shadow-md p-0 md:p-3 gap-4">
 								<Button

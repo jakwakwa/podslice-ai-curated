@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth, useUser } from "@clerk/nextjs";
-import { HomeIcon, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -48,7 +48,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 			<SidebarInset>
 				<header
-					className={`fixed flex ${isMobile ? "h-18" : "h-16"} bg-header/90   backdrop-blur-[13px]   shadow-[0_1px_5px_3px_rgba(0,0.2,100,0.12)] overflow-hidden shrink-0 items-center border-none gap-4   group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 mt-0 max-w-screen justify-between px-4  py-0 overflow-y-scroll transition all  duration-200 ease-in-out ${state === "expanded" ? "" : "collapsed"}`}>
+					className={`fixed flex ${isMobile ? "h-18" : "h-16"}   shadow-[0_1px_5px_3px_rgba(0,0.2,100,0.12)] overflow-hidden shrink-0 items-center border-none gap-4 z-50 left-0 group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 mt-0 max-w-screen justify-between px-0  py-0 overflow-y-scroll transition all  duration-200 ease-in-out ${state === "expanded" ? "" : "collapsed"}`}>
 					<div
 						className={`flex items-center ${isMobile ? "h-18" : "h-14"} justify-start  ${state === "expanded" ? "md:px-4 w-[240px]" : "md:px-0 w-[80px] "}`}>
 						<Link
@@ -56,10 +56,10 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 							className={`flex items-center h-24 justify-start text-xs  ${state === "expanded" ? "px-0  ml-0 md:pl-0" : "md:pl-1"}`}>
 							{!isMobile ? (
 								<Image
-									className={`transition-all flex flex-row items-center  duration-300 ease-in-out w-full ${state === "expanded" ? "h-18 max-w-[124px] " : "max-w-[40px]   justify-center"}`}
+									className={`transition-all flex flex-row items-center  duration-300 ease-in-out w-full ${state === "expanded" ? "h-18 max-w-[124px] " : "max-w-0 max-h-10   justify-center"}`}
 									src={`${state === "expanded" ? "/logo" : "/icon"}.svg`}
 									width={124}
-									height={14}
+									height={12}
 									alt={`Menu`}
 								/>
 							) : (
@@ -71,7 +71,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 									alt={`Menu`}
 								/>
 							)}
-							<HomeIcon className="mt-1 mr-4" height={14} />
+							{/* <HomeIcon className="mt-1 mr-4" height={14} /> */}
 						</Link>
 
 						<SidebarTrigger
@@ -248,7 +248,7 @@ function ProfileForm({
 											<Link
 												href={subItem.url}
 												onClick={() => setOpenMobileDrawer(false)}
-												className="text-cyan-200 py-3 bg-black/0 rounded-lg flex text-left flex-row border titlecase font-bold  border-cyan-800  items-center justify-start cursor-pointer gap-2  shadow-sm max-w-[60%] px-8 min-w-full my-0">
+												className="text-blue-400 py-3 bg-black/0 rounded-lg flex text-left flex-row border titlecase font-bold  border-cyan-800  items-center justify-start cursor-pointer gap-2  shadow-sm max-w-[60%] px-8 min-w-full my-0">
 												{subItem.name}
 											</Link>
 										</li>
@@ -260,7 +260,7 @@ function ProfileForm({
 							<Link
 								href={item.url}
 								onClick={() => setOpenMobileDrawer(false)}
-								className="py-3 bg-black/10 rounded-lg flex text-left flex-row items-center justify-start cursor-pointer my-0 mx-auto gap-2 font-medium border border-slate-600 shadow-md shadow-slate-950/60 text-shadow-slate-950/80 text-cyan-200/80  max-w-[70%] md:max-w-fit pl-8">
+								className="py-3 bg-black/10 rounded-lg flex text-left flex-row items-center justify-start cursor-pointer my-0 mx-auto gap-2 font-medium border border-slate-600 shadow-md shadow-slate-950/60 text-shadow-slate-950/80 text-blue-400/80  max-w-[70%] md:max-w-fit pl-8">
 								{item.icon && <item.icon className="size-6	 me-2  text-teal-300 " />}
 								{item.title}
 							</Link>

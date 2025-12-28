@@ -31,7 +31,7 @@ export default function EpisodesManagementPanelClient({
 
 	return (
 		<div className="grid grid-cols-1 gap-4">
-			<Card className="bg-dunk">
+			<Card>
 				<PanelHeader
 					title={`Episodes (${episodes.length})`}
 					description="View and manage generated episodes"

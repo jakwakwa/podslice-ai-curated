@@ -154,7 +154,7 @@ export default function LandingPageContent() {
 							{howItWorks.map((step, index) => (
 								<motion.div
 									key={step.step}
-									className="bg-default py-8 px-4 max-w-[89vw]  mx-auto flex   flex-col justify-start lg:mx-auto text-center p-0 rounded-[20px] border-2 border-light  bg-linear-to-br to-purple-600/10 via-indigo-200/10 from-cyan-400/20  backdrop-blur-sm  border-violet-400/10 shadow-xl items-center "
+									className="bg-default py-8 px-4 max-w-[89vw]  mx-auto flex   flex-col justify-start lg:mx-auto text-center p-0 rounded-[20px] border-2 border-light  bg-linear-to-br to-purple-600/10 via-indigo-200/10 from-cyan-400/20  backdrop-blur-sm  border-blue-400/10 shadow-xl items-center "
 									initial={{ opacity: 0, y: 30, scale: 0.95 }}
 									whileInView={{ opacity: 1, y: 0, scale: 1 }}
 									viewport={{ once: true, margin: "-100px" }}

@@ -122,7 +122,7 @@ export function BundleSummaryPanel({
 											<TableHead className="text-foreground/60" colSpan={3}>
 												Feed Subscription:
 											</TableHead>
-											<TableHead className="text-right uppercase font-bold text-violet-400">
+											<TableHead className="text-right uppercase font-bold text-blue-400">
 												{userCurationProfile.selectedBundle?.name}
 											</TableHead>
 										</TableRow>
