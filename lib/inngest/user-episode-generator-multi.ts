@@ -158,12 +158,42 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 
 			const analysis = await generateFinancialAnalysis(transcript);
 
-			// Format summary as Markdown
+			// Format trade recommendations as markdown list
+			const tradeRecsMd =
+				analysis.writtenContent.tradeRecommendations.length > 0
+					? analysis.writtenContent.tradeRecommendations
+							.map(
+								t =>
+									`- **${t.direction} ${t.ticker}** (${t.conviction} conviction): ${t.rationale}${t.timeHorizon ? ` | ${t.timeHorizon}` : ""}`
+							)
+							.join("\n")
+					: "No specific trade recommendations from this source.";
+
+			// Format document contradictions if any
+			const contradictionsMd =
+				analysis.writtenContent.documentContradictions.length > 0
+					? analysis.writtenContent.documentContradictions
+							.map(
+								c =>
+									`- **[${c.severity}]** Claim: "${c.claim}" ⚠️ Ground Truth: "${c.groundTruth}"`
+							)
+							.join("\n")
+					: null;
+
+			// Format summary as Markdown with all B2B sections
 			const summaryMarkdown = `## Executive Brief
 ${analysis.writtenContent.executiveBrief}
-
+${analysis.writtenContent.variantView ? `\n## Variant View\n${analysis.writtenContent.variantView}` : ""}
+${analysis.structuredData.sectorRotation ? `\n## Sector Rotation\n${analysis.structuredData.sectorRotation}` : ""}
 ## Investment Implications
-${analysis.writtenContent.investmentImplications}`;
+${analysis.writtenContent.investmentImplications}
+
+## Trade Recommendations
+${tradeRecsMd}
+
+## Risks & Red Flags
+${analysis.writtenContent.risksAndRedFlags}
+${contradictionsMd ? `\n## Document Fact-Check (Lie Detector)\n${contradictionsMd}` : ""}`;
 
 			await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
