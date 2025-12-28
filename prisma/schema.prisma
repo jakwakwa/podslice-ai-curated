@@ -79,8 +79,6 @@ model UserEpisode {
   duration_seconds     Int?                  @map("duration_seconds")
   status               UserEpisodeStatus     @default(PENDING) @map("status")
   progress_message     String?               @map("progress_message")
-  news_sources         String?               @map("news_sources")
-  news_topic           String?               @map("news_topic")
   auto_generated       Boolean               @default(false) @map("auto_generated")
   // B2B Intelligence Fields
   sentiment            MarketSentiment?      @map("sentiment")

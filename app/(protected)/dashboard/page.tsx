@@ -226,8 +226,6 @@ async function fetchUserEpisodes(userId: string): Promise<UserEpisodeWithSignedU
 				status: true,
 				summary: true,
 				summary_length: true,
-				news_sources: true,
-				news_topic: true,
 				// B2B Intelligence
 				sentiment: true,
 				sentiment_score: true,

@@ -173,7 +173,10 @@ ${analysis.writtenContent.investmentImplications}`;
 				where: { episode_id: userEpisodeId },
 				data: {
 					summary: summaryMarkdown,
-					intelligence: analysis.structuredData as unknown as Prisma.InputJsonValue,
+					intelligence: {
+						...analysis.structuredData,
+						...analysis.writtenContent,
+					} as unknown as Prisma.InputJsonValue,
 					// Basic mapping for backward compatibility (optional, but good for safety if UI uses these)
 					sentiment_score: analysis.structuredData.sentimentScore,
 					// We don't map tickers to mentioned_assets because the schema changed significantly behavior-wise

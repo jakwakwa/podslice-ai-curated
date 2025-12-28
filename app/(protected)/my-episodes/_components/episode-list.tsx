@@ -99,8 +99,6 @@ export function EpisodeList({
 						status: ep.status,
 						progress_message: ep.progress_message ?? null,
 						duration_seconds: ep.duration_seconds,
-						news_sources: ep.news_sources ?? null,
-						news_topic: ep.news_topic ?? null,
 						is_public: ep.is_public ?? false,
 						public_gcs_audio_url: ep.public_gcs_audio_url ?? null,
 						auto_generated: ep.auto_generated ?? false,
@@ -142,8 +140,6 @@ export function EpisodeList({
 			status: match.status,
 			progress_message: match.progress_message ?? null,
 			duration_seconds: match.duration_seconds,
-			news_sources: match.news_sources ?? null,
-			news_topic: match.news_topic ?? null,
 			is_public: match.is_public ?? false,
 			public_gcs_audio_url: match.public_gcs_audio_url ?? null,
 			auto_generated: match.auto_generated ?? false,
@@ -264,7 +260,7 @@ export function EpisodeList({
 									durationSeconds={episode.duration_seconds ?? null}
 									youtubeUrl={episode.youtube_url}
 									detailsHref={`/my-episodes/${episode.episode_id}`}
-									isNewsEpisode={!!(episode.news_sources || episode.news_topic)}
+									isNewsEpisode={false}
 									actions={
 										<>
 											{episode.status === "COMPLETED" && episode.signedAudioUrl && (
@@ -285,8 +281,6 @@ export function EpisodeList({
 															status: episode.status,
 															progress_message: episode.progress_message ?? null,
 															duration_seconds: episode.duration_seconds,
-															news_sources: episode.news_sources ?? null,
-															news_topic: episode.news_topic ?? null,
 															is_public: episode.is_public ?? false,
 															public_gcs_audio_url: episode.public_gcs_audio_url ?? null,
 															auto_generated: episode.auto_generated ?? false,
@@ -294,8 +288,9 @@ export function EpisodeList({
 															sentiment_score: episode.sentiment_score ?? null,
 															mentioned_assets: episode.mentioned_assets ?? null,
 															voice_archetype: episode.voice_archetype ?? null,
-															reference_doc_url: episode.reference_doc_url ?? null,
-															context_weight: episode.context_weight ?? null,
+															reference_doc_url: null,
+															context_weight: null,
+															intelligence: null,
 														};
 														playEpisode(normalizedEpisode);
 													}}

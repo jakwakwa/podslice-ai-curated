@@ -169,7 +169,10 @@ ${analysis.writtenContent.investmentImplications}`;
 				where: { episode_id: userEpisodeId },
 				data: {
 					summary: summaryMarkdown,
-					intelligence: analysis.structuredData as unknown as Prisma.InputJsonValue,
+					intelligence: {
+						...analysis.structuredData,
+						...analysis.writtenContent,
+					} as unknown as Prisma.InputJsonValue,
 					sentiment_score: analysis.structuredData.sentimentScore,
 					// sentiment and mentioned_assets are deprecated for B2B but we keep the score for basic sorting if needed
 				},
