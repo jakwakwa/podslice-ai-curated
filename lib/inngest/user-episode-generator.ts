@@ -14,7 +14,10 @@ import {
 	generateObjectiveSummaryWithOpenAI,
 	generateTextWithOpenAI,
 } from "@/lib/inngest/utils/openai";
-import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
+import {
+	generateFinancialAnalysis,
+	generateObjectiveSummary,
+} from "@/lib/inngest/utils/summary";
 // (No direct GCS import; handled in shared helpers)
 import { prisma } from "@/lib/prisma";
 import {
@@ -187,6 +190,34 @@ export const generateUserEpisode = inngest.createFunction(
 				data: { summary: text },
 			});
 			return text;
+		});
+
+		// Step 2.5: Generate Financial Analysis (B2B Logic)
+		await step.run("generate-financial-intelligence", async () => {
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: { progress_message: "Extracting financial intelligence..." },
+			});
+
+			try {
+				const analysis = await generateFinancialAnalysis(transcript);
+				// Save intelligence data
+				await prisma.userEpisode.update({
+					where: { episode_id: userEpisodeId },
+					data: {
+						sentiment: analysis.sentiment,
+						sentiment_score: analysis.sentimentScore,
+						// Use any cast if specific JSON typing is strict, but Prisma Json handles objects/arrays
+						mentioned_assets: analysis.mentionedAssets as any,
+						// technical_contradictions not in schema yet
+					},
+				});
+				return analysis;
+			} catch (error) {
+				console.error("[FINANCIAL_ANALYSIS] Failed to extract intelligence", error);
+				// Non-blocking failure; just continue
+				return null;
+			}
 		});
 
 		// Step 3: Generate Podslice-hosted script (commentary over summary)

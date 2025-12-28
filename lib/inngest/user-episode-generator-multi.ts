@@ -12,7 +12,10 @@ import {
 	generateObjectiveSummaryWithOpenAI,
 	generateTextWithOpenAI,
 } from "@/lib/inngest/utils/openai";
-import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
+import {
+	generateFinancialAnalysis,
+	generateObjectiveSummary,
+} from "@/lib/inngest/utils/summary";
 import { prisma } from "@/lib/prisma";
 import {
 	getSummaryLengthConfig,
@@ -183,6 +186,30 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 			return text;
 		});
 
+		// Step 2.5: Generate Financial Analysis
+		await step.run("generate-financial-intelligence", async () => {
+			// Don't block the main flow if this fails
+			try {
+				await prisma.userEpisode.update({
+					where: { episode_id: userEpisodeId },
+					data: { progress_message: "Extracting financial intelligence..." },
+				});
+				const analysis = await generateFinancialAnalysis(transcript);
+				await prisma.userEpisode.update({
+					where: { episode_id: userEpisodeId },
+					data: {
+						sentiment: analysis.sentiment,
+						sentiment_score: analysis.sentimentScore,
+						mentioned_assets: analysis.mentionedAssets as any,
+					},
+				});
+				return analysis;
+			} catch (error) {
+				console.error("[FINANCIAL_ANALYSIS_MULTI] Failed", error);
+				return null;
+			}
+		});
+
 		const duetLines = await step.run("generate-duet-script", async () => {
 			await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
@@ -254,37 +281,37 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 						},
 					});
 
-				if (!line) {
-					console.warn(`[TTS] Skipping undefined line at index ${i}`);
-					continue;
-				}
-				const sanitizedText = sanitizeSpeakerLabels(line.text);
-				let audio: Buffer;
-				try {
-					const voice = line.speaker === "A" ? voiceA : voiceB;
-					audio = await ttsWithVoice(sanitizedText, voice);
-				} catch (error) {
-					console.warn(
-						`[TTS] Gemini TTS failed for line ${i + 1}/${duetLines.length} (Speaker ${line.speaker}). Attempting backup with ElevenLabs...`,
-						error
-					);
-					try {
-						// Map speaker to ElevenLabs voice ID
-						const elevenLabsVoiceId =
-							line.speaker === "A" ? "vDchjyOZZytffNeZXfZK" : "ucgJ8SdlW1CZr9MIm8BP";
-						audio = await generateElevenLabsTts(sanitizedText, elevenLabsVoiceId);
-					} catch (backupError) {
-						console.error(
-							`[TTS] Backup ElevenLabs TTS also failed for line ${i + 1}/${duetLines.length}`,
-							backupError
-						);
-						throw backupError; // Fail the entire workflow since both providers failed
+					if (!line) {
+						console.warn(`[TTS] Skipping undefined line at index ${i}`);
+						continue;
 					}
+					const sanitizedText = sanitizeSpeakerLabels(line.text);
+					let audio: Buffer;
+					try {
+						const voice = line.speaker === "A" ? voiceA : voiceB;
+						audio = await ttsWithVoice(sanitizedText, voice);
+					} catch (error) {
+						console.warn(
+							`[TTS] Gemini TTS failed for line ${i + 1}/${duetLines.length} (Speaker ${line.speaker}). Attempting backup with ElevenLabs...`,
+							error
+						);
+						try {
+							// Map speaker to ElevenLabs voice ID
+							const elevenLabsVoiceId =
+								line.speaker === "A" ? "vDchjyOZZytffNeZXfZK" : "ucgJ8SdlW1CZr9MIm8BP";
+							audio = await generateElevenLabsTts(sanitizedText, elevenLabsVoiceId);
+						} catch (backupError) {
+							console.error(
+								`[TTS] Backup ElevenLabs TTS also failed for line ${i + 1}/${duetLines.length}`,
+								backupError
+							);
+							throw backupError; // Fail the entire workflow since both providers failed
+						}
+					}
+					const chunkFileName = `${tempPath}/line-${i}.wav`;
+					const gcsUrl = await uploadBufferToPrimaryBucket(audio, chunkFileName);
+					urls.push(gcsUrl);
 				}
-				const chunkFileName = `${tempPath}/line-${i}.wav`;
-				const gcsUrl = await uploadBufferToPrimaryBucket(audio, chunkFileName);
-				urls.push(gcsUrl);
-			}
 
 				console.log(`[TTS] Uploaded ${urls.length} dialogue chunks to GCS`);
 				return urls;

@@ -24,4 +24,5 @@ export interface UserEpisodeIntelligence {
 	referenceDocUrl?: string | null; // Phase 2: PDF/Whitepaper context
 	contextWeight?: number | null; // 0 to 1: weight of PDF vs Audio content
 	voiceArchetype?: string | null; // "STRATEGIST" | "TECHNICAL_LEAD" | "NEWSROOM"
+	technicalContradictions?: string[]; // Contradictions found in reference docs
 }

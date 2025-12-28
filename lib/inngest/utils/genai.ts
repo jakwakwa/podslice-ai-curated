@@ -76,3 +76,38 @@ export function extractTextFromResponse(response: {
 }
 
 export { getClient as getGenAIClient };
+
+export async function generateJSON(
+	model: string,
+	prompt: string,
+	schema?: any
+): Promise<any> {
+	const client = getClient();
+	const generationConfig: any = {
+		responseMimeType: "application/json",
+	};
+
+	if (schema) {
+		generationConfig.responseSchema = schema;
+	}
+
+	const result = await client.models.generateContent({
+		model,
+		contents: [{ role: "user", parts: [{ text: prompt }] }],
+		config: generationConfig,
+	});
+
+	const responseText =
+		result.candidates?.[0]?.content?.parts
+			?.map((p: { text?: string }) => p.text)
+			.filter(Boolean)
+			.join(" ")
+			?.trim() || "{}";
+
+	try {
+		return JSON.parse(responseText);
+	} catch (_e) {
+		console.error("Failed to parse JSON response from Gemini", responseText);
+		throw new Error("Failed to parse JSON response");
+	}
+}
