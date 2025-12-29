@@ -15,6 +15,7 @@ import type { MentionedAsset } from "@/lib/types/intelligence";
 import { cn } from "@/lib/utils";
 import { useDashboardStore } from "@/store/dashboardStore";
 import { TickerBadge } from "./ticker-badge";
+import { CircularProgress } from "@/components/ui/circular-progress";
 
 // Extended type for component props (casting from Prisma result)
 type MarketPulseEpisode = UserEpisode & {
@@ -62,7 +63,7 @@ export function MarketPulseTable({ episodes }: MarketPulseTableProps) {
 							Sentiment
 						</TableHead>
 						<TableHead className="text-xs text-zinc-400 uppercase tracking-wider font-medium">
-							Mentioned Assets
+							Tickers
 						</TableHead>
 						<TableHead className="text-right text-xs text-zinc-400 uppercase tracking-wider font-medium">
 							Date
@@ -92,9 +93,6 @@ export function MarketPulseTable({ episodes }: MarketPulseTableProps) {
 							const sentimentBadgeColor = isPositive
 								? "bg-emerald-500/20 text-emerald-400 border-emerald-500/20"
 								: "bg-rose-500/20 text-rose-400 border-rose-500/20";
-							const sentimentBarColor = isPositive
-								? "bg-gradient-to-r from-emerald-500 to-emerald-400"
-								: "bg-gradient-to-r from-rose-500 to-rose-400";
 
 							// Mock reliability (80-99%)
 							const reliability = 85 + (episode.episode_title.length % 15);
@@ -106,7 +104,7 @@ export function MarketPulseTable({ episodes }: MarketPulseTableProps) {
 									<TableCell className="font-medium py-5">
 										<div className="flex flex-col gap-1">
 											<span className="text-xs text-zinc-500 block">Source & Title</span>
-											<span className="text-foreground font-semibold text-lg leading-tight">
+											<span className="text-foreground font-semibold text-sm truncate text-overflow-ellipsis max-w-[240px] leading-tight">
 												{episode.episode_title}
 											</span>
 											<span className="text-xs text-zinc-500 uppercase font-medium tracking-wider">
@@ -115,52 +113,49 @@ export function MarketPulseTable({ episodes }: MarketPulseTableProps) {
 										</div>
 									</TableCell>
 									<TableCell className="py-5">
-										<div className="flex flex-col gap-2">
-											<div className="flex items-center gap-2">
-												<div className="h-1.5 w-20 bg-zinc-700 rounded-full overflow-hidden">
-													<div
-														className="h-full bg-gradient-to-r from-violet-500 to-violet-400 rounded-full"
-														style={{ width: `${reliability}%` }}
-													/>
-												</div>
-												<span className="text-xs font-bold text-foreground">
-													{reliability}%
-												</span>
-											</div>
+										<div className="flex items-center gap-4">
+											<CircularProgress
+												value={reliability}
+												size={32}
+												strokeWidth={3}
+												indicatorClassName="text-violet-500"
+												trackClassName="text-zinc-800"
+												valueClassName="text-[9px] font-bold text-zinc-400"
+											/>
 										</div>
 									</TableCell>
 									<TableCell className="py-5">
-										<div className="flex flex-col gap-2">
-											<div className="flex items-center gap-3">
-												<div className="flex items-center gap-2">
-													<div className="h-1.5 w-16 bg-zinc-700 rounded-full overflow-hidden">
-														<div
-															className={cn("h-full rounded-full", sentimentBarColor)}
-															style={{ width: `${reliabilityPercent}%` }}
-														/>
-													</div>
-													<span className="text-xs font-bold text-foreground">
-														{Math.round(score * 100)}%
-													</span>
-												</div>
-												<span
-													className={cn(
-														"px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1",
-														sentimentBadgeColor
-													)}>
-													{label}
-													{isPositive ? (
-														<ArrowUp className="w-3 h-3" />
-													) : (
-														<ArrowDown className="w-3 h-3" />
-													)}
-												</span>
-											</div>
+										<div className="flex items-center gap-3">
+											<CircularProgress
+												value={reliabilityPercent} // Using score magnitude as %
+												size={32}
+												strokeWidth={3}
+												indicatorClassName={
+													isPositive ? "text-emerald-500" : "text-rose-500"
+												}
+												trackClassName="text-zinc-800"
+												valueClassName={cn(
+													"text-[9px] font-bold",
+													isPositive ? "text-emerald-400" : "text-rose-400"
+												)}
+											/>
+											<span
+												className={cn(
+													"px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1",
+													sentimentBadgeColor
+												)}>
+												{label}
+												{isPositive ? (
+													<ArrowUp className="w-3 h-3" />
+												) : (
+													<ArrowDown className="w-3 h-3" />
+												)}
+											</span>
 										</div>
 									</TableCell>
 									<TableCell className="py-5">
 										<div className="flex flex-col gap-1">
-											<span className="text-xs text-zinc-500 mb-1">Mentioned Assets</span>
+											<span className="text-xs text-zinc-500 mb-1"> N/A </span>
 											<div className="flex flex-wrap gap-2">
 												{assets.length > 0 ? (
 													assets.map(asset => (

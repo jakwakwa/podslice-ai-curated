@@ -89,7 +89,7 @@ export function HeroSection({ isActive }: SectionProps) {
 					<Button
 						variant="default"
 						size="lg"
-						className="bg-white hover:bg-gray-100 rounded-full px-8 py-6 text-lg font-medium">
+						className="bg-purple-500 hover:bg-gray-100 rounded-full px-8 py-6 text-lg font-medium">
 						<Link href="/sign-in" className="text-white">
 							Start Your Free Trial
 						</Link>

@@ -61,7 +61,7 @@ export function CTASection({ isActive }: SectionProps) {
 					<Button
 						variant="default"
 						size="lg"
-						className="bg-white hover:bg-gray-100 rounded-full px-10 py-6 text-lg font-semibold shadow-2xl hover:scale-105 transition-transform">
+						className="bg-black hover:bg-gray-100 rounded-full px-10 py-6 text-lg font-semibold shadow-2xl hover:scale-105 transition-transform">
 						<Link href="/sign-in" className="text-white">
 							Start Your Free Trial
 						</Link>

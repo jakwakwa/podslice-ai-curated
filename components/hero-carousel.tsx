@@ -60,8 +60,8 @@ export function HeroCarousel() {
 						onClick={() => scrollToSection(index)}
 						className={`w-2 h-2 rounded-full transition-all duration-500 ${
 							index === activeIndex
-								? "bg-white scale-150 shadow-lg"
-								: "bg-white/40 hover:bg-white/60"
+								? "bg-violet-500 scale-150 shadow-lg"
+								: "bg-emerald/40 hover:bg-white/60"
 						}`}
 						aria-label={`Go to section ${index + 1}`}
 					/>
