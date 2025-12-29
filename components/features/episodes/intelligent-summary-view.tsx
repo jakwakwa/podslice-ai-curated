@@ -66,6 +66,7 @@ export interface IntelligentSummaryViewProps {
 			documentContradictions?: DocumentContradiction[];
 		};
 	};
+	customAudioPlayer?: React.ReactNode;
 }
 
 // Mock data for asset performance line chart
@@ -91,6 +92,7 @@ export default function IntelligentSummaryView({
 	publishedAt,
 	youtubeUrl,
 	intelligence,
+	customAudioPlayer,
 }: IntelligentSummaryViewProps) {
 	// Fallback for null/undefined intelligence
 	if (!(intelligence?.structuredData && intelligence?.writtenContent)) {
@@ -189,48 +191,56 @@ export default function IntelligentSummaryView({
 					data-audio-url={audioUrl}
 					className="lg:col-span-2 bg-[#111] border-none shadow-2xl rounded-3xl overflow-hidden relative group">
 					<CardContent className="p-6 md:p-8 flex flex-col justify-between h-full relative z-10 min-h-[220px]">
-						{/* Simulated Waveform Visualization */}
-						<div className="absolute inset-0 flex items-center justify-center opacity-30 pointer-events-none">
-							<div className="flex items-center gap-1 h-32 w-full px-8 justify-center">
-								{Array.from({ length: 40 }).map((_, i) => (
-									<div
-										key={i}
-										className="w-1.5 rounded-full bg-linear-to-t from-emerald-500/50 via-emerald-400/80 to-purple-500/50"
-										style={{
-											height: `${Math.max(20, Math.random() * 100)}%`,
-											animation: `pulse 2s infinite ${i * 0.05}s`,
-										}}
-									/>
-								))}
+						{customAudioPlayer ? (
+							<div className="flex flex-col h-full justify-center">
+								{customAudioPlayer}
 							</div>
-						</div>
-
-						{/* Audio Controls */}
-						<div className="mt-auto z-20 space-y-4 w-full">
-							{/* Progress Bar */}
-							<div className="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
-								<div className="h-full w-1/3 bg-linear-to-r from-orange-400 to-red-500" />
-							</div>
-
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-4">
-									<button
-										type="button"
-										className="h-10 w-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-all backdrop-blur-md">
-										<Play className="h-4 w-4 fill-white" />
-									</button>
-									<span className="text-xs font-mono text-gray-400">
-										1:45 / {formatDuration(duration)}
-									</span>
+						) : (
+							<>
+								{/* Simulated Waveform Visualization */}
+								<div className="absolute inset-0 flex items-center justify-center opacity-30 pointer-events-none">
+									<div className="flex items-center gap-1 h-32 w-full px-8 justify-center">
+										{Array.from({ length: 40 }).map((_, i) => (
+											<div
+												key={i}
+												className="w-1.5 rounded-full bg-linear-to-t from-emerald-500/50 via-emerald-400/80 to-purple-500/50"
+												style={{
+													height: `${Math.max(20, Math.random() * 100)}%`,
+													animation: `pulse 2s infinite ${i * 0.05}s`,
+												}}
+											/>
+										))}
+									</div>
 								</div>
 
-								<div className="flex items-center gap-4 text-gray-400">
-									<Volume2 className="h-4 w-4 hover:text-white cursor-pointer" />
-									<MessageSquare className="h-4 w-4 hover:text-white cursor-pointer" />
-									<Download className="h-4 w-4 hover:text-white cursor-pointer" />
+								{/* Audio Controls */}
+								<div className="mt-auto z-20 space-y-4 w-full">
+									{/* Progress Bar */}
+									<div className="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+										<div className="h-full w-1/3 bg-linear-to-r from-orange-400 to-red-500" />
+									</div>
+
+									<div className="flex items-center justify-between">
+										<div className="flex items-center gap-4">
+											<button
+												type="button"
+												className="h-10 w-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-all backdrop-blur-md">
+												<Play className="h-4 w-4 fill-white" />
+											</button>
+											<span className="text-xs font-mono text-gray-400">
+												1:45 / {formatDuration(duration)}
+											</span>
+										</div>
+
+										<div className="flex items-center gap-4 text-gray-400">
+											<Volume2 className="h-4 w-4 hover:text-white cursor-pointer" />
+											<MessageSquare className="h-4 w-4 hover:text-white cursor-pointer" />
+											<Download className="h-4 w-4 hover:text-white cursor-pointer" />
+										</div>
+									</div>
 								</div>
-							</div>
-						</div>
+							</>
+						)}
 					</CardContent>
 				</Card>
 

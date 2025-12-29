@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 import EpisodeHeader from "@/components/features/episodes/episode-header";
 import EpisodeShell from "@/components/features/episodes/episode-shell";
+import IntelligentSummaryView from "@/components/features/episodes/intelligent-summary-view";
 import KeyTakeaways from "@/components/features/episodes/key-takeaways";
 import { Separator } from "@/components/ui/separator";
 import { ensureSharedBucketName, parseGcsUri } from "@/lib/inngest/utils/gcs";
@@ -23,6 +24,7 @@ const UserEpisodeSchema = z.object({
 	public_gcs_audio_url: z.string().nullable().optional(),
 	duration_seconds: z.number().nullable().optional(),
 	status: z.enum(["PENDING", "PROCESSING", "COMPLETED", "FAILED"]),
+	intelligence: z.any().nullable().optional(),
 	created_at: z.date(),
 	updated_at: z.date(),
 	is_public: z.boolean(),
@@ -31,6 +33,7 @@ const UserEpisodeSchema = z.object({
 type EpisodeWithPublicUrl = UserEpisode & {
 	publicAudioUrl: string | null;
 	is_public: boolean;
+	intelligence?: any;
 };
 
 async function getPublicEpisode(id: string): Promise<EpisodeWithPublicUrl | null> {
@@ -45,6 +48,7 @@ async function getPublicEpisode(id: string): Promise<EpisodeWithPublicUrl | null
 			public_gcs_audio_url: true,
 			duration_seconds: true,
 			status: true,
+			intelligence: true,
 			created_at: true,
 			updated_at: true,
 			is_public: true,
@@ -164,6 +168,50 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 	// For YouTube videos, extract key takeaways
 	const takeaways = extractKeyTakeaways(episode.summary);
 
+	// Reshape flat intelligence data from DB to nested structure expected by component
+	interface StoredIntelligence {
+		sentimentScore: number;
+		sentimentLabel: "BULLISH" | "NEUTRAL" | "BEARISH";
+		tickers: string[];
+		sectorRotation?: string | null;
+		executiveBrief: string;
+		variantView?: string | null;
+		investmentImplications: string;
+		risksAndRedFlags: string;
+		tradeRecommendations?: any[];
+		documentContradictions?: any[];
+	}
+
+	let mappedIntelligence = null;
+	if (episode.intelligence) {
+		const raw = episode.intelligence as unknown as StoredIntelligence;
+		mappedIntelligence = {
+			structuredData: {
+				sentimentScore: raw.sentimentScore,
+				sentimentLabel: raw.sentimentLabel,
+				tickers: raw.tickers,
+				sectorRotation: raw.sectorRotation,
+			},
+			writtenContent: {
+				executiveBrief: raw.executiveBrief,
+				variantView: raw.variantView,
+				investmentImplications: raw.investmentImplications,
+				risksAndRedFlags: raw.risksAndRedFlags,
+				tradeRecommendations: raw.tradeRecommendations,
+				documentContradictions: raw.documentContradictions,
+			},
+		};
+	}
+
+	const nativePlayer = episode.publicAudioUrl ? (
+		<div className="w-full">
+			<audio controls className="w-full" src={episode.publicAudioUrl}>
+				<track kind="captions" />
+				Your browser does not support the audio element.
+			</audio>
+		</div>
+	) : null;
+
 	return (
 		<div className="min-h-screen layout-inset-background">
 			<div className="container mx-auto px-4 py-8">
@@ -185,23 +233,29 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 							}}
 						/>
 						<div className="mt-4 my-8">
-							{episode.publicAudioUrl && (
-								<div className="mb-6">
-									<audio controls className="w-full" src={episode.publicAudioUrl}>
-										<track kind="captions" />
-										Your browser does not support the audio element.
-									</audio>
-								</div>
+							{mappedIntelligence ? (
+								<IntelligentSummaryView
+									title={episode.episode_title}
+									audioUrl={episode.publicAudioUrl}
+									duration={episode.duration_seconds}
+									publishedAt={episode.created_at}
+									youtubeUrl={episode.youtube_url}
+									intelligence={mappedIntelligence}
+									customAudioPlayer={nativePlayer}
+								/>
+							) : (
+								<>
+									{nativePlayer && <div className="mb-6">{nativePlayer}</div>}
+									<Separator
+										className="my-8"
+										style={{
+											borderColor: "#000 !important",
+											boxShadow: "0px -1px 0px 0px rgb(0 0 0,0.7) !important",
+										}}
+									/>
+									<KeyTakeaways items={takeaways} />
+								</>
 							)}
-
-							<Separator
-								className="my-8"
-								style={{
-									borderColor: "#000 !important",
-									boxShadow: "0px -1px 0px 0px rgb(0 0 0,0.7) !important",
-								}}
-							/>
-							<KeyTakeaways items={takeaways} />
 						</div>
 					</div>
 				</EpisodeShell>
