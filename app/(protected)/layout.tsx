@@ -28,6 +28,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSubscriptionInit } from "@/hooks/useSubscriptionInit";
 import { Footer } from "./footer";
+import GradientBlinds from "@/components/GradientBlinds";
 
 function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 	const { state } = useSidebar();
@@ -122,6 +123,22 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 							strokeColor="#000"
 							className="absolute inset-0 flex items-start justify-center   -z-1 top-0 opacity-40 backdrop-blur-2xl  size-250 w-screen md:min-w-none  mx-0  p-0  flex-col my-0 md:flex-row pt-6 md:p-3 md:py-16 md:mx-0 pl-0 md:my-0  "
 						/> */}
+						<div className="absolute top-0 opacity-40 left-0 w-full -z-1 h-full">
+							<GradientBlinds
+								gradientColors={["#FF9FFC", "#5227FF"]}
+								angle={30}
+								noise={0.3}
+								blindCount={12}
+								blindMinWidth={50}
+								spotlightRadius={0.7}
+								spotlightSoftness={0.7}
+								spotlightOpacity={1}
+								mouseDampening={0.15}
+								distortAmount={0}
+								shineDirection="left"
+								mixBlendMode="lighten"
+							/>
+						</div>
 
 						{children}
 					</div>

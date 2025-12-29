@@ -67,6 +67,7 @@ export interface IntelligentSummaryViewProps {
 		};
 	};
 	customAudioPlayer?: React.ReactNode;
+	hideHeader?: boolean;
 }
 
 // Mock data for asset performance line chart
@@ -93,6 +94,7 @@ export default function IntelligentSummaryView({
 	youtubeUrl,
 	intelligence,
 	customAudioPlayer,
+	hideHeader,
 }: IntelligentSummaryViewProps) {
 	// Fallback for null/undefined intelligence
 	if (!(intelligence?.structuredData && intelligence?.writtenContent)) {
@@ -149,32 +151,34 @@ export default function IntelligentSummaryView({
 	return (
 		<div className="flex flex-col gap-6 animate-in fade-in duration-500 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-[#0a0a0a] text-white rounded-3xl font-sans">
 			{/* Header */}
-			<div className="space-y-1">
-				<h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-					{title}
-				</h1>
-				<div className="flex items-center gap-2 text-sm text-gray-400 font-medium">
-					{duration && <span>{Math.round(duration / 60)} min</span>}
-					{publishedAt && (
-						<>
-							<span>•</span>
-							<span>{formatDate(publishedAt)}</span>
-						</>
-					)}
-					{youtubeUrl && (
-						<>
-							<span>•</span>
-							<a
-								href={youtubeUrl}
-								target="_blank"
-								rel="noreferrer"
-								className="hover:text-white transition-colors">
-								Youtube Url
-							</a>
-						</>
-					)}
+			{!hideHeader && (
+				<div className="space-y-1">
+					<h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
+						{title}
+					</h1>
+					<div className="flex items-center gap-2 text-sm text-gray-400 font-medium">
+						{duration && <span>{Math.round(duration / 60)} min</span>}
+						{publishedAt && (
+							<>
+								<span>•</span>
+								<span>{formatDate(publishedAt)}</span>
+							</>
+						)}
+						{youtubeUrl && (
+							<>
+								<span>•</span>
+								<a
+									href={youtubeUrl}
+									target="_blank"
+									rel="noreferrer"
+									className="hover:text-white transition-colors">
+									Youtube Url
+								</a>
+							</>
+						)}
+					</div>
 				</div>
-			</div>
+			)}
 
 			{/* Top Row: Audio Spec + Sentiment */}
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -412,7 +416,6 @@ export default function IntelligentSummaryView({
 										color: "#fff",
 									}}
 									itemStyle={{ color: "#4ade80" }}
-									formatter={(val: number) => [`$${val}`, "Price"]}
 								/>
 								<Line
 									type="monotone"

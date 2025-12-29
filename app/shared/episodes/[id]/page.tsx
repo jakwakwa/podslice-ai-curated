@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
+import { Badge } from "@/components/ui/badge";
 import EpisodeHeader from "@/components/features/episodes/episode-header";
 import EpisodeShell from "@/components/features/episodes/episode-shell";
 import IntelligentSummaryView from "@/components/features/episodes/intelligent-summary-view";
@@ -222,15 +224,22 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 							createdAt={episode.created_at}
 							durationSeconds={episode.duration_seconds ?? null}
 							metaBadges={
-								<span className="inline-flex items-center gap-2 rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400">
+								<Badge className="bg-purple-500 hover:bg-purple-600 text-white border-0 rounded-full px-2 h-6 text-[10px] font-bold">
 									Public Episode
-								</span>
+								</Badge>
 							}
 							rightLink={{
 								href: episode.youtube_url,
 								label: "Youtube Url",
 								external: true,
 							}}
+							rightAction={
+								<Link href="/">
+									<Badge className="bg-indigo-600 hover:bg-indigo-700 text-white border-0 rounded-full px-4 h-6 text-[10px] font-bold cursor-pointer">
+										Join Podslice
+									</Badge>
+								</Link>
+							}
 						/>
 						<div className="mt-4 my-8">
 							{mappedIntelligence ? (
@@ -242,6 +251,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 									youtubeUrl={episode.youtube_url}
 									intelligence={mappedIntelligence}
 									customAudioPlayer={nativePlayer}
+									hideHeader={true}
 								/>
 							) : (
 								<>
