@@ -73,7 +73,7 @@ export const VercelInviteUserEmail = ({
 							<strong>{invitedByUsername}</strong> (
 							<Link
 								href={`mailto:${invitedByEmail}`}
-								className="text-amber-600 no-underline">
+								className="text-emerald-600 no-underline">
 								{invitedByEmail}
 							</Link>
 							) has invited you to the <strong>{teamName}</strong> team on{" "}
@@ -118,7 +118,7 @@ export const VercelInviteUserEmail = ({
 						</Section>
 						<Text className="text-[14px] text-black leading-[24px]">
 							or copy and paste this URL into your browser:{" "}
-							<Link href={inviteLink} className="text-amber-600 no-underline">
+							<Link href={inviteLink} className="text-emerald-600 no-underline">
 								{inviteLink}
 							</Link>
 						</Text>

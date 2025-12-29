@@ -43,7 +43,7 @@ export function SummaryLengthSelector({
 						className={cn(
 							"m-0  mt-1 flex  flex-row items-center justify-start px-4 py-0 h-18  md:h-11 gap-3 rounded-lg bg-neutral-800 border transition-color duration-300 ease-in-out relative",
 							value === key
-								? "bg-amber-950 outline-2 outline-amber-800"
+								? "bg-emerald-950 outline-2 outline-emerald-800"
 								: "border-border hover:bg-accent/80",
 							disabled && "opacity-90 bg-accent-10 cursor-not-allowed"
 						)}>

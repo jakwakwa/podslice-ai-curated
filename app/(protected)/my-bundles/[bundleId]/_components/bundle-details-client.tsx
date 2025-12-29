@@ -230,7 +230,7 @@ export function BundleDetailsClient({ bundle: initialBundle }: BundleDetailsClie
 											{index + 1}
 										</div>
 										<div className="flex flex-col items-start justify-center min-w-0 pr-6  gap-1">
-											<h4 className="font-medium max-w-100 text-sm text-amber-400/80 w-full">
+											<h4 className="font-medium max-w-100 text-sm text-emerald-400/80 w-full">
 												{episode.userEpisode.episode_title}
 											</h4>
 											<p className="text-xs text-muted-foreground">

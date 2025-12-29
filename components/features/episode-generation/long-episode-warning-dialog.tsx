@@ -51,7 +51,7 @@ export function LongEpisodeWarningDialog({
 										7-10 minute summary, but it counts as <strong>2 episodes</strong>{" "}
 										towards your monthly limit.
 									</p>
-									<div className="px-3  py-1 border-2 border-amber-500/50 rounded-lg">
+									<div className="px-3  py-1 border-2 border-emerald-500/50 rounded-lg">
 										<p className="font-semibold text-slate-900">
 											Current status: {remainingCredits} credits remaining
 										</p>

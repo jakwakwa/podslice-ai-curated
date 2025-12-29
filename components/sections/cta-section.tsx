@@ -20,7 +20,7 @@ export function CTASection({ isActive }: SectionProps) {
 	}, [isActive]);
 
 	return (
-		<div className="relative h-full w-full bg-linear-to-br from-purple-600 via-purple-600 to-amber-500 overflow-hidden">
+		<div className="relative h-full w-full bg-linear-to-br from-purple-600 via-purple-600 to-emerald-500 overflow-hidden">
 			{/* Animated background elements */}
 			<div className="absolute inset-0">
 				<div

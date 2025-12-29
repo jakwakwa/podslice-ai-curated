@@ -140,7 +140,7 @@ export function EpisodeStatusTable({ defaultExpanded = false }: EpisodeStatusTab
 					<div
 						className={cn(
 							"h-2 w-2 rounded-full",
-							isConnected ? "bg-green-500 animate-pulse" : "bg-amber-400 animate pulse"
+							isConnected ? "bg-green-500 animate-pulse" : "bg-emerald-400 animate pulse"
 						)}
 					/>
 					<h3 className="text-lg font-semibold">Episode Generation Status</h3>
@@ -181,7 +181,7 @@ export function EpisodeStatusTable({ defaultExpanded = false }: EpisodeStatusTab
 										<div className="flex flex-col gap-1 ">
 											<span
 												className={` line-clamp-2 text-xs  ${cn(
-													episode.status === "PROCESSING" && "text-amber-400 font-medium",
+													episode.status === "PROCESSING" && "text-emerald-400 font-medium",
 													episode.status === "COMPLETED" && "text-green-400 font-medium",
 													episode.status === "FAILED" && "text-red-400",
 													episode.status === "PENDING" && "text-muted-foreground "
@@ -215,7 +215,7 @@ function StatusBadge({ status }: { status: EpisodeStatusUpdate["status"] }) {
 			);
 		case "PROCESSING":
 			return (
-				<Badge variant="default" className="gap-1.5 bg-amber-600">
+				<Badge variant="default" className="gap-1.5 bg-emerald-600">
 					<Loader2 className="h-3 w-3 animate-spin" />
 					Creating
 				</Badge>

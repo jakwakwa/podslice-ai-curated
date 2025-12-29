@@ -35,7 +35,7 @@ function getNotificationColor(type: string) {
 		case "episode_ready":
 			return "text-green-500";
 		case "weekly_reminder":
-			return "text-amber-500";
+			return "text-emerald-500";
 		default:
 			return "text-gray-500";
 	}

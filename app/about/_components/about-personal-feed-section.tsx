@@ -7,9 +7,9 @@ export default function AboutPersonalFeedSection() {
 		<div className="max-w-5x mx-auto grid md:grid-cols-2 gap-8">
 			<div className="p-8 bg-card rounded-2xl border border-border hover:border-primary/30 transition-all duration-300">
 				<div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-6">
-					<Radio className="w-7 h-7 text-amber-400" />
+					<Radio className="w-7 h-7 text-emerald-400" />
 				</div>
-				<h3 className="text-2xl font-bold text-amber-400 mb-4">
+				<h3 className="text-2xl font-bold text-emerald-400 mb-4">
 					Curated<span>FOR YOU</span> for You
 				</h3>
 				<p className="text-foreground leading-relaxed">
@@ -21,9 +21,9 @@ export default function AboutPersonalFeedSection() {
 			</div>
 			<div className="p-8 bg-card rounded-2xl border border-border hover:border-primary/30 transition-all duration-300">
 				<div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-6">
-					<Zap className="w-7 h-7 text-amber-400" />
+					<Zap className="w-7 h-7 text-emerald-400" />
 				</div>
-				<h3 className="text-2xl font-bold text-amber-400 mb-4">Created by You</h3>
+				<h3 className="text-2xl font-bold text-emerald-400 mb-4">Created by You</h3>
 				<p className="text-foreground leading-relaxed">
 					This is where the real power lies. Found a 2-hour interview or lecture on
 					YouTube? Just paste the link into Podslice. Want to catch up on the latest news?

@@ -5,6 +5,13 @@
     "clientKind": "git",
     "useIgnoreFile": false
   },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "off"
+      }
+    }
+  },
   "files": {
     "ignoreUnknown": false,
     "includes": [
@@ -56,8 +63,7 @@
       },
       "correctness": {
         "noUnusedVariables": {
-          "level": "error",
-          "fix": "safe"
+          "level": "error"
         },
         "noUnusedFunctionParameters": {
           "level": "error",
@@ -67,9 +73,7 @@
         "useExhaustiveDependencies": "warn",
         "useHookAtTopLevel": "error",
         "noUnusedImports": {
-          "level": "warn",
-          "fix": "safe",
-          "options": {}
+          "level": "error"
         },
         "noUnreachable": "error",
         "noConstAssign": "error",
@@ -123,7 +127,11 @@
         "noSparseArray": "error",
         "noConsole": {
           "options": {
-            "allow": ["assert", "error", "warn"]
+            "allow": [
+              "assert",
+              "error",
+              "warn"
+            ]
           },
           "fix": "safe"
         }

@@ -6,5 +6,5 @@ interface CuratedPodcastListProps {
 }
 
 export function CuratedPodcastList({ onSelectPodcast: _onSelectPodcast, selectedPodcasts: _selectedPodcasts }: CuratedPodcastListProps) {
-	return <div className="text-amber-400 font-bold text-sm">COMING SOON!</div>
+	return <div className="text-emerald-400 font-bold text-sm">COMING SOON!</div>
 }

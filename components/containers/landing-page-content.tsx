@@ -70,7 +70,7 @@ export default function LandingPageContent() {
 				{/* <div className={`${styles.herobg} max-w-full w-screen md:w-full flex flex-col justify-center items-center content-center mx-auto px-8 md:px-0 pb-4 md:py-0  gap-0 mb-0`} /> */}
 
 				{/* Hero Section */}
-				<section className={`${styles.heamberction} w-full min-w-screen  `}>
+				<section className={`${styles.herosection} w-full min-w-screen  `}>
 					<div
 						className={`flex flex-col content-center justify-center items-center h-[70vh]`}>
 						<motion.div
@@ -133,7 +133,7 @@ export default function LandingPageContent() {
 				</section>
 				<div className="background-base bg-primary" />
 				{/* How It Works Section */}
-				<section className="overflow-hidden px-0 min-w-screen w-full md:h-full py-4 md:min-w-screen md:w-full md:px-4  bg-linear-to-b to-amber-950 from-gray-950 my-0 md:py-0 md:gap-0 md:mb-0 md:-mt-0">
+				<section className="overflow-hidden px-0 min-w-screen w-full md:h-full py-4 md:min-w-screen md:w-full md:px-4  bg-linear-to-b to-emerald-950 from-gray-950 my-0 md:py-0 md:gap-0 md:mb-0 md:-mt-0">
 					<div className="w-full max-w-screen md:min-w-7xl mx-auto md:px-12 px-0 py-8 md:py-24 mt-0 ">
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
@@ -154,7 +154,7 @@ export default function LandingPageContent() {
 							{howItWorks.map((step, index) => (
 								<motion.div
 									key={step.step}
-									className="bg-default py-8 px-4 max-w-[89vw]  mx-auto flex   flex-col justify-start lg:mx-auto text-center p-0 rounded-[20px] border-2 border-light  bg-linear-to-br to-purple-600/10 via-indigo-200/10 from-amber-400/20  backdrop-blur-sm  border-amber-400/10 shadow-xl items-center "
+									className="bg-default py-8 px-4 max-w-[89vw]  mx-auto flex   flex-col justify-start lg:mx-auto text-center p-0 rounded-[20px] border-2 border-light  bg-linear-to-br to-purple-600/10 via-indigo-200/10 from-emerald-400/20  backdrop-blur-sm  border-emerald-400/10 shadow-xl items-center "
 									initial={{ opacity: 0, y: 30, scale: 0.95 }}
 									whileInView={{ opacity: 1, y: 0, scale: 1 }}
 									viewport={{ once: true, margin: "-100px" }}
@@ -169,7 +169,7 @@ export default function LandingPageContent() {
 										transition: { duration: 0.2 },
 									}}>
 									<div
-										className="rounded-full align-center bg-azure-500/50 text-primary-foreground bg-gray-900/40 shadow-xl  border-amber-500/30  border-3 shadow-amber-950/70 font-bold 
+										className="rounded-full align-center bg-azure-500/50 text-primary-foreground bg-gray-900/40 shadow-xl  border-emerald-500/30  border-3 shadow-emerald-950/70 font-bold 
 								 mb-3 inline-flex justify-center items-center w-10 h-10">
 										{step.step}
 									</div>
@@ -241,7 +241,7 @@ export default function LandingPageContent() {
 													className="flex content-center items-start gap-3 pb-3 text-foreground/60 text-sm font-light ">
 													<CheckCircle
 														size={16}
-														className="text-amber flex-shrink-0 mt-[1px]"
+														className="text-emerald flex-shrink-0 mt-[1px]"
 														color={"#abf3f5"}
 													/>
 													{feature}

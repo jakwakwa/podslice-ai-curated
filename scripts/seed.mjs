@@ -13,11 +13,11 @@ const podcastsSeed = [
 		category: "Technology",
 	},
 	{
-		slug: "builder-amberprint",
-		name: "Builder's amberprint",
+		slug: "builder-blueprint",
+		name: "Builder's blueprint",
 		description: "Stories and tactics from product builders shipping at scale.",
-		url: "https://podslice.example/podcasts/builders-amberprint",
-		image_url: "https://picsum.photos/seed/builders-amberprint/400/400",
+		url: "https://podslice.example/podcasts/builders-blueprint",
+		image_url: "https://picsum.photos/seed/builders-blueprint/400/400",
 		category: "Business",
 	},
 	{
@@ -61,7 +61,7 @@ const bundlesSeed = [
 		description: "A product-led mix for shipping teams and product strategists.",
 		image_url: "https://picsum.photos/seed/product-pulse/600/400",
 		min_plan: PlanGate.CASUAL_LISTENER,
-		podcastSlugs: ["builder-amberprint", "future-of-workshop"],
+		podcastSlugs: ["builder-blueprint", "future-of-workshop"],
 	},
 	{
 		bundle_id: "seed-curators-choice",
@@ -177,7 +177,7 @@ async function main() {
 				image_url: podcast.image_url,
 				category: podcast.category,
 				is_active: true,
-				owner_user_id: podcast.slug === "builder-amberprint" ? demoUser.user_id : null,
+				owner_user_id: podcast.slug === "builder-blueprint" ? demoUser.user_id : null,
 			},
 			create: {
 				name: podcast.name,
@@ -185,7 +185,7 @@ async function main() {
 				url: podcast.url,
 				image_url: podcast.image_url,
 				category: podcast.category,
-				owner_user_id: podcast.slug === "builder-amberprint" ? demoUser.user_id : null,
+				owner_user_id: podcast.slug === "builder-blueprint" ? demoUser.user_id : null,
 			},
 		})
 		podcastsBySlug.set(podcast.slug, record)

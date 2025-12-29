@@ -48,6 +48,7 @@ import { getMaxDurationSeconds } from "@/lib/env";
 import { useNotificationStore } from "@/lib/stores";
 import type { SummaryLengthOption } from "@/lib/types/summary-length";
 import { FormAccordion } from "./form-accordion";
+import { UsageDisplay } from "./usage-display";
 
 const EPISODE_LIMIT = PRICING_TIER[2]?.episodeLimit ?? 30;
 const YT_MAX_DURATION_SECONDS = getMaxDurationSeconds();
@@ -492,33 +493,44 @@ export default function SummaryCreator() {
 	const _handleGoBack = () => router.back();
 
 	return (
-		<div className="w-full h-auto mb-0 px-3 py-0 md:px-8 md:pt-8 lg:px-10 mr-0 lg:pb-12 lg:mb-0 rounded-none shadow-lg rounded-b-md overflow-hidden">
-			<div className="w-full flex flex-col gap-3 md:gap-8 md:w-full  p-0 md:min-w-full md:max-w-full">
-				<div className="w-full md:py-8 px-0 md:p-0 ">
-					{/* <ComponentSpinner isLabel={false} /> */}
-
-					<div className="w-full flex flex-col px-0 md:px-4  gap-4">
-						<div className="bg-bigcard border border-border bg-sidebar/20 rounded-3xl text-[10px] shadow-md p-5 md:p-8">
-							<Label className="mb-2 md:mb-4">Pick a Summary Type:</Label>
+		<div className="max-w-6xl mx-auto p-0 md:p-6 text-foreground">
+			{/* Two Column Grid Layout */}
+			<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+				{/* Main Form Area (2/3) */}
+				<div className="lg:col-span-2 space-y-6">
+					{/* Pick Summary Type Card */}
+					<div className="bg-[#0f1115] rounded-3xl p-6 md:p-8 border border-zinc-800 shadow-xl">
+						<span className="block text-sm font-medium text-emerald-400 mb-2">
+							Pick a Summary Type:
+						</span>
+						<p className="text-xs text-zinc-400 mb-4">
 							{creatorMode === "youtube"
 								? "Instructions: To find the youtube link, go to the video, click the share button below the video, copy the link that pop-up and paste it over here."
 								: "Want to catch up on the latest news? Select your desired sources and topics. Our AI will get to work and create a custom summary (both audio and text) just for you."}
-							<div className="md:w-[300px] mt-5 flex flex-col md:flex-row items-start justify-start gap-2 ">
-								<Button
-									type="button"
-									variant={creatorMode === "youtube" ? "default" : "outline"}
-									onClick={() => setCreatorMode("youtube")}
-									disabled={isBusy}>
-									podcast summary
-								</Button>
-								<Button
-									type="button"
-									variant={creatorMode === "news" ? "default" : "outline"}
-									onClick={() => setCreatorMode("news")}
-									disabled={isBusy}>
-									Reaseach summary
-								</Button>
-							</div>
+						</p>
+						<div className="flex flex-wrap gap-4">
+							<Button
+								type="button"
+								onClick={() => setCreatorMode("youtube")}
+								disabled={isBusy}
+								className={
+									creatorMode === "youtube"
+										? "px-6 py-2.5 rounded-full bg-violet-500 text-white font-semibold text-sm hover:shadow-[0_0_15px_rgba(168,85,247,0.4)] transition-all"
+										: "px-6 py-2.5 rounded-full bg-transparent border border-zinc-700 text-zinc-400 hover:text-white text-sm transition-all hover:border-zinc-500"
+								}>
+								Podcast Summary
+							</Button>
+							<Button
+								type="button"
+								onClick={() => setCreatorMode("news")}
+								disabled={isBusy}
+								className={
+									creatorMode === "news"
+										? "px-6 py-2.5 rounded-full bg-violet-500 text-white font-semibold text-sm hover:shadow-[0_0_15px_rgba(168,85,247,0.4)] transition-all"
+										: "px-6 py-2.5 rounded-full bg-transparent border border-zinc-700 text-zinc-400 hover:text-white text-sm transition-all hover:border-zinc-500"
+								}>
+								Research Summary
+							</Button>
 						</div>
 						<form
 							className=" w-full"
@@ -543,10 +555,9 @@ export default function SummaryCreator() {
 											<TooltipTrigger asChild>
 												<button
 													type="button"
-													className="flex text-xs flex-row items-center text-amber-200/80 py-1 gap-2">
+													className="flex text-xs flex-row items-center text-emerald-200/80 py-1 gap-2">
 													<HelpCircle
-														color={"#3080ff"}
-														className="text-xs  top-7 md:top-3 right-4 text-white"
+														className="text-xs top-7 md:top-3 right-4 text-emerald-400"
 														size={16}
 													/>
 													<span className="text-xs">
@@ -555,8 +566,8 @@ export default function SummaryCreator() {
 												</button>
 											</TooltipTrigger>
 											<span className="hidden">Hover</span>
-											<TooltipContent className="bg-amber-900 backdrop-blur-sm flex flex-col items-center justify-center shadow-lg shadow-gray-950/90">
-												<p className="text-sm text-whitw cursor-default font-bold">
+											<TooltipContent className="bg-zinc-900 border border-zinc-800 backdrop-blur-sm flex flex-col items-center justify-center shadow-lg">
+												<p className="text-sm text-white cursor-default font-bold">
 													Quick Guide: How to Find and Paste YouTube Link
 												</p>
 												<Image
@@ -598,11 +609,13 @@ export default function SummaryCreator() {
 											{" "}
 											<div className="flex mt-4 flex-row items-center gap-2">
 												<Eye
-													className="text-xs  top-7 md:top-3 right-4 text-amber-400"
+													className="text-xs top-7 md:top-3 right-4 text-emerald-400"
 													size={16}
 												/>
 												<span className="text-xs text-indigo-200">
-													<span className="font-bold text-amber-300">Quick Review:</span>{" "}
+													<span className="font-bold text-emerald-300">
+														Quick Review:
+													</span>{" "}
 													Confirm the video details below are correct
 												</span>
 											</div>
@@ -628,9 +641,13 @@ export default function SummaryCreator() {
 							{/* Smart Suggestion UI - Phase 4 Integration -> Moved to Research Lab Context */}
 
 							{creatorMode === "news" && (
-								<div className="bg-(--swak-2) m-0 p-0 rounded-3xl flex flex-row flex-wrap md:my-8 gap-0 mx-0 px-0 md:mx-0 min-w-full md:gap-4 ">
-									<div className="mt-0 md:col-span-2 lg:min-w-full w-full border border-border rounded-t-3xl bg-amber-700/20  shadow-md p-8">
-										<Label htmlFor="selectedTopicId">Topic</Label>
+								<div className="bg-transparent m-0 p-0 rounded-3xl flex flex-col gap-6 w-full">
+									<div className="w-full border border-zinc-800 rounded-3xl bg-[#16191d] shadow-md p-6">
+										<Label
+											htmlFor="selectedTopicId"
+											className="text-emerald-400 mb-2 block">
+											Topic
+										</Label>
 										<Input
 											placeholder="Research any topic..."
 											id="selectedTopicId"
@@ -833,7 +850,7 @@ export default function SummaryCreator() {
 										<button
 											type="button"
 											onClick={() => setShowTips(!showTips)}
-											className="flex mt-4 w-32 h-1 items-center gap-2 font-medium text-amber-400/80 hover:text-foreground transition-colors mb-3 text-[0.7rem] py-4 uppercase ">
+											className="flex mt-4 w-32 h-1 items-center gap-2 font-medium text-emerald-400/80 hover:text-foreground transition-colors mb-3 text-[0.7rem] py-4 uppercase ">
 											{showTips ? (
 												<ChevronDown className="h-4 w-4 md:max-10 " />
 											) : (
@@ -869,7 +886,7 @@ export default function SummaryCreator() {
 													<li className="flex items-start gap-2">
 														<span className="text-red-500">⚠️</span>
 														<span>
-															<strong className="text-amber-400">Avoid:</strong>{" "}
+															<strong className="text-emerald-400">Avoid:</strong>{" "}
 															Music-heavy content, very fast speech, or videos with poor
 															audio quality
 														</span>
@@ -1032,18 +1049,24 @@ export default function SummaryCreator() {
 								/>
 							</FormAccordion>
 
-							<div className="flex my-12  w-fit flex-col px-0 md:px-4 border border-gray-900/9	0 rounded-3xl  shadow-md p-0 md:p-3 gap-4">
+							<div className="my-8 w-full md:w-auto">
 								<Button
 									type="submit"
-									variant="secondary"
 									disabled={!canSubmit}
-									className="w-full p-0">
+									className="w-full md:w-auto px-8 py-6 rounded-xl bg-gradient-to-r from-emerald-400 via-[#22d3ee] to-violet-500 text-black font-bold text-lg flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(74,222,128,0.5)] transition-all transform hover:scale-[1.01] border-none">
 									{isCreating ? "Creating..." : "Generate summary"}
-									<SparklesIcon />
+									<SparklesIcon className="w-5 h-5 text-black" />
 								</Button>
 							</div>
 						</form>
 						{error && <p className="text-red-500 mt-4">{error}</p>}
+					</div>
+				</div>
+
+				{/* Sidebar Area (1/3) */}
+				<div className="lg:col-span-1">
+					<div className="sticky top-6">
+						<UsageDisplay />
 					</div>
 				</div>
 			</div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import {
 	Table,
 	TableBody,
@@ -47,21 +48,31 @@ export function MarketPulseTable({ episodes }: MarketPulseTableProps) {
 	});
 
 	return (
-		<div className="rounded-md border bg-card">
+		<div className="rounded-2xl border border-zinc-800 bg-[#111216] overflow-hidden">
 			<Table>
 				<TableHeader>
-					<TableRow>
-						<TableHead className="w-[300px]">Source & Title</TableHead>
-						<TableHead>Reliability</TableHead>
-						<TableHead>Sentiment</TableHead>
-						<TableHead>Mentioned Assets</TableHead>
-						<TableHead className="text-right">Date</TableHead>
+					<TableRow className="border-b border-zinc-800 hover:bg-transparent">
+						<TableHead className="w-[300px] text-xs text-zinc-400 uppercase tracking-wider font-medium">
+							Source & Title
+						</TableHead>
+						<TableHead className="text-xs text-zinc-400 uppercase tracking-wider font-medium">
+							Reliability
+						</TableHead>
+						<TableHead className="text-xs text-zinc-400 uppercase tracking-wider font-medium">
+							Sentiment
+						</TableHead>
+						<TableHead className="text-xs text-zinc-400 uppercase tracking-wider font-medium">
+							Mentioned Assets
+						</TableHead>
+						<TableHead className="text-right text-xs text-zinc-400 uppercase tracking-wider font-medium">
+							Date
+						</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
 					{filteredEpisodes.length === 0 ? (
 						<TableRow>
-							<TableCell colSpan={5} className="h-24 text-center">
+							<TableCell colSpan={5} className="h-24 text-center text-zinc-500">
 								No market data found.
 							</TableCell>
 						</TableRow>
@@ -73,74 +84,95 @@ export function MarketPulseTable({ episodes }: MarketPulseTableProps) {
 
 							// Calculate gradient color for sentiment bar
 							const score = episode.sentiment_score ?? 0; // -1 to 1
-							// Map -1..1 to 0..100% for red->green gradient
-							// Simple approach: width is absolute, color depends on value
 							const isPositive = score >= 0;
-							const intensity = Math.abs(score) * 100;
-							const barColor = isPositive ? "bg-emerald-500" : "bg-rose-500";
-							const label = isPositive ? "Bullish" : "Bearish";
+							const reliabilityPercent = Math.abs(score) * 100;
+
+							// Sentiment label and colors matching design
+							const label = isPositive ? "BULLISH" : "BEARISH";
+							const sentimentBadgeColor = isPositive
+								? "bg-emerald-500/20 text-emerald-400 border-emerald-500/20"
+								: "bg-rose-500/20 text-rose-400 border-rose-500/20";
+							const sentimentBarColor = isPositive
+								? "bg-gradient-to-r from-emerald-500 to-emerald-400"
+								: "bg-gradient-to-r from-rose-500 to-rose-400";
 
 							// Mock reliability (80-99%)
 							const reliability = 85 + (episode.episode_title.length % 15);
 
 							return (
-								<TableRow key={episode.episode_id}>
-									<TableCell className="font-medium">
-										<div className="flex flex-col">
-											<span className="truncate max-w-[280px] text-foreground font-semibold">
+								<TableRow
+									key={episode.episode_id}
+									className="border-b border-zinc-800/50 hover:bg-violet-500/5 transition-colors">
+									<TableCell className="font-medium py-5">
+										<div className="flex flex-col gap-1">
+											<span className="text-xs text-zinc-500 block">Source & Title</span>
+											<span className="text-foreground font-semibold text-lg leading-tight">
 												{episode.episode_title}
 											</span>
-											<span className="text-xs text-muted-foreground uppercase">
-												{episode.voice_archetype || "Analyst"}
+											<span className="text-xs text-zinc-500 uppercase font-medium tracking-wider">
+												{episode.voice_archetype || "ANALYST"}
 											</span>
 										</div>
 									</TableCell>
-									<TableCell>
-										<div className="flex items-center gap-2">
-											<span className="text-xs font-mono font-bold text-muted-foreground">
-												{reliability}%
-											</span>
-											<div className="h-1.5 w-12 bg-secondary rounded-full overflow-hidden">
-												<div
-													className="h-full bg-amber-400"
-													style={{ width: `${reliability}%` }}
-												/>
+									<TableCell className="py-5">
+										<div className="flex flex-col gap-2">
+											<div className="flex items-center gap-2">
+												<div className="h-1.5 w-20 bg-zinc-700 rounded-full overflow-hidden">
+													<div
+														className="h-full bg-gradient-to-r from-violet-500 to-violet-400 rounded-full"
+														style={{ width: `${reliability}%` }}
+													/>
+												</div>
+												<span className="text-xs font-bold text-foreground">
+													{reliability}%
+												</span>
 											</div>
 										</div>
 									</TableCell>
-									<TableCell>
-										<div className="flex flex-col gap-1 w-[120px]">
-											<div className="flex justify-between text-[10px] text-muted-foreground uppercase font-bold">
-												<span>{Math.round(score * 100)}%</span>
-												<span>{score === 0 ? "Neutral" : label}</span>
-											</div>
-											<div className="h-2 w-full bg-secondary rounded-full relative overflow-hidden">
-												{/* Center marker */}
-												<div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-background z-10" />
-												{/* Bar */}
-												<div
-													className={cn("h-full absolute top-0", barColor)}
-													style={{
-														left: isPositive ? "50%" : undefined,
-														right: isPositive ? undefined : "50%",
-														width: `${intensity / 2}%`, // Since it takes up half space max
-													}}
-												/>
+									<TableCell className="py-5">
+										<div className="flex flex-col gap-2">
+											<div className="flex items-center gap-3">
+												<div className="flex items-center gap-2">
+													<div className="h-1.5 w-16 bg-zinc-700 rounded-full overflow-hidden">
+														<div
+															className={cn("h-full rounded-full", sentimentBarColor)}
+															style={{ width: `${reliabilityPercent}%` }}
+														/>
+													</div>
+													<span className="text-xs font-bold text-foreground">
+														{Math.round(score * 100)}%
+													</span>
+												</div>
+												<span
+													className={cn(
+														"px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1",
+														sentimentBadgeColor
+													)}>
+													{label}
+													{isPositive ? (
+														<ArrowUp className="w-3 h-3" />
+													) : (
+														<ArrowDown className="w-3 h-3" />
+													)}
+												</span>
 											</div>
 										</div>
 									</TableCell>
-									<TableCell>
-										<div className="flex flex-wrap gap-1">
-											{assets.length > 0 ? (
-												assets.map(asset => (
-													<TickerBadge key={asset.ticker} ticker={asset.ticker} />
-												))
-											) : (
-												<span className="text-xs text-muted-foreground">-</span>
-											)}
+									<TableCell className="py-5">
+										<div className="flex flex-col gap-1">
+											<span className="text-xs text-zinc-500 mb-1">Mentioned Assets</span>
+											<div className="flex flex-wrap gap-2">
+												{assets.length > 0 ? (
+													assets.map(asset => (
+														<TickerBadge key={asset.ticker} ticker={asset.ticker} />
+													))
+												) : (
+													<span className="text-xs text-zinc-500">-</span>
+												)}
+											</div>
 										</div>
 									</TableCell>
-									<TableCell className="text-right text-xs text-muted-foreground">
+									<TableCell className="text-right text-xs text-zinc-500 py-5">
 										{format(new Date(episode.created_at), "MMM d, HH:mm")}
 									</TableCell>
 								</TableRow>

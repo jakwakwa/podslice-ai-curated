@@ -52,7 +52,7 @@ export default function Episode1NotesPage() {
 											href="https://cryptodnes.bg/en/bitcoin-plunges-below-87000-as-confusing-u-s-jobs-data-clouds-fed-rate-decision/"
 											target="_blank"
 											rel="noopener noreferrer"
-											className="text-amber-400 hover:text-amber-300 hover:underline">
+											className="text-emerald-400 hover:text-emerald-300 hover:underline">
 											Bitcoin Plunges Below $87,000 as Confusing U.S. Jobs Data Clouds Fed
 											Rate Decision
 										</Link>
@@ -62,7 +62,7 @@ export default function Episode1NotesPage() {
 											href="https://www.morningstar.com/news/dow-jones/202511203909/north-american-morning-briefing-ai-bubble-worries-ease-focus-turns-to-jobs-report"
 											target="_blank"
 											rel="noopener noreferrer"
-											className="text-amber-400 hover:text-amber-300 hover:underline">
+											className="text-emerald-400 hover:text-emerald-300 hover:underline">
 											North American Morning Briefing: AI Bubble Worries Ease, Focus Turns
 											to Jobs Report
 										</Link>
@@ -72,7 +72,7 @@ export default function Episode1NotesPage() {
 											href="https://www.theguardian.com/commentisfree/2025/nov/18/the-guardian-view-on-cryptos-latest-crash-it-reveals-who-pays-the-price-for-a-failing-economy"
 											target="_blank"
 											rel="noopener noreferrer"
-											className="text-amber-400 hover:text-amber-300 hover:underline">
+											className="text-emerald-400 hover:text-emerald-300 hover:underline">
 											The Guardian view on crypto’s latest crash: it reveals who pays the
 											price for a failing economy
 										</Link>
@@ -82,7 +82,7 @@ export default function Episode1NotesPage() {
 											href="https://www.investing.com/analysis/the-1-billion-company-that-controls-what-ai-giants-cant-buy-200669867"
 											target="_blank"
 											rel="noopener noreferrer"
-											className="text-amber-400 hover:text-amber-300 hover:underline">
+											className="text-emerald-400 hover:text-emerald-300 hover:underline">
 											The $1 Billion Company That Controls What AI Giants Can't Buy |
 											Investing.com
 										</Link>
@@ -100,7 +100,7 @@ export default function Episode1NotesPage() {
 											href="https://irisenergy.gcs-web.com/news-releases/news-release-details/iren-reports-q3-fy25-results/"
 											target="_blank"
 											rel="noopener noreferrer"
-											className="text-amber-400 hover:text-amber-300 hover:underline">
+											className="text-emerald-400 hover:text-emerald-300 hover:underline">
 											IREN Reports Q3 FY25 Results
 										</Link>
 									</li>
@@ -109,7 +109,7 @@ export default function Episode1NotesPage() {
 											href="https://www.nasdaq.com/articles/how-can-irens-transition-ai-cloud-benefit-stock"
 											target="_blank"
 											rel="noopener noreferrer"
-											className="text-amber-400 hover:text-amber-300 hover:underline">
+											className="text-emerald-400 hover:text-emerald-300 hover:underline">
 											How Can IREN's Transition Into the AI Cloud Benefit the stock? -
 											Nasdaq
 										</Link>
@@ -119,7 +119,7 @@ export default function Episode1NotesPage() {
 											href="https://www.nasdaq.com/articles/gross-mining-margin-under-stress-bitfarms-transitions-hpc-ai"
 											target="_blank"
 											rel="noopener noreferrer"
-											className="text-amber-400 hover:text-amber-300 hover:underline">
+											className="text-emerald-400 hover:text-emerald-300 hover:underline">
 											Gross Mining Margin Under Stress as Bitfarms Transitions to HPC/AI |
 											Nasdaq
 										</Link>

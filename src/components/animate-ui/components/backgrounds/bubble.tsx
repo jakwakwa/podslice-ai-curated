@@ -106,7 +106,7 @@ const BubbleBackground = React.forwardRef<HTMLDivElement, BubbleBackgroundProps>
 				ref={containerRef}
 				data-slot="bubble-background"
 				className={cn(
-					"relative size-full overflow-hidden bg-linear-to-br from-violet-900 to-amber-900",
+					"relative size-full overflow-hidden bg-linear-to-br from-violet-900 to-emerald-900",
 					className
 				)}
 				{...props}>

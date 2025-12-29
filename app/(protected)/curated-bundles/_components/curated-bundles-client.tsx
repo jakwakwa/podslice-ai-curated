@@ -451,7 +451,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 											</div>
 
 											<div className="flex items-start gap-2 text-sm font-normal tracking-wide w-full">
-												<div className="relative my-2 border-2  border-amber-300 rounded-lg outline-0 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
+												<div className="relative my-2 border-2  border-emerald-300 rounded-lg outline-0 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
 													{!failedBundleImages.has(bundle?.bundle_id || "") &&
 													bundle?.bundle_id ? (
 														<img

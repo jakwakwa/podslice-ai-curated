@@ -60,7 +60,7 @@ export function EpisodeProgress({
 				<CardTitle className="flex items-center space-x-2">
 					{isCompleted && <CheckCircle className="h-5 w-5 text-green-500" />}
 					{isFailed && <XCircle className="h-5 w-5 text-red-500" />}
-					{isInProgress && <Clock className="h-5 w-5 text-amber-500 animate-pulse" />}
+					{isInProgress && <Clock className="h-5 w-5 text-emerald-500 animate-pulse" />}
 					<span>{status.episode_title}</span>
 				</CardTitle>
 				<CardDescription>{status.progress.message}</CardDescription>
@@ -75,7 +75,7 @@ export function EpisodeProgress({
 						<span>{Math.round(progressPercentage)}%</span>
 					</div>
 					{isPolling && (
-						<div className="text-xs text-amber-600 flex items-center space-x-1">
+						<div className="text-xs text-emerald-600 flex items-center space-x-1">
 							<Clock className="h-3 w-3 animate-spin" />
 							<span>Checking progress...</span>
 						</div>

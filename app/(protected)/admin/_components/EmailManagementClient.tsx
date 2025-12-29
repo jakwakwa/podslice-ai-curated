@@ -170,7 +170,7 @@ export default function EmailManagementClient({
 										</Badge>
 									))}
 								</div>
-								<p className="text-sm font-medium text-amber-600">
+								<p className="text-sm font-medium text-emerald-600">
 									{bundle.userCount} user{bundle.userCount !== 1 ? "s" : ""} subscribed
 								</p>
 							</div>
@@ -276,8 +276,8 @@ export default function EmailManagementClient({
 									</div>
 
 									{recipientCount > 0 && (
-										<div className="p-3 bg-amber-50 rounded-lg">
-											<p className="text-sm font-medium text-amber-800">
+										<div className="p-3 bg-emerald-50 rounded-lg">
+											<p className="text-sm font-medium text-emerald-800">
 												This email will be sent to {recipientCount} user
 												{recipientCount !== 1 ? "s" : ""} subscribed to "
 												{selectedBundle?.name}"

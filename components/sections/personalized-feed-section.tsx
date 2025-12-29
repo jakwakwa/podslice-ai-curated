@@ -30,7 +30,7 @@ export function PersonalizedFeedSection({ isActive }: SectionProps) {
 					<h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-gray-900 text-balance leading-tight">
 						Personalized Feed.
 						<br />
-						<span className="text-amber-400">Curated for you.</span>
+						<span className="text-emerald-400">Curated for you.</span>
 					</h2>
 				</div>
 

@@ -72,8 +72,8 @@ const priorityMap: Record<
 	"White Paper": {
 		label: "White Paper",
 		badge:
-			"border border-amber-500/30 bg-amber-500/20 text-amber-600 dark:text-amber-400",
-		dot: "bg-amber-500",
+			"border border-emerald-500/30 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400",
+		dot: "bg-emerald-500",
 		description: "Technical or academic papers",
 	},
 	"Earnings Report": {

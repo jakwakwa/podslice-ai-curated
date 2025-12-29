@@ -242,7 +242,7 @@ export function BundleSelectionDialog({
 								if (isAlreadySelected) {
 									return (
 										<span>
-											<strong className="font-bold text-amber-500">
+											<strong className="font-bold text-emerald-500">
 												{sanitizeText(selectedBundle.name)} Bundle{" "}
 											</strong>{" "}
 											is already active in your profile
@@ -281,7 +281,7 @@ export function BundleSelectionDialog({
 
 												<ArrowRightCircle size={20} />
 
-												<span className="font-bold mx-1 text-amber-300">
+												<span className="font-bold mx-1 text-emerald-300">
 													{sanitizeText(selectedBundle.name)}
 												</span>
 											</span>
@@ -297,7 +297,7 @@ export function BundleSelectionDialog({
 							{shouldShowSwitchWarning && (
 								<>
 									{/* Warning Message */}
-									<div className="px-1 py-[1px] w-fit max-w-[90%]  bg-yellow-500/10 outline-[0.5px] outline-amber-600/70 border-amber-500 rounded-xs text-[0.65rem] text-amber-200/70">
+									<div className="px-1 py-[1px] w-fit max-w-[90%]  bg-yellow-500/10 outline-[0.5px] outline-emerald-600/70 border-emerald-500 rounded-xs text-[0.65rem] text-emerald-200/70">
 										{isSharedBundle
 											? `You'll lose access to episodes from "${sanitizedCurrentBundleName}" after switching`
 											: `Access to "${sanitizedCurrentBundleName}" summaries will be lost`}

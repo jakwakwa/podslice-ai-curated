@@ -61,7 +61,7 @@ const SAMPLE_LOGS: Log[] = [
 ];
 
 const levelStyles: Record<LogLevel, string> = {
-	Analysis: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+	Analysis: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
 	"Earnings Report": "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
 	"White Paper": "bg-red-500/10 text-red-600 dark:text-red-400",
 	research: "bg-red-500/10 text-red-600 dark:text-red-400",

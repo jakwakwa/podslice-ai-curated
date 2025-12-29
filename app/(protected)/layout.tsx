@@ -93,10 +93,10 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 								</DrawerTrigger>
 								<DrawerContent className="sm:max-w-screen flex flex-col justify-center items-center bg-header backdrop-blur-3xl border-none rounded-t-xl p-0 w-full ">
 									<DrawerHeader>
-										<DrawerTitle className=" text-center text-amber-100/90">
+										<DrawerTitle className=" text-center text-emerald-100/90">
 											Menu
 										</DrawerTitle>
-										<DrawerDescription className="text-center text-amber-100/50">
+										<DrawerDescription className="text-center text-emerald-100/50">
 											Navigate within the app
 										</DrawerDescription>
 										<ProfileForm setOpenMobileDrawer={setOpenMobileDrawer} />
@@ -138,7 +138,7 @@ const UserNavMobile = ({
 	user: { name: string; email: string; avatar: string };
 }) => {
 	return (
-		<div className=" rounded-lg relative  md:max-h-9 flex items-center md:items-start  max-w-[36px]  border-0 border-amber-100/10 bg-sidebar/10 overflow-hidden justify-center  outline-0  p-1  transition-all duration-300 ease-in-out max-h-9 h-9 mx-auto ">
+		<div className=" rounded-lg relative  md:max-h-9 flex items-center md:items-start  max-w-[36px]  border-0 border-emerald-100/10 bg-sidebar/10 overflow-hidden justify-center  outline-0  p-1  transition-all duration-300 ease-in-out max-h-9 h-9 mx-auto ">
 			<NavUser user={user} />
 		</div>
 	);
@@ -234,13 +234,13 @@ function ProfileForm({
 					<li key={item.title} className=" text-left text-sm w-full ">
 						{item.subItems && item.subItems.length > 0 ? (
 							// Parent item with subItems - not clickable
-							<div className="  bg-black/0 flex flex-col text-left  items-start justify-center cursor-pointer my-0 mx-auto gap-2 font-medium border border-amber-600/0 shadow-md text-base   shadow-slate-950/0 text-shadow-slate-950/80 text-amber-300 max-w-[80%] md:max-w-fit ">
+							<div className="  bg-black/0 flex flex-col text-left  items-start justify-center cursor-pointer my-0 mx-auto gap-2 font-medium border border-emerald-600/0 shadow-md text-base   shadow-slate-950/0 text-shadow-slate-950/80 text-emerald-300 max-w-[80%] md:max-w-fit ">
 								<div className="flex pl-8 flex-row items-center justify-start gap-2 mt-4 uppercase">
 									{item.icon && <item.icon className="size-6    text-violet-500" />}
 									{item.title}
 								</div>
 
-								<ul className="flex text-sm font-bold text-amber-400 flex-col gap-2 py-2 px-8 w-full mt-0 mb-2 titlecase ">
+								<ul className="flex text-sm font-bold text-emerald-400 flex-col gap-2 py-2 px-8 w-full mt-0 mb-2 titlecase ">
 									{item.subItems.map(subItem => (
 										<li
 											key={subItem.name}
@@ -248,7 +248,7 @@ function ProfileForm({
 											<Link
 												href={subItem.url}
 												onClick={() => setOpenMobileDrawer(false)}
-												className="text-amber-400 py-3 bg-black/0 rounded-lg flex text-left flex-row border titlecase font-bold  border-amber-800  items-center justify-start cursor-pointer gap-2  shadow-sm max-w-[60%] px-8 min-w-full my-0">
+												className="text-emerald-400 py-3 bg-black/0 rounded-lg flex text-left flex-row border titlecase font-bold  border-emerald-800  items-center justify-start cursor-pointer gap-2  shadow-sm max-w-[60%] px-8 min-w-full my-0">
 												{subItem.name}
 											</Link>
 										</li>
@@ -260,8 +260,8 @@ function ProfileForm({
 							<Link
 								href={item.url}
 								onClick={() => setOpenMobileDrawer(false)}
-								className="py-3 bg-black/10 rounded-lg flex text-left flex-row items-center justify-start cursor-pointer my-0 mx-auto gap-2 font-medium border border-slate-600 shadow-md shadow-slate-950/60 text-shadow-slate-950/80 text-amber-400/80  max-w-[70%] md:max-w-fit pl-8">
-								{item.icon && <item.icon className="size-6	 me-2  text-amber-300 " />}
+								className="py-3 bg-black/10 rounded-lg flex text-left flex-row items-center justify-start cursor-pointer my-0 mx-auto gap-2 font-medium border border-slate-600 shadow-md shadow-slate-950/60 text-shadow-slate-950/80 text-emerald-400/80  max-w-[70%] md:max-w-fit pl-8">
+								{item.icon && <item.icon className="size-6	 me-2  text-emerald-300 " />}
 								{item.title}
 							</Link>
 						)}
