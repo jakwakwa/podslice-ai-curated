@@ -28,6 +28,8 @@
 	--destructive: oklch(0.577 0.245 27.325);
 	--border: oklch(0% 0 0);
 	--input: oklch(0.92 0.004 286.32);
+	--input-selection: oklch(25.246% 0.11223 321.879 / 0.422);
+	-input-ring: oklch(25.246% 0.11223 321.879 / 0.422);
 	--ring: oklch(23.413% 0.00463 17.174);
 	--chart-1: oklch(0.809 0.105 251.813);
 	--chart-2: oklch(0.623 0.214 259.815);
@@ -51,18 +53,20 @@
 	--card-foreground: oklch(0.94 0.01 270);
 	--popover: oklch(8% 0.008 270);
 	--popover-foreground: oklch(0.94 0.01 270);
-	--primary: oklch(72% 0.19 160);
+	--primary: oklch(56.949% 0.11469 164.968);
 	--primary-foreground: oklch(10% 0.01 160);
 	--secondary: oklch(65% 0.22 300);
 	--secondary-foreground: oklch(0.98 0 0);
 	--muted: oklch(20% 0.008 270);
 	--muted-foreground: oklch(0.60 0.015 270);
 	--accent: oklch(65% 0.22 300);
-	--accent-foreground: oklch(0.98 0 0);
+	--accent-foreground: #000;
 	--destructive: oklch(0.704 0.191 22.216);
 	--border: oklch(25% 0.01 270);
-	--input: oklch(15% 0.008 270);
-	--ring: oklch(65% 0.22 300);
+	--input: oklch(91.973% 0.00413 285.946 / 0.368);
+	--input-selection: oklch(25.246% 0.11223 321.879 / 0.422);
+
+	--ring: oklch(86.666% 0.25671 145.002);
 	--chart-1: oklch(72% 0.19 160);
 	--chart-2: oklch(65% 0.22 300);
 	--chart-3: oklch(0.546 0.245 262.881);
@@ -84,6 +88,7 @@
 @layer base {
 	* {
 		border-color: var(--border);
+
 	}
 
 	body {
@@ -110,6 +115,8 @@
 
 		background-color: var(--background);
 	}
+
+
 
 	/* Glassmorphic utility classes */
 	.bg-dialog-card {
@@ -259,7 +266,7 @@
 	/* ============================================= */
 
 	.bg-card {
-		background-color: #fe64da0d;
+		background-image: linear-gradient(to bottom left, #3c334893, #2e323175);
 	}
 
 	.bg-bigcard {
@@ -327,7 +334,43 @@
 		height: 80px;
 	}
 
+	button {
+		color: white !important;
+		transition: all 0.2s ease-in-out;
+		font-weight: 400 !important;
+		margin-bottom: 20px !important;
+	}
 
+	a:hover {
+		cursor: pointer;
+		opacity: 0.8 !important;
+	}
+
+	input {
+		background-color: #ffffffc4 !important;
+		background-image: linear-gradient(to bottom, #2b292924, #3c3c4641) !important;
+		color: var(--accent-foreground) !important;
+		border-radius: 10px !important;
+		box-shadow: inset 0.5px 2px 3.5px 1px #00000067 !important;
+		transition: all 0.2s ease-in-out;
+		/* outline-offset: 1px !important; */
+		border: var(--ring) !important;
+		padding: 15px !important;
+		letter-spacing: 0.3px;
+	}
+
+	input:focus-visible,
+	input:focus,
+	input:hover,
+	input:active {
+		cursor: pointer;
+		color: var(--accent-foreground) !important;
+	}
+
+	button:hover {
+		cursor: pointer;
+		opacity: 0.9 !important;
+	}
 
 	button.btn-playicon-lg > svg {
 		position: relative !important;
@@ -340,18 +383,14 @@
 		/*box-shadow: 0px 3px 14px #48407b !important;*/
 	}
 
-	textarea,
-	input {
-		outline: 1px solid transparent !important;
-		outline-offset: 1px !important;
-
-		background-color: var(--input) !important;
-		box-shadow: inset 0px 3px 9px 1px var(--input-shadow) !important;
-	}
 
 	input::placeholder {
-		/*color: var(--input-placeholder) !important;*/
-		opacity: 0.75;
+		color: var(--input-ring) !important;
+		opacity: 0.55 !important;
+
+		font-size: 0.8rem !important;
+		font-weight: 400 !important;
+
 	}
 
 	textarea:focus,
@@ -375,7 +414,6 @@
 	input:hover,
 	input:active,
 	input:focus {
-		color: var(--color-primary-foreground) !important;
 		outline: 1px solid var(--input-ring) !important;
 		outline-offset: 1px !important;
 		transition: all 0.2s ease-in-out;
@@ -392,9 +430,8 @@
 
 
 	input::selection {
-		opacity: 0.5 !important;
-		color: var(--input-ring) !important;
 		white-space: nowrap !important;
+		background-color: var(--input-ring) !important;
 	}
 
 	button.btn-playicon {

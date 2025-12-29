@@ -32,35 +32,26 @@ export function LongEpisodeWarningDialog({
 			<AlertDialogContent>
 				<AlertDialogHeader>
 					<div className="flex items-center gap-3 mb-2">
-						<AlertCircle className="h-8 w-8 text-purple-500" />
+						<AlertCircle className="animate-bounce h-5 w-5 text-amber-500" />
 						<AlertDialogTitle>
 							{hasEnoughCredits
 								? "Deep Dive Uses 2 Episode Credits"
 								: "Insufficient Credits"}
 						</AlertDialogTitle>
-
-
 					</div>
 					<AlertDialogDescription asChild>
-
 						<div className="space-y-3 text-base text-muted-foreground">
 							{hasEnoughCredits ? (
 								<>
-									<p>
-										The <strong>Deep Dive</strong> option creates a more comprehensive
-										7-10 minute summary, but it counts as <strong>2 episodes</strong>{" "}
-										towards your monthly limit.
-									</p>
-									<div className="px-3  py-1 border-2 border-emerald-500/50 rounded-lg">
-										<p className="font-semibold text-slate-900">
-											Current status: {remainingCredits} credits remaining
-										</p>
-										<p className="text-sm text-muted-foreground mt-1">
+									<div>
+										<p className="font-semibold text-amber-200 mt-4">
 											After creating this episode, you'll have {remainingCredits - 2}{" "}
 											credits left.
 										</p>
 									</div>
-									<p>Would you like to continue?</p>
+									<p className="my-4 text-gray-300 font-bold text-lg">
+										Would you like to continue?
+									</p>
 								</>
 							) : (
 								<>

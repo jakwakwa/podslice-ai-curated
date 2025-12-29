@@ -49,6 +49,7 @@ import { useNotificationStore } from "@/lib/stores";
 import type { SummaryLengthOption } from "@/lib/types/summary-length";
 import { FormAccordion } from "./form-accordion";
 import { UsageDisplay } from "./usage-display";
+import { TogglePill } from "@/components/shared/toggle-pill";
 
 const EPISODE_LIMIT = PRICING_TIER[2]?.episodeLimit ?? 30;
 const YT_MAX_DURATION_SECONDS = getMaxDurationSeconds();
@@ -500,37 +501,23 @@ export default function SummaryCreator() {
 				<div className="lg:col-span-2 space-y-6">
 					{/* Pick Summary Type Card */}
 					<div className="bg-[#0f1115] rounded-3xl p-6 md:p-8 border border-zinc-800 shadow-xl">
-						<span className="block text-sm font-medium text-emerald-400 mb-2">
-							Pick a Summary Type:
+						<span className="block text-xl font-black text-foreground mb-2">
+							Financial Intelligence Configurations
 						</span>
-						<p className="text-xs text-zinc-400 mb-4">
-							{creatorMode === "youtube"
-								? "Instructions: To find the youtube link, go to the video, click the share button below the video, copy the link that pop-up and paste it over here."
-								: "Want to catch up on the latest news? Select your desired sources and topics. Our AI will get to work and create a custom summary (both audio and text) just for you."}
-						</p>
-						<div className="flex flex-wrap gap-4">
-							<Button
-								type="button"
+
+						<div className="flex flex-wrap mt-12 gap-2">
+							<TogglePill
+								isActive={creatorMode === "youtube"}
 								onClick={() => setCreatorMode("youtube")}
-								disabled={isBusy}
-								className={
-									creatorMode === "youtube"
-										? "px-6 py-2.5 rounded-full bg-violet-500 text-white font-semibold text-sm hover:shadow-[0_0_15px_rgba(168,85,247,0.4)] transition-all"
-										: "px-6 py-2.5 rounded-full bg-transparent border border-zinc-700 text-zinc-400 hover:text-white text-sm transition-all hover:border-zinc-500"
-								}>
-								Podcast Summary
-							</Button>
-							<Button
-								type="button"
+								disabled={isBusy}>
+								Intelligence Reporting
+							</TogglePill>
+							<TogglePill
+								isActive={creatorMode === "news"}
 								onClick={() => setCreatorMode("news")}
-								disabled={isBusy}
-								className={
-									creatorMode === "news"
-										? "px-6 py-2.5 rounded-full bg-violet-500 text-white font-semibold text-sm hover:shadow-[0_0_15px_rgba(168,85,247,0.4)] transition-all"
-										: "px-6 py-2.5 rounded-full bg-transparent border border-zinc-700 text-zinc-400 hover:text-white text-sm transition-all hover:border-zinc-500"
-								}>
-								Research Summary
-							</Button>
+								disabled={true}>
+								Research (coming soon)
+							</TogglePill>
 						</div>
 						<form
 							className=" w-full"
@@ -548,9 +535,7 @@ export default function SummaryCreator() {
 							{creatorMode === "youtube" && (
 								<div className="p-0">
 									<div className="space-y-2 md:w-ful overflow-hidden bg-card p-5 my-8 gap-4 mx-0 md:mx-0 border border-border rounded-3xl  shadow-md p-8l md:min-w-fit">
-										<Label htmlFor="youtubeUrl">
-											Link to podcast episode ( YouTube only )
-										</Label>
+										<Label htmlFor="youtubeUrl"> Audio/Video source</Label>
 										<Tooltip>
 											<TooltipTrigger asChild>
 												<button
@@ -591,11 +576,16 @@ export default function SummaryCreator() {
 
 										{isFetchingMetadata && <ComponentSpinner />}
 										{youtubeUrlError && (
-											<p className="flex bg-destructive px-2.5 py-1 text-destructive-foreground text-xs mt-2 rounded-md outline-1 outline-destructive">
+											<p className="flex bg-red-700/60 animate-[bounce_1.5s_ease-in-out_infinite] px-2.5 py-1 text-destructive-foreground text-xs mt-4 rounded-md outline-1 outline-red-400 border-red-500">
 												{" "}
-												<span className="flex items-center gap-3">
+												<span className="flex items-center gap-3 text-red-200 border-red-400">
 													{" "}
-													<MessageSquareWarning width={32} /> {youtubeUrlError}
+													<MessageSquareWarning
+														color={`var(--color-red-400)`}
+														width={18}
+														height={18}
+													/>{" "}
+													{youtubeUrlError}
 												</span>
 											</p>
 										)}
@@ -614,21 +604,20 @@ export default function SummaryCreator() {
 												/>
 												<span className="text-xs text-indigo-200">
 													<span className="font-bold text-emerald-300">
-														Quick Review:
+														Is this correct?
 													</span>{" "}
-													Confirm the video details below are correct
 												</span>
 											</div>
-											<div className="bg-red-950/20 my-3 md:col-span-2 py-3 px-4 rounded-sm outline-1 outline-purple-900 shadow-sm max-w-sm  ">
-												<p className=" font-normal text-purple-300 flex text-[0.6rem] items-center gap-2 py-1">
-													<VideoIcon width={14} height={14} color="purple" />
+											<div className="bg-violet-300/5 my-3 md:col-span-2 py-2 px-5 rounded-lg outline-1 outline-gray-600 shadow-sm max-w-sm  ">
+												<p className=" font-normal text-gray-300 flex text-[0.6rem] items-center gap-2 py-1">
+													<VideoIcon width={14} height={14} color="red" />
 													Youtube Video Link:
 												</p>
-												<p className="text-violet-200/70 font-light text-[0.79rem] leading-tight">
+												<p className="text-emerald-200/70 font-light text-[0.77rem] leading-tight">
 													{videoTitle}
 												</p>
 												{videoDuration !== null && (
-													<p className="text-[0.6rem] py-1 font-mono text-purple-400">
+													<p className="text-[0.7rem] py-1 font-mono text-gray-300">
 														{Math.floor(videoDuration / 60)}m {videoDuration % 60}s
 													</p>
 												)}
@@ -709,11 +698,11 @@ export default function SummaryCreator() {
 								<FormAccordion
 									value="research-lab"
 									className="my-8"
-									title="Research Lab Context">
+									title="Smart Research Lab">
 									<div className="space-y-4 pt-2">
 										<div className="flex flex-col gap-4">
 											<div className="flex flex-row justify-between items-center">
-												<Label>Context Source</Label>
+												<Label>Source</Label>
 												{/* Suggestion Badge/Button */}
 												{suggestedAssets.length > 0 && !referenceDocUrl && (
 													<Button
@@ -745,7 +734,7 @@ export default function SummaryCreator() {
 													{user?.id && <AddAssetDialog userId={user.id} />}
 												</div>
 											) : (
-												<div className="rounded-lg border bg-card p-3 flex items-center justify-between gap-3">
+												<div className="rounded-lg  bg-black/30 border-violet-400/50 border-[1.1px] p-3 flex items-center justify-between gap-3">
 													<div className="flex items-center gap-3 overflow-hidden">
 														<div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/10">
 															<InfoIcon className="h-4 w-4 text-primary" />
@@ -754,9 +743,9 @@ export default function SummaryCreator() {
 															<span className="truncate text-sm font-medium">
 																{selectedAssetTitle || "Selected Document"}
 															</span>
-															<span className="truncate text-xs text-muted-foreground">
+															{/* <span className="truncate text-xs text-muted-foreground">
 																{referenceDocUrl}
-															</span>
+															</span> */}
 														</div>
 													</div>
 													<Button
@@ -786,23 +775,27 @@ export default function SummaryCreator() {
 										</div>
 
 										{referenceDocUrl && (
-											<div className="space-y-4 bg-muted/30 p-4 rounded-lg border border-border/50">
+											<div className="space-y-4 bg-muted/30 p-1 rounded-lg border border-border/50">
 												<div className="flex justify-between items-center">
-													<Label className="text-xs font-bold">Context Weighting</Label>
-													<span className="text-xs font-mono bg-primary/20 px-2 py-0.5 rounded text-primary">
-														{contextWeight[0]}% Document
-													</span>
+													<Label className="text-sm font-bold">
+														Lie Detector Weighting
+													</Label>
 												</div>
 												<Slider
 													value={contextWeight}
 													onValueChange={setContextWeight}
 													max={100}
 													step={5}
-													className="py-4"
+													className="py-1.5 bg-black/30 border-[0.1px] border-cyan-400/60 rounded-lg"
 												/>
-												<div className="flex justify-between text-[0.6rem] text-muted-foreground uppercase font-bold px-1">
-													<span>Podcast Audio</span>
-													<span>Reference Doc</span>
+												<div className="flex justify-between text-[0.7rem] text-violet-400 uppercase font-bold px-1">
+													<p className="text-white/50">Audio Source</p>
+													<p>
+														Research Doc
+														<span className="font-mono bg-primary/20 px-2 py-0.5 text-sm rounded text-emerald-400">
+															{contextWeight[0]}%
+														</span>{" "}
+													</p>
 												</div>
 											</div>
 										)}
@@ -1053,7 +1046,7 @@ export default function SummaryCreator() {
 								<Button
 									type="submit"
 									disabled={!canSubmit}
-									className="w-full md:w-auto px-8 py-6 rounded-xl bg-gradient-to-r from-emerald-400 via-[#22d3ee] to-violet-500 text-black font-bold text-lg flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(74,222,128,0.5)] transition-all transform hover:scale-[1.01] border-none">
+									className="w-full md:w-auto px-8 py-6 rounded-xl bg-gradient-to-r from-emerald-500 via-[#078da2] to-violet-500 text-black font-bold text-lg flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(74,222,128,0.5)] transition-all transform hover:scale-[1.01] border-none">
 									{isCreating ? "Creating..." : "Generate summary"}
 									<SparklesIcon className="w-5 h-5 text-black" />
 								</Button>

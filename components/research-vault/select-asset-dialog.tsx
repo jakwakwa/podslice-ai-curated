@@ -63,7 +63,10 @@ export function SelectAssetDialog({ onSelect, trigger }: SelectAssetDialogProps)
 				</DialogHeader>
 				<div className="py-2">
 					<div className="relative">
-						<Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+						<Search
+							color="#000"
+							className="absolute right-4 top-4 h-4 w-4 hover:text-primary"
+						/>
 						<Input
 							placeholder="Search assets..."
 							value={searchQuery}
@@ -84,6 +87,7 @@ export function SelectAssetDialog({ onSelect, trigger }: SelectAssetDialogProps)
 					) : (
 						<div className="space-y-2">
 							{filteredAssets.map(asset => (
+								// biome-ignore lint/a11y/noStaticElementInteractions: <unresolved>
 								<div
 									key={asset.id}
 									className="flex items-center justify-between rounded-lg border p-3 hover:bg-accent cursor-pointer transition-colors"
