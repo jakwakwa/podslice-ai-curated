@@ -36,7 +36,7 @@ const UserEpisodeSchema = z.object({
 type EpisodeWithSigned = UserEpisode & {
 	signedAudioUrl: string | null;
 	is_public: boolean;
-	intelligence?: any;
+	intelligence?: unknown;
 };
 
 async function getEpisodeWithSignedUrl(
@@ -99,9 +99,23 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
 	// Reshape flat intelligence data from DB to nested structure expected by component
 	// The Inngest function flattens structuredData + writtenContent into the root of the JSON
+
+	interface StoredIntelligence {
+		sentimentScore: number;
+		sentimentLabel: "BULLISH" | "NEUTRAL" | "BEARISH";
+		tickers: string[];
+		sectorRotation?: string | null;
+		executiveBrief: string;
+		variantView?: string | null;
+		investmentImplications: string;
+		risksAndRedFlags: string;
+		tradeRecommendations?: any[]; // Keep any for inner objects or import types if possible
+		documentContradictions?: any[];
+	}
+
 	let mappedIntelligence = null;
 	if (episode.intelligence) {
-		const raw = episode.intelligence as any;
+		const raw = episode.intelligence as unknown as StoredIntelligence;
 		mappedIntelligence = {
 			structuredData: {
 				sentimentScore: raw.sentimentScore,
@@ -147,7 +161,14 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
 					<Separator className="my-8" />
 					{mappedIntelligence ? (
-						<IntelligentSummaryView intelligence={mappedIntelligence} />
+						<IntelligentSummaryView
+							title={episode.episode_title}
+							audioUrl={episode.signedAudioUrl}
+							duration={episode.duration_seconds}
+							publishedAt={episode.created_at}
+							youtubeUrl={episode.youtube_url}
+							intelligence={mappedIntelligence}
+						/>
 					) : (
 						<KeyTakeaways items={takeaways} />
 					)}
