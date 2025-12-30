@@ -1,11 +1,9 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import type { HeaderProps } from "@/lib/component-variants";
-import { useSubscriptionStore } from "@/lib/stores/subscription-store-paddlejs";
-import { hasCurateControlAccess } from "@/utils/paddle/plan-utils";
-import { H1, H2, H3, Typography } from "./typography";
+
+import { H1, H2, H3 } from "./typography";
 
 interface PageHeaderProps extends React.HTMLAttributes<HTMLElement>, HeaderProps {
 	title: string;
@@ -15,33 +13,16 @@ interface PageHeaderProps extends React.HTMLAttributes<HTMLElement>, HeaderProps
 }
 
 const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(
-	({ title, description, level = 1, button }, _ref) => {
+	({ title, level = 1, button }, _ref) => {
 		const _HeadingComponent = level === 1 ? H1 : level === 2 ? H2 : H3;
-		const _router = useRouter();
-		const pathname = usePathname();
-		const subscription = useSubscriptionStore(state => state.subscription);
-		const _isLoading = useSubscriptionStore(state => state.isLoading);
-
-		// Check if user has Curate Control access
-		const _hasAccess = hasCurateControlAccess(subscription?.plan_type);
-
-		// Define allowed paths internally - only show button on dashboard
-		const allowedPaths = ["/dashboard"];
-		const _isPathAllowed = allowedPaths.includes(pathname);
 
 		return (
-			<div className="w-full h-24 rounded-2xl bg-gradient-to-r from-[#1E1B26] to-[#16151A] flex items-center px-8 border border-zinc-800 mb-8">
-				<div className="flex items-center justify-between w-full">
-					<h1 className="text-2xl font-semibold text-slate-200">{title}</h1>
-					{description && (
-						<Typography
-							as="p"
-							variant="body"
-							className="text-sm text-zinc-400 hidden md:block">
-							{description}
-						</Typography>
-					)}
-					{button && <div className="flex items-center">{button}</div>}
+			<div className="w-full h-fit px-8 backdrop-filter-sm flex items-center rounded-2xl bg-linear-to-r from-[#1E1B26]/80 to-[#1E1B26]/70 border-[0.5px] border-black">
+				<div className="flex h-full  w-full items-center flex-row justify-between">
+					<h1 className="text-2xl font-semibold w-fit leading-normal text-slate-200">
+						{title}
+					</h1>
+					{button && <div>{button}</div>}
 				</div>
 			</div>
 		);

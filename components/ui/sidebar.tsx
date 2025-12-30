@@ -235,7 +235,7 @@ function SidebarTrigger({
 			data-slot="sidebar-trigger"
 			size="sm"
 			className={cn(
-				"inline-flex content-center outline-0 w-7 h-7 border-0 px-0 py-0 my-auto items-center justify-center gap-0 whitespace-nowrap leading-5 tracking-wide transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 outline-none  overflow-visible focus-visible:outline-0 focus-visible:outline-offset-0 rounded-sm bg-[#000]/0 hover:bg-[#272244]/0 text-[#d6d0f6] hover:text-[#76e8ff]",
+				"inline-flex content-center outline-0 w-7 h-7 border-0 px-0 py-0 my-auto items-center justify-center gap-0 whitespace-nowrap leading-5 tracking-wide transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 outline-none  overflow-visible focus-visible:outline-0  z-50 w-full bg-red focus-visible:outline-offset-0 rounded-sm bg-[#000]/0 hover:bg-[#272244]/0 text-[#d6d0f6] hover:text-[#76e8ff]",
 				className
 			)}
 			onClick={event => {
@@ -245,13 +245,13 @@ function SidebarTrigger({
 			{...props}>
 			{open ? (
 				<SidebarCloseIcon
-					size={14}
-					className="m-auto h-full w-full text-primary-white max-w-[16px] max-h-[16px]"
+					size={16}
+					className="m-auto h-full w-full text-primary-white max-w-[20px] max-h-[20px]"
 				/>
 			) : (
 				<IconLayoutSidebarRightCollapseFilled
-					size={14}
-					className="m-auto h-full w-full text-primary-white max-w-[16px] max-h-[16px]"
+					size={16}
+					className="m-auto h-full w-full text-primary-white max-w-[20px] max-h-[20px]"
 				/>
 			)}
 			<span className="sr-only hidden">menu</span>

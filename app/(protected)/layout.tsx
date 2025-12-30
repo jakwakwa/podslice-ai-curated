@@ -28,7 +28,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSubscriptionInit } from "@/hooks/useSubscriptionInit";
 import { Footer } from "./footer";
-import GradientBlinds from "@/components/GradientBlinds";
+import Silk from "@/components/Silk";
 
 function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 	const { state } = useSidebar();
@@ -49,34 +49,29 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 			<SidebarInset>
 				<header
-					className={`fixed flex ${isMobile ? "h-18" : "h-16"}   shadow-[0_1px_5px_3px_rgba(0,0.2,100,0.12)] overflow-hidden shrink-0 items-center border-none gap-4 z-50 left-0 group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 mt-0 max-w-screen justify-between px-0  py-0 overflow-y-scroll transition all  duration-200 ease-in-out ${state === "expanded" ? "" : "collapsed"}`}>
+					className={`fixed flex ${isMobile ? "h-18" : "h-16"} bg-sidebar  shadow-[0_1px_5px_3px_rgba(0,0.2,100,0.12)] overflow-hidden shrink-0 items-center border-none gap-4 z-50 left-0 group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 mt-0 max-w-screen justify-between px-0  py-0 overflow-y-scroll transition all  duration-200 ease-in-out ${state === "expanded" ? "w-full" : "collapsed"}`}>
 					<div
-						className={`flex items-center ${isMobile ? "h-18" : "h-14"} justify-start  ${state === "expanded" ? "md:px-4 w-[240px]" : "md:px-0 w-[80px] "}`}>
-						<Link
-							href="/dashboard"
-							className={`flex items-center h-24 justify-start text-xs  ${state === "expanded" ? "px-0  ml-0 md:pl-0" : "md:pl-1"}`}>
-							{!isMobile ? (
-								<Image
-									className={`transition-all flex flex-row items-center  duration-300 ease-in-out w-full ${state === "expanded" ? "h-18 max-w-[124px] " : "max-w-0 max-h-10   justify-center"}`}
-									src={`${state === "expanded" ? "/logo" : "/icon"}.svg`}
-									width={124}
-									height={12}
-									alt={`Menu`}
-								/>
-							) : (
-								<Image
-									className={`transition-all flex flex-row items-center  h-21 duration-300 ease-in-out w-full ${state === "expanded" ? "h-21 max-w-[124px] " : "max-w-[200px] h-21 justify-center"}`}
-									src={"/logo.svg"}
-									width={200}
-									height={28}
-									alt={`Menu`}
-								/>
-							)}
-							{/* <HomeIcon className="mt-1 mr-4" height={14} /> */}
-						</Link>
+						className={`flex  items-center ${isMobile ? "h-18" : "h-14"} justify-start  ${state === "expanded" ? "md:flex-row md:px-4 w-[240px]" : "md:flex-col md:px-0 w-[80px] "}`}>
+						{!isMobile ? (
+							<Image
+								className={`transition-all flex flex-row items-center ${isMobile ? "h-18" : "h-10"} duration-300 ease-in-out ${state === "expanded" ? "h-21 max-w-[124px] " : "max-w-[20px] h-21 justify-center"}`}
+								src={"/icon.svg"}
+								width={200}
+								height={28}
+								alt={`Menu`}
+							/>
+						) : (
+							<Image
+								className={`transition-all flex flex-row items-center ${isMobile ? "h-18" : "h-14"} duration-300 ease-in-out w-full ${state === "expanded" ? "h-21 max-w-[124px] " : "max-w-[200px] h-21 justify-center"}`}
+								src={"/logo.svg"}
+								width={200}
+								height={28}
+								alt={`Menu`}
+							/>
+						)}
 
 						<SidebarTrigger
-							className="hidden md:block md:w-[px] w-0 h-0 md:h-[14px] border border-[#50647a0] border-none shadow-none"
+							className="md:block md:w-[px] h-0 md:h-[14px] border border-[#50647a0] border-none shadow-none w-[54px]"
 							size="sm"
 							variant="outline"
 						/>
@@ -123,20 +118,13 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 							strokeColor="#000"
 							className="absolute inset-0 flex items-start justify-center   -z-1 top-0 opacity-40 backdrop-blur-2xl  size-250 w-screen md:min-w-none  mx-0  p-0  flex-col my-0 md:flex-row pt-6 md:p-3 md:py-16 md:mx-0 pl-0 md:my-0  "
 						/> */}
-						<div className="absolute top-0 opacity-40 left-0 w-full -z-1 h-full">
-							<GradientBlinds
-								gradientColors={["#FF9FFC", "#5227FF"]}
-								angle={30}
-								noise={0.3}
-								blindCount={12}
-								blindMinWidth={50}
-								spotlightRadius={0.7}
-								spotlightSoftness={0.7}
-								spotlightOpacity={1}
-								mouseDampening={0.15}
-								distortAmount={0}
-								shineDirection="left"
-								mixBlendMode="lighten"
+						<div className="absolute top-0  left-0 w-screen -z-1 h-full">
+							<Silk
+								speed={1.8}
+								scale={0.4}
+								color="#526066"
+								noiseIntensity={3.8}
+								rotation={2.7}
 							/>
 						</div>
 
