@@ -1,4 +1,4 @@
-import type React from "react";
+import type * as React from "react";
 import { forwardRef, useMemo, useRef, useLayoutEffect } from "react";
 import { Canvas, useFrame, useThree, type RootState } from "@react-three/fiber";
 import { Color, type Mesh, type ShaderMaterial } from "three";
