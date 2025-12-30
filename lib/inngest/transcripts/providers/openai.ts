@@ -9,7 +9,8 @@ export const OpenAITextFallbackProvider: TranscriptProvider = {
 		return true;
 	},
 	async getTranscript(request: TranscriptRequest): Promise<TranscriptResponse> {
-		const apiKey = process.env.OPENAI_API_KEY || process.env.OPENAI_KEY || process.env.OPENAI;
+		const apiKey =
+			process.env.OPENAI_API_KEY || process.env.OPENAI_KEY || process.env.OPENAI;
 		if (!apiKey) {
 			return { success: false, error: "OpenAI API key missing", provider: this.name };
 		}
@@ -43,16 +44,29 @@ export const OpenAITextFallbackProvider: TranscriptProvider = {
 
 			if (!openai.ok) {
 				const text = await openai.text();
-				return { success: false, error: `OpenAI error: ${openai.status} ${text}`, provider: this.name };
+				return {
+					success: false,
+					error: `OpenAI error: ${openai.status} ${text}`,
+					provider: this.name,
+				};
 			}
 
 			const json = await openai.json();
-			const content = (json?.choices?.[0]?.message?.content || json?.choices?.[0]?.text || "").trim();
-			if (!content) return { success: false, error: "No transcript extracted", provider: this.name };
+			const content = (
+				json?.choices?.[0]?.message?.content ||
+				json?.choices?.[0]?.text ||
+				""
+			).trim();
+			if (!content)
+				return { success: false, error: "No transcript extracted", provider: this.name };
 
 			return { success: true, transcript: content, provider: this.name };
 		} catch (err) {
-			return { success: false, error: err instanceof Error ? err.message : String(err), provider: this.name };
+			return {
+				success: false,
+				error: err instanceof Error ? err.message : String(err),
+				provider: this.name,
+			};
 		}
 	},
 };

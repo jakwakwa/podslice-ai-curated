@@ -22,23 +22,34 @@ interface DashboardClientWrapperProps {
  * DashboardClientWrapper
  * Handles client-only interactions: modals, wizards, and profile updates
  */
-export function DashboardClientWrapper({ hasProfile, userCurationProfile, onProfileUpdated }: DashboardClientWrapperProps) {
+export function DashboardClientWrapper({
+	hasProfile,
+	userCurationProfile,
+	onProfileUpdated,
+}: DashboardClientWrapperProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isCreateWizardOpen, setIsCreateWizardOpen] = useState(false);
 
-	const handleSaveUserCurationProfile = async (updatedData: Partial<UserCurationProfile>) => {
+	const handleSaveUserCurationProfile = async (
+		updatedData: Partial<UserCurationProfile>
+	) => {
 		if (!userCurationProfile) return;
 		try {
-			const response = await fetch(`/api/user-curation-profiles/${userCurationProfile.profile_id}`, {
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(updatedData),
-			});
+			const response = await fetch(
+				`/api/user-curation-profiles/${userCurationProfile.profile_id}`,
+				{
+					method: "PATCH",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(updatedData),
+				}
+			);
 			if (!response.ok) {
 				const errorData = await response.json();
-				throw new Error(errorData.error || errorData.message || "Failed to update user curation profile");
+				throw new Error(
+					errorData.error || errorData.message || "Failed to update user curation profile"
+				);
 			}
 
 			toast.success("Weekly Bundled Feed updated successfully!");
@@ -71,9 +82,15 @@ export function DashboardClientWrapper({ hasProfile, userCurationProfile, onProf
 							<AlertCircle className="h-4 w-4" />
 							Would you like to get started with your feed?
 						</AlertTitle>
-						<AlertDescription className="mt-2">You haven't created a Weekly Bundled Feed yet. Create one to start managing your podcast curation.</AlertDescription>
+						<AlertDescription className="mt-2">
+							You haven't created a Weekly Bundled Feed yet. Create one to start managing
+							your podcast curation.
+						</AlertDescription>
 						<div className="mt-4">
-							<Button variant="default" size="sm" onClick={() => setIsCreateWizardOpen(true)}>
+							<Button
+								variant="default"
+								size="sm"
+								onClick={() => setIsCreateWizardOpen(true)}>
 								Select a Bundle
 							</Button>
 						</div>
@@ -83,7 +100,12 @@ export function DashboardClientWrapper({ hasProfile, userCurationProfile, onProf
 
 			{/* Edit modal */}
 			{userCurationProfile && (
-				<EditUserFeedModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} collection={userCurationProfile} onSave={handleSaveUserCurationProfile} />
+				<EditUserFeedModal
+					isOpen={isModalOpen}
+					onClose={() => setIsModalOpen(false)}
+					collection={userCurationProfile}
+					onSave={handleSaveUserCurationProfile}
+				/>
 			)}
 
 			{/* Create wizard */}
@@ -114,4 +136,3 @@ function UserFeedWizardWrapper({ onSuccess }: { onSuccess: () => void }) {
 
 	return <UserFeedSelector />;
 }
-

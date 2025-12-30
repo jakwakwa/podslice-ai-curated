@@ -1,7 +1,20 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+	CardDescription,
+} from "@/components/ui/card";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
 import Link from "next/link";
 
 type EntryRow = {
@@ -14,12 +27,18 @@ type EntryRow = {
 	fetchedAt: string; // ISO
 };
 
-export default function YoutubeFeedEntriesPanelClient({ entries }: { entries: EntryRow[] }) {
+export default function YoutubeFeedEntriesPanelClient({
+	entries,
+}: {
+	entries: EntryRow[];
+}) {
 	return (
 		<Card>
 			<CardHeader>
 				<CardTitle>Latest Entries ({entries.length})</CardTitle>
-				<CardDescription>Recent items fetched by the YouTube RSS cron job</CardDescription>
+				<CardDescription>
+					Recent items fetched by the YouTube RSS cron job
+				</CardDescription>
 			</CardHeader>
 			<CardContent className="overflow-x-auto">
 				<Table>
@@ -33,19 +52,29 @@ export default function YoutubeFeedEntriesPanelClient({ entries }: { entries: En
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{entries.map((e) => (
+						{entries.map(e => (
 							<TableRow key={e.id}>
-								<TableCell className="whitespace-nowrap">{formatDateTime(e.fetchedAt)}</TableCell>
-								<TableCell className="whitespace-nowrap">{e.publishedDate ? formatDateTime(e.publishedDate) : "—"}</TableCell>
+								<TableCell className="whitespace-nowrap">
+									{formatDateTime(e.fetchedAt)}
+								</TableCell>
+								<TableCell className="whitespace-nowrap">
+									{e.publishedDate ? formatDateTime(e.publishedDate) : "—"}
+								</TableCell>
 								<TableCell className="max-w-[24rem] truncate" title={e.videoTitle}>
 									{e.videoTitle}
 								</TableCell>
 								<TableCell className="max-w-[24rem] truncate">
-									<Link href={e.videoUrl} className="text-link hover:text-link-hover" target="_blank" rel="noreferrer">
+									<Link
+										href={e.videoUrl}
+										className="text-link hover:text-link-hover"
+										target="_blank"
+										rel="noreferrer">
 										{e.videoUrl}
 									</Link>
 								</TableCell>
-								<TableCell className="whitespace-nowrap">{e.userEmail ?? e.userId}</TableCell>
+								<TableCell className="whitespace-nowrap">
+									{e.userEmail ?? e.userId}
+								</TableCell>
 							</TableRow>
 						))}
 					</TableBody>
@@ -63,6 +92,3 @@ function formatDateTime(iso: string): string {
 		return iso;
 	}
 }
-
-
-

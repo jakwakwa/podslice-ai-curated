@@ -101,7 +101,7 @@ export default function EmailManagementClient({
 		return () => {
 			ignore = true;
 		};
-	}, [isPreviewOpen]);
+	}, [isPreviewOpen, selectedTemplateSlug]);
 
 	const previewUrl = useMemo(() => {
 		if (!selectedTemplateSlug) return "";

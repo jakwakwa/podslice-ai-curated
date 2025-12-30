@@ -80,7 +80,7 @@ export default async function DashboardPage() {
 				hasProfile={hasProfile}
 				userCurationProfile={userCurationProfile}
 			/>
-			<div className="flex flex-col md:flex-col xl:flex-row w-full   gap-4">
+			<div className="flex flex-col md:flex-col xl:flex-row w-full gap-4">
 				{/* Recent Episodes Section */}
 				<Suspense fallback={<RecentListSkeleton />}>
 					{/* Bundle Feed Section */}
@@ -241,7 +241,7 @@ async function fetchUserEpisodes(userId: string): Promise<UserEpisodeWithSignedU
 		// Generate signed URLs
 		const storageReader = getStorageReader();
 		const episodesWithSignedUrls = await Promise.all(
-			episodes.map(async (episode: any) => {
+			episodes.map(async episode => {
 				let signedAudioUrl: string | null = null;
 				if (episode.gcs_audio_url) {
 					const parsed = parseGcsUri(episode.gcs_audio_url);

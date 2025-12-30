@@ -10,9 +10,9 @@ export async function GET(_request: Request) {
 			return new NextResponse("Unauthorized", { status: 401 });
 		}
 
-    const notifications = await prisma.notification.findMany({
+		const notifications = await prisma.notification.findMany({
 			where: { user_id: userId },
-			orderBy: { created_at: "desc" }
+			orderBy: { created_at: "desc" },
 		});
 
 		return NextResponse.json(notifications);

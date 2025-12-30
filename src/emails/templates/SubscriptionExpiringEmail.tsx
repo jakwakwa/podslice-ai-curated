@@ -23,8 +23,7 @@ export function SubscriptionExpiringEmail({
 	return (
 		<EmailLayout
 			title="Subscription Expiring"
-			previewText={`Your PODSLICE subscription expires on ${expirationDate}.`}
-		>
+			previewText={`Your PODSLICE subscription expires on ${expirationDate}.`}>
 			{/* Greeting */}
 			<Text
 				style={{
@@ -34,8 +33,7 @@ export function SubscriptionExpiringEmail({
 					fontWeight,
 					textAlign: "center",
 					margin: "0 0 16px 0",
-				}}
-			>
+				}}>
 				Hi {userFirstName}
 			</Text>
 
@@ -47,8 +45,7 @@ export function SubscriptionExpiringEmail({
 						color: EMAIL_CONSTANTS.COLORS.warning,
 						fontSize: "28px",
 						margin: 0,
-					}}
-				>
+					}}>
 					🔔 Subscription Expiring
 				</Heading>
 			</Section>
@@ -60,16 +57,14 @@ export function SubscriptionExpiringEmail({
 					padding: "24px",
 					borderRadius: "8px",
 					marginBottom: "24px",
-				}}
-			>
+				}}>
 				<Text
 					style={{
 						color: EMAIL_CONSTANTS.COLORS.warning,
 						margin: 0,
 						fontWeight: 500,
 						textAlign: "center",
-					}}
-				>
+					}}>
 					Expires on {expirationDate}
 				</Text>
 			</Section>
@@ -80,10 +75,9 @@ export function SubscriptionExpiringEmail({
 					fontSize: "16px",
 					lineHeight: 1.5,
 					marginBottom: "24px",
-				}}
-			>
-				Your PODSLICE subscription is set to expire soon. Don't miss out on your personalized
-				podcast content!
+				}}>
+				Your PODSLICE subscription is set to expire soon. Don't miss out on your
+				personalized podcast content!
 			</Text>
 
 			<Section style={{ textAlign: "center", marginBottom: "32px" }}>
@@ -98,8 +92,7 @@ export function SubscriptionExpiringEmail({
 						borderRadius: "6px",
 						fontWeight: 500,
 						fontSize: "16px",
-					}}
-				>
+					}}>
 					Renew Subscription
 				</Button>
 			</Section>
@@ -112,8 +105,7 @@ export function SubscriptionExpiringEmail({
 						color: EMAIL_CONSTANTS.COLORS.text.light,
 						fontSize: "12px",
 						margin: 0,
-					}}
-				>
+					}}>
 					Need help? Contact our support team.
 					<br />
 					The PODSLICE Team

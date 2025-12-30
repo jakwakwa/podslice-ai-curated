@@ -55,17 +55,17 @@ export default async function CuratedBundlesPage({
 			is_active: true,
 			...(q
 				? {
-					OR: [
-						{ name: { contains: q, mode: "insensitive" } },
-						{
-							bundle_podcast: {
-								some: {
-									podcast: { name: { contains: q, mode: "insensitive" } },
+						OR: [
+							{ name: { contains: q, mode: "insensitive" } },
+							{
+								bundle_podcast: {
+									some: {
+										podcast: { name: { contains: q, mode: "insensitive" } },
+									},
 								},
 							},
-						},
-					],
-				}
+						],
+					}
 				: {}),
 			...(minPlanFilter ? { min_plan: PlanGate[minPlanFilter] } : {}),
 		};
@@ -90,19 +90,19 @@ export default async function CuratedBundlesPage({
 			owner_user_id: { not: userId },
 			...(q
 				? {
-					OR: [
-						{ name: { contains: q, mode: "insensitive" } },
-						{
-							episodes: {
-								some: {
-									userEpisode: {
-										episode_title: { contains: q, mode: "insensitive" },
+						OR: [
+							{ name: { contains: q, mode: "insensitive" } },
+							{
+								episodes: {
+									some: {
+										userEpisode: {
+											episode_title: { contains: q, mode: "insensitive" },
+										},
 									},
 								},
 							},
-						},
-					],
-				}
+						],
+					}
 				: {}),
 		};
 

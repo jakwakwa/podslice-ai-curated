@@ -75,9 +75,17 @@ type DiscardedSegmentMeta = {
 };
 
 export function sanitizeSegmentText(input: string): string {
-	const withoutBracketedTimestamps = input.replace(/\[(?:\d{1,2}:){1,2}\d{2}(?:\.\d+)?\]/g, " ").replace(/\((?:\d{1,2}:){1,2}\d{2}(?:\.\d+)?\)/g, " ");
-	const withoutInlineTimestamps = withoutBracketedTimestamps.replace(/\b(?:\d{1,2}:){1,2}\d{2}(?:\.\d+)?\b/g, " ");
-	const withoutSpeakerLabels = withoutInlineTimestamps.replace(/^[A-Z][A-Z0-9_-]{0,20}:\s+/gm, "");
+	const withoutBracketedTimestamps = input
+		.replace(/\[(?:\d{1,2}:){1,2}\d{2}(?:\.\d+)?\]/g, " ")
+		.replace(/\((?:\d{1,2}:){1,2}\d{2}(?:\.\d+)?\)/g, " ");
+	const withoutInlineTimestamps = withoutBracketedTimestamps.replace(
+		/\b(?:\d{1,2}:){1,2}\d{2}(?:\.\d+)?\b/g,
+		" "
+	);
+	const withoutSpeakerLabels = withoutInlineTimestamps.replace(
+		/^[A-Z][A-Z0-9_-]{0,20}:\s+/gm,
+		""
+	);
 	return withoutSpeakerLabels.replace(/\s+/g, " ").trim();
 }
 
@@ -140,9 +148,15 @@ function analyzeSegmentText(text: string): {
 	};
 }
 
-export function evaluateSegmentQuality(segment: TranscribedSegment): { valid: boolean; reason?: string } {
+export function evaluateSegmentQuality(segment: TranscribedSegment): {
+	valid: boolean;
+	reason?: string;
+} {
 	const trimmed = segment.text.trim();
-	const durationSeconds = Math.max(0, parseOffsetSeconds(segment.endOffset) - parseOffsetSeconds(segment.startOffset));
+	const durationSeconds = Math.max(
+		0,
+		parseOffsetSeconds(segment.endOffset) - parseOffsetSeconds(segment.startOffset)
+	);
 
 	if (trimmed.length === 0) {
 		return {
@@ -151,7 +165,14 @@ export function evaluateSegmentQuality(segment: TranscribedSegment): { valid: bo
 		};
 	}
 
-	const { totalWords, stopWordCount, shortWordCount, dominantWord, dominantWordFrequency, nonStopWordCount } = analyzeSegmentText(trimmed);
+	const {
+		totalWords,
+		stopWordCount,
+		shortWordCount,
+		dominantWord,
+		dominantWordFrequency,
+		nonStopWordCount,
+	} = analyzeSegmentText(trimmed);
 
 	if (totalWords < MIN_WORD_THRESHOLD || trimmed.length < MIN_CHARACTER_THRESHOLD) {
 		return { valid: false, reason: "too_short" };
@@ -173,7 +194,8 @@ export function evaluateSegmentQuality(segment: TranscribedSegment): { valid: bo
 		totalWords >= 6 &&
 		shortWordCount / totalWords >= 0.85 &&
 		dominantWordFrequency / totalWords >= 0.75 &&
-		((dominantWord?.length ?? 0) <= 3 || (dominantWord ? STOP_WORDS.has(dominantWord) : false))
+		((dominantWord?.length ?? 0) <= 3 ||
+			(dominantWord ? STOP_WORDS.has(dominantWord) : false))
 	) {
 		return { valid: false, reason: "repetitive_short_words" };
 	}
@@ -316,7 +338,10 @@ export const geminiVideoWorker = inngest.createFunction(
 			}
 
 			if (segments.length === 0) {
-				const message = errors.length > 0 ? `All ${errors.length} transcription chunk(s) failed.` : "Gemini returned no usable transcript chunks.";
+				const message =
+					errors.length > 0
+						? `All ${errors.length} transcription chunk(s) failed.`
+						: "Gemini returned no usable transcript chunks.";
 				await writeEpisodeDebugLog(userEpisodeId, {
 					step: "gemini",
 					status: "fail",

@@ -23,13 +23,13 @@ export async function GET(request: Request) {
 	const authHeader = request.headers.get("authorization");
 	const secretParam = url.searchParams.get("secret");
 	const isVercelCron = request.headers.get("x-vercel-cron") === "1";
-	
+
 	const cronSecret = process.env.CRON_SECRET;
-	const isAuthorized = 
-		isVercelCron || 
+	const isAuthorized =
+		isVercelCron ||
 		(cronSecret && authHeader === `Bearer ${cronSecret}`) ||
 		(cronSecret && secretParam === cronSecret);
-	
+
 	if (!isAuthorized) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
@@ -75,9 +75,11 @@ export async function GET(request: Request) {
 				// Check if user has curate_control plan with active/trialing status
 				const subscription = config.user.subscriptions[0];
 				const hasValidPlan = subscription?.plan_type === "curate_control";
-				const hasActiveStatus = ["active", "trialing"].includes(subscription?.status?.toLowerCase() || "");
-				
-				if (!hasValidPlan || !hasActiveStatus) {
+				const hasActiveStatus = ["active", "trialing"].includes(
+					subscription?.status?.toLowerCase() || ""
+				);
+
+				if (!(hasValidPlan && hasActiveStatus)) {
 					summary.skippedNoPlan += 1;
 					continue;
 				}
@@ -104,7 +106,8 @@ export async function GET(request: Request) {
 				const fallbackTitle = fallbackSource
 					? `Latest insights from ${fallbackSource}`
 					: "Latest YouTube video summary";
-				const episodeTitle = normalizedTitle.length >= 2 ? normalizedTitle : fallbackTitle;
+				const episodeTitle =
+					normalizedTitle.length >= 2 ? normalizedTitle : fallbackTitle;
 
 				// Create a UserEpisode record in PENDING state
 				const userEpisode = await prisma.userEpisode.create({
@@ -161,4 +164,3 @@ export async function GET(request: Request) {
 		);
 	}
 }
-

@@ -8,11 +8,11 @@ const initialState = {
 
 export const useAudioPlayerStore = create(
 	devtools(
-		(set) => ({
+		set => ({
 			...initialState,
 
 			// Set the current episode and open the sheet
-			setEpisode: (episode) => {
+			setEpisode: episode => {
 				set({
 					episode,
 					isSheetOpen: true,

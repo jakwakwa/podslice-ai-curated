@@ -47,7 +47,13 @@ export async function POST(request: Request) {
 		}
 
 		if (!(bundleId && podcastId && youtubeUrl)) {
-			return NextResponse.json({ error: "Missing required fields: bundleId, podcastId, youtubeUrl (or legacy sources)" }, { status: 400 });
+			return NextResponse.json(
+				{
+					error:
+						"Missing required fields: bundleId, podcastId, youtubeUrl (or legacy sources)",
+				},
+				{ status: 400 }
+			);
 		}
 
 		// Validate that the bundle exists (and fetch podcasts)
@@ -63,7 +69,10 @@ export async function POST(request: Request) {
 		// Validate that the selected podcast is part of the bundle
 		const isMember = bundle.bundle_podcast.some(bp => bp.podcast_id === podcastId);
 		if (!isMember) {
-			return NextResponse.json({ error: "Selected podcast is not in the chosen bundle" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Selected podcast is not in the chosen bundle" },
+				{ status: 400 }
+			);
 		}
 
 		// Single ingestion event (one video -> one curated episode)
@@ -76,11 +85,21 @@ export async function POST(request: Request) {
 			},
 		});
 
-		const res = NextResponse.json({ success: true, message: "Admin episode generation dispatched", legacy: legacyUsed ? true : undefined });
+		const res = NextResponse.json({
+			success: true,
+			message: "Admin episode generation dispatched",
+			legacy: legacyUsed ? true : undefined,
+		});
 		if (legacyUsed) {
 			res.headers.set("Deprecation", "true");
-			res.headers.set("Sunset", new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toUTCString()); // 14 days window
-			res.headers.set("Link", '<https://github.com/jakwakwa/podslice-ai-curated>; rel="documentation"; title="Update payload to { youtubeUrl }"');
+			res.headers.set(
+				"Sunset",
+				new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toUTCString()
+			); // 14 days window
+			res.headers.set(
+				"Link",
+				'<https://github.com/jakwakwa/podslice-ai-curated>; rel="documentation"; title="Update payload to { youtubeUrl }"'
+			);
 		}
 		return res;
 	} catch (error) {

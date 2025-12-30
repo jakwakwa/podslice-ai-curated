@@ -18,7 +18,12 @@ function getRuntimeEnv(): "production" | "preview" | "development" {
 
 function looksLikeJson(value: string): boolean {
 	const t = value.trim();
-	return t.startsWith("{") || t.startsWith("[") || t.includes('"type"') || t.includes('"client_email"');
+	return (
+		t.startsWith("{") ||
+		t.startsWith("[") ||
+		t.includes('"type"') ||
+		t.includes('"client_email"')
+	);
 }
 
 export function ensureGoogleCredentialsForADC(): void {

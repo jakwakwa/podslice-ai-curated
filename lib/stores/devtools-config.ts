@@ -1,4 +1,4 @@
-import type { DevtoolsOptions } from "zustand/middleware"
+import type { DevtoolsOptions } from "zustand/middleware";
 
 /**
  * Devtools configuration for Zustand stores
@@ -7,7 +7,7 @@ import type { DevtoolsOptions } from "zustand/middleware"
 export const createDevtoolsConfig = (storeName: string): DevtoolsOptions => ({
 	name: storeName,
 	enabled: process.env.NODE_ENV === "development",
-})
+});
 
 /**
  * Common devtools configurations for existing stores
@@ -16,4 +16,4 @@ export const devtoolsConfigs = {
 	notification: createDevtoolsConfig("notification-store"),
 	subscription: createDevtoolsConfig("subscription-store"),
 	userCurationProfile: createDevtoolsConfig("user-curation-profile-store"),
-} as const
+} as const;

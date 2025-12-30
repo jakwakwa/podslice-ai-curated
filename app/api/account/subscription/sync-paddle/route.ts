@@ -14,17 +14,30 @@ export async function POST() {
 		}
 
 		// Ensure we have a Paddle customer id
-		const user = await prisma.user.findUnique({ where: { user_id: userId }, select: { paddle_customer_id: true } });
+		const user = await prisma.user.findUnique({
+			where: { user_id: userId },
+			select: { paddle_customer_id: true },
+		});
 		if (!user?.paddle_customer_id) {
-			return NextResponse.json({ error: "No Paddle customer id on file for user" }, { status: 404 });
+			return NextResponse.json(
+				{ error: "No Paddle customer id on file for user" },
+				{ status: 404 }
+			);
 		}
 
 		// Query Paddle for subscriptions tied to this customer
 		const paddleResponse = await getSubscriptionsByCustomer(user.paddle_customer_id);
-		const subscriptions: unknown[] = Array.isArray(paddleResponse?.data) ? paddleResponse.data : Array.isArray(paddleResponse) ? paddleResponse : [];
+		const subscriptions: unknown[] = Array.isArray(paddleResponse?.data)
+			? paddleResponse.data
+			: Array.isArray(paddleResponse)
+				? paddleResponse
+				: [];
 
 		if (!subscriptions || subscriptions.length === 0) {
-			return NextResponse.json({ message: "No subscriptions found for this Paddle customer" }, { status: 200 });
+			return NextResponse.json(
+				{ message: "No subscriptions found for this Paddle customer" },
+				{ status: 200 }
+			);
 		}
 
 		// Prefer active, then trialing, otherwise first entry
@@ -43,11 +56,16 @@ export async function POST() {
 		};
 
 		const typedSubs = subscriptions as PaddleSubscriptionItem[];
-		const preferred = typedSubs.find(s => s?.status === "active") ?? typedSubs.find(s => s?.status === "trialing") ?? typedSubs[0];
+		const preferred =
+			typedSubs.find(s => s?.status === "active") ??
+			typedSubs.find(s => s?.status === "trialing") ??
+			typedSubs[0];
 
 		const externalId: string | null = preferred?.id ?? preferred?.subscription_id ?? null;
-		const priceId: string | null = preferred?.items?.[0]?.price?.id ?? preferred?.items?.[0]?.price_id ?? null;
-		const status: string = typeof preferred?.status === "string" ? preferred.status : "active";
+		const priceId: string | null =
+			preferred?.items?.[0]?.price?.id ?? preferred?.items?.[0]?.price_id ?? null;
+		const status: string =
+			typeof preferred?.status === "string" ? preferred.status : "active";
 		const current_period_start: Date | null = preferred?.current_billing_period?.starts_at
 			? new Date(preferred.current_billing_period.starts_at)
 			: preferred?.started_at
@@ -58,9 +76,15 @@ export async function POST() {
 			: preferred?.next_billed_at
 				? new Date(preferred.next_billed_at)
 				: null;
-		const trial_end: Date | null = preferred?.trial_end_at ? new Date(preferred.trial_end_at) : null;
-		const canceled_at: Date | null = preferred?.canceled_at ? new Date(preferred.canceled_at) : null;
-		const cancel_at_period_end: boolean = Boolean(preferred?.cancel_at_end || preferred?.cancel_at_period_end);
+		const trial_end: Date | null = preferred?.trial_end_at
+			? new Date(preferred.trial_end_at)
+			: null;
+		const canceled_at: Date | null = preferred?.canceled_at
+			? new Date(preferred.canceled_at)
+			: null;
+		const cancel_at_period_end: boolean = Boolean(
+			preferred?.cancel_at_end || preferred?.cancel_at_period_end
+		);
 
 		let synced: unknown;
 		if (externalId) {
@@ -107,7 +131,10 @@ export async function POST() {
 			});
 		}
 
-		return NextResponse.json({ message: "Subscription synced from Paddle", subscription: synced });
+		return NextResponse.json({
+			message: "Subscription synced from Paddle",
+			subscription: synced,
+		});
 	} catch (error) {
 		const message = error instanceof Error ? error.message : "Unknown error";
 		console.error("[SUBSCRIPTION_SYNC_PADDLE]", message);

@@ -23,4 +23,4 @@ declare global {
 	interface IProcessEnv extends globalThis.IProcessEnv {}
 }
 
-declare module "*.module.css"
+declare module "*.module.css";

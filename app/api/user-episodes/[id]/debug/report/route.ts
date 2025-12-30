@@ -21,7 +21,10 @@ export async function GET(_request: Request, { params }: RouteParams) {
 		const latestFile = files[0];
 		if (!latestFile) return NextResponse.json({ report: null });
 		const [buf] = await latestFile.download();
-		return new NextResponse(buf, { status: 200, headers: { "Content-Type": "text/markdown; charset=utf-8" } });
+		return new NextResponse(buf, {
+			status: 200,
+			headers: { "Content-Type": "text/markdown; charset=utf-8" },
+		});
 	} catch (error) {
 		console.error("[USER_EPISODE_DEBUG_REPORT]", error);
 		return NextResponse.json({ error: "Failed to fetch debug report" }, { status: 500 });

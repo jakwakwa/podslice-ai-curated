@@ -181,7 +181,8 @@ export function EpisodeStatusTable({ defaultExpanded = false }: EpisodeStatusTab
 										<div className="flex flex-col gap-1 ">
 											<span
 												className={` line-clamp-2 text-xs  ${cn(
-													episode.status === "PROCESSING" && "text-emerald-400 font-medium",
+													episode.status === "PROCESSING" &&
+														"text-emerald-400 font-medium",
 													episode.status === "COMPLETED" && "text-green-400 font-medium",
 													episode.status === "FAILED" && "text-red-400",
 													episode.status === "PENDING" && "text-muted-foreground "

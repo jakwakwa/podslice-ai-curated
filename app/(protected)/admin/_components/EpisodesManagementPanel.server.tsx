@@ -43,10 +43,6 @@ export default async function EpisodesManagementPanel() {
 	const shapedBundles = bundles as unknown as Bundle[];
 
 	return (
-		<EpisodesManagementPanelClient
-			episodes={shapedEpisodes}
-			bundles={shapedBundles}
-		/>
+		<EpisodesManagementPanelClient episodes={shapedEpisodes} bundles={shapedBundles} />
 	);
 }
-

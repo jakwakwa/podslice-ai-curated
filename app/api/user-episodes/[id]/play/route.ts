@@ -7,7 +7,10 @@ import { userIsActive } from "@/lib/usage";
 function extractGcsFromHttp(url: string): { bucket: string; object: string } | null {
 	try {
 		const u = new URL(url);
-		if (u.hostname === "storage.googleapis.com" || u.hostname === "storage.cloud.google.com") {
+		if (
+			u.hostname === "storage.googleapis.com" ||
+			u.hostname === "storage.cloud.google.com"
+		) {
 			// Path style: /bucket/object
 			const path = u.pathname.replace(/^\//, "");
 			const slash = path.indexOf("/");
@@ -60,7 +63,8 @@ export async function GET(_request: Request, { params }: RouteParams) {
 		});
 
 		const isOwnedByUser = userEpisode.user_id === userId;
-		const isInSelectedSharedBundle = (profile?.selectedSharedBundle?.episodes.length ?? 0) > 0;
+		const isInSelectedSharedBundle =
+			(profile?.selectedSharedBundle?.episodes.length ?? 0) > 0;
 		const authorized = isOwnedByUser || isInSelectedSharedBundle;
 
 		if (!authorized) {

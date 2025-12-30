@@ -14,11 +14,9 @@ export default async function AdminYoutubeFeedPage() {
 	return (
 		<div className="container mx-auto p-6 max-w-6xl space-y-6">
 			<h1 className="text-2xl font-semibold">YouTube RSS Entries</h1>
-		<Suspense fallback={<div>Loading entries…</div>}>
-			<YoutubeFeedEntriesPanel />
-		</Suspense>
+			<Suspense fallback={<div>Loading entries…</div>}>
+				<YoutubeFeedEntriesPanel />
+			</Suspense>
 		</div>
 	);
 }
-
-

@@ -109,8 +109,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 		variantView?: string | null;
 		investmentImplications: string;
 		risksAndRedFlags: string;
-		tradeRecommendations?: any[]; // Keep any for inner objects or import types if possible
-		documentContradictions?: any[];
+		tradeRecommendations?: unknown[]; // Keep any for inner objects or import types if possible
+		documentContradictions?: unknown[];
 	}
 
 	let mappedIntelligence = null;

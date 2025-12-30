@@ -4,7 +4,13 @@ import { useSearchParams } from "next/navigation";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { PRICING_TIER } from "@/config/paddle-config";
 import { useSubscriptionStore } from "@/lib/stores/subscription-store-paddlejs";
 import type { PaddleCheckoutCompletedData } from "@/lib/types";
@@ -38,7 +44,7 @@ const ManagPlanLandingPage: React.FC = () => {
 		const run = async () => {
 			try {
 				await fetch("/api/account/subscription/sync-paddle", { method: "POST" });
-			} catch { }
+			} catch {}
 			await fetchSubscription();
 		};
 		void run();
@@ -72,8 +78,13 @@ const ManagPlanLandingPage: React.FC = () => {
 		}
 	};
 
-	const status = subscription?.status && typeof subscription.status === "string" ? subscription.status.toLowerCase() : null;
-	const hasActiveSubscription = Boolean(subscription && (status === "active" || status === "trialing" || status === "paused"));
+	const status =
+		subscription?.status && typeof subscription.status === "string"
+			? subscription.status.toLowerCase()
+			: null;
+	const hasActiveSubscription = Boolean(
+		subscription && (status === "active" || status === "trialing" || status === "paused")
+	);
 
 	return (
 		<>
@@ -81,10 +92,16 @@ const ManagPlanLandingPage: React.FC = () => {
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>Membership expired</DialogTitle>
-						<DialogDescription>Your subscription is not active. To continue creating episodes, please upgrade your membership.</DialogDescription>
+						<DialogDescription>
+							Your subscription is not active. To continue creating episodes, please
+							upgrade your membership.
+						</DialogDescription>
 					</DialogHeader>
 					<div className="flex gap-2 justify-end mt-4">
-						<Button type="button" variant="secondary" onClick={() => setExpiredOpen(false)}>
+						<Button
+							type="button"
+							variant="secondary"
+							onClick={() => setExpiredOpen(false)}>
 							Close
 						</Button>
 						<Button
@@ -107,7 +124,11 @@ const ManagPlanLandingPage: React.FC = () => {
 
 			{!hasActiveSubscription && (
 				<div className="flex w-full flex-col gap-12 mt-4 ">
-					<PricingPlans onCheckoutCompleted={syncSubscription} onCheckoutClosed={fetchSubscription} paddleProductPlan={PRICING_TIER} />
+					<PricingPlans
+						onCheckoutCompleted={syncSubscription}
+						onCheckoutClosed={fetchSubscription}
+						paddleProductPlan={PRICING_TIER}
+					/>
 				</div>
 			)}
 		</>

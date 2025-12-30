@@ -15,14 +15,20 @@ function parseGcsUrl(rawUrl: string): ParsedGcs | null {
 			const withoutScheme = rawUrl.slice("gs://".length);
 			const firstSlash = withoutScheme.indexOf("/");
 			if (firstSlash === -1) return null;
-			return { bucket: withoutScheme.slice(0, firstSlash), filePath: withoutScheme.slice(firstSlash + 1) };
+			return {
+				bucket: withoutScheme.slice(0, firstSlash),
+				filePath: withoutScheme.slice(firstSlash + 1),
+			};
 		}
 
 		// https://storage.googleapis.com/bucket/path or https://storage.cloud.google.com/bucket/path
 		if (host === "storage.googleapis.com" || host === "storage.cloud.google.com") {
 			const firstSlash = path.indexOf("/");
 			if (firstSlash === -1) return null;
-			return { bucket: path.slice(0, firstSlash), filePath: decodeURIComponent(path.slice(firstSlash + 1)) };
+			return {
+				bucket: path.slice(0, firstSlash),
+				filePath: decodeURIComponent(path.slice(firstSlash + 1)),
+			};
 		}
 
 		// https://<bucket>.storage.googleapis.com/path
@@ -68,13 +74,17 @@ export async function extractDurationFromGCSFile(gcsUrl: string): Promise<number
 				const chunks: Buffer[] = [];
 				file
 					.createReadStream({ start: 0, end: 255 })
-					.on("data", chunk => chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)))
+					.on("data", chunk =>
+						chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk))
+					)
 					.on("error", reject)
 					.on("end", () => resolve(Buffer.concat(chunks)));
 			});
 
 			const duration = extractAudioDuration(headerBuffer, "audio/wav");
-			console.log(`Extracted duration for ${filePath}: ${duration ? `${duration}s` : "unknown"}`);
+			console.log(
+				`Extracted duration for ${filePath}: ${duration ? `${duration}s` : "unknown"}`
+			);
 			return duration;
 		}
 
@@ -83,9 +93,20 @@ export async function extractDurationFromGCSFile(gcsUrl: string): Promise<number
 			console.log(`Reading object metadata for ${filePath}...`);
 			const [meta] = await file.getMetadata();
 			const custom = meta.metadata || {};
-			const candidates = [custom.duration_seconds, custom.durationSeconds, custom.duration, custom.audio_duration_seconds, custom.audioDurationSeconds];
+			const candidates = [
+				custom.duration_seconds,
+				custom.durationSeconds,
+				custom.duration,
+				custom.audio_duration_seconds,
+				custom.audioDurationSeconds,
+			];
 			for (const v of candidates) {
-				const n = typeof v === "string" ? Number.parseInt(v, 10) : typeof v === "number" ? v : NaN;
+				const n =
+					typeof v === "string"
+						? Number.parseInt(v, 10)
+						: typeof v === "number"
+							? v
+							: NaN;
 				if (Number.isFinite(n) && n > 0) {
 					console.log(`Using custom metadata duration for ${filePath}: ${n}s`);
 					return n;
@@ -103,13 +124,16 @@ export async function extractDurationFromGCSFile(gcsUrl: string): Promise<number
 			const stream = file.createReadStream();
 			const parsePromise = mm.parseStream(stream, undefined, { duration: true });
 			const timeoutMs = 10000;
-			const timeoutPromise = new Promise<never>((_, reject) => setTimeout(() => reject(new Error("parse timeout")), timeoutMs));
+			const timeoutPromise = new Promise<never>((_, reject) =>
+				setTimeout(() => reject(new Error("parse timeout")), timeoutMs)
+			);
 			const metadata = await Promise.race([parsePromise, timeoutPromise]);
 			try {
 				stream.destroy();
 			} catch {}
 			const seconds =
-				(metadata as { format?: { duration?: number } }).format?.duration && Number.isFinite((metadata as { format?: { duration?: number } }).format?.duration)
+				(metadata as { format?: { duration?: number } }).format?.duration &&
+				Number.isFinite((metadata as { format?: { duration?: number } }).format?.duration)
 					? Math.round((metadata as { format?: { duration?: number } }).format?.duration!)
 					: null;
 			if (seconds && seconds > 0) {
@@ -133,7 +157,10 @@ export async function extractDurationFromGCSFile(gcsUrl: string): Promise<number
 /**
  * Update duration for all UserEpisodes that have missing duration_seconds
  */
-export async function updateMissingUserEpisodeDurations(): Promise<{ updated: number; failed: number }> {
+export async function updateMissingUserEpisodeDurations(): Promise<{
+	updated: number;
+	failed: number;
+}> {
 	const episodesWithoutDuration = await prisma.userEpisode.findMany({
 		where: {
 			gcs_audio_url: { not: null },
@@ -178,7 +205,10 @@ export async function updateMissingUserEpisodeDurations(): Promise<{ updated: nu
 /**
  * Update duration for all Episodes that have missing duration_seconds
  */
-export async function updateMissingEpisodeDurations(): Promise<{ updated: number; failed: number }> {
+export async function updateMissingEpisodeDurations(): Promise<{
+	updated: number;
+	failed: number;
+}> {
 	const episodesWithoutDuration = await prisma.episode.findMany({
 		where: {
 			duration_seconds: null,
@@ -191,7 +221,9 @@ export async function updateMissingEpisodeDurations(): Promise<{ updated: number
 		take: 50, // Limit to avoid timeout, can run multiple times
 	});
 
-	console.log(`Found ${episodesWithoutDuration.length} regular episodes without duration`);
+	console.log(
+		`Found ${episodesWithoutDuration.length} regular episodes without duration`
+	);
 
 	let updated = 0;
 	let failed = 0;
@@ -227,7 +259,9 @@ export async function updateMissingEpisodeDurations(): Promise<{ updated: number
 /**
  * Extract duration for a single user episode
  */
-export async function extractUserEpisodeDuration(episodeId: string): Promise<{ success: boolean; duration?: number; error?: string }> {
+export async function extractUserEpisodeDuration(
+	episodeId: string
+): Promise<{ success: boolean; duration?: number; error?: string }> {
 	try {
 		const episode = await prisma.userEpisode.findUnique({
 			where: { episode_id: episodeId },
@@ -267,6 +301,9 @@ export async function extractUserEpisodeDuration(episodeId: string): Promise<{ s
 		}
 	} catch (error) {
 		console.error(`Failed to extract duration for episode ${episodeId}:`, error);
-		return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+		return {
+			success: false,
+			error: error instanceof Error ? error.message : "Unknown error",
+		};
 	}
 }

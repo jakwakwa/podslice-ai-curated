@@ -176,7 +176,7 @@ describe("ProcessWebhook - Deterministic Subscription Resolution", () => {
 
 	it("should use existing subscription if paddle_subscription_id matches", async () => {
 		const validSubId = `sub_test_${Date.now()}`;
-		
+
 		// Create a subscription with a valid paddle_subscription_id
 		const existingSub = await prisma.subscription.create({
 			data: {
@@ -287,7 +287,7 @@ describe("ProcessWebhook - Logging", () => {
 
 		const consoleSpy = vi.spyOn(console, "log");
 		const processor = new ProcessWebhook();
-		
+
 		// Access private method for testing
 		(processor as any).logWebhookSnapshot("test_event", { foo: "bar" });
 
@@ -306,7 +306,7 @@ describe("ProcessWebhook - Logging", () => {
 
 		const consoleSpy = vi.spyOn(console, "log");
 		const processor = new ProcessWebhook();
-		
+
 		// Access private method for testing
 		(processor as any).logWebhookSnapshot("test_event", { foo: "bar" });
 
@@ -316,4 +316,3 @@ describe("ProcessWebhook - Logging", () => {
 		consoleSpy.mockRestore();
 	});
 });
-

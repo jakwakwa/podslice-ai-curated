@@ -1,37 +1,40 @@
-import type { Paddle, PricePreviewParams, PricePreviewResponse } from "@paddle/paddle-js"
-import { useEffect, useState } from "react"
-import { PRICING_TIER } from "@/config/paddle-config"
+import type { Paddle, PricePreviewParams, PricePreviewResponse } from "@paddle/paddle-js";
+import { useEffect, useState } from "react";
+import { PRICING_TIER } from "@/config/paddle-config";
 
-export type PaddlePrices = Record<string, string>
+export type PaddlePrices = Record<string, string>;
 
 function getLineItems(): PricePreviewParams["items"] {
-	const priceId = PRICING_TIER.map(tier => [tier.priceId])
-	return priceId.flat().map(priceId => ({ priceId, quantity: 1 }))
+	const priceId = PRICING_TIER.map(tier => [tier.priceId]);
+	return priceId.flat().map(priceId => ({ priceId, quantity: 1 }));
 }
 
 function getPriceAmounts(prices: PricePreviewResponse) {
 	return prices.data.details.lineItems.reduce((acc, item) => {
-		acc[item.price.id] = item.formattedTotals.total
-		return acc
-	}, {} as PaddlePrices)
+		acc[item.price.id] = item.formattedTotals.total;
+		return acc;
+	}, {} as PaddlePrices);
 }
 
-export function usePaddlePrices(paddle: Paddle | undefined, country: string): { prices: PaddlePrices; loading: boolean } {
-	const [prices, setPrices] = useState<PaddlePrices>({})
-	const [loading, setLoading] = useState<boolean>(true)
+export function usePaddlePrices(
+	paddle: Paddle | undefined,
+	country: string
+): { prices: PaddlePrices; loading: boolean } {
+	const [prices, setPrices] = useState<PaddlePrices>({});
+	const [loading, setLoading] = useState<boolean>(true);
 
 	useEffect(() => {
 		const paddlePricePreviewRequest: Partial<PricePreviewParams> = {
 			items: getLineItems(),
 			...(country !== "OTHERS" && { address: { countryCode: country } }),
-		}
+		};
 
-		setLoading(true)
+		setLoading(true);
 
 		paddle?.PricePreview(paddlePricePreviewRequest as PricePreviewParams).then(prices => {
-			setPrices(prevState => ({ ...prevState, ...getPriceAmounts(prices) }))
-			setLoading(false)
-		})
-	}, [country, paddle])
-	return { prices, loading }
+			setPrices(prevState => ({ ...prevState, ...getPriceAmounts(prices) }));
+			setLoading(false);
+		});
+	}, [country, paddle]);
+	return { prices, loading };
 }

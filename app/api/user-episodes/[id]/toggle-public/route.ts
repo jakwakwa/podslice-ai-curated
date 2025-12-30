@@ -45,7 +45,9 @@ export async function POST(_request: Request, { params }: RouteParams) {
 
 		// Only completed episodes can be shared
 		if (episode.status !== "COMPLETED") {
-			return new NextResponse("Episode must be completed before sharing", { status: 400 });
+			return new NextResponse("Episode must be completed before sharing", {
+				status: 400,
+			});
 		}
 
 		if (!episode.gcs_audio_url) {

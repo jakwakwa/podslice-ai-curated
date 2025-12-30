@@ -1,5 +1,12 @@
 const CACHE_NAME = "podslice-cache-v1";
-const PRECACHE_URLS = ["/", "/offline.html", "/manifest.json", "/icon.png", "/logo-icon.png", "/favicon.svg"];
+const PRECACHE_URLS = [
+	"/",
+	"/offline.html",
+	"/manifest.json",
+	"/icon.png",
+	"/logo-icon.png",
+	"/favicon.svg",
+];
 
 const RUNTIME_CACHE = "podslice-runtime";
 

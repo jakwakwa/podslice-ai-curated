@@ -106,6 +106,7 @@ export function LatestBundleEpisode({
 					{/* Player Controls */}
 					<div className="flex items-center gap-3">
 						<button
+							type="button"
 							onClick={() => playEpisode(episode)}
 							className="h-10 w-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 transition-transform"
 							aria-label={`Play ${episode.title}`}>

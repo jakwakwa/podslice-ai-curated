@@ -4,7 +4,6 @@ import { useRef } from "react";
 import type { UserEpisode } from "@/lib/types";
 import PlayAndShare from "./play-and-share";
 import PublicToggleButton from "./public-toggle-button";
-import { Label } from "@/components/ui/label";
 
 interface EpisodeActionsWrapperProps {
 	episode: UserEpisode;
@@ -38,9 +37,7 @@ export default function EpisodeActionsWrapper({
 	};
 
 	return (
-
 		<div className="max-w-[70vw] w-1/3">
-
 			<PlayAndShare
 				kind="user"
 				episode={episode}
@@ -49,24 +46,11 @@ export default function EpisodeActionsWrapper({
 				onPublicStateChange={registerPlayAndShareCallback}
 			/>
 
-
-
-
-
-
-
-
-
-
 			<PublicToggleButton
 				episodeId={episode.episode_id}
 				initialIsPublic={isPublic}
 				onToggleSuccess={handleToggleSuccess}
 			/>
-		</div	>
-
-
-
+		</div>
 	);
 }
-

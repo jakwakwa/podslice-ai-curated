@@ -75,14 +75,22 @@ export function useSubscriptionInit() {
 				}
 
 				const d = parsed.data;
-				const allowedPlanTypes = ["free_slice", "casual_listener", "curate_control"] as const;
+				const allowedPlanTypes = [
+					"free_slice",
+					"casual_listener",
+					"curate_control",
+				] as const;
 				type PlanType = (typeof allowedPlanTypes)[number];
-				const isPlanType = (value: string): value is PlanType => (allowedPlanTypes as readonly string[]).includes(value);
-				const normalizedPlan: PlanType = isPlanType(d.plan_type) ? d.plan_type : "casual_listener";
+				const isPlanType = (value: string): value is PlanType =>
+					(allowedPlanTypes as readonly string[]).includes(value);
+				const normalizedPlan: PlanType = isPlanType(d.plan_type)
+					? d.plan_type
+					: "casual_listener";
 
 				const allowedStatuses = ["trialing", "active", "canceled", "paused"] as const;
 				type StatusType = (typeof allowedStatuses)[number];
-				const isStatusType = (value: string): value is StatusType => (allowedStatuses as readonly string[]).includes(value);
+				const isStatusType = (value: string): value is StatusType =>
+					(allowedStatuses as readonly string[]).includes(value);
 				const normalizedStatus: StatusType = isStatusType(d.status) ? d.status : "active";
 
 				const normalizeDate = (value?: string | null): Date | null =>
@@ -108,7 +116,11 @@ export function useSubscriptionInit() {
 				setSubscription(normalized);
 			} catch (error) {
 				// Only log actual errors, not the absence of subscription
-				if (error instanceof Error && !error.message.includes("204") && !error.message.includes("Unexpected end of JSON input")) {
+				if (
+					error instanceof Error &&
+					!error.message.includes("204") &&
+					!error.message.includes("Unexpected end of JSON input")
+				) {
 					console.error("Failed to initialize subscription:", error);
 				}
 				setError(error instanceof Error ? error.message : "Failed to load subscription");

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -356,10 +357,13 @@ export default function BundlesPanelClient({
 								/>
 								{createImagePreview && (
 									<div className="mt-2">
-										<img
+										<Image
 											src={createImagePreview}
 											alt="Preview"
+											width={80}
+											height={80}
 											className="w-20 h-20 object-cover rounded"
+											unoptimized
 										/>
 									</div>
 								)}
@@ -443,7 +447,7 @@ export default function BundlesPanelClient({
 								{/* Header */}
 								<div className="flex items-start gap-2 justify-between mb-0 w-full">
 									{bundle.bundle_id && !failedBundleImages.has(bundle.bundle_id) ? (
-										<img
+										<Image
 											src={`/api/bundles/${bundle.bundle_id}/image`}
 											alt={bundle.name}
 											width={64}
@@ -480,13 +484,13 @@ export default function BundlesPanelClient({
 											<Button
 												variant="outline"
 												size="sm"
-												className="border-border border-1 outline-1 outline-white/20"
+												className="border-border border outline-1 outline-white/20"
 												onClick={cancelEdit}>
 												Cancel
 											</Button>
 											<Button
 												variant="default"
-												className="border-border border-1 outline-1 outline-white/20"
+												className="border-border border outline-1 outline-white/20"
 												size="sm"
 												onClick={saveEdit}
 												disabled={isPending || !editForm.name.trim()}>
@@ -537,7 +541,7 @@ export default function BundlesPanelClient({
 												(!failedBundleImages.has(bundle.bundle_id) &&
 													bundle.bundle_id) ? (
 													<div className="mt-2">
-														<img
+														<Image
 															src={
 																editImagePreview ||
 																`/api/bundles/${bundle.bundle_id}/image`

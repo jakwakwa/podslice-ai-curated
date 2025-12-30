@@ -1,11 +1,11 @@
-import type { Metadata } from "next"
-import { Suspense } from "react"
-import { SheetShowcase } from "./_components/SheetShowcase"
+import type { Metadata } from "next";
+import { Suspense } from "react";
+import { SheetShowcase } from "./_components/SheetShowcase";
 
 export const metadata: Metadata = {
 	title: "Audio Player Sheet Demo",
 	description: "Showcase of the AudioPlayerSheet UI for review",
-}
+};
 
 import type { JSX } from "react";
 
@@ -18,7 +18,5 @@ export default function Page(): JSX.Element {
 				<SheetShowcase />
 			</Suspense>
 		</div>
-	)
+	);
 }
-
-

@@ -7,12 +7,16 @@ import type * as React from "react";
 import EpisodeFailedEmail, {
 	type EpisodeFailedEmailProps,
 } from "./templates/EpisodeFailedEmail";
-import EpisodeReadyEmail, { type EpisodeReadyEmailProps } from "./templates/EpisodeReadyEmail";
+import EpisodeReadyEmail, {
+	type EpisodeReadyEmailProps,
+} from "./templates/EpisodeReadyEmail";
 import SubscriptionExpiringEmail, {
 	type SubscriptionExpiringEmailProps,
 } from "./templates/SubscriptionExpiringEmail";
 import TestEmail, { type TestEmailProps } from "./templates/TestEmail";
-import TrialEndingEmail, { type TrialEndingEmailProps } from "./templates/TrialEndingEmail";
+import TrialEndingEmail, {
+	type TrialEndingEmailProps,
+} from "./templates/TrialEndingEmail";
 import WeeklyReminderEmail, {
 	type WeeklyReminderEmailProps,
 } from "./templates/WeeklyReminderEmail";
@@ -42,7 +46,8 @@ export const EMAIL_TEMPLATES = {
 		id: "episode-ready",
 		slug: "episode-ready",
 		displayName: "Episode Ready",
-		description: "Sent when a user's weekly podcast episode has been generated and is ready",
+		description:
+			"Sent when a user's weekly podcast episode has been generated and is ready",
 		component: EpisodeReadyEmail,
 		getSubject: (props: EpisodeReadyEmailProps) =>
 			`🎧 Your episode "${props.episodeTitle}" is ready!`,
@@ -113,7 +118,7 @@ export function getAllTemplates(): EmailTemplate<any>[] {
  * Get an email template by slug
  */
 export function getTemplateBySlug(slug: string): EmailTemplate<unknown> | null {
-	const template = getAllTemplates().find((t) => t.slug === slug);
+	const template = getAllTemplates().find(t => t.slug === slug);
 	return template || null;
 }
 

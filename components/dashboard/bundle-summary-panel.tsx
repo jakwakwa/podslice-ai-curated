@@ -1,7 +1,6 @@
 "use client";
 import { Edit, Podcast, X } from "lucide-react";
 import { useEffect } from "react";
-import { dashboardCopy } from "@/app/(protected)/dashboard/content";
 import { Button } from "@/components/ui/button";
 import { PRICING_TIER } from "@/config/paddle-config";
 import { useUserEpisodesStore } from "@/lib/stores/user-episodes-store";
@@ -30,8 +29,6 @@ export function BundleSummaryPanel({
 	onUpdateBundle,
 	bundleEpisodes = [],
 }: BundleSummaryPanelProps) {
-	const { sections } = dashboardCopy;
-
 	// Get usage actions and state from the store
 	const fetchCompletedEpisodeCount = useUserEpisodesStore(
 		state => state.fetchCompletedEpisodeCount

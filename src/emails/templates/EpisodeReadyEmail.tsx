@@ -21,13 +21,13 @@ export function EpisodeReadyEmail({
 	profileName,
 }: EpisodeReadyEmailProps) {
 	const baseUrl = getEmailBaseUrl();
-	const { fontSize, fontWeight, color, lineHeight, marginBottom } = EMAIL_CONSTANTS.GREETING;
+	const { fontSize, fontWeight, color, lineHeight, marginBottom } =
+		EMAIL_CONSTANTS.GREETING;
 
 	return (
 		<EmailLayout
 			title="Your Episode is Ready!"
-			previewText={`Great news! Your weekly podcast episode "${episodeTitle}" is ready to listen.`}
-		>
+			previewText={`Great news! Your weekly podcast episode "${episodeTitle}" is ready to listen.`}>
 			{/* Greeting */}
 			<Text
 				style={{
@@ -37,8 +37,7 @@ export function EpisodeReadyEmail({
 					fontWeight: "bold",
 					textAlign: "center",
 					margin: `0 0 8px 0`,
-				}}
-			>
+				}}>
 				Hi {userFirstName}
 			</Text>
 
@@ -52,8 +51,7 @@ export function EpisodeReadyEmail({
 					lineHeight: "1.8rem",
 					color: "rgb(39 134 126)",
 					textAlign: "center",
-				}}
-			>
+				}}>
 				Woohoo! Great news!
 			</Heading>
 
@@ -66,8 +64,7 @@ export function EpisodeReadyEmail({
 					lineHeight: 1.5,
 					color: "rgb(30 30 33)",
 					textAlign: "center",
-				}}
-			>
+				}}>
 				Your custom summary has been generated and is ready for you to enjoy.
 			</Text>
 
@@ -80,8 +77,7 @@ export function EpisodeReadyEmail({
 					color: "rgb(66 75 92)",
 					marginTop: "16px",
 					textAlign: "center",
-				}}
-			>
+				}}>
 				🎧 "{episodeTitle}"
 			</Text>
 
@@ -105,8 +101,7 @@ export function EpisodeReadyEmail({
 						lineHeight: "2rem",
 						marginTop: "16px",
 						marginBottom: "16px",
-					}}
-				>
+					}}>
 					If you found this summary useful
 					<br />
 					and want to share with other's
@@ -130,8 +125,7 @@ export function EpisodeReadyEmail({
 						lineHeight: "1.25rem",
 						color: "rgb(225 242 240)",
 						textDecoration: "none",
-					}}
-				>
+					}}>
 					View or Share
 				</Button>
 
@@ -147,8 +141,7 @@ export function EpisodeReadyEmail({
 						fontSize: "0.875rem",
 						lineHeight: "1.25rem",
 						textDecoration: "none",
-					}}
-				>
+					}}>
 					Go to your dashboard
 				</Link>
 			</Section>

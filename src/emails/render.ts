@@ -22,7 +22,7 @@ export async function renderEmail<P = any>(
 	props: P,
 	options?: {
 		pretty?: boolean;
-	},
+	}
 ): Promise<RenderedEmail> {
 	// Render HTML
 	const html = await render(createElement(component as any, props as any), {
@@ -46,7 +46,7 @@ export function renderEmailSync<P = any>(
 	props: P,
 	options?: {
 		pretty?: boolean;
-	},
+	}
 ): RenderedEmail {
 	// Create element
 	const element = createElement(component as any, props as any);

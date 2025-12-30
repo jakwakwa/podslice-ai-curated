@@ -1,9 +1,15 @@
-import { SelectContent, SelectItem, SelectTrigger, SelectValue, Select as ShadCnSelect } from "@/components/ui/select"
+import {
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+	Select as ShadCnSelect,
+} from "@/components/ui/select";
 
 interface Props {
-	value: string
-	options: string[]
-	onChange: (value: string) => void
+	value: string;
+	options: string[];
+	onChange: (value: string) => void;
 }
 export function Select({ onChange, options, value }: Props) {
 	return (
@@ -19,5 +25,5 @@ export function Select({ onChange, options, value }: Props) {
 				))}
 			</SelectContent>
 		</ShadCnSelect>
-	)
+	);
 }

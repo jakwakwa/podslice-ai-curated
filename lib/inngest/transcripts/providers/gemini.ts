@@ -39,7 +39,8 @@ export const GeminiVideoProvider: TranscriptProvider = {
 				},
 			};
 		} catch (error) {
-			const errorMessage = error instanceof Error ? error.message : "Unknown Gemini error";
+			const errorMessage =
+				error instanceof Error ? error.message : "Unknown Gemini error";
 			return {
 				success: false,
 				error: errorMessage,

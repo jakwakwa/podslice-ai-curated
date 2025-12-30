@@ -3,6 +3,7 @@
 import { AlertCircle, Lock } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
@@ -454,7 +455,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 												<div className="relative my-2 border-2  border-emerald-300 rounded-lg outline-0 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
 													{!failedBundleImages.has(bundle?.bundle_id || "") &&
 													bundle?.bundle_id ? (
-														<img
+														<Image
 															className="w-full object-cover"
 															src={`/api/bundles/${bundle.bundle_id}/image`}
 															alt={bundle.name}
@@ -465,10 +466,11 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 														/>
 													) : (
 														<div className="w-full h-[110px] bg-muted flex items-center justify-center">
-															<img
+															<Image
 																src="/generic-news-placeholder2.png"
 																alt={bundle.name}
-																className="w-full h-full object-cover"
+																fill
+																className="object-cover"
 															/>
 														</div>
 													)}
@@ -594,19 +596,22 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 												<div className="relative my-2 rounded-lg outline-2 overflow-hidden w-full min-w-[200px] h-fit lg:h-fit xl:h-fit xl:justify-end">
 													{!failedBundleImages.has(bundle?.bundle_id || "") &&
 													bundle?.bundle_id ? (
-														<img
+														<Image
 															className="w-full object-cover"
 															src={`/api/bundles/${bundle.bundle_id}/image`}
 															alt={bundle.name}
+															width={190}
+															height={110}
 															style={{ width: "100%", height: "auto" }}
 															onError={() => handleImageError(bundle.bundle_id || "")}
 														/>
 													) : (
 														<div className="w-full h-[110px] bg-muted flex items-center justify-center">
-															<img
+															<Image
 																src="/generic-news-placeholder2.png"
 																alt={bundle.name}
-																className="w-full h-full object-cover"
+																fill
+																className="object-cover"
 															/>
 														</div>
 													)}

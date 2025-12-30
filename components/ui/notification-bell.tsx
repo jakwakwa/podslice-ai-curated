@@ -229,7 +229,8 @@ export function NotificationBell() {
 								key={notification.notification_id}
 								className={cn(
 									"bg-indigo-200/20 border transition-all duration-200 rounded-2xl hover:border-emerald-400/30 hover:shadow-sm mb-2 py-1",
-									!notification.is_read && "bg-emerald-300/20 border-3 border-emerald-300/20"
+									!notification.is_read &&
+										"bg-emerald-300/20 border-3 border-emerald-300/20"
 								)}>
 								<div className="py-1">
 									<div className="flex items-start justify-between mb-1">

@@ -67,7 +67,7 @@ export function EpisodeList({
 		const paginatedEpisodes = filtered.slice(startIndex, endIndex);
 
 		return { episodes: paginatedEpisodes, totalPages };
-	}, [data, completedOnly, filter, currentPage, episodesPerPage]);
+	}, [data, completedOnly, filter, currentPage]);
 
 	// Reset to page 1 when filter changes
 	useEffect(() => {
