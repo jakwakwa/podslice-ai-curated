@@ -13,41 +13,41 @@ interface SectionProps {
 const steps = [
 	{
 		icon: RiSearchEyeLine,
-		title: "Analyze Content",
+		title: "Input Research",
 		description:
-			"Simply provide a Youtube Video you don't have time to watch or select a News topic you want to catch up on.",
+			"Drop in PDFs, earnings call transcripts, or point to research-heavy podcasts and videos you need to process.",
 		color: "from-emerald-400 to-emerald-700",
 		bgColor: "bg-emerald-100",
 	},
 	{
 		icon: HiOutlineSparkles,
-		title: "AI Analysis",
+		title: "Signal Extraction",
 		description:
-			"Our advanced AI (powered by Google's Gemini) instantly analyzes the content, identifies the key points, and understands the main arguments.",
+			"Our proprietary AI models instantly parse the audio and text for tickers, sentiment, and contrarian insights.",
 		color: "from-pink-400 to-violet-900",
 		bgColor: "bg-pink-50",
 	},
 	{
 		icon: Brain,
-		title: "Smart Summaries & Scripts",
+		title: "Intelligence Reports",
 		description:
-			"It then writes a detailed, structured text summary and generates a script for a conversational, mini-podcast.",
+			"Podslice generates a structured executive brief, mapping ticker-specific sentiment and rotation signals.",
 		color: "from-emerald-500 to-emerald-800",
 		bgColor: "bg-emerald-50",
 	},
 	{
 		icon: RiVoiceAiLine,
-		title: "Natural Audio",
+		title: "High-Fidelity Briefings",
 		description:
-			"We use a high-quality, natural-sounding AI voice to turn that script into a polished podcast episode.",
+			"Synthesized PM-style audio briefings are generated, perfect for your morning commute or desk-side review.",
 		color: "from-emerald-500 to-emerald-900",
 		bgColor: "bg-emerald-50",
 	},
 	{
 		icon: IconChecklist,
-		title: "Ready For You",
+		title: "Actionable Intelligence",
 		description:
-			"Your new summary lands in your personal feed, complete with its own structured text page and the polished audio episode.",
+			"Your dashboard updates with ground-truth audited insights, ready for deployment into your modern portfolio.",
 		color: "from-pink-600 to-emerald-950",
 		bgColor: "bg-violet-50",
 	},

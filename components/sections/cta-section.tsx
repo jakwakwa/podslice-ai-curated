@@ -41,7 +41,7 @@ export function CTASection({ isActive }: SectionProps) {
 					className={`text-4xl md:text-5xl lg:text-7xl font-semibold text-white max-w-4xl leading-tight text-balance transition-all duration-1000 ${
 						mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 					}`}>
-					Ready to Get Started?
+					Ready to Upgrade Your Intelligence?
 				</h2>
 
 				<p
@@ -49,8 +49,8 @@ export function CTASection({ isActive }: SectionProps) {
 						mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 					}`}
 					style={{ transitionDelay: "200ms" }}>
-					Sign up for Podslice today and start turning information overload into
-					actionable insight.
+					Sign up for Podslice today and start extracting actionable signals from your
+					research pipeline in seconds.
 				</p>
 
 				<div

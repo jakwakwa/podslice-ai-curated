@@ -1,6 +1,13 @@
 "use client";
 
-import { FileAudio, Layers, ListChecks, Newspaper, Volume2, Youtube } from "lucide-react";
+import {
+	BarChart3,
+	Layers,
+	ListChecks,
+	Newspaper,
+	ShieldCheck,
+	Volume2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface SectionProps {
@@ -9,22 +16,22 @@ interface SectionProps {
 
 const features = [
 	{
-		icon: Youtube,
-		title: "Summarize YouTube Videos",
+		icon: BarChart3,
+		title: "Real-time Asset Intelligence",
 		description:
-			"Convert any YouTube video into a concise audio episode and detailed text breakdown with one click.",
+			"Automatically identify tickers across your research pipeline with proprietary sentiment scoring and rotation mapping.",
 	},
 	{
-		icon: FileAudio,
-		title: "Dual-Format Summaries",
+		icon: ShieldCheck,
+		title: "The Ground-Truth Protocol",
 		description:
-			"Every summary includes both a podcast-style audio episode and a dedicated, structured text page.",
+			"Our AI flags contradictions between speaker claims and your uploaded reference documents or live search results.",
 	},
 	{
-		icon: ListChecks,
-		title: "Structured Text Breakdowns",
+		icon: Volume2,
+		title: "The PM Briefing",
 		description:
-			"Get key takeaways, short summaries, target audience info, and relevant topics.",
+			"High-fidelity audio reports designed for the morning commute—synthesised analysis, not transcript echoes.",
 	},
 	{
 		icon: Newspaper,
@@ -33,10 +40,10 @@ const features = [
 			"Stay on top of current events with AI-powered news briefings in both audio and text.",
 	},
 	{
-		icon: Volume2,
-		title: "High-Quality AI Voices",
+		icon: ListChecks,
+		title: "Dual-Format Summaries",
 		description:
-			"Listen to smooth, natural-sounding audio powered by advanced AI voice technology.",
+			"Every summary includes both a podcast-style audio episode and a dedicated, structured text page.",
 	},
 	{
 		icon: Layers,

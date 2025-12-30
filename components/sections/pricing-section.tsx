@@ -10,27 +10,31 @@ interface SectionProps {
 
 const plans = [
 	{
-		name: "Free Slice",
-		description: "Get started for free and listen to our curated bundles.",
+		name: "Intelligence Trial",
+		description: "Test the ground-truth protocol with our core bundles.",
 		price: "FREE TRIAL",
-		features: ["7 free day Curate Control membership then $4,5"],
+		features: [
+			"7-day trial then $4.50/mo",
+			"Macro & Equity Bundles",
+			"AI News Briefings",
+		],
 		highlighted: true,
 	},
 	{
-		name: "Casual Listener",
-		description: "Unlock more content and features.",
+		name: "Research Analyst",
+		description: "Extended access for specialized research workflows.",
 		price: "$2",
-		features: ["All Feeds Access", "Full text breakdowns", "Priority processing"],
+		features: ["All Intelligence Feeds", "Full Signal Breakdowns", "Priority Extraction"],
 		highlighted: false,
 	},
 	{
-		name: "Curate Control",
-		description: "Get the full Podslice experience with custom summaries.",
-		price: "$4,5",
+		name: "Institutional PM",
+		description: "The full Podslice terminal for modern portfolio management.",
+		price: "$4.50",
 		features: [
-			"Everything in Casual",
-			"YouTube Video summaries",
-			"Personalised Newsfeed summaries",
+			"Everything in Analyst",
+			"Proprietary PDF/Research Uploads",
+			"Custom Ticker Sentiment Pipelines",
 		],
 		highlighted: false,
 	},
@@ -56,10 +60,10 @@ export function PricingSection({ isActive }: SectionProps) {
 						mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 					}`}>
 					<h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-gray-900 text-balance">
-						Find Your Perfect Plan
+						Performance-Driven Pricing
 					</h2>
 					<p className="mt-4 text-gray-600 text-lg">
-						Podslice has a plan for every type of listener.
+						Select the intelligence tier that fits your research pipeline.
 					</p>
 				</div>
 

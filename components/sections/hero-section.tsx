@@ -69,7 +69,7 @@ export function HeroSection({ isActive }: SectionProps) {
 						mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 					}`}
 					style={{ transitionDelay: "500ms" }}>
-					Turn information overload into actionable insight.
+					Institutional Intelligence for the Modern Portfolio.
 				</h1>
 
 				<p
@@ -77,8 +77,9 @@ export function HeroSection({ isActive }: SectionProps) {
 						mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 					}`}
 					style={{ transitionDelay: "700ms" }}>
-					Your personal AI assistant that transforms content into short, insightful audio
-					and text summaries.
+					Move beyond simple summaries. Podslice extracts actionable signals, ticker
+					sentiment, and contrarian insights from hours of audio and research documents in
+					seconds.
 				</p>
 
 				<div
