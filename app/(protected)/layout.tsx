@@ -49,16 +49,16 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 			<SidebarInset>
 				<header
-					className={`fixed flex ${isMobile ? "h-18" : "h-16"} bg-sidebar  shadow-[0_1px_5px_3px_rgba(0,0.2,100,0.12)] overflow-hidden shrink-0 items-center border-none gap-4 z-50 left-0 group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 mt-0 max-w-screen justify-between px-0  py-0 overflow-y-scroll transition all  duration-200 ease-in-out ${state === "expanded" ? "w-full" : "collapsed"}`}>
+					className={`fixed flex ${isMobile ? "h-18 w-screen left-0 top-0 ml-0" : `h-16 right-0 ${state === "expanded" ? "left-(--sidebar-width)" : "left-(--sidebar-width-icon)"}`} bg-gray-950 shadow-[0_1px_5px_3px_rgba(0,0.2,100,0.12)] overflow-hidden shrink-0 items-center border-none gap-4 z-50 group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 mt-0 justify-between px-0  py-0 overflow-y-scroll transition-all  duration-200 ease-in-out`}>
 					<div
-						className={`flex  items-center ${isMobile ? "h-18" : "h-14"} justify-start  ${state === "expanded" ? "md:flex-row md:px-4 w-[240px]" : "md:flex-col md:px-0 w-[80px] "}`}>
+						className={`flex items-center ${isMobile ? "h-18" : "h-5"}   ${state === "expanded" ? "md:flex-row md:px-4" : "md:flex-row md:px-0"}`}>
 						{!isMobile ? (
 							<Image
-								className={`transition-all flex flex-row items-center ${isMobile ? "h-18" : "h-10"} duration-300 ease-in-out ${state === "expanded" ? "h-21 max-w-[124px] " : "max-w-[20px] h-21 justify-center"}`}
-								src={"/icon.svg"}
+								className={`transition-all flex flex-row items-center ${isMobile ? "h-18" : "h-10"} duration-300  ease-in-out ${state === "expanded" ? "h-21 max-w-[124px] " : "max-w-[20px] h-21 justify-center"}`}
+								src={state === "expanded" ? "/logo.svg" : "/icon.svg"}
 								width={200}
 								height={28}
-								alt={`Menu`}
+								alt={`Podslice`}
 							/>
 						) : (
 							<Image
@@ -66,7 +66,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 								src={"/logo.svg"}
 								width={200}
 								height={28}
-								alt={`Menu`}
+								alt={`Podslice`}
 							/>
 						)}
 
@@ -82,7 +82,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 						{isMobile && typeof window !== "undefined" && (
 							<Drawer open={openMobileDrawer} onOpenChange={setOpenMobileDrawer}>
 								<DrawerTrigger asChild>
-									<Button variant="outline" size="sm" className="">
+									<Button variant="outline" size="sm" className="mr-4">
 										<Menu />
 										<span className="hidden">Nav Menu Drawer</span>
 									</Button>
@@ -240,7 +240,7 @@ function ProfileForm({
 						{item.subItems && item.subItems.length > 0 ? (
 							// Parent item with subItems - not clickable
 							<div className="  bg-black/0 flex flex-col text-left  items-start justify-center cursor-pointer my-0 mx-auto gap-2 font-medium border border-emerald-600/0 shadow-md text-base   shadow-slate-950/0 text-shadow-slate-950/80 text-emerald-300 max-w-[80%] md:max-w-fit ">
-								<div className="flex pl-8 flex-row items-center justify-start gap-2 mt-4 uppercase">
+								<div className="flex pl-8 flex-row items-center justify-start gap-2 mt-4 uppercase ">
 									{item.icon && <item.icon className="size-6    text-violet-500" />}
 									{item.title}
 								</div>

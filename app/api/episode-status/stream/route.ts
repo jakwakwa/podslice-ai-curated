@@ -23,13 +23,24 @@ export async function GET(request: Request) {
 
 	const stream = new ReadableStream({
 		async start(controller) {
-			// Tell EventSource to retry in 5s on disconnect
-			controller.enqueue(encoder.encode(`retry: 5000\n\n`));
-			// Track last seen status to detect changes
-			const lastSeenStatus = new Map<string, string>();
+			let isClosed = false;
+
+			const closeStream = () => {
+				if (isClosed) return;
+				isClosed = true;
+				clearInterval(interval);
+				clearInterval(heartbeat);
+				clearTimeout(plannedClose);
+				try {
+					controller.close();
+				} catch (_e) {
+					// Controller might already be closed or errored
+				}
+			};
 
 			// Function to send episode updates
 			const sendUpdate = async () => {
+				if (isClosed) return;
 				try {
 					// Fetch episodes:
 					// - All PENDING and PROCESSING episodes (active work)
@@ -73,6 +84,9 @@ export async function GET(request: Request) {
 						take: 10,
 					});
 
+					// Check again after async op
+					if (isClosed) return;
+
 					// Check for status changes or progress updates
 					for (const episode of episodes) {
 						const lastStatus = lastSeenStatus.get(episode.episode_id);
@@ -105,8 +119,21 @@ export async function GET(request: Request) {
 					}
 				} catch (error) {
 					console.error("[EPISODE_STATUS_STREAM]", error);
+					// If we can't enqueue, probably closed, so close cleanup
+					if (!isClosed) closeStream();
 				}
 			};
+
+			// Tell EventSource to retry in 5s on disconnect
+			try {
+				controller.enqueue(encoder.encode(`retry: 5000\n\n`));
+			} catch (_e) {
+				// If initial enqueue fails, just return
+				return;
+			}
+
+			// Track last seen status to detect changes
+			const lastSeenStatus = new Map<string, string>();
 
 			// Initial send
 			await sendUpdate();
@@ -116,33 +143,30 @@ export async function GET(request: Request) {
 
 			// Heartbeat every 20 seconds to keep the connection alive through proxies
 			const heartbeat = setInterval(() => {
+				if (isClosed) return;
 				try {
 					controller.enqueue(
 						encoder.encode(`event: heartbeat\ndata: {"type":"heartbeat"}\n\n`)
 					);
 				} catch (_e) {
-					// no-op
+					closeStream();
 				}
 			}, 20000);
 
 			// Proactively close the stream around 55s so the browser reconnects and we avoid platform timeouts
 			const plannedClose = setTimeout(() => {
+				if (isClosed) return;
 				try {
 					controller.enqueue(
 						encoder.encode(`event: close\ndata: {"reason":"rotate"}\n\n`)
 					);
 				} catch (_e) {}
-				clearInterval(interval);
-				clearInterval(heartbeat);
-				controller.close();
+				closeStream();
 			}, 55000);
 
 			// Cleanup on close
 			request.signal.addEventListener("abort", () => {
-				clearInterval(interval);
-				clearInterval(heartbeat);
-				clearTimeout(plannedClose);
-				controller.close();
+				closeStream();
 			});
 		},
 	});
