@@ -49,7 +49,7 @@ export function NavMain({
 				{items.map((item, index) => (
 					<div key={item.url} className="my-1">
 						{item.separator && index > 0 && (
-							<SidebarSeparator className="border-none text-sidebar-foreground  mx-0 my-5 h-[1px]" />
+							<SidebarSeparator className="border-none text-sidebar-foreground  mx-0 my-5 h-px" />
 						)}
 						<SidebarMenuItem>
 							<SidebarMenuButton asChild isActive={pathname === item.url}>
@@ -59,11 +59,22 @@ export function NavMain({
 										"flex text-sidebar-primary-foreground opacity-100 items-center gap-4"
 									)}
 									onClick={handleLinkClick}>
-									{!item.hasSubitems && item.icon && (
-										<item.icon
-											className={`size-6 ${item.isActive ? `text-indigo-600 opacity-100` : `text-sidebar-foreground-muted font-light`}`}
-										/>
-									)}
+									{!item.hasSubitems &&
+										item.icon &&
+										(() => {
+											// biome-ignore lint/suspicious/noExplicitAny: Cast to any required to bypass strict string-assignment build error
+											const Icon = item.icon as any;
+											return (
+												<Icon
+													className={cn(
+														"size-6",
+														item.isActive
+															? "text-indigo-600 opacity-100"
+															: "text-sidebar-foreground-muted font-light"
+													)}
+												/>
+											);
+										})()}
 									<span
 										className={
 											item.hasSubitems
@@ -82,11 +93,21 @@ export function NavMain({
 										<SidebarMenuItem key={subItem.url}>
 											<SidebarMenuButton asChild>
 												<Link href={subItem.url}>
-													{subItem.icon && (
-														<subItem.icon
-															className={`size-6 ${subItem.isActive ? `text-indigo-100 font-light opacity-100` : `text-sidebar-foreground-muted opacity-100`}`}
-														/>
-													)}
+													{subItem.icon &&
+														(() => {
+															// biome-ignore lint/suspicious/noExplicitAny: Cast to any required to bypass strict string-assignment build error
+															const Icon = subItem.icon as any;
+															return (
+																<Icon
+																	className={cn(
+																		"size-6",
+																		subItem.isActive
+																			? "text-indigo-100 font-light opacity-100"
+																			: "text-sidebar-foreground-muted opacity-100"
+																	)}
+																/>
+															);
+														})()}
 													<span className="text-[0.9rem] font-light text-sidebar-primary opacity-[0.7]">
 														{subItem.name}
 													</span>

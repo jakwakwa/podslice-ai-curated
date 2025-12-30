@@ -29,7 +29,8 @@ export async function GET(request: Request) {
 
 		const sampleProps = template.getSampleProps() as Record<string, unknown>;
 		const { html } = await renderEmail(
-			template.component as React.ComponentType<unknown>,
+			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+			template.component as any,
 			sampleProps,
 			{
 				pretty: true,

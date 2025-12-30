@@ -39,9 +39,9 @@ export const initializeStoresForDevTools = () => {
 
 	// Check if Redux DevTools extension is available
 	if (typeof window !== "undefined") {
-		// @ts-ignore - checking for Redux DevTools extension
 		const hasReduxDevTools = !!(
-			window.__REDUX_DEVTOOLS_EXTENSION__ || window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+			(window as any).__REDUX_DEVTOOLS_EXTENSION__ ||
+			(window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
 		);
 		console.log("Redux DevTools Extension detected:", hasReduxDevTools);
 
@@ -76,10 +76,10 @@ export const verifyDevToolsSetup = () => {
 
 	// Check browser extension
 	if (typeof window !== "undefined") {
-		// @ts-ignore
 		if (
 			!(
-				window.__REDUX_DEVTOOLS_EXTENSION__ || window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+				(window as any).__REDUX_DEVTOOLS_EXTENSION__ ||
+				(window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
 			)
 		) {
 			issues.push("Redux DevTools browser extension not installed or not enabled");

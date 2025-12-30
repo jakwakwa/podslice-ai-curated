@@ -5,7 +5,10 @@ import { z } from "zod";
 import EpisodeActionsWrapper from "@/components/features/episodes/episode-actions-wrapper";
 import EpisodeHeader from "@/components/features/episodes/episode-header";
 import EpisodeShell from "@/components/features/episodes/episode-shell";
-import IntelligentSummaryView from "@/components/features/episodes/intelligent-summary-view";
+import IntelligentSummaryView, {
+	type TradeRecommendation,
+	type DocumentContradiction,
+} from "@/components/features/episodes/intelligent-summary-view";
 import KeyTakeaways from "@/components/features/episodes/key-takeaways";
 import { Separator } from "@/components/ui/separator";
 import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
@@ -109,8 +112,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 		variantView?: string | null;
 		investmentImplications: string;
 		risksAndRedFlags: string;
-		tradeRecommendations?: unknown[]; // Keep any for inner objects or import types if possible
-		documentContradictions?: unknown[];
+		tradeRecommendations?: TradeRecommendation[];
+		documentContradictions?: DocumentContradiction[];
 	}
 
 	let mappedIntelligence = null;
