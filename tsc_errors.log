@@ -1,9 +1,0 @@
-[96mapp/api/admin/email-preview/route.ts[0m:[93m32[0m:[93m4[0m - [91merror[0m[90m TS2345: [0mArgument of type 'ElementType<any, keyof IntrinsicElements>' is not assignable to parameter of type 'ComponentType<any>'.
-  Type 'string' is not assignable to type 'ComponentType<any>'.
-
-[7m32[0m    template.component as React.ElementType,
-[7m  [0m [91m   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
-
-
-Found 1 error in app/api/admin/email-preview/route.ts[90m:32[0m
-
