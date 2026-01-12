@@ -280,7 +280,7 @@ export default function IntelligentSummaryView({
 			{/* Main Grid: Cards */}
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 				{documentContradictions && documentContradictions.length > 0 && (
-					<Card className="bg-linear-to-br from-amber-500 via-amber-500 lg:col-span-2 to-amber-500/70 border-0 rounded-3xl overflow-hidden relative max-h-[400px]">
+					<Card className="bg-linear-to-br from-amber-500 via-amber-500 lg:col-span-2 to-amber-500/70 border-0 rounded-3xl overflow-hidden relative md:max-h-[400px]">
 						<div className="absolute inset-0 bg-linear-to-r from-amber-500/10 to-transparent pointer-events-none" />
 						<CardContent className="p-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
 							<div className="flex-1 space-y-4">
@@ -538,7 +538,7 @@ export default function IntelligentSummaryView({
 				</Card>
 
 				{/* Risks & Red Flags */}
-				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden lg:col-span-3 hover:border-white/10 transition-colors">
+				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden  lg:col-span-3 hover:border-white/10 transition-colors">
 					<CardHeader className="flex flex-row items-center gap-3 pb-2 pt-6 px-6">
 						<div className="p-2 bg-gray-800/50 rounded-lg">
 							<AlertTriangle className="h-5 w-5 text-red-500" />

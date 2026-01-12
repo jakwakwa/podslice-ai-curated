@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -108,7 +109,11 @@ export function MarketPulseTable({ episodes }: MarketPulseTableProps) {
 									<TableCell className="font-medium py-5">
 										<div className="flex flex-col gap-1">
 											<span className="text-foreground font-semibold text-xs truncate text-overflow-ellipsis max-w-[310px]">
-												{episode.episode_title}
+												<Link
+													href={`/my-episodes/${episode.episode_id}`}
+													className="hover:text-violet-400 hover:underline transition-colors">
+													{episode.episode_title}
+												</Link>
 											</span>
 											<span className="text-[10px] text-zinc-500 uppercase font-medium tracking-wider">
 												ARCHETYPE: {episode.voice_archetype || "ANALYST"}
