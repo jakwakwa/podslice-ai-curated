@@ -10,6 +10,6 @@ export default function EpisodeShell({
 	className,
 }: EpisodeShellProps): ReactElement {
 	const base =
-		"bg-zinc-800 md:bg-zinc-800/20 p-4 m-0 overflow-hidden w-full md:p-12 rounded-sm md:mx-auto";
+		"bg-zinc-800 md:bg-zinc-800/20 p-4 m-0 overflow-hidden w-full mt-0 p-8 rounded-sm md:mx-auto";
 	return <div className={className ? `${base} ${className}` : base}>{children}</div>;
 }

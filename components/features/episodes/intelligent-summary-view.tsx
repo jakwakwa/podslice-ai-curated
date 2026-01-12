@@ -161,9 +161,6 @@ export default function IntelligentSummaryView({
 			{/* Header */}
 			{hideHeader && (
 				<div className="space-y-1">
-					<h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-						{title}
-					</h1>
 					<div className="flex items-center gap-2 text-sm text-gray-400 font-medium">
 						{duration && <span>{Math.round(duration / 60)} min</span>}
 						{publishedAt && (
@@ -353,7 +350,7 @@ export default function IntelligentSummaryView({
 										</div>
 									))}
 								</div>
-								<div>
+								<div className="flex flex-col md:flex-row items-start gap-0 md:gap-2 md:items-center">
 									<Button
 										onClick={() => {
 											window.open(
@@ -366,8 +363,7 @@ export default function IntelligentSummaryView({
 										View Statistics
 										<ArrowRight className="ml-2 h-4 w-4" />
 									</Button>
-								</div>
-								<div>
+
 									<Button
 										onClick={() => {
 											window.open(
@@ -390,7 +386,7 @@ export default function IntelligentSummaryView({
 					<CardHeader className="flex flex-row items-center justify-between pb-2 pt-6 px-6">
 						<CardTitle className="text-lg font-bold text-gray-100 flex flex-col">
 							<span>Key Asset Performance</span>
-							<span className="text-lg font-mono text-gray-500 font-normal mt-1">
+							<span className="text-2xl font-mono text-amber-200 font-normal mt-1">
 								{tickers?.[0] || "MARKET"}
 							</span>
 						</CardTitle>
@@ -521,7 +517,7 @@ export default function IntelligentSummaryView({
 					</div>
 				</Card>
 				{/* Investment Implications */}
-				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden lg:col-span-2  hover:border-white/10 transition-colors h-auto">
+				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden lg:col-span-3  hover:border-white/10 transition-colors h-auto">
 					<CardHeader className="flex flex-row items-center gap-3 pb-2 pt-6 px-6">
 						<div className="p-2 bg-gray-800/50 rounded-lg">
 							<Lightbulb className="h-5 w-5 text-indigo-400" />

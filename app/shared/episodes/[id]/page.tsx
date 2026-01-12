@@ -127,7 +127,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 								</Link>
 							}
 						/>
-						<div className="mt-4 my-8">
+						<div className="mt-24 mb-8">
 							{mappedIntelligence ? (
 								<IntelligentSummaryView
 									title={episode.episode_title}

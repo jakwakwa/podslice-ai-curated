@@ -37,7 +37,7 @@ export default function EpisodeActionsWrapper({
 	};
 
 	return (
-		<div className=" w-full gap-3 m-0 flex items-end justify-start h-[120px]">
+		<div className=" w-full gap-3 m-0 flex items-end justify-start h-[20px]">
 			<PlayAndShare
 				kind="user"
 				episode={episode}
