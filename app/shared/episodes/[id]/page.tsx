@@ -230,7 +230,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 							}
 							rightLink={{
 								href: episode.youtube_url,
-								label: "Youtube Url",
+								label: "Source",
 								external: true,
 							}}
 							rightAction={

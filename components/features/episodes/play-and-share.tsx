@@ -90,7 +90,7 @@ export default function PlayAndShare({
 
 	return (
 		<>
-			<div className="w-full max-w-[10vw] flex md:flex-row my-8 items-start gap-4">
+			<div className="md:w-full md:justify-end flex md:flex-row md:mt-8 md:items-center gap-4">
 				<Button
 					type="button"
 					className="outline-emerald-400 outline-1 max-h-10"
@@ -103,7 +103,7 @@ export default function PlayAndShare({
 				</Button>
 				<Button
 					type="button"
-					className="outline-indigo-400 outline-1 max-h-10"
+					className="outline-indigo-400 bg-indigo-500/10 outline-1 max-h-10"
 					variant="default"
 					size="sm"
 					onClick={onShare}>

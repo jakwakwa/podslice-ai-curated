@@ -139,7 +139,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
 	return (
 		<EpisodeShell>
-			<div>
+			<div className="w-full">
 				<EpisodeHeader
 					title={episode.episode_title}
 					createdAt={episode.created_at}
@@ -151,18 +151,18 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 					}
 					rightLink={{
 						href: episode.youtube_url,
-						label: "Youtube Url",
+						label: "Source",
 						external: true,
 					}}
 				/>
-				<div className="">
+				<div className="m-0 w-full">
 					<EpisodeActionsWrapper
 						episode={episode}
 						signedAudioUrl={episode.signedAudioUrl}
 						isPublic={episode.is_public}
 					/>
 
-					<Separator className="my-8" />
+					<Separator className="mb-4" />
 					{mappedIntelligence ? (
 						<IntelligentSummaryView
 							title={episode.episode_title}

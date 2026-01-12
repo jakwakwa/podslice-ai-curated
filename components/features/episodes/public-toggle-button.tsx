@@ -68,8 +68,7 @@ export default function PublicToggleButton({
 	}, [episodeId, isPublic, onToggleSuccess]);
 
 	return (
-		<span className="flex items-center gap-4 my-8 w-full text-xs">
-			Visibility:
+		<span className="flex items-center gap-4 text-xs">
 			<Button
 				type="button"
 				variant={isPublic ? "default" : "outline"}

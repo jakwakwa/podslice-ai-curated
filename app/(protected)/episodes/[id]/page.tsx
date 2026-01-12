@@ -205,8 +205,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 						signedAudioUrl={episode.signedAudioUrl}
 					/>
 				</div>
-				<div className="mt-4 my-8">
-					<Separator className="my-8" />
+				<div className="mt-2 my-0">
+					<Separator className="my-2" />
 					<KeyTakeaways items={takeaways} />
 				</div>
 			</div>
