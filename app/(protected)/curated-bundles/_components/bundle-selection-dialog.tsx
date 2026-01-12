@@ -297,7 +297,7 @@ export function BundleSelectionDialog({
 							{shouldShowSwitchWarning && (
 								<>
 									{/* Warning Message */}
-									<div className="px-1 py-[1px] w-fit max-w-[90%]  bg-yellow-500/10 outline-[0.5px] outline-emerald-600/70 border-emerald-500 rounded-xs text-[0.65rem] text-emerald-200/70">
+									<div className="px-1 py-px w-fit max-w-[90%]  bg-yellow-500/10 outline-[0.5px] outline-emerald-600/70 border-emerald-500 rounded-xs text-[0.65rem] text-emerald-200/70">
 										{isSharedBundle
 											? `You'll lose access to episodes from "${sanitizedCurrentBundleName}" after switching`
 											: `Access to "${sanitizedCurrentBundleName}" summaries will be lost`}
