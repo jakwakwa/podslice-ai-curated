@@ -279,9 +279,48 @@ export default function IntelligentSummaryView({
 
 			{/* Main Grid: Cards */}
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+				{documentContradictions && documentContradictions.length > 0 && (
+					<Card className="bg-linear-to-br from-amber-500 via-amber-500 lg:col-span-2 to-amber-500/70 border-0 rounded-3xl overflow-hidden relative max-h-[400px]">
+						<div className="absolute inset-0 bg-linear-to-r from-amber-500/10 to-transparent pointer-events-none" />
+						<CardContent className="p-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+							<div className="flex-1 space-y-4">
+								<div className="flex items-center gap-3">
+									<Target className="h-6 w-6 text-amber-500" />
+									<h3 className="text-xl font-bold text-white">Lie Detector</h3>
+								</div>
+
+								<div className="space-y-4">
+									{documentContradictions.slice(0, 1).map((truth, idx) => (
+										<div key={idx} className="space-y-2">
+											<div className="flex items-center gap-3">
+												<div className="text-2xl font-bold tracking-tighter text-white">
+													<span className="text-amber-300">Claim:</span> "{truth.claim}"
+												</div>
+
+												<Badge
+													variant="secondary"
+													className={cn(
+														"uppercase min-w-[60px] text-[9px] font-bold px-2 py-0.5 tracking-narrow",
+														truth.severity === "CRITICAL"
+															? "bg-red-500/80 text-red-200"
+															: "bg-emerald-500/80 text-emerald-200"
+													)}>
+													{truth.severity}
+												</Badge>
+											</div>
+											<p className="text-gray-300  leading-relaxed max-w-2xl">
+												{truth.groundTruth}
+											</p>
+										</div>
+									))}
+								</div>
+							</div>
+						</CardContent>
+					</Card>
+				)}
 				{/* Trade Ideas Card (Full Width Highlight) */}
 				{tradeRecommendations && tradeRecommendations.length > 0 && (
-					<Card className="bg-linear-to-br lg:col-span-2 from-emerald-500/20 via-purple-500/20 to-indigo-500/10 border-0 rounded-3xl overflow-hidden relative">
+					<Card className="bg-linear-to-br lg:col-span-1 from-emerald-500/20 via-purple-500/20 to-indigo-500/10 border-0 rounded-3xl overflow-hidden relative">
 						<div className="absolute inset-0 bg-linear-to-r from-emerald-500/10 to-transparent pointer-events-none" />
 						<CardContent className="p-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
 							<div className="flex-1 space-y-4">
@@ -346,6 +385,73 @@ export default function IntelligentSummaryView({
 						</CardContent>
 					</Card>
 				)}
+				{/* Key Asset Performance (Chart) */}
+				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden lg:col-span-2 hover:border-white/10 transition-colors min-h-[300px] flex flex-col">
+					<CardHeader className="flex flex-row items-center justify-between pb-2 pt-6 px-6">
+						<CardTitle className="text-lg font-bold text-gray-100 flex flex-col">
+							<span>Key Asset Performance</span>
+							<span className="text-lg font-mono text-gray-500 font-normal mt-1">
+								{tickers?.[0] || "MARKET"}
+							</span>
+						</CardTitle>
+						<div className="flex items-center gap-3">
+							{latestPrice && (
+								<span className="text-3xl font-bold tracking-tight text-[#72e1ee]">
+									${latestPrice.toLocaleString()}
+								</span>
+							)}
+							<BarChart3 className="h-5 w-5 text-gray-500" />
+						</div>
+					</CardHeader>
+					<CardContent className="px-6 pb-6 flex-1 w-full min-h-[200px]">
+						<ResponsiveContainer width="100%" height="100%" minHeight={200}>
+							<LineChart
+								data={chartData && chartData.length > 0 ? chartData : MOCK_CHART_DATA}>
+								<defs>
+									<linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+										<stop offset="5%" stopColor="#72e1ee" stopOpacity={0.3} />
+										<stop offset="95%" stopColor="#72e1ee" stopOpacity={0} />
+									</linearGradient>
+								</defs>
+								<XAxis
+									dataKey="day"
+									stroke="#fff"
+									fontSize={12}
+									tickLine={false}
+									axisLine={false}
+									minTickGap={24}
+								/>
+								<YAxis
+									stroke="#374151"
+									fontSize={12}
+									tickLine={false}
+									axisLine={false}
+									tickFormatter={val => `$${val}`}
+									domain={["auto", "auto"]}
+									width={40}
+								/>
+								<Tooltip
+									contentStyle={{
+										backgroundColor: "#1f2937",
+										border: "none",
+										borderRadius: "8px",
+										color: "#fff",
+									}}
+									itemStyle={{ color: "#4ade80" }}
+								/>
+								<Line
+									type="monotone"
+									dataKey="value"
+									stroke="#b272ee"
+									strokeWidth={2}
+									dot={false}
+									activeDot={{ r: 4, fill: "#fff" }}
+								/>
+							</LineChart>
+						</ResponsiveContainer>
+					</CardContent>
+				</Card>
+
 				{/* Sentiment Gauge Card */}
 				<Card className="bg-[#111] border-none shadow-2xl rounded-3xl p-6 flex flex-col lg:col-span-1 items-center justify-center relative">
 					<div className="relative w-40 h-40 flex items-center justify-center">
@@ -430,113 +536,9 @@ export default function IntelligentSummaryView({
 						</div>
 					</CardContent>
 				</Card>
-				{documentContradictions && documentContradictions.length > 0 && (
-					<Card className="bg-linear-to-br from-amber-500 via-amber-500 lg:col-span-1 to-amber-500/70 border-0 rounded-3xl overflow-hidden relative max-h-[400px]">
-						<div className="absolute inset-0 bg-linear-to-r from-amber-500/10 to-transparent pointer-events-none" />
-						<CardContent className="p-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-							<div className="flex-1 space-y-4">
-								<div className="flex items-center gap-3">
-									<Target className="h-6 w-6 text-amber-500" />
-									<h3 className="text-xl font-bold text-white">Lie Detector</h3>
-								</div>
 
-								<div className="space-y-4">
-									{documentContradictions.slice(0, 1).map((truth, idx) => (
-										<div key={idx} className="space-y-2">
-											<div className="flex items-center gap-3">
-												<div className="text-2xl font-bold tracking-tighter text-white">
-													<span className="text-amber-300">Claim:</span> "{truth.claim}"
-												</div>
-
-												<Badge
-													variant="secondary"
-													className={cn(
-														"uppercase min-w-[60px] text-[9px] font-bold px-2 py-0.5 tracking-narrow",
-														truth.severity === "CRITICAL"
-															? "bg-red-500/80 text-red-200"
-															: "bg-emerald-500/80 text-emerald-200"
-													)}>
-													{truth.severity}
-												</Badge>
-											</div>
-											<p className="text-gray-300  leading-relaxed max-w-2xl">
-												{truth.groundTruth}
-											</p>
-										</div>
-									))}
-								</div>
-							</div>
-						</CardContent>
-					</Card>
-				)}
-				{/* Key Asset Performance (Chart) */}
-				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden lg:col-span-1 hover:border-white/10 transition-colors min-h-[300px] flex flex-col">
-					<CardHeader className="flex flex-row items-center justify-between pb-2 pt-6 px-6">
-						<CardTitle className="text-lg font-bold text-gray-100 flex flex-col">
-							<span>Key Asset Performance</span>
-							<span className="text-lg font-mono text-gray-500 font-normal mt-1">
-								{tickers?.[0] || "MARKET"}
-							</span>
-						</CardTitle>
-						<div className="flex items-center gap-3">
-							{latestPrice && (
-								<span className="text-3xl font-bold tracking-tight text-[#72e1ee]">
-									${latestPrice.toLocaleString()}
-								</span>
-							)}
-							<BarChart3 className="h-5 w-5 text-gray-500" />
-						</div>
-					</CardHeader>
-					<CardContent className="px-6 pb-6 flex-1 w-full min-h-[200px]">
-						<ResponsiveContainer width="100%" height="100%" minHeight={200}>
-							<LineChart
-								data={chartData && chartData.length > 0 ? chartData : MOCK_CHART_DATA}>
-								<defs>
-									<linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-										<stop offset="5%" stopColor="#72e1ee" stopOpacity={0.3} />
-										<stop offset="95%" stopColor="#72e1ee" stopOpacity={0} />
-									</linearGradient>
-								</defs>
-								<XAxis
-									dataKey="day"
-									stroke="#fff"
-									fontSize={12}
-									tickLine={false}
-									axisLine={false}
-									minTickGap={24}
-								/>
-								<YAxis
-									stroke="#374151"
-									fontSize={12}
-									tickLine={false}
-									axisLine={false}
-									tickFormatter={val => `$${val}`}
-									domain={["auto", "auto"]}
-									width={40}
-								/>
-								<Tooltip
-									contentStyle={{
-										backgroundColor: "#1f2937",
-										border: "none",
-										borderRadius: "8px",
-										color: "#fff",
-									}}
-									itemStyle={{ color: "#4ade80" }}
-								/>
-								<Line
-									type="monotone"
-									dataKey="value"
-									stroke="#b272ee"
-									strokeWidth={2}
-									dot={false}
-									activeDot={{ r: 4, fill: "#fff" }}
-								/>
-							</LineChart>
-						</ResponsiveContainer>
-					</CardContent>
-				</Card>
 				{/* Risks & Red Flags */}
-				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden lg:col-span-2 hover:border-white/10 transition-colors">
+				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden lg:col-span-3 hover:border-white/10 transition-colors">
 					<CardHeader className="flex flex-row items-center gap-3 pb-2 pt-6 px-6">
 						<div className="p-2 bg-gray-800/50 rounded-lg">
 							<AlertTriangle className="h-5 w-5 text-red-500" />

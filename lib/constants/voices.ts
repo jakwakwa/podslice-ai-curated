@@ -30,36 +30,36 @@ export const VOICE_OPTIONS: readonly VoiceOption[] = [
 		id: "Strategist",
 		label: "The Strategist (Deep/Steady)",
 		sample: "Market signals are aligning with long-term macroeconomic trends.",
-		googleVoiceName: "Charon",
-		elevenLabsId: "", // Deprecated
+		googleVoiceName: "Algieba",
+		elevenLabsId: "gs0tAILXbY5DNrJrsM6F",
 	},
 	{
 		id: "Newsroom",
 		label: "The Newsroom (Fast/Daily)",
 		sample: "Breaking news: Major institutional inflow into spot ETFs today.",
-		googleVoiceName: "Kore", // Female, clear
-		elevenLabsId: "", // Deprecated
+		googleVoiceName: "Rasalgethi", // Female, clear
+		elevenLabsId: "kPzsL2i3teMYv0FxEYQ6",
 	},
 	{
 		id: "TechnicalLead",
 		label: "The Technical Lead (Precise/Clear)",
 		sample: "Bitcoin's hash rate distribution shows significant resilience.",
-		googleVoiceName: "Puck", // Generic male, clear
-		elevenLabsId: "", // Deprecated
+		googleVoiceName: "Autonoe", // Generic male, clear
+		elevenLabsId: "zZLmKvCp1i04X8E0FJ8B",
 	},
 	{
 		id: "Analyst",
 		label: "The Analyst (Rough/Direct)",
 		sample: "The data suggests a strong reversal in the coming quarter.",
-		googleVoiceName: "Fenrir", // Deep, rough
-		elevenLabsId: "", // Deprecated
+		googleVoiceName: "Sadaltager", // Deep, rough
+		elevenLabsId: "zZLmKvCp1i04X8E0FJ8B",
 	},
 	{
 		id: "Presenter",
 		label: "The Presenter (High/Energetic)",
 		sample: "Welcome back to the show! We have some exciting updates.",
 		googleVoiceName: "Aoede", // High-pitched female
-		elevenLabsId: "", // Deprecated
+		elevenLabsId: "zZLmKvCp1i04X8E0FJ8B",
 	},
 ] as const;
 
