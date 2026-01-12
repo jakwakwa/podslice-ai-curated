@@ -67,6 +67,7 @@ export interface IntelligentSummaryViewProps {
 	customAudioPlayer?: React.ReactNode;
 	hideHeader?: boolean;
 	documentContradictions?: DocumentContradiction[];
+	chartData?: { day: string; value: number }[];
 }
 
 // Mock data for asset performance line chart
@@ -95,6 +96,7 @@ export default function IntelligentSummaryView({
 	customAudioPlayer,
 	hideHeader,
 	documentContradictions,
+	chartData,
 }: IntelligentSummaryViewProps) {
 	const { setEpisode } = useAudioPlayerStore();
 
@@ -149,6 +151,10 @@ export default function IntelligentSummaryView({
 	};
 
 	const sentimentColor = getSentimentColor(sentimentLabel);
+
+	// Get latest price from chart data
+	const latestPrice =
+		chartData && chartData.length > 0 ? chartData[chartData.length - 1].value : null;
 
 	return (
 		<div className="flex flex-col gap-6 animate-in fade-in duration-500 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-[#0a0a0a] text-white rounded-3xl font-sans">
@@ -473,28 +479,36 @@ export default function IntelligentSummaryView({
 								{tickers?.[0] || "MARKET"}
 							</span>
 						</CardTitle>
-						<BarChart3 className="h-5 w-5 text-gray-500" />
+						<div className="flex items-center gap-3">
+							{latestPrice && (
+								<span className="text-3xl font-bold tracking-tight text-[#72e1ee]">
+									${latestPrice.toLocaleString()}
+								</span>
+							)}
+							<BarChart3 className="h-5 w-5 text-gray-500" />
+						</div>
 					</CardHeader>
 					<CardContent className="px-6 pb-6 flex-1 w-full min-h-[200px]">
 						<ResponsiveContainer width="100%" height="100%" minHeight={200}>
-							<LineChart data={MOCK_CHART_DATA}>
+							<LineChart
+								data={chartData && chartData.length > 0 ? chartData : MOCK_CHART_DATA}>
 								<defs>
 									<linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-										<stop offset="5%" stopColor="#4ade80" stopOpacity={0.3} />
-										<stop offset="95%" stopColor="#4ade80" stopOpacity={0} />
+										<stop offset="5%" stopColor="#72e1ee" stopOpacity={0.3} />
+										<stop offset="95%" stopColor="#72e1ee" stopOpacity={0} />
 									</linearGradient>
 								</defs>
 								<XAxis
 									dataKey="day"
-									stroke="#374151"
-									fontSize={10}
+									stroke="#fff"
+									fontSize={12}
 									tickLine={false}
 									axisLine={false}
-									minTickGap={10}
+									minTickGap={24}
 								/>
 								<YAxis
 									stroke="#374151"
-									fontSize={10}
+									fontSize={12}
 									tickLine={false}
 									axisLine={false}
 									tickFormatter={val => `$${val}`}
@@ -513,7 +527,7 @@ export default function IntelligentSummaryView({
 								<Line
 									type="monotone"
 									dataKey="value"
-									stroke="#4ade80"
+									stroke="#b272ee"
 									strokeWidth={2}
 									dot={false}
 									activeDot={{ r: 4, fill: "#fff" }}

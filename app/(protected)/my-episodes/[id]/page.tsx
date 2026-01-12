@@ -12,6 +12,7 @@ import IntelligentSummaryView, {
 import KeyTakeaways from "@/components/features/episodes/key-takeaways";
 import { Separator } from "@/components/ui/separator";
 import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
+import { getHistoricalPrices, type ChartDataPoint } from "@/lib/marketstack";
 import { extractKeyTakeaways, extractNarrativeRecap } from "@/lib/markdown/episode-text";
 import { prisma } from "@/lib/prisma";
 import type { UserEpisode } from "@/lib/types";
@@ -137,6 +138,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 		};
 	}
 
+	// Fetch historical data for the first ticker if available
+	let chartData: ChartDataPoint[] = [];
+	if (mappedIntelligence?.structuredData?.tickers?.[0]) {
+		chartData = await getHistoricalPrices(mappedIntelligence.structuredData.tickers[0]);
+	}
+
 	return (
 		<EpisodeShell>
 			<div className="w-full">
@@ -174,6 +181,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 							documentContradictions={
 								mappedIntelligence?.writtenContent.documentContradictions
 							}
+							chartData={chartData}
 						/>
 					) : (
 						<KeyTakeaways items={takeaways} />
