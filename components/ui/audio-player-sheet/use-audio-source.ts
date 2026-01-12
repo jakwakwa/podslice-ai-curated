@@ -5,7 +5,9 @@ type Args = { open: boolean; episode: Episode | UserEpisode | null };
 type Result = { resolvedSrc: string; isResolving: boolean; error: string | null };
 
 function isUserEpisodeType(e: Episode | UserEpisode): e is UserEpisode {
-	return typeof e === "object" && e !== null && "youtube_url" in e && !("podcast_id" in e);
+	return (
+		typeof e === "object" && e !== null && "youtube_url" in e && !("podcast_id" in e)
+	);
 }
 
 export function useAudioSource({ open, episode }: Args): Result {
@@ -24,7 +26,12 @@ export function useAudioSource({ open, episode }: Args): Result {
 			setIsResolving(true);
 			setError(null);
 
-			const raw = "audio_url" in episode && episode.audio_url ? episode.audio_url : "gcs_audio_url" in episode && episode.gcs_audio_url ? episode.gcs_audio_url : "";
+			const raw =
+				"audio_url" in episode && episode.audio_url
+					? episode.audio_url
+					: "gcs_audio_url" in episode && episode.gcs_audio_url
+						? episode.gcs_audio_url
+						: "";
 
 			// Construct play endpoint when needed
 			const id = episode.episode_id;
@@ -33,7 +40,11 @@ export function useAudioSource({ open, episode }: Args): Result {
 			try {
 				// For user episodes, always go through the play endpoint so we can sign GCS HTTP/gs:// URLs
 				if (isUserEpisode) {
-					const playEndpoint = raw.startsWith("/api/") ? raw : id ? `/api/user-episodes/${id}/play` : "";
+					const playEndpoint = raw.startsWith("/api/")
+						? raw
+						: id
+							? `/api/user-episodes/${id}/play`
+							: "";
 					if (!playEndpoint) {
 						setResolvedSrc("");
 						setIsResolving(false);
@@ -54,7 +65,11 @@ export function useAudioSource({ open, episode }: Args): Result {
 				}
 
 				// Otherwise resolve via catalog play endpoint
-				const playEndpoint = raw.startsWith("/api/") ? raw : id ? `/api/episodes/${id}/play` : "";
+				const playEndpoint = raw.startsWith("/api/")
+					? raw
+					: id
+						? `/api/episodes/${id}/play`
+						: "";
 				if (!playEndpoint) {
 					setResolvedSrc("");
 					setIsResolving(false);

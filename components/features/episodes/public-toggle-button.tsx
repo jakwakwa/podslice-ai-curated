@@ -68,20 +68,20 @@ export default function PublicToggleButton({
 	}, [episodeId, isPublic, onToggleSuccess]);
 
 	return (
-		<span className="flex items-center gap-4 my-8 w-full text-xs">
-
-			Visibility:
+		<span className="flex items-center gap-4 text-xs">
 			<Button
 				type="button"
 				variant={isPublic ? "default" : "outline"}
 				size="sm"
 				onClick={handleToggle}
-				disabled={isLoading}
-				icon={isPublic ? <Globe className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
-			>
+				disabled={isLoading}>
+				{isPublic ? (
+					<Globe className="h-4 w-4 mr-2" />
+				) : (
+					<Lock className="h-4 w-4 mr-2" />
+				)}
 				{isLoading ? "Updating..." : isPublic ? "Public" : "Private"}
 			</Button>
 		</span>
 	);
 }
-

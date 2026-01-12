@@ -15,12 +15,26 @@ function resolveAllowedGates(plan: string | null | undefined): PlanGate[] {
 
 	// Handle various plan type formats that might be stored in the database
 	if (normalized === "curate_control" || normalized === "curate control") {
-		return [PlanGate.NONE, PlanGate.FREE_SLICE, PlanGate.CASUAL_LISTENER, PlanGate.CURATE_CONTROL];
+		return [
+			PlanGate.NONE,
+			PlanGate.FREE_SLICE,
+			PlanGate.CASUAL_LISTENER,
+			PlanGate.CURATE_CONTROL,
+		];
 	}
-	if (normalized === "casual_listener" || normalized === "casual listener" || normalized === "casual") {
+	if (
+		normalized === "casual_listener" ||
+		normalized === "casual listener" ||
+		normalized === "casual"
+	) {
 		return [PlanGate.NONE, PlanGate.FREE_SLICE, PlanGate.CASUAL_LISTENER];
 	}
-	if (normalized === "free_slice" || normalized === "free slice" || normalized === "free" || normalized === "freeslice") {
+	if (
+		normalized === "free_slice" ||
+		normalized === "free slice" ||
+		normalized === "free" ||
+		normalized === "freeslice"
+	) {
 		return [PlanGate.NONE, PlanGate.FREE_SLICE];
 	}
 	// Default: NONE plan or no plan
@@ -56,7 +70,9 @@ export async function GET(_request: Request) {
 		// Compute bundle episodes by podcast membership (podcast-centric model)
 		let computedBundleEpisodes: unknown[] = [];
 		if (userCurationProfile.selectedBundle) {
-			const podcastIds = userCurationProfile.selectedBundle.bundle_podcast.map((bp: { podcast_id: string }) => bp.podcast_id);
+			const podcastIds = userCurationProfile.selectedBundle.bundle_podcast.map(
+				(bp: { podcast_id: string }) => bp.podcast_id
+			);
 			if (podcastIds.length > 0) {
 				computedBundleEpisodes = await prisma.episode.findMany({
 					where: { podcast_id: { in: podcastIds } },
@@ -74,7 +90,9 @@ export async function GET(_request: Request) {
 			selectedBundle: userCurationProfile.selectedBundle
 				? {
 						...userCurationProfile.selectedBundle,
-						podcasts: userCurationProfile.selectedBundle.bundle_podcast.map((bp: { podcast: unknown }) => bp.podcast),
+						podcasts: userCurationProfile.selectedBundle.bundle_podcast.map(
+							(bp: { podcast: unknown }) => bp.podcast
+						),
 						episodes: computedBundleEpisodes,
 					}
 				: null,
@@ -99,7 +117,10 @@ export async function POST(request: Request) {
 
 		// Validate required fields
 		if (!name || typeof isBundleSelection !== "boolean") {
-			return NextResponse.json({ error: "Name and isBundleSelection are required" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Name and isBundleSelection are required" },
+				{ status: 400 }
+			);
 		}
 
 		// Check if user already has an active profile
@@ -108,7 +129,10 @@ export async function POST(request: Request) {
 		});
 
 		if (existingProfile) {
-			return NextResponse.json({ error: "User already has an active profile" }, { status: 409 });
+			return NextResponse.json(
+				{ error: "User already has an active profile" },
+				{ status: 409 }
+			);
 		}
 
 		// Get user's subscription plan
@@ -130,7 +154,9 @@ export async function POST(request: Request) {
 
 			// Check plan gate access
 			const allowedGates = resolveAllowedGates(userPlan);
-			const canInteract = allowedGates.some(allowedGate => allowedGate === bundle.min_plan);
+			const canInteract = allowedGates.some(
+				allowedGate => allowedGate === bundle.min_plan
+			);
 			if (!canInteract) {
 				return NextResponse.json(
 					{
@@ -144,11 +170,17 @@ export async function POST(request: Request) {
 
 		// Validate podcast selection if applicable
 		if (!isBundleSelection && (!selectedPodcasts || selectedPodcasts.length === 0)) {
-			return NextResponse.json({ error: "At least one podcast must be selected for custom profiles" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "At least one podcast must be selected for custom profiles" },
+				{ status: 400 }
+			);
 		}
 
 		if (!isBundleSelection && selectedPodcasts && selectedPodcasts.length > 5) {
-			return NextResponse.json({ error: "Maximum 5 podcasts allowed for custom profiles" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Maximum 5 podcasts allowed for custom profiles" },
+				{ status: 400 }
+			);
 		}
 
 		// Create the profile
@@ -175,7 +207,9 @@ export async function POST(request: Request) {
 			selectedBundle: profile.selectedBundle
 				? {
 						...profile.selectedBundle,
-						podcasts: profile.selectedBundle.bundle_podcast.map((bp: { podcast: unknown }) => bp.podcast),
+						podcasts: profile.selectedBundle.bundle_podcast.map(
+							(bp: { podcast: unknown }) => bp.podcast
+						),
 					}
 				: null,
 		};

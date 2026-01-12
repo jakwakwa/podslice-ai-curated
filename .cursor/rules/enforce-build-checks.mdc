@@ -1,5 +1,0 @@
----
-alwaysApply: false
----
-# CRITICAL:
-- After changes, ensure `bun run build` and `bun run lint` pass before merging.

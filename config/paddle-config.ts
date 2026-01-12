@@ -9,7 +9,7 @@ const PRICING_TIER: PlanTier[] = [
 		description: "30 day FREE TRIAL",
 		features: ["7 day free trial with full access to all CURATE CONTROL features"],
 		featured: false,
-		episodeLimit: 20,
+		episodeLimit: 50,
 	},
 	{
 		priceId: "pri_01k1dzhm5ccevk59y626z80mmf",
@@ -31,11 +31,11 @@ const PRICING_TIER: PlanTier[] = [
 		icon: "/assets/icons/price-tiers/free-icon.svg",
 		features: [
 			"Access to all other features and tools (Casual Listener included)",
-			"AI-Powered Audio and Text Summaries: Create single or multi-speaker, realistically AI-synthesized voiced podcast-style summaries. capped at 20",
+			"AI-Powered Audio and Text Summaries: Create single or multi-speaker, realistically AI-synthesized voiced podcast-style summaries. capped at 50",
 		],
 		description:
 			"Stay in control with the ability to create fully personalised Ai powered generated audio summaries",
-		episodeLimit: 20,
+		episodeLimit: 50,
 		featured: true,
 	},
 ];

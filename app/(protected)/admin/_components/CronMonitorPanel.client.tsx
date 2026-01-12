@@ -29,8 +29,14 @@ type CronJob = {
 	estimatedDuration?: string;
 };
 
+interface CronError {
+	user_id: string;
+	message: string;
+}
+
 type ExecutionResult = {
 	success: boolean;
+	// biome-ignore lint/suspicious/noExplicitAny: API data can be any shape
 	data?: any;
 	error?: string;
 	timestamp: Date;
@@ -258,7 +264,7 @@ export default function CronMonitorClient() {
 											</AlertTitle>
 											<AlertDescription>
 												<div className="mt-2 space-y-2">
-													{result.data.errors.map((error: any, idx: number) => (
+													{result.data?.errors?.map((error: CronError, idx: number) => (
 														<div key={idx} className="text-xs">
 															<strong>User:</strong> {error.user_id} - {error.message}
 														</div>

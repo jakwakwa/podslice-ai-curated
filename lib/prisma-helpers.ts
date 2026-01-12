@@ -8,7 +8,7 @@ import type { Prisma } from "@prisma/client";
 /**
  * Safe select for UserEpisode list views.
  * Excludes transcript and summary which can be megabytes each.
- * 
+ *
  * Use this for any endpoint that returns multiple episodes.
  */
 export const userEpisodeListSelect = {
@@ -27,7 +27,7 @@ export const userEpisodeListSelect = {
 /**
  * Full select for UserEpisode detail views.
  * Includes all fields. Only use for single episode queries.
- * 
+ *
  * WARNING: Do NOT use this for findMany() queries - you'll hit
  * Prisma's 4MB response size limit!
  */

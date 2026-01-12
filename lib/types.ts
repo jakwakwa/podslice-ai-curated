@@ -1,5 +1,10 @@
 // Import Prisma types and enums (now as a value too)
-import { PlanGate, type Prisma, type FeedbackRating as PrismaFeedbackRating, UserRole } from "@prisma/client";
+import {
+	PlanGate,
+	type Prisma,
+	type FeedbackRating as PrismaFeedbackRating,
+	UserRole,
+} from "@prisma/client";
 
 // Base scalar model shapes derived from Prisma payloads (compatible with Prisma v6)
 export type User = Prisma.$UserPayload["scalars"];

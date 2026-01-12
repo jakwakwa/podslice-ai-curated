@@ -138,7 +138,7 @@ export function NotificationBell() {
 			case "episode_ready":
 				return "text-green-500";
 			case "weekly_reminder":
-				return "text-amber-500";
+				return "text-emerald-500";
 			case "subscription_activated":
 			case "subscription_renewed":
 			case "payment_successful":
@@ -147,9 +147,9 @@ export function NotificationBell() {
 			case "payment_failed":
 				return "text-red-500";
 			case "subscription_ending":
-				return "text-amber-500";
+				return "text-emerald-500";
 			case "subscription_upgraded":
-				return "text-blue-500";
+				return "text-emerald-500";
 			case "subscription_downgraded":
 				return "text-gray-500";
 			default:
@@ -171,7 +171,7 @@ export function NotificationBell() {
 						className="rounded-[9999999px] text-white/80 w-4 h-4"
 					/>
 					{unreadCount > 0 && (
-						<span className="absolute top-1 right-2 bg-destructive-foreground p-1 h-3 w-3 rounded-full text-[0.9rem]  flex items-center animate-pulse justify-center text-destructive-foreground">
+						<span className="absolute top-1 right-2 bg-destructive-foreground  h-2 w-2 rounded-full  flex items-center animate-bounce justify-center bg-emerald-500 p-[7px] text-white text-[9px]">
 							2
 						</span>
 					)}
@@ -191,7 +191,7 @@ export function NotificationBell() {
 							{unreadCount > 0 && (
 								<Button
 									variant="ghost"
-									size="xs"
+									size="sm"
 									onClick={handleMarkAllAsRead}
 									disabled={isLoading}
 									className="text-xs px-2 py-1 h-auto text-white">
@@ -201,7 +201,7 @@ export function NotificationBell() {
 							)}
 							<Button
 								variant="outline"
-								size="xs"
+								size="sm"
 								onClick={handleClearAll}
 								className="text-xs px-2 py-1 h-auto text-primary-foreground ">
 								<XCircleIcon size={14} />
@@ -213,8 +213,11 @@ export function NotificationBell() {
 
 				<div className="max-h-96 overflow-y-auto p-2">
 					{notifications.length === 0 ? (
-						<div className="flex flex-col items-center justify-center py-8 px-4 text-center text-muted-foreground">
-							<Bell size={32} className="mb-3 text-primary-foreground-muted/40" />
+						<div className="flex flex-col items-center justify-center py-8 px-4 text-center bg-red-600 text-muted-foreground">
+							<Bell
+								size={32}
+								className="mb-3 text-primary-foreground-muted/40 bg-red-600"
+							/>
 							<p className="mb-1 text-base font-medium text-primary-foreground-muted/70">
 								No notifications yet
 							</p>
@@ -228,8 +231,9 @@ export function NotificationBell() {
 								variant="default"
 								key={notification.notification_id}
 								className={cn(
-									"bg-indigo-200/20 border transition-all duration-200 rounded-2xl hover:border-cyan-400/30 hover:shadow-sm mb-2 py-1",
-									!notification.is_read && "bg-cyan-300/20 border-3 border-cyan-300/20"
+									"bg-indigo-200/20 border transition-all duration-200 rounded-2xl hover:border-emerald-400/30 hover:shadow-sm mb-2 py-1",
+									!notification.is_read &&
+										"bg-emerald-300/20 border-3 border-emerald-300/20"
 								)}>
 								<div className="py-1">
 									<div className="flex items-start justify-between mb-1">
@@ -260,17 +264,17 @@ export function NotificationBell() {
 										{!notification.is_read && (
 											<Button
 												variant="ghost"
-												size="xs"
+												size="sm"
 												onClick={() => handleMarkAsRead(notification.notification_id)}
 												disabled={isLoading}
-												className="border  shadow-black/30 shadow-md  rounded-4xl text-blue-300 text-xs py-0 h-6 px-3">
+												className="border  shadow-black/30 shadow-md  rounded-4xl text-emerald-300 text-xs py-0 h-6 px-3">
 												mark as read
 												<EyeIcon size={14} />
 											</Button>
 										)}
 										<Button
 											variant="ghost"
-											size="xs"
+											size="sm"
 											onClick={() =>
 												handleDeleteNotification(notification.notification_id)
 											}

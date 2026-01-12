@@ -14,7 +14,7 @@ const podcastsSeed = [
 	},
 	{
 		slug: "builder-blueprint",
-		name: "Builder's Blueprint",
+		name: "Builder's blueprint",
 		description: "Stories and tactics from product builders shipping at scale.",
 		url: "https://podslice.example/podcasts/builders-blueprint",
 		image_url: "https://picsum.photos/seed/builders-blueprint/400/400",

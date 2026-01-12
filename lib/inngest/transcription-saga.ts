@@ -25,11 +25,21 @@ export const transcriptionCoordinator = inngest.createFunction(
 		const { jobId, userEpisodeId, srcUrl, generationMode, voiceA, voiceB } = input;
 
 		await step.run("mark-processing", async () => {
-			await prisma.userEpisode.update({ where: { episode_id: userEpisodeId }, data: { status: "PROCESSING", youtube_url: srcUrl } });
-			await writeEpisodeDebugLog(userEpisodeId, { step: "status", status: "start", message: "PROCESSING" });
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: { status: "PROCESSING", youtube_url: srcUrl },
+			});
+			await writeEpisodeDebugLog(userEpisodeId, {
+				step: "status",
+				status: "start",
+				message: "PROCESSING",
+			});
 		});
 
-		const probe = await step.run("preflight-probe", async () => await preflightProbe(srcUrl));
+		const probe = await step.run(
+			"preflight-probe",
+			async () => await preflightProbe(srcUrl)
+		);
 		await writeEpisodeDebugLog(userEpisodeId, {
 			step: "preflight",
 			status: probe.ok ? "success" : "fail",
@@ -55,30 +65,47 @@ export const transcriptionCoordinator = inngest.createFunction(
 				const { getMaxDurationSeconds } = await import("@/lib/env");
 				const maxDurationSeconds = getMaxDurationSeconds();
 				if (details.duration > maxDurationSeconds) {
-					throw new Error(`Video duration ${details.duration} seconds exceeds maximum allowed duration of ${maxDurationSeconds} seconds (${Math.floor(maxDurationSeconds / 60)} minutes)`);
+					throw new Error(
+						`Video duration ${details.duration} seconds exceeds maximum allowed duration of ${maxDurationSeconds} seconds (${Math.floor(maxDurationSeconds / 60)} minutes)`
+					);
 				}
 
 				await prisma.userEpisode.update({
 					where: { episode_id: userEpisodeId },
 					data: {
 						episode_title: needsTitle ? details.title : title || details.title,
-						duration_seconds: needsDuration && details.duration > 0 ? details.duration : episode?.duration_seconds,
+						duration_seconds:
+							needsDuration && details.duration > 0
+								? details.duration
+								: episode?.duration_seconds,
 					},
 				});
 				await writeEpisodeDebugLog(userEpisodeId, {
 					step: "youtube-metadata",
 					status: "success",
-					meta: { enriched: true, replacedTitle: needsTitle, addedDuration: needsDuration && details.duration > 0 },
+					meta: {
+						enriched: true,
+						replacedTitle: needsTitle,
+						addedDuration: needsDuration && details.duration > 0,
+					},
 				});
 			} catch (_err) {
-				const errorMessage = _err instanceof Error ? _err.message : "metadata enrichment error";
+				const errorMessage =
+					_err instanceof Error ? _err.message : "metadata enrichment error";
 				const isDurationError = errorMessage.includes("exceeds maximum allowed duration");
 
 				if (isDurationError) {
 					// Duration validation failed - fail the entire transcription job
 					await step.run("mark-failed-duration", async () => {
-						await prisma.userEpisode.update({ where: { episode_id: userEpisodeId }, data: { status: "FAILED" } });
-						await writeEpisodeDebugLog(userEpisodeId, { step: "duration-validation", status: "fail", message: errorMessage });
+						await prisma.userEpisode.update({
+							where: { episode_id: userEpisodeId },
+							data: { status: "FAILED" },
+						});
+						await writeEpisodeDebugLog(userEpisodeId, {
+							step: "duration-validation",
+							status: "fail",
+							message: errorMessage,
+						});
 					});
 
 					await step.run("email-duration-failed", async () => {
@@ -107,7 +134,11 @@ export const transcriptionCoordinator = inngest.createFunction(
 
 					return { ok: false, jobId, error: errorMessage };
 				} else {
-					await writeEpisodeDebugLog(userEpisodeId, { step: "youtube-metadata", status: "fail", message: errorMessage });
+					await writeEpisodeDebugLog(userEpisodeId, {
+						step: "youtube-metadata",
+						status: "fail",
+						message: errorMessage,
+					});
 				}
 			}
 		});
@@ -133,7 +164,8 @@ export const transcriptionCoordinator = inngest.createFunction(
 			}),
 		]);
 
-		const successEvent = result && (result as { name?: string }).name === Events.Succeeded ? result : null;
+		const successEvent =
+			result && (result as { name?: string }).name === Events.Succeeded ? result : null;
 
 		const runFallback = async (reason: string) => {
 			await writeEpisodeDebugLog(userEpisodeId, {
@@ -148,7 +180,10 @@ export const transcriptionCoordinator = inngest.createFunction(
 
 			if (!fallback.success) {
 				await step.run("mark-failed", async () => {
-					await prisma.userEpisode.update({ where: { episode_id: userEpisodeId }, data: { status: "FAILED" } });
+					await prisma.userEpisode.update({
+						where: { episode_id: userEpisodeId },
+						data: { status: "FAILED" },
+					});
 					await writeEpisodeDebugLog(userEpisodeId, {
 						step: "transcription",
 						status: "fail",
@@ -186,13 +221,21 @@ export const transcriptionCoordinator = inngest.createFunction(
 				return { ok: false, jobId };
 			}
 
-			const transcriptText = (fallback as { transcript?: string; provider?: string }).transcript as string;
-			const provider = (fallback as { provider?: string }).provider ?? "fallback-orchestrator";
+			const transcriptText = (fallback as { transcript?: string; provider?: string })
+				.transcript as string;
+			const provider =
+				(fallback as { provider?: string }).provider ?? "fallback-orchestrator";
 			await step.run("store-transcript", async () => {
-				await prisma.userEpisode.update({ where: { episode_id: userEpisodeId }, data: { transcript: transcriptText } });
+				await prisma.userEpisode.update({
+					where: { episode_id: userEpisodeId },
+					data: { transcript: transcriptText },
+				});
 			});
 			await step.sendEvent("forward-generation", {
-				name: generationMode === "multi" ? "user.episode.generate.multi.requested" : "user.episode.generate.requested",
+				name:
+					generationMode === "multi"
+						? "user.episode.generate.multi.requested"
+						: "user.episode.generate.requested",
 				data: { userEpisodeId, voiceA, voiceB },
 			});
 			await step.run("write-final-report", async () => {
@@ -211,7 +254,9 @@ export const transcriptionCoordinator = inngest.createFunction(
 		}
 
 		// Gemini succeeded - process the result
-		const successPayload = ProviderSucceededSchema.parse((successEvent as { data: unknown }).data);
+		const successPayload = ProviderSucceededSchema.parse(
+			(successEvent as { data: unknown }).data
+		);
 		let transcriptText: string | null = successPayload.transcript ?? null;
 
 		if (!transcriptText) {
@@ -227,7 +272,8 @@ export const transcriptionCoordinator = inngest.createFunction(
 				await writeEpisodeDebugLog(userEpisodeId, {
 					step: "transcription",
 					status: "info",
-					message: "Gemini success event missing transcript; invoking orchestrator fallback.",
+					message:
+						"Gemini success event missing transcript; invoking orchestrator fallback.",
 					meta: successPayload.meta,
 				});
 				return await runFallback("missing-transcript");
@@ -237,11 +283,17 @@ export const transcriptionCoordinator = inngest.createFunction(
 		const ensuredTranscript = transcriptText;
 
 		await step.run("store-transcript", async () => {
-			await prisma.userEpisode.update({ where: { episode_id: userEpisodeId }, data: { transcript: ensuredTranscript } });
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: { transcript: ensuredTranscript },
+			});
 		});
 
 		await step.sendEvent("forward-generation", {
-			name: generationMode === "multi" ? "user.episode.generate.multi.requested" : "user.episode.generate.requested",
+			name:
+				generationMode === "multi"
+					? "user.episode.generate.multi.requested"
+					: "user.episode.generate.requested",
 			data: { userEpisodeId, voiceA, voiceB },
 		});
 
@@ -252,7 +304,12 @@ export const transcriptionCoordinator = inngest.createFunction(
 
 		await step.sendEvent("finalize-success", {
 			name: Events.Finalized,
-			data: { jobId, userEpisodeId, status: "succeeded", provider: successPayload.provider },
+			data: {
+				jobId,
+				userEpisodeId,
+				status: "succeeded",
+				provider: successPayload.provider,
+			},
 		});
 
 		return { ok: true, jobId };

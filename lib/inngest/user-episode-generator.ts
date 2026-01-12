@@ -1,14 +1,7 @@
-import { generateText as genText } from "@/lib/inngest/utils/genai";
-import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
-import {
-	getSummaryLengthConfig,
-	SUMMARY_LENGTH_OPTIONS,
-	type SummaryLengthOption,
-} from "@/lib/types/summary-length";
-
-// TODO: Consider switching to Google Cloud Text-to-Speech API for stable TTS
-
+// (No direct GCS import; handled in shared helpers)
+import type { Prisma } from "@prisma/client";
 import { extractUserEpisodeDuration } from "@/app/(protected)/admin/audio-duration/duration-extractor";
+import { getDefaultVoice } from "@/lib/constants/voices";
 // aiConfig consumed indirectly via shared helpers
 // Shared helpers
 import {
@@ -18,8 +11,13 @@ import {
 	splitScriptIntoChunks,
 	uploadBufferToPrimaryBucket,
 } from "@/lib/inngest/episode-shared";
-// (No direct GCS import; handled in shared helpers)
+import { generateElevenLabsTts } from "@/lib/inngest/utils/elevenlabs";
+import { generateFinancialAnalysis } from "@/lib/inngest/utils/summary";
 import { prisma } from "@/lib/prisma";
+import {
+	SUMMARY_LENGTH_OPTIONS,
+	type SummaryLengthOption,
+} from "@/lib/types/summary-length";
 import { inngest } from "./client";
 
 // All uploads use the primary bucket defined by GOOGLE_CLOUD_STORAGE_BUCKET_NAME
@@ -44,7 +42,7 @@ export const generateUserEpisode = inngest.createFunction(
 	{
 		id: "generate-user-episode-workflow",
 		name: "Generate User Episode Workflow",
-		retries: 2,
+		retries: 0, // Disable all retries to allow immediate fallback logic (Gemini → ElevenLabs)
 		onFailure: async ({ error: _error, event, step }) => {
 			const { userEpisodeId } = (
 				event as unknown as { data: { event: { data: { userEpisodeId: string } } } }
@@ -150,63 +148,148 @@ export const generateUserEpisode = inngest.createFunction(
 
 		const transcript = transcriptContext.transcript;
 
-		// Step 2: Generate TRUE neutral summary (chunked if large)
-		const summary = await step.run("generate-summary", async () => {
+		// Step 2: Generate Financial Analysis & Content (Single Source of Truth)
+		const { audioScript } = await step.run("generate-financial-analysis", async () => {
 			await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
-				data: { progress_message: "Analyzing content and extracting key insights..." },
+				data: {
+					progress_message:
+						"Analyzing content, extracting insights, and writing script...",
+				},
 			});
 
-			const modelName = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
-			const text = await generateObjectiveSummary(transcript, { modelName });
-			await prisma.userEpisode.update({
+			// Fetch reference doc URL
+			const epData = await prisma.userEpisode.findUnique({
 				where: { episode_id: userEpisodeId },
-				data: { summary: text },
+				select: { reference_doc_url: true },
 			});
-			return text;
-		});
 
-		// Step 3: Generate Podslice-hosted script (commentary over summary)
-		const script = await step.run("generate-script", async () => {
-			const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
+			let referenceDoc: { content: Buffer; mimeType: string } | string | undefined;
+			let enableSearchFallback = false;
 
-			// Get word/minute targets based on selected length
-			const lengthConfig = getSummaryLengthConfig(resolvedSummaryLength);
-			const [minWords, maxWords] = lengthConfig.words;
-			const [minMinutes, maxMinutes] = lengthConfig.minutes;
+			if (epData?.reference_doc_url) {
+				try {
+					console.log(`[ANALYSIS] Found reference doc URL: ${epData.reference_doc_url}`);
 
-			const rawScript = await genText(
-				modelName2,
-				`Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) single-narrator podcast segment where a Podslice host explains the highlights to listeners.\n\nIdentity & framing:\n- The speaker is a Podslice host summarizing someone else's content.\n- Do NOT reenact or impersonate the original speakers.\n- Present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken words only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as “the video” or “the episode.”\n\nStructure:\n- Hook that frames this as a Podslice summary.\n- Smooth transitions between highlight clusters.\n- Clear, concise wrap-up.\n\nSUMMARY:\n${summary}`
-			);
+					// Check if it's a ResearchAsset to get cached content first (optional optimization)
+					// For now, we rely on the multimodal PDF download for robustness.
 
-			// Validate and enforce word count limit to ensure episodes stay within target duration
-			const words = rawScript.split(/\s+/).filter(Boolean);
-			const wordCount = words.length;
+					const { getStorageReader } = await import("@/lib/inngest/utils/gcs");
+					const storageReader = getStorageReader();
 
-			if (wordCount > maxWords) {
-				console.log(
-					`⚠️ Script exceeds target word count: ${wordCount} words (max: ${maxWords} for ${resolvedSummaryLength}). Truncating to ${maxWords} words.`
-				);
-				// Truncate to maxWords, preserving sentence boundaries where possible
-				const truncatedWords = words.slice(0, maxWords);
-				// Try to end on a sentence boundary
-				let truncatedScript = truncatedWords.join(" ");
-				const lastPeriod = truncatedScript.lastIndexOf(".");
-				const lastQuestion = truncatedScript.lastIndexOf("?");
-				const lastExclamation = truncatedScript.lastIndexOf("!");
-				const lastSentenceEnd = Math.max(lastPeriod, lastQuestion, lastExclamation);
+					let bucket: string | undefined;
+					let object: string | undefined;
 
-				if (lastSentenceEnd >= 0) {
-					// Always end on a sentence boundary if possible to ensure natural flow
-					truncatedScript = truncatedScript.substring(0, lastSentenceEnd + 1);
+					// Parse URL
+					if (epData.reference_doc_url.startsWith("https://storage.googleapis.com/")) {
+						const parts = epData.reference_doc_url
+							.replace("https://storage.googleapis.com/", "")
+							.split("/");
+						bucket = parts[0];
+						object = parts.slice(1).join("/");
+					} else if (epData.reference_doc_url.startsWith("gs://")) {
+						const parts = epData.reference_doc_url.replace("gs://", "").split("/");
+						bucket = parts[0];
+						object = parts.slice(1).join("/");
+					}
+
+					if (bucket && object) {
+						const decodedObject = decodeURIComponent(object);
+						console.log(
+							`[ANALYSIS] Downloading reference doc from GCS: ${bucket}/${decodedObject}`
+						);
+						const [fileBuffer] = await storageReader
+							.bucket(bucket)
+							.file(decodedObject)
+							.download();
+						const [metadata] = await storageReader
+							.bucket(bucket)
+							.file(decodedObject)
+							.getMetadata();
+
+						referenceDoc = {
+							content: fileBuffer,
+							mimeType: metadata.contentType || "application/pdf",
+						};
+					} else {
+						console.warn(
+							`[ANALYSIS] Could not parse GCS URL: ${epData.reference_doc_url}. Enabling search fallback.`
+						);
+						enableSearchFallback = true;
+					}
+				} catch (err) {
+					console.error(
+						"[ANALYSIS] Failed to download reference doc (enabling search fallback)",
+						err
+					);
+					enableSearchFallback = true;
 				}
-
-				return truncatedScript;
 			}
 
-			return rawScript;
+			// Call the unified function
+			const analysis = await generateFinancialAnalysis(
+				transcript,
+				referenceDoc,
+				enableSearchFallback
+			);
+
+			// Format trade recommendations as markdown list
+			const tradeRecsMd =
+				analysis.writtenContent.tradeRecommendations.length > 0
+					? analysis.writtenContent.tradeRecommendations
+							.map(
+								t =>
+									`- **${t.direction} ${t.ticker}** (${t.conviction} conviction): ${t.rationale}${t.timeHorizon ? ` | ${t.timeHorizon}` : ""}`
+							)
+							.join("\n")
+					: "No specific trade recommendations from this source.";
+
+			// Format document contradictions if any
+			const contradictionsMd =
+				analysis.writtenContent.documentContradictions.length > 0
+					? analysis.writtenContent.documentContradictions
+							.map(
+								c =>
+									`- **[${c.severity}]** Claim: "${c.claim}" ⚠️ Ground Truth: "${c.groundTruth}"`
+							)
+							.join("\n")
+					: null;
+
+			// Format summary as Markdown with all B2B sections
+			const summaryMarkdown = `## Executive Brief
+${analysis.writtenContent.executiveBrief}
+${analysis.writtenContent.variantView ? `\n## Variant View\n${analysis.writtenContent.variantView}` : ""}
+${analysis.structuredData.sectorRotation ? `\n## Sector Rotation\n${analysis.structuredData.sectorRotation}` : ""}
+## Investment Implications
+${analysis.writtenContent.investmentImplications}
+
+## Trade Recommendations
+${tradeRecsMd}
+
+## Risks & Red Flags
+${analysis.writtenContent.risksAndRedFlags}
+${contradictionsMd ? `\n## Document Fact-Check (Lie Detector)\n${contradictionsMd}` : ""}`;
+
+			// Save everything to DB
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: {
+					summary: summaryMarkdown,
+					intelligence: {
+						...analysis.structuredData,
+						...analysis.writtenContent,
+					} as unknown as Prisma.InputJsonValue,
+					// Basic mapping for backward compatibility (optional, but good for safety if UI uses these)
+					sentiment_score: analysis.structuredData.sentimentScore,
+					// We don't map tickers to mentioned_assets because the schema changed significantly behavior-wise
+				},
+			});
+
+			return { audioScript: analysis.audioScript };
 		});
+
+		// Skip old Step 3 (script generation) since we have audioScript now.
+		const script = audioScript;
 
 		// Step 4: Convert to Audio - Upload chunks to GCS immediately to avoid memory/opcode limits
 		const chunkUrls = await step.run("generate-and-upload-tts-chunks", async () => {
@@ -235,7 +318,26 @@ export const generateUserEpisode = inngest.createFunction(
 					},
 				});
 
-				const buf = await generateSingleSpeakerTts(scriptParts[i]!);
+				let buf: Buffer;
+				try {
+					buf = await generateSingleSpeakerTts(scriptParts[i]!);
+				} catch (error) {
+					console.warn(
+						`[TTS] Gemini TTS failed for chunk ${i + 1}/${scriptParts.length}. Attempting backup with ElevenLabs...`,
+						error
+					);
+					try {
+						// Use default voice config for ElevenLabs fallback
+						const defaultVoice = getDefaultVoice();
+						buf = await generateElevenLabsTts(scriptParts[i]!, defaultVoice.elevenLabsId);
+					} catch (backupError) {
+						console.error(
+							`[TTS] Backup ElevenLabs TTS also failed for chunk ${i + 1}/${scriptParts.length}`,
+							backupError
+						);
+						throw backupError; // Fail the entire workflow since both providers failed
+					}
+				}
 				// Upload immediately to GCS, return only the URL
 				const chunkFileName = `${tempPath}/chunk-${i}.wav`;
 				const gcsUrl = await uploadBufferToPrimaryBucket(buf, chunkFileName);
@@ -278,7 +380,7 @@ export const generateUserEpisode = inngest.createFunction(
 
 				console.log(`[COMBINE] Downloaded ${audioChunkBase64.length} chunks, combining`);
 				const fileName = `user-episodes/${userEpisodeId}-${Date.now()}.wav`;
-				const { finalBuffer, durationSeconds } = combineAndUploadWavChunks(
+				const { finalBuffer, durationSeconds } = await combineAndUploadWavChunks(
 					audioChunkBase64,
 					fileName
 				);

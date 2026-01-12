@@ -28,9 +28,9 @@ export function PersonalizedFeedSection({ isActive }: SectionProps) {
 						mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 					}`}>
 					<h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-gray-900 text-balance leading-tight">
-						Personalized Feed.
+						Research Terminal.
 						<br />
-						<span className="text-cyan-400">Curated for you.</span>
+						<span className="text-emerald-400">Curated for Performance.</span>
 					</h2>
 				</div>
 
@@ -41,13 +41,12 @@ export function PersonalizedFeedSection({ isActive }: SectionProps) {
 						}`}
 						style={{ transitionDelay: "200ms" }}>
 						<h3 className="text-2xl font-semibold text-gray-900 mb-4">
-							Curated <span className="text-gray-400">FOR YOU</span>
+							Institutional <span className="text-gray-400">BUNDLES</span>
 						</h3>
 						<p className="text-gray-600 leading-relaxed text-lg">
-							Get summaries from popular shows and channels we've already curated for you.
-							Just subscribe to our "Bundles" (e.g., "Tech Today," "Wellness Weekly," or
-							"Finance Fast-Track"), and new audio and text summaries will appear in your
-							feed automatically.
+							Subscribe to pre-configured intelligence bundles covering Global Macro,
+							Equity Rotation, or Fixed Income. Automated reports and PM-briefings land
+							directly in your feed as they break.
 						</p>
 					</div>
 
@@ -57,13 +56,12 @@ export function PersonalizedFeedSection({ isActive }: SectionProps) {
 						}`}
 						style={{ transitionDelay: "400ms" }}>
 						<h3 className="text-2xl font-semibold text-gray-900 mb-4">
-							Controlled <span className="text-gray-400">BY YOU</span>
+							Custom <span className="text-gray-400">PIPELINE</span>
 						</h3>
 						<p className="text-gray-600 leading-relaxed text-lg">
-							This is where the real power lies. Found a 2-hour interview or lecture on
-							YouTube? Just paste the link into Podslice. Want to catch up on the latest
-							news? Select your topics. Our AI will get to work and create a custom
-							summary just for you.
+							Upload your own proprietary research or link specific earnings calls and
+							industry panels. Our AI identifies the tickers, extracts the sentiment, and
+							cross-references claims against the ground-truth in your vault.
 						</p>
 					</div>
 				</div>

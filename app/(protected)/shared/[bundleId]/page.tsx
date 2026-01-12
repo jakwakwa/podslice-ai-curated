@@ -39,7 +39,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 	return {
 		title: bundle.name,
-		description: bundle.description || `A shared episode bundle with ${bundle.total_episodes} episodes`,
+		description:
+			bundle.description ||
+			`A shared episode bundle with ${bundle.total_episodes} episodes`,
 	};
 }
 

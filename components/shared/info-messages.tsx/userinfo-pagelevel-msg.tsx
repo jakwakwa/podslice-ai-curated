@@ -2,7 +2,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
-export function UserInfoPageLevelMsg({ isActive, message }: { isActive: boolean, message: string }) {
+export function UserInfoPageLevelMsg({
+	isActive,
+	message,
+}: {
+	isActive: boolean;
+	message: string;
+}) {
 	if (isActive) {
 		return null;
 	}
@@ -12,14 +18,16 @@ export function UserInfoPageLevelMsg({ isActive, message }: { isActive: boolean,
 				{message}
 			</p>
 
-			<Link href="/manage-membership " className=" mt-4 max-w-md   lg:max-w-sm px-8 mx-auto">
-				<Button variant="default" disabled={isActive} className=" disabled:text-slate-400 w-full">
+			<Link
+				href="/manage-membership "
+				className=" mt-4 max-w-md   lg:max-w-sm px-8 mx-auto">
+				<Button
+					variant="default"
+					disabled={isActive}
+					className=" disabled:text-slate-400 w-full">
 					Reactivate
 				</Button>
 			</Link>
 		</Card>
 	);
 }
-
-
-

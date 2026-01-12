@@ -1,4 +1,4 @@
-import { generateText } from "@/lib/inngest/utils/genai";
+import { generateText, type Part } from "@/lib/inngest/utils/genai";
 
 /**
  * Generate an objective summary (bullets + narrative recap) for a potentially large transcript.
@@ -54,4 +54,172 @@ export async function generateObjectiveSummary(
 		`Here are bullet point extracts from segmented transcript pieces (deduplicate & merge conceptually related items):\n\n${consolidatedBullets}`
 	);
 	return generateText(modelName, finalPrompt);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// B2B FINANCIAL INTELLIGENCE SCHEMA
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface TradeRecommendation {
+	direction: "LONG" | "SHORT" | "HOLD" | "AVOID";
+	ticker: string;
+	conviction: "HIGH" | "MEDIUM" | "LOW";
+	rationale: string; // One sentence explaining why
+	timeHorizon?: string; // e.g., "3-6 months", "Near-term catalyst"
+}
+
+export interface RiskFlag {
+	severity: "HIGH" | "MEDIUM" | "LOW";
+	category: string; // e.g., "Regulatory", "Execution", "Macro", "Valuation"
+	description: string;
+}
+
+export interface DocumentContradiction {
+	claim: string; // What the speaker claimed
+	groundTruth: string; // What the reference doc says
+	severity: "CRITICAL" | "NOTABLE" | "MINOR";
+}
+
+export interface FinancialResponse {
+	structuredData: {
+		sentimentScore: number; // -1.0 to 1.0
+		sentimentLabel: "BULLISH" | "NEUTRAL" | "BEARISH";
+		tickers: string[];
+		sectorRotation: string | null; // null if not applicable
+	};
+	writtenContent: {
+		executiveBrief: string; // 3 sentences max - the asymmetric bet
+		variantView: string | null; // How this differs from consensus; null if no clear variant
+		investmentImplications: string; // Markdown - specific insights
+		risksAndRedFlags: string; // Markdown - explicit section, or "Not applicable to source input"
+		tradeRecommendations: TradeRecommendation[]; // Can be empty array
+		documentContradictions: DocumentContradiction[]; // Only populated if reference doc provided
+	};
+	audioScript: string; // Contrarian briefing for PM
+}
+
+export async function generateFinancialAnalysis(
+	transcript: string,
+	referenceDoc?: { content: Buffer; mimeType: string } | string,
+	enableSearchFallback = false
+): Promise<FinancialResponse> {
+	const modelName = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
+
+	const hasReferenceDoc = !!referenceDoc;
+	const isBinaryDoc =
+		typeof referenceDoc === "object" &&
+		referenceDoc !== null &&
+		"content" in referenceDoc;
+
+	let systemPrompt = `Role: You are a Senior Investment Analyst at a multi-strategy hedge fund.
+Target Audience: Boutique investment firms, crypto professionals, equity researchers, and advanced individual investors who pay $50-100/month for actionable intelligence—not summaries.
+
+MISSION:
+Extract ACTIONABLE SIGNALS from audio content. Your users don't have time to listen but need the insights.
+This is NOT a summary service. You provide:
+1. Ticker extraction with sentiment
+2. Risk identification (Lie Detector)
+3. Trade recommendations with conviction levels
+4. Variant views (non-consensus angles)
+${hasReferenceDoc ? "5. Contradiction flagging against the provided reference document" : ""}
+
+RULES FOR CONDITIONAL SECTIONS:
+- ALWAYS evaluate each section honestly. If something is NOT relevant, explicitly state it.
+- For "risksAndRedFlags": If no risks found, write "Not applicable to source input. No material risks, exaggerations, or red flags identified."
+- For "variantView": If the speaker's view aligns with consensus, return null.
+- For "sectorRotation": If no capital flow pattern is discussed, return null.
+- For "tradeRecommendations": If no actionable trades emerge, return empty array [].
+${
+	hasReferenceDoc
+		? '- For "documentContradictions": Flag any discrepancies between speaker claims and reference doc. If none, return empty array [].'
+		: enableSearchFallback
+			? '- For "documentContradictions": Use Google Search to verify questionable claims. If contradictions found, list them. If none, return empty array [].'
+			: '- For "documentContradictions": Return empty array [] (no reference document provided).'
+}
+
+BE UNBIASED AND FACT-DRIVEN:
+- Do NOT inflate importance or add fluff
+- Do NOT invent insights that aren't grounded in the source
+- State when information is speculative vs. stated as fact
+- Your credibility depends on accuracy, not volume
+
+OUTPUT JSON SCHEMA:
+{
+  "structuredData": {
+    "sentimentScore": float (-1.0 extreme fear to 1.0 extreme greed),
+    "sentimentLabel": "BULLISH" | "NEUTRAL" | "BEARISH",
+    "tickers": string[] (all mentioned assets, prefixed with $, e.g. ["$BTC", "$NVDA"]),
+    "sectorRotation": string | null (e.g., "Rotation: Software → Energy Infrastructure" or null if not discussed)
+  },
+  "writtenContent": {
+    "executiveBrief": string (3 sentences max. The asymmetric insight. Markdown OK.),
+    "variantView": string | null (How this differs from WSJ/Bloomberg consensus. null if no clear variant.),
+    "investmentImplications": string (Markdown. Second-order effects and strategic positioning.),
+    "risksAndRedFlags": string (Markdown. Explicit risks, exaggerations, or hype identified. If none: "Not applicable to source input. No material risks identified."),
+    "tradeRecommendations": [
+      {
+        "direction": "LONG" | "SHORT" | "HOLD" | "AVOID",
+        "ticker": "$TICKER",
+        "conviction": "HIGH" | "MEDIUM" | "LOW",
+        "rationale": "One sentence why",
+        "timeHorizon": "e.g., 3-6 months (optional)"
+      }
+    ],
+    "documentContradictions": [
+      {
+        "claim": "What the speaker claimed",
+        "groundTruth": "What the reference document (or search result) states",
+        "severity": "CRITICAL" | "NOTABLE" | "MINOR"
+      }
+    ]
+  },
+  "audioScript": string (A 2-minute briefing for a Portfolio Manager.
+   - Tone: Professional, direct, no fluff. Not cynical or sensational.
+   - Style: 'The key signal from this content is X. Here's why it matters for positioning.'
+   - Structure: Lead with the insight, then context, then implications.
+   - Constraint: 800-1200 words. Full paragraphs, not bullets.
+   - NEVER echo the original transcript. Synthesize your own analysis.
+   - DO NOT include "Host:" or "Speaker:" prefixes.)
+}`;
+
+	if (enableSearchFallback) {
+		systemPrompt += `\n\nSEARCH FALLBACK ENABLED:\nUse the provided Google Search tool to ground your analysis, verify specific metrics, or check for recent developments that contradict the speaker if the reference document is missing or insufficient.`;
+	}
+
+	const textPrompt = `${systemPrompt}\n\nTRANSCRIPT:\n${transcript.slice(0, 50000)}`;
+
+	let prompt: string | Part[] = textPrompt;
+
+	// We use the generateJSON helper
+	const { generateJSON } = await import("@/lib/inngest/utils/genai");
+
+	if (hasReferenceDoc) {
+		if (isBinaryDoc) {
+			const docBuffer = (referenceDoc as { content: Buffer }).content;
+			const mimeType = (referenceDoc as { mimeType: string }).mimeType;
+			// Multimodal
+			const docPart: Part = {
+				inlineData: {
+					data: docBuffer.toString("base64"),
+					mimeType: mimeType,
+				},
+			};
+			const docInstructions: Part = {
+				text: "\n\nREFERENCE DOCUMENT PROVIDED. Use this as GROUND TRUTH for contradiction detection.",
+			};
+			const systemPart: Part = { text: textPrompt };
+			prompt = [docPart, docInstructions, systemPart];
+		} else {
+			// Text
+			prompt = `${textPrompt}\n\nREFERENCE DOCUMENT (GROUND TRUTH):\n${referenceDoc}`;
+		}
+	} else {
+		prompt = `${textPrompt}\n\nNO REFERENCE DOCUMENT PROVIDED - return empty documentContradictions array unless you find contradictions via Google Search.`;
+	}
+
+	const tools = enableSearchFallback ? [{ googleSearch: {} }] : undefined;
+
+	const response = await generateJSON(modelName, prompt, undefined, { tools });
+
+	return response as FinancialResponse;
 }

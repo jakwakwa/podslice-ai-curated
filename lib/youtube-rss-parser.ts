@@ -9,14 +9,15 @@ export type RssEntry = {
  */
 export async function extractChannelId(channelUrl: string): Promise<string | null> {
 	if (!channelUrl) return null;
-	
+
 	const url = safeParseUrl(channelUrl);
 	if (!url) return null;
 
 	// Check if it's a YouTube domain
-	const isYouTube = url.hostname === "youtube.com" || 
-	                   url.hostname === "www.youtube.com" || 
-	                   url.hostname === "m.youtube.com";
+	const isYouTube =
+		url.hostname === "youtube.com" ||
+		url.hostname === "www.youtube.com" ||
+		url.hostname === "m.youtube.com";
 	if (!isYouTube) return null;
 
 	// Extract from /channel/UC... format
@@ -33,7 +34,7 @@ export async function extractChannelId(channelUrl: string): Promise<string | nul
 			const response = await fetch(channelUrl);
 			if (!response.ok) return null;
 			const html = await response.text();
-			
+
 			// Look for channel ID in meta tags or structured data
 			const channelIdMatch = html.match(/"channelId":"(UC[\w-]+)"/);
 			if (channelIdMatch?.[1]) {
@@ -106,7 +107,7 @@ function parseYouTubeRss(xml: string): RssEntry[] {
 	const parts = xml.split("<entry");
 	for (let i = 1; i < parts.length; i++) {
 		const chunk = parts[i];
-		const entryXml = "<entry" + chunk;
+		const entryXml = `<entry>${chunk}`;
 
 		const title = matchTagText(entryXml, "title");
 		const publishedRaw = matchTagText(entryXml, "published");
@@ -160,5 +161,3 @@ function safeParseUrl(value: string): URL | null {
 		return null;
 	}
 }
-
-

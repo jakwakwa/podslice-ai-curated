@@ -2,7 +2,10 @@ import { NextResponse } from "next/server";
 import { extractYouTubeVideoId } from "@/lib/inngest/utils/youtube";
 
 // Cache for YouTube channel data (in-memory cache)
-const channelCache = new Map<string, { channelName: string; channelImage: string; timestamp: number }>();
+const channelCache = new Map<
+	string,
+	{ channelName: string; channelImage: string; timestamp: number }
+>();
 const CACHE_TTL = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
 
 // Function to clean YouTube URL for fallback display
@@ -43,13 +46,17 @@ export async function GET(request: Request) {
 		if (!isYouTubeLike) {
 			try {
 				const u = new URL(youtubeUrl);
-				isYouTubeLike = u.hostname.includes("youtube.com") || u.hostname.includes("youtu.be");
+				isYouTubeLike =
+					u.hostname.includes("youtube.com") || u.hostname.includes("youtu.be");
 			} catch {
 				isYouTubeLike = false;
 			}
 		}
 		if (lower === "news" || !isYouTubeLike) {
-			return NextResponse.json({ error: "Not a YouTube URL", fallback: cleanYouTubeUrl(youtubeUrl) }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Not a YouTube URL", fallback: cleanYouTubeUrl(youtubeUrl) },
+				{ status: 400 }
+			);
 		}
 
 		const apiKey = process.env.YOUTUBE_API_KEY;
@@ -129,7 +136,11 @@ export async function GET(request: Request) {
 		}
 
 		const channelName = channelData.items[0].snippet.title;
-		const channelImage = channelData.items[0].snippet.thumbnails?.high?.url || channelData.items[0].snippet.thumbnails?.default?.url || channelData.items[0].snippet.thumbnails?.medium?.url || null;
+		const channelImage =
+			channelData.items[0].snippet.thumbnails?.high?.url ||
+			channelData.items[0].snippet.thumbnails?.default?.url ||
+			channelData.items[0].snippet.thumbnails?.medium?.url ||
+			null;
 
 		// Cache the result
 		channelCache.set(youtubeUrl, {

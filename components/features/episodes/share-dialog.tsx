@@ -149,7 +149,7 @@ export function ShareDialog({
 					</div>
 
 					{!isPublic && (
-						<p className="text-sm text-amber-400  text-center">
+						<p className="text-sm text-emerald-400  text-center">
 							⚠️ This episode is private. Set it to public to share with others.
 						</p>
 					)}

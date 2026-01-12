@@ -32,10 +32,10 @@ export interface PlayableEpisodeCardProps {
 
 /**
  * Unified Playable Episode Card
- * 
+ *
  * This component provides a consistent way to render episode cards
  * across the application, handling both bundle episodes and user episodes.
- * 
+ *
  * Features:
  * - Automatic episode normalization
  * - Consistent play button styling
@@ -49,7 +49,6 @@ export function PlayableEpisodeCard({
 	showDownload = false,
 	renderActions,
 	selected = false,
-	className,
 	as = "div",
 	isPlaying = false,
 }: PlayableEpisodeCardProps) {
@@ -133,15 +132,14 @@ export function PlayableEpisodeCard({
 							variant="outline"
 							size="sm"
 							disabled={isDownloading}
-							className="h-8"
-						>
+							className="h-8">
 							<Download className="w-4 h-4" />
 							{isDownloading ? "Downloading..." : "Download"}
 						</Button>
 					)}
 
 					{/* Custom Actions */}
-					{renderActions && renderActions(episode)}
+					{renderActions?.(episode)}
 				</div>
 			}
 		/>

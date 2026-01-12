@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -240,14 +241,14 @@ export default function BundlesPanelClient({
 				// Upload new image if selected
 				let imageData: string | undefined;
 				let imageType: string | undefined;
-				let imageUrl = ""; // No longer using image_url from state
+				let _imageUrl = ""; // No longer using image_url from state
 
 				if (editImageFile) {
 					const uploadResult = await uploadImage(editImageFile, id);
 					if (uploadResult) {
 						imageData = uploadResult.imageData;
 						imageType = uploadResult.imageType;
-						imageUrl = uploadResult.url;
+						_imageUrl = uploadResult.url;
 					}
 				}
 
@@ -313,7 +314,7 @@ export default function BundlesPanelClient({
 		bundles.length === 0 ? "Add your first bundle" : "Add Another Bundle";
 
 	return (
-		<Card variant="dunk">
+		<Card>
 			<PanelHeader
 				title="Bundle Management"
 				description="Create new bundles and manage existing ones"
@@ -325,9 +326,9 @@ export default function BundlesPanelClient({
 					label: "Refresh",
 					onClick: async () => {
 						try {
-							await fetch("/api/admin/revalidate-bundles", { method: "POST" })
-						} catch { }
-						router.refresh()
+							await fetch("/api/admin/revalidate-bundles", { method: "POST" });
+						} catch {}
+						router.refresh();
 					},
 				}}
 			/>
@@ -356,10 +357,13 @@ export default function BundlesPanelClient({
 								/>
 								{createImagePreview && (
 									<div className="mt-2">
-										<img
+										<Image
 											src={createImagePreview}
 											alt="Preview"
+											width={80}
+											height={80}
 											className="w-20 h-20 object-cover rounded"
+											unoptimized
 										/>
 									</div>
 								)}
@@ -443,7 +447,7 @@ export default function BundlesPanelClient({
 								{/* Header */}
 								<div className="flex items-start gap-2 justify-between mb-0 w-full">
 									{bundle.bundle_id && !failedBundleImages.has(bundle.bundle_id) ? (
-										<img
+										<Image
 											src={`/api/bundles/${bundle.bundle_id}/image`}
 											alt={bundle.name}
 											width={64}
@@ -477,12 +481,16 @@ export default function BundlesPanelClient({
 								<div className="flex items-center gap-2 mt-3">
 									{isEditing ? (
 										<>
-											<Button variant="outline" size="sm" className="border-border border-1 outline-1 outline-white/20" onClick={cancelEdit}>
+											<Button
+												variant="outline"
+												size="sm"
+												className="border-border border outline-1 outline-white/20"
+												onClick={cancelEdit}>
 												Cancel
 											</Button>
 											<Button
 												variant="default"
-												className="border-border border-1 outline-1 outline-white/20"
+												className="border-border border outline-1 outline-white/20"
 												size="sm"
 												onClick={saveEdit}
 												disabled={isPending || !editForm.name.trim()}>
@@ -529,10 +537,15 @@ export default function BundlesPanelClient({
 													accept="image/*"
 													onChange={handleEditImageChange}
 												/>
-												{editImagePreview || (!failedBundleImages.has(bundle.bundle_id) && bundle.bundle_id) ? (
+												{editImagePreview ||
+												(!failedBundleImages.has(bundle.bundle_id) &&
+													bundle.bundle_id) ? (
 													<div className="mt-2">
-														<img
-															src={editImagePreview || `/api/bundles/${bundle.bundle_id}/image`}
+														<Image
+															src={
+																editImagePreview ||
+																`/api/bundles/${bundle.bundle_id}/image`
+															}
 															alt="Current"
 															width={80}
 															height={80}

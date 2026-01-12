@@ -44,14 +44,14 @@ export function EpisodeCard({
 	return (
 		<Card
 			variant="default"
-			className="bg-card relative w-full h-[230px] sm:h-[150px] md:h-[200px] lg:h-[130px]  gap-2">
+			className="bg-card relative w-full h-[230px] sm:h-[150px] md:h-[200px] lg:h-[130px] mb-3 py-2 gap-2">
 			<CardAction>{actions}</CardAction>
-			<div className="w-full h-fit flex flex-col-reverse sm:flex-row gap-3 justify-between px-0  md:flex-col-reverse lg:flex-row sm:gap-5 lg:gap-8 items-evenly   py-0 lg:py-1 lg:px-0 lg:justify-betwen lg:items-between relative ">
+			<div className="w-full h-fit flex flex-col-reverse sm:flex-row gap-3 justify-between px-0  md:flex-col-reverse lg:flex-row sm:gap-5 lg:gap-4 items-evenly py-0 lg:py-1 lg:px-0 lg:justify-betwen lg:items-between relative">
 				{(() => {
 					// For bundle episodes, use the episode's image_url
 					if (imageUrl) {
 						return (
-							<div className="aspect-video w-full h-fit max-h-[110px] max-w-[150px]   xl:h-42 md:h-22 sm:max-h-[10px] sm:max-w-[140px] lg:h-auto lg:max-h-[90px] lg:hidden xl:flex shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#3626efc7] shadow-black/35 border-[#421b8bed] rounded-md md:rounded-lg overflow-hidden border-2	 outline-1 outline-gray-500   lg:min-w-[160px]">
+							<div className="aspect-video w-full h-fit max-h-[110px] max-w-[150px] xl:h-42 md:h-22 sm:max-h-[10px] sm:max-w-[140px] lg:h-auto lg:max-h-[90px] lg:hidden xl:flex shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-[#3626efc7] shadow-black/35 border-[#421b8bed] rounded-md md:rounded-lg overflow-hidden border-2outline-1 outline-gray-500   lg:min-w-[160px]">
 								<Image
 									src={imageUrl}
 									alt={title}
@@ -80,7 +80,7 @@ export function EpisodeCard({
 					if (youtubeUrl) {
 						if (youtubeChannelImage) {
 							return (
-								<div className="aspect-video w-full h-fit max-h-[110px] max-w-[150px]   xl:h-42 md:h-32 sm:max-h-[110px] sm:max-w-[140px] lg:h-auto lg:max-h-[90px] lg:hidden xl:flex shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-cyan-900 shadow-black/35 border-[#421b8bed] rounded-md md:rounded-lg overflow-hidden border-2	 outline-1 outline-gray-500   lg:min-w-[160px]">
+								<div className="aspect-video w-full h-fit max-h-[110px] max-w-[150px]   xl:h-42 md:h-32 sm:max-h-[110px] sm:max-w-[140px] lg:h-auto lg:max-h-[90px] lg:hidden xl:flex shadow-[1px_2px_5px_2px_#003e3cca,1px_-7px_19px_0px_#013e3cca_inset] bg-emerald-900 shadow-black/35 border-[#421b8bed] rounded-md md:rounded-lg overflow-hidden border-2	 outline-1 outline-gray-500   lg:min-w-[160px]">
 									<Image
 										src={youtubeChannelImage}
 										alt={title}
@@ -106,7 +106,7 @@ export function EpisodeCard({
 				<div className="flex w-[90%] flex-col justify-between h-fit items-start content-start py-0 md:px-3 z-10 md:flex-col  md:pl-0  md:gap-0 md:justify-between md:min-h-fit lg:pl-2 lg:pt-2">
 					{detailsHref ? (
 						<Link
-							className="text-[1.1rem] flex-col gap-1 items-start font-semibold md:w-full md:text-[0.65]  leading-tight line-clamp-2 h-auto max-h-14 lg:max-w-[85%] lg:text-base mb-5 lg:pb-0 text-primary-foreground text-shadow-2xs hover:text-cyan-200 hover:decoration-azure-800 hover:opacity-90 transition-all duration-300 text-left capitalize"
+							className="text-[1.1rem] flex-col gap-1 items-start font-semibold md:w-full md:text-[0.65]  leading-tight line-clamp-2 h-auto max-h-14 lg:max-w-[85%] lg:text-base mb-5 lg:pb-0 text-primary-foreground text-shadow-2xs hover:text-emerald-400 hover:decoration-azure-800 hover:opacity-90 transition-all duration-300 text-left capitalize"
 							href={detailsHref}>
 							<span className="text-[0.6rem] tracking-wider font-light uppercase ">
 								view details

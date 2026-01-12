@@ -1,6 +1,6 @@
 ---
 description: Fixing Build Errors
-alwaysApply: false
+alwaysApply: true
 ---
 # Fixing Build Errors
 

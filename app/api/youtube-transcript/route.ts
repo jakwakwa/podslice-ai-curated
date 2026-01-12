@@ -29,14 +29,18 @@ export async function GET(request: Request) {
 			return NextResponse.json(
 				{
 					success: false,
-					error: "Server-side YouTube captions are disabled in this environment. Use client extraction in the browser.",
+					error:
+						"Server-side YouTube captions are disabled in this environment. Use client extraction in the browser.",
 				},
 				{ status: 429 }
 			);
 		}
 
 		// Transcripts disabled: always respond with 410 Gone
-		return NextResponse.json({ success: false, error: "Transcripts disabled: Use generation pipeline." }, { status: 410 });
+		return NextResponse.json(
+			{ success: false, error: "Transcripts disabled: Use generation pipeline." },
+			{ status: 410 }
+		);
 	} catch (error) {
 		console.error("[YOUTUBE_TRANSCRIPT_GET]", error);
 		if (error instanceof Error) {

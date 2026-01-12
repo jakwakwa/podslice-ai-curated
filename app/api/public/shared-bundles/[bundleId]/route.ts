@@ -4,7 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { userIsActive } from "@/lib/usage";
 
 // GET /api/public/shared-bundles/[bundleId]
-export async function GET(_request: Request, { params }: { params: Promise<{ bundleId: string }> }) {
+export async function GET(
+	_request: Request,
+	{ params }: { params: Promise<{ bundleId: string }> }
+) {
 	try {
 		// Require authentication
 		const { userId } = await auth();
@@ -55,7 +58,10 @@ export async function GET(_request: Request, { params }: { params: Promise<{ bun
 		});
 
 		if (!bundle) {
-			return NextResponse.json({ error: "Bundle not found or not active" }, { status: 404 });
+			return NextResponse.json(
+				{ error: "Bundle not found or not active" },
+				{ status: 404 }
+			);
 		}
 
 		// Return bundle with metadata

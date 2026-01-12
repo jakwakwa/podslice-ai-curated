@@ -29,8 +29,6 @@ export async function GET(_request: Request) {
 				auto_generated: true,
 				duration_seconds: true,
 				status: true,
-				news_sources: true,
-				news_topic: true,
 				summary_length: true,
 				progress_message: true,
 				is_public: true,

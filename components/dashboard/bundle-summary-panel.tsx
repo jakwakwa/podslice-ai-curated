@@ -1,17 +1,7 @@
 "use client";
-import { Edit, Podcast, UserIcon } from "lucide-react";
+import { Edit, Podcast, X } from "lucide-react";
 import { useEffect } from "react";
-import { dashboardCopy } from "@/app/(protected)/dashboard/content";
 import { Button } from "@/components/ui/button";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
-import { Typography } from "@/components/ui/typography";
 import { PRICING_TIER } from "@/config/paddle-config";
 import { useUserEpisodesStore } from "@/lib/stores/user-episodes-store";
 import type { Episode, UserCurationProfileWithRelations } from "@/lib/types";
@@ -31,6 +21,7 @@ interface BundleSummaryPanelProps {
 /**
  * BundleSummaryPanel
  * Displays the user's active bundle selection with summary stats and update button
+ * Styled to match the design mockup
  */
 export function BundleSummaryPanel({
 	userCurationProfile,
@@ -38,9 +29,7 @@ export function BundleSummaryPanel({
 	onUpdateBundle,
 	bundleEpisodes = [],
 }: BundleSummaryPanelProps) {
-	const { sections } = dashboardCopy;
-
-	// 1. Get usage actions and state from the store
+	// Get usage actions and state from the store
 	const fetchCompletedEpisodeCount = useUserEpisodesStore(
 		state => state.fetchCompletedEpisodeCount
 	);
@@ -48,16 +37,14 @@ export function BundleSummaryPanel({
 		state => state.completedEpisodeCount
 	);
 
-	// 2. Fetch the latest count on mount
+	// Fetch the latest count on mount
 	useEffect(() => {
 		fetchCompletedEpisodeCount();
 	}, [fetchCompletedEpisodeCount]);
 
-	// 3. Determine the plan limit based on the subscription
-	// We normalize the plan_type to matching the PRICING_TIER config keys (e.g., "CURATE_CONTROL")
+	// Determine the plan limit based on the subscription
 	const currentPlanId = (subscription?.plan_type || "").toUpperCase();
 	const planConfig = PRICING_TIER.find(tier => tier.planId === currentPlanId);
-	// Default to 0 or a safe fallback if no plan is found
 	const monthlyLimit = planConfig?.episodeLimit ?? 0;
 
 	const hasValidBundle =
@@ -79,120 +66,81 @@ export function BundleSummaryPanel({
 		return inactive ? `${label} (expired)` : label;
 	};
 
+	const quotaPercent =
+		monthlyLimit > 0 ? (completedEpisodeCount / monthlyLimit) * 100 : 0;
+
 	return (
-		<div className="rounded-xl w-screen md:w-full pt-0 md:pr-0 md:mr-0 flex flex-col lg:flex-col lg:justify-center lg:items-center md:p-1 sm:pt-0 md:pt-6  p-0 m-0 mx-auto md:mx-0 md:overflow-hidden lg:w-full lg:gap-1 overflow-hidden mt-8 mb-4 md:mt-0 max-h-300 max-w-full">
-			<div className="px-0 lg:gap-2 flex flex-col md:justify-between md:p-0 md:rounded-none w-full">
-				<h2 className="pt-8 font-bold md:text-secondary-foreground md:pt-0 md:px-0 py-4 text-base  md:block">
-					{sections.bundleFeed.title}
-				</h2>
-				<div className="md:rounded-2xl">
-					<div className="md:border-1 bg-sidebar shadow-indigo-800/90 md:shadow-none border border-border  py-6 md:pt-4 md:pb-0 px-2 shadow-lg rounded-t-lg text-secondary-foreground md:text-primary-foreground">
-						<Button
-							className="inline-flex text-sm md:text-xs justify-end w-full px-0 mb-2 text-foreground"
-							variant="ghost"
-							size="xs"
-							onClick={onUpdateBundle}
-							aria-label="Update bundle selection">
-							<Edit className="text-ring" />
-							{sections.bundleFeed.updateButton}
-						</Button>
-						<div className="mb-4 flex flex-col">
-							<p className="text-[0.65rem] w-full uppercase tracking-wide font-mono font-bold text-primary-foreground-muted p-0 mb-2">
-								User/Curated Feeds
-							</p>
+		<div className="bg-[#111216] border border-zinc-800 rounded-2xl p-6 shadow-sm">
+			{/* Header */}
+			<div className="flex justify-between items-start mb-6">
+				<h2 className="font-medium text-lg text-slate-200">Your Feed Details</h2>
+			</div>
 
-							<div className="bg-card flex  py-2 px-3 md:px-2 md:py-1 md:rounded-sm border border-sidebar-border/50 shadow-sm shadow-indigo-950/90 rounded-md gap-3">
-								<Typography className="flex w-full text-sm font-light items-center gap-2">
-									<Podcast
-										size={16}
-										className="text-ring md:text-accent-foreground text-2xl"
-									/>
-									Active Channel Overview:
-								</Typography>
-							</div>
-						</div>
+			{/* Edit Button */}
+			<Button
+				className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg border border-violet-500/30 text-violet-400 bg-violet-500/5 hover:bg-violet-500/10 transition-colors text-sm font-medium mb-6"
+				variant="ghost"
+				onClick={onUpdateBundle}
+				aria-label="Update bundle selection">
+				<Edit className="w-4 h-4" />
+				Edit Channel Overview
+			</Button>
+
+			{/* Content */}
+			<div className="space-y-4">
+				{/* Active Channel Overview */}
+				<div className="p-3 bg-black/30 rounded-lg border border-zinc-800 flex items-center gap-2">
+					<Podcast className="w-4 h-4 text-zinc-500" />
+					<span className="text-sm text-zinc-400">Active Channel Overview</span>
+				</div>
+
+				{/* Feed Subscription */}
+				<div className="flex justify-between items-center py-2 border-b border-zinc-800">
+					<span className="text-sm text-zinc-400">Feed Subscription:</span>
+					<span className="text-xs font-bold px-2 py-1 rounded bg-emerald-900/30 text-emerald-400 tracking-wider uppercase">
+						{userCurationProfile.selectedBundle?.name || "PODSLICE ORIGINALS"}
+					</span>
+				</div>
+
+				{/* Available Summaries */}
+				<div className="flex justify-between items-center py-2 border-b border-zinc-800">
+					<span className="text-sm text-zinc-400">Available Summaries</span>
+					<span className="text-sm font-semibold text-slate-200">
+						{bundleEpisodes?.length || 0}
+					</span>
+				</div>
+
+				{/* User Data Section */}
+				<div className="pt-4">
+					<span className="text-xs text-zinc-500 uppercase tracking-wider mb-2 block">
+						USER DATA
+					</span>
+					<div className="p-3 bg-black/30 rounded-lg border border-zinc-800 flex items-center gap-2 mb-4">
+						<X className="w-4 h-4 text-zinc-500" />
+						<span className="text-sm text-zinc-400">Personal Content</span>
 					</div>
+				</div>
 
-					<div className=" md:inline mt-0 w-full">
-						<div className="bg-(--kwak-2) border-t-0 overflow-hidden rounded-b-md border border-[#51516500] px-0 p-0">
-							<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full border border-gray-800/30 rounded-md overflow-hidden pt-0">
-								<Table>
-									<TableHeader>
-										<TableRow>
-											<TableHead className="text-foreground/60" colSpan={3}>
-												Feed Subscription:
-											</TableHead>
-											<TableHead className="text-right uppercase font-bold text-violet-400">
-												{userCurationProfile.selectedBundle?.name}
-											</TableHead>
-										</TableRow>
-									</TableHeader>
-									<TableBody>
-										{/*{sections.bundleFeed.map(invoice => (*/}
-
-										<TableRow>
-											<TableCell colSpan={3} className="font-medium text-foreground/60">
-												{sections.bundleFeed.summaryLabel}
-											</TableCell>
-
-											<TableCell className="text-right font-mono">
-												{" "}
-												{bundleEpisodes?.length || "Pending"}
-											</TableCell>
-										</TableRow>
-									</TableBody>
-								</Table>
-							</div>
-						</div>
+				{/* AI Summary Quota */}
+				<div>
+					<div className="flex justify-between text-sm mb-2">
+						<span className="text-zinc-400">User's AI Summary Quote:</span>
+						<span className="font-medium text-slate-200">
+							{completedEpisodeCount}/{monthlyLimit}
+						</span>
 					</div>
-					<div className=" md:inline mt-0 w-full">
-						<div className="mb-4 flex flex-col">
-							<p className="text-[0.65rem] w-full uppercase mt-4  font-mono font-bold text-primary-foreground-muted md:text-primary-foreground-muted  md:not-italic p-0 mb-2">
-								{sections.bundleFeed.personalFeedLabel}
-							</p>
-
-							<div className="bg-card flex  py-2 px-3 md:px-2 md:py-1.5 md:rounded-sm border-1 border-sidebar-border/50 shadow-sm shadow-indigo-950/90 rounded-md gap-3 font-sans">
-								<Typography className="flex w-full text-sm font-light items-center gap-2">
-									<UserIcon size={16} className="text-ring md:text-accent-foreground" />
-									<span className="text-sm text-foreground gap-3 font-sans text-left font-light">
-										{sections.bundleFeed.pesdonalFeedTitle}
-									</span>
-								</Typography>
-							</div>
-						</div>{" "}
-						<div className="bg-(--kwak-2) border-t-0 overflow-hidden rounded-md border-1 border-[#51516500] px-0 p-0">
-							<div className="flex flex-col justify-start gap-2 items-start my-2 px-0 w-full border-0  border-gray-800/30 rounded-md overflow-hidden pt-0">
-								<Table>
-									<TableHeader>
-										<TableRow>
-											<TableHead colSpan={3} className="text-foreground/60">
-												{" "}
-												{sections.bundleFeed.activeBundleLabel}
-											</TableHead>
-											<TableHead className="text-right uppercase font-mono">
-												{completedEpisodeCount}
-												<span className="font-bold">/{monthlyLimit}</span>
-											</TableHead>
-										</TableRow>
-									</TableHeader>
-									<TableBody>
-										{/*{sections.bundleFeed.map(invoice => (*/}
-										<TableRow>
-											<TableCell
-												colSpan={3}
-												className="font-medium capitalize text-foreground/60">
-												{sections.bundleFeed.planLabel}
-											</TableCell>
-
-											<TableCell className="text-right capitalize">
-												{getPlanDisplay()}
-											</TableCell>
-										</TableRow>
-									</TableBody>
-								</Table>
-							</div>
-						</div>
+					<div className="h-2 w-full bg-zinc-700 rounded-full overflow-hidden">
+						<div
+							className="h-full bg-emerald-500 rounded-full transition-all duration-300"
+							style={{ width: `${Math.min(quotaPercent, 100)}%` }}
+						/>
 					</div>
+				</div>
+
+				{/* Membership Plan */}
+				<div className="flex justify-between items-center pt-2">
+					<span className="text-sm text-zinc-400">Membership Plan:</span>
+					<span className="text-sm text-zinc-400 capitalize">{getPlanDisplay()}</span>
 				</div>
 			</div>
 		</div>

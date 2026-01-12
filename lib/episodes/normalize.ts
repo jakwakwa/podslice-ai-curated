@@ -33,17 +33,6 @@ export interface NormalizedEpisode {
 	original: Episode | UserEpisode;
 }
 
-/** Formats the news sources string into a human-friendly label */
-export function formatNewsSources(rawSources: string): string {
-	const cleaned = (rawSources || "").trim();
-	if (!cleaned) return "News episode";
-	if (cleaned === "stocks") return "PolyMarket, Traderview, Yahoo! Finance";
-	return cleaned
-		.split(", ")
-		.map(s => s.charAt(0).toUpperCase() + s.slice(1))
-		.join(", ");
-}
-
 export type EpisodeSubtitleContext = {
 	/** For bundle episodes when podcast relation name is not present */
 	podcastName?: string;
@@ -56,7 +45,10 @@ export type EpisodeSubtitleContext = {
 /**
  * Returns a consistent subtitle string for an episode
  */
-export function getEpisodeSubtitle(episode: Episode | UserEpisode, ctx: EpisodeSubtitleContext = {}): string {
+export function getEpisodeSubtitle(
+	episode: Episode | UserEpisode,
+	ctx: EpisodeSubtitleContext = {}
+): string {
 	// Bundle episode: prefer relation name, then provided podcastName, otherwise generic label
 	if (isBundleEpisode(episode)) {
 		const e = episode as unknown as { podcast?: { name?: string } };
@@ -64,14 +56,7 @@ export function getEpisodeSubtitle(episode: Episode | UserEpisode, ctx: EpisodeS
 	}
 
 	// User episode
-	const userEp = episode as UserEpisode;
-	const isNews = (userEp.youtube_url || "").toLowerCase() === "news";
-	if (isNews) {
-		if (userEp.news_sources) {
-			return `Sources: ${formatNewsSources(userEp.news_sources)}`;
-		}
-		return "News episode";
-	}
+	const _userEp = episode as UserEpisode;
 
 	// YouTube episode
 	if (ctx.isChannelLoading) return "Loading...";
@@ -97,9 +82,6 @@ export function isBundleEpisode(episode: Episode | UserEpisode): episode is Epis
  */
 export function normalizeEpisode(episode: Episode | UserEpisode): NormalizedEpisode {
 	if (isUserEpisode(episode)) {
-		// News episodes have youtube_url set to 'news' and should not trigger YouTube lookups
-		const isNews = (episode.youtube_url || "").toLowerCase() === "news";
-		const sources = isNews && episode.news_sources ? `Sources: ${formatNewsSources(episode.news_sources)}` : null;
 		return {
 			id: episode.episode_id,
 			title: episode.episode_title || "Untitled Episode",
@@ -109,8 +91,8 @@ export function normalizeEpisode(episode: Episode | UserEpisode): NormalizedEpis
 			durationSeconds: episode.duration_seconds ?? null,
 			publishedAt: episode.created_at,
 			permalink: `/my-episodes/${episode.episode_id}`,
-			youtubeUrl: isNews ? null : (episode.youtube_url ?? null),
-			subtitle: sources,
+			youtubeUrl: episode.youtube_url ?? null,
+			subtitle: null,
 			original: episode,
 		};
 	}
@@ -133,7 +115,10 @@ export function normalizeEpisode(episode: Episode | UserEpisode): NormalizedEpis
 /**
  * Gets the artwork URL for an episode, with fallback logic
  */
-export function getArtworkUrlForEpisode(episode: Episode | UserEpisode, youtubeChannelImage?: string | null): string | null {
+export function getArtworkUrlForEpisode(
+	episode: Episode | UserEpisode,
+	youtubeChannelImage?: string | null
+): string | null {
 	if (isBundleEpisode(episode)) {
 		return episode.image_url || null;
 	}
@@ -149,6 +134,8 @@ export function getArtworkUrlForEpisode(episode: Episode | UserEpisode, youtubeC
 /**
  * Batch normalizes an array of episodes
  */
-export function normalizeEpisodes(episodes: (Episode | UserEpisode)[]): NormalizedEpisode[] {
+export function normalizeEpisodes(
+	episodes: (Episode | UserEpisode)[]
+): NormalizedEpisode[] {
 	return episodes.map(normalizeEpisode);
 }

@@ -1,11 +1,22 @@
+import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { extractUserEpisodeDuration } from "@/app/(protected)/admin/audio-duration/duration-extractor";
 import { aiConfig } from "@/config/ai";
-import { combineAndUploadWavChunks, uploadBufferToPrimaryBucket, sanitizeSpeakerLabels } from "@/lib/inngest/episode-shared";
+import { getVoiceById } from "@/lib/constants/voices";
+import {
+	combineAndUploadWavChunks,
+	sanitizeSpeakerLabels,
+	uploadBufferToPrimaryBucket,
+} from "@/lib/inngest/episode-shared";
+import { generateElevenLabsTts } from "@/lib/inngest/utils/elevenlabs";
 import { generateTtsAudio, generateText as genText } from "@/lib/inngest/utils/genai";
-import { generateObjectiveSummary } from "@/lib/inngest/utils/summary";
+import { generateTextWithOpenAI } from "@/lib/inngest/utils/openai";
+import { generateFinancialAnalysis } from "@/lib/inngest/utils/summary";
 import { prisma } from "@/lib/prisma";
-import { getSummaryLengthConfig, type SummaryLengthOption } from "@/lib/types/summary-length";
+import {
+	getSummaryLengthConfig,
+	type SummaryLengthOption,
+} from "@/lib/types/summary-length";
 import { inngest } from "./client";
 
 // Use shared generateTtsAudio directly for multi-speaker; voice selection via param
@@ -28,7 +39,11 @@ function stripMarkdownJsonFences(input: string): string {
 }
 
 function coerceJsonArray(input: string): DialogueLine[] {
-	const attempts: Array<() => unknown> = [() => JSON.parse(input), () => JSON.parse(input.match(/\[[\s\S]*\]/)?.[0] || "[]"), () => JSON.parse(stripMarkdownJsonFences(input))];
+	const attempts: Array<() => unknown> = [
+		() => JSON.parse(input),
+		() => JSON.parse(input.match(/\[[\s\S]*\]/)?.[0] || "[]"),
+		() => JSON.parse(stripMarkdownJsonFences(input)),
+	];
 	for (const attempt of attempts) {
 		try {
 			const parsed = attempt();
@@ -44,9 +59,14 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		name: "Generate User Episode Multi-Speaker Workflow",
 		retries: 2,
 		onFailure: async ({ event, step }) => {
-			const { userEpisodeId } = (event as unknown as { data: { event: { data: { userEpisodeId: string } } } }).data.event.data;
+			const { userEpisodeId } = (
+				event as unknown as { data: { event: { data: { userEpisodeId: string } } } }
+			).data.event.data;
 			if (!userEpisodeId) {
-				console.error("[USER_EPISODE_MULTI_FAILED] Missing userEpisodeId in failure event", event);
+				console.error(
+					"[USER_EPISODE_MULTI_FAILED] Missing userEpisodeId in failure event",
+					event
+				);
 				return;
 			}
 			await prisma.userEpisode.update({
@@ -85,7 +105,13 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 	},
 	{ event: "user.episode.generate.multi.requested" },
 	async ({ event, step }) => {
-		const { userEpisodeId, voiceA, voiceB, useShortEpisodesOverride, summaryLength = "MEDIUM" } = event.data as {
+		const {
+			userEpisodeId,
+			voiceA,
+			voiceB,
+			useShortEpisodesOverride,
+			summaryLength = "MEDIUM",
+		} = event.data as {
 			userEpisodeId: string;
 			voiceA: string;
 			voiceB: string;
@@ -96,9 +122,9 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 		await step.run("update-status-to-processing", async () => {
 			return await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
-				data: { 
+				data: {
 					status: "PROCESSING",
-					progress_message: "Getting started—preparing your multi-speaker episode..."
+					progress_message: "Getting started—preparing your multi-speaker episode...",
 				},
 			});
 		});
@@ -108,140 +134,329 @@ export const generateUserEpisodeMulti = inngest.createFunction(
 				where: { episode_id: userEpisodeId },
 				data: { progress_message: "Loading your video transcript..." },
 			});
-			
+
 			const episode = await prisma.userEpisode.findUnique({
 				where: { episode_id: userEpisodeId },
 			});
 			if (!episode) throw new Error(`UserEpisode with ID ${userEpisodeId} not found.`);
-			if (!episode.transcript) throw new Error(`No transcript found for episode ${userEpisodeId}`);
+			if (!episode.transcript)
+				throw new Error(`No transcript found for episode ${userEpisodeId}`);
 			return episode.transcript;
 		});
 
-		const isShort = useShortEpisodesOverride ?? aiConfig.useShortEpisodes;
+		const _isShort = useShortEpisodesOverride ?? aiConfig.useShortEpisodes;
 
-		const summary = await step.run("generate-summary", async () => {
+		// Step 2: Generate Financial Analysis & Content (Single Source of Truth)
+		const summary = await step.run("generate-financial-analysis", async () => {
 			await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
-				data: { progress_message: "Analyzing content and extracting key insights..." },
+				data: {
+					progress_message:
+						"Analyzing content, extracting insights, and writing script...",
+				},
 			});
-			
-			const modelName = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
-			const text = await generateObjectiveSummary(transcript, { modelName });
-			await prisma.userEpisode.update({
-				where: { episode_id: userEpisodeId },
-				data: { summary: text },
-			});
-			return text;
-		});
 
-	const duetLines = await step.run("generate-duet-script", async () => {
-		await prisma.userEpisode.update({
-			where: { episode_id: userEpisodeId },
-			data: { progress_message: "Crafting an engaging two-host conversation script..." },
-		});
-		
-		const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
-		
-		// Get word/minute targets based on selected length
-		const lengthConfig = getSummaryLengthConfig(summaryLength);
-		const [minWords, maxWords] = lengthConfig.words;
-		const [minMinutes, maxMinutes] = lengthConfig.minutes;
-		
-			const text = await genText(
-				modelName2,
-				`Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) two-host podcast conversation where Podslice hosts A and B explain the highlights to listeners. Alternate speakers naturally.\n\nIdentity & framing:\n- Hosts are from Podslice and are commenting on someone else's content.\n- They do NOT reenact or impersonate the original speakers.\n- They present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly, spoken by A):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken dialogue only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as “the video” or “the episode.”\n- Do not include any speaker names, labels, or direct addresses in the text (e.g., no 'A', 'B', 'Hey Host', 'What do you think?'). The hosts should discuss the content without referencing each other by name or label.\n\nOutput ONLY valid JSON array of objects with fields: speaker ("A" or "B") and text (string). The text MUST NOT include any speaker names or labels; only the spoken words. No markdown.\n\nSUMMARY:\n${summary}`
+			// Fetch reference doc URL
+			const epData = await prisma.userEpisode.findUnique({
+				where: { episode_id: userEpisodeId },
+				select: { reference_doc_url: true },
+			});
+
+			let referenceDoc: { content: Buffer; mimeType: string } | string | undefined;
+			let enableSearchFallback = false;
+
+			if (epData?.reference_doc_url) {
+				try {
+					console.log(`[ANALYSIS] Found reference doc URL: ${epData.reference_doc_url}`);
+
+					// Check if it's a ResearchAsset to get cached content first (optional optimization)
+					// For now, we rely on the multimodal PDF download for robustness.
+
+					const { getStorageReader } = await import("@/lib/inngest/utils/gcs");
+					const storageReader = getStorageReader();
+
+					let bucket: string | undefined;
+					let object: string | undefined;
+
+					// Parse URL
+					if (epData.reference_doc_url.startsWith("https://storage.googleapis.com/")) {
+						const parts = epData.reference_doc_url
+							.replace("https://storage.googleapis.com/", "")
+							.split("/");
+						bucket = parts[0];
+						object = parts.slice(1).join("/");
+					} else if (epData.reference_doc_url.startsWith("gs://")) {
+						const parts = epData.reference_doc_url.replace("gs://", "").split("/");
+						bucket = parts[0];
+						object = parts.slice(1).join("/");
+					}
+
+					if (bucket && object) {
+						const decodedObject = decodeURIComponent(object);
+						console.log(
+							`[ANALYSIS] Downloading reference doc from GCS: ${bucket}/${decodedObject}`
+						);
+						const [fileBuffer] = await storageReader
+							.bucket(bucket)
+							.file(decodedObject)
+							.download();
+						const [metadata] = await storageReader
+							.bucket(bucket)
+							.file(decodedObject)
+							.getMetadata();
+
+						referenceDoc = {
+							content: fileBuffer,
+							mimeType: metadata.contentType || "application/pdf",
+						};
+					} else {
+						console.warn(
+							`[ANALYSIS] Could not parse GCS URL: ${epData.reference_doc_url}. Enabling search fallback.`
+						);
+						enableSearchFallback = true;
+					}
+				} catch (err) {
+					console.error(
+						"[ANALYSIS] Failed to download reference doc (enabling search fallback)",
+						err
+					);
+					enableSearchFallback = true;
+				}
+			}
+
+			const analysis = await generateFinancialAnalysis(
+				transcript,
+				referenceDoc,
+				enableSearchFallback
 			);
-			return coerceJsonArray(text);
+
+			// Format trade recommendations as markdown list
+			const tradeRecsMd =
+				analysis.writtenContent.tradeRecommendations.length > 0
+					? analysis.writtenContent.tradeRecommendations
+							.map(
+								t =>
+									`- **${t.direction} ${t.ticker}** (${t.conviction} conviction): ${t.rationale}${t.timeHorizon ? ` | ${t.timeHorizon}` : ""}`
+							)
+							.join("\n")
+					: "No specific trade recommendations from this source.";
+
+			// Format document contradictions if any
+			const contradictionsMd =
+				analysis.writtenContent.documentContradictions.length > 0
+					? analysis.writtenContent.documentContradictions
+							.map(
+								c =>
+									`- **[${c.severity}]** Claim: "${c.claim}" ⚠️ Ground Truth: "${c.groundTruth}"`
+							)
+							.join("\n")
+					: null;
+
+			// Format summary as Markdown with all B2B sections
+			const summaryMarkdown = `## Executive Brief
+${analysis.writtenContent.executiveBrief}
+${analysis.writtenContent.variantView ? `\n## Variant View\n${analysis.writtenContent.variantView}` : ""}
+${analysis.structuredData.sectorRotation ? `\n## Sector Rotation\n${analysis.structuredData.sectorRotation}` : ""}
+## Investment Implications
+${analysis.writtenContent.investmentImplications}
+
+## Trade Recommendations
+${tradeRecsMd}
+
+## Risks & Red Flags
+${analysis.writtenContent.risksAndRedFlags}
+${contradictionsMd ? `\n## Document Fact-Check (Lie Detector)\n${contradictionsMd}` : ""}`;
+
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: {
+					summary: summaryMarkdown,
+					intelligence: {
+						...analysis.structuredData,
+						...analysis.writtenContent,
+					} as unknown as Prisma.InputJsonValue,
+					sentiment_score: analysis.structuredData.sentimentScore,
+					// sentiment and mentioned_assets are deprecated for B2B but we keep the score for basic sorting if needed
+				},
+			});
+
+			return summaryMarkdown;
+		});
+
+		const duetLines = await step.run("generate-duet-script", async () => {
+			await prisma.userEpisode.update({
+				where: { episode_id: userEpisodeId },
+				data: {
+					progress_message: "Crafting an engaging two-host conversation script...",
+				},
+			});
+
+			const modelName2 = process.env.GEMINI_GENAI_MODEL || "gemini-2.0-flash-lite";
+
+			// Get word/minute targets based on selected length
+			const lengthConfig = getSummaryLengthConfig(summaryLength);
+			const [minWords, maxWords] = lengthConfig.words;
+			const [minMinutes, maxMinutes] = lengthConfig.minutes;
+
+			const scriptPrompt = `Task: Based on the SUMMARY below, write a ${minWords}-${maxWords} word (approximately ${minMinutes}-${maxMinutes} minutes) two-host podcast conversation where Podslice hosts A and B explain the highlights to listeners. Alternate speakers naturally.\n\nIdentity & framing:\n- Hosts are from Podslice and are commenting on someone else's content.\n- They do NOT reenact or impersonate the original speakers.\n- They present key takeaways, context, and insights.\n\nBrand opener (must be the first line, exactly, spoken by A):\n"Feeling lost in the noise? This summary is brought to you by Podslice. We filter out the fluff, the filler, and the drawn-out discussions, leaving you with pure, actionable knowledge. In a world full of chatter, we help you find the insight."\n\nConstraints:\n- No stage directions, no timestamps, no sound effects.\n- Spoken dialogue only.\n- Natural, engaging tone.\n- Avoid claiming ownership of original content; refer to it as "the video" or "the episode."\n- Do not include any speaker names, labels, or direct addresses in the text (e.g., no 'A', 'B', 'Hey Host', 'What do you think?'). The hosts should discuss the content without referencing each other by name or label.\n\nOutput ONLY valid JSON array of objects with fields: speaker ("A" or "B") and text (string). The text MUST NOT include any speaker names or labels; only the spoken words. No markdown.\n\nSUMMARY:\n${summary}`;
+
+			let rawScript: string;
+			try {
+				rawScript = await genText(modelName2, scriptPrompt);
+			} catch (error) {
+				console.warn(
+					"[FALLBACK] Gemini script generation failed, attempting OpenAI fallback...",
+					error
+				);
+				try {
+					await prisma.userEpisode.update({
+						where: { episode_id: userEpisodeId },
+						data: {
+							progress_message: "Using backup service to write your script...",
+						},
+					});
+					rawScript = await generateTextWithOpenAI(scriptPrompt, {
+						temperature: 0.7,
+					});
+				} catch (backupError) {
+					console.error("[FALLBACK] OpenAI script generation also failed", backupError);
+					throw backupError; // Fail the entire workflow since both providers failed
+				}
+			}
+			return coerceJsonArray(rawScript);
 		});
 
 		// TTS for all dialogue lines - Upload chunks to GCS immediately
-		const lineChunkUrls = await step.run("generate-and-upload-dialogue-audio", async () => {
-			await prisma.userEpisode.update({
-				where: { episode_id: userEpisodeId },
-				data: { progress_message: "Converting dialogue to audio with your selected voices..." },
-			});
-			
-			const urls: string[] = [];
-			const tempPath = `user-episodes/${userEpisodeId}/temp-dialogue-chunks`;
-
-			for (let i = 0; i < duetLines.length; i++) {
-				const line = duetLines[i];
-				console.log(`[TTS] Generating and uploading line ${i + 1}/${duetLines.length} (Speaker ${line?.speaker})`);
-				
-				// Update progress with current line
+		const lineChunkUrls = await step.run(
+			"generate-and-upload-dialogue-audio",
+			async () => {
 				await prisma.userEpisode.update({
 					where: { episode_id: userEpisodeId },
-					data: { progress_message: `Generating dialogue audio (line ${i + 1} of ${duetLines.length})...` },
+					data: {
+						progress_message: "Converting dialogue to audio with your selected voices...",
+					},
 				});
 
-				if (!line) {
-					console.warn(`[TTS] Skipping undefined line at index ${i}`);
-					continue;
+				const urls: string[] = [];
+				const tempPath = `user-episodes/${userEpisodeId}/temp-dialogue-chunks`;
+
+				for (let i = 0; i < duetLines.length; i++) {
+					const line = duetLines[i];
+					console.log(
+						`[TTS] Generating and uploading line ${i + 1}/${duetLines.length} (Speaker ${line?.speaker})`
+					);
+
+					// Update progress with current line
+					await prisma.userEpisode.update({
+						where: { episode_id: userEpisodeId },
+						data: {
+							progress_message: `Generating dialogue audio (line ${i + 1} of ${duetLines.length})...`,
+						},
+					});
+
+					if (!line) {
+						console.warn(`[TTS] Skipping undefined line at index ${i}`);
+						continue;
+					}
+					const sanitizedText = sanitizeSpeakerLabels(line.text);
+					let audio: Buffer;
+					try {
+						const voice = line.speaker === "A" ? voiceA : voiceB;
+						audio = await ttsWithVoice(sanitizedText, voice);
+					} catch (error) {
+						console.warn(
+							`[TTS] Gemini TTS failed for line ${i + 1}/${duetLines.length} (Speaker ${line.speaker}). Attempting backup with ElevenLabs...`,
+							error
+						);
+						try {
+							// Look up voice config for dynamic ElevenLabs fallback
+							const selectedVoiceId = line.speaker === "A" ? voiceA : voiceB;
+							const voiceConfig = getVoiceById(selectedVoiceId);
+							const elevenLabsVoiceId =
+								voiceConfig?.elevenLabsId ?? "ucgJ8SdlW1CZr9MIm8BP";
+							audio = await generateElevenLabsTts(sanitizedText, elevenLabsVoiceId);
+						} catch (backupError) {
+							console.error(
+								`[TTS] Backup ElevenLabs TTS also failed for line ${i + 1}/${duetLines.length}`,
+								backupError
+							);
+							throw backupError; // Fail the entire workflow since both providers failed
+						}
+					}
+					const chunkFileName = `${tempPath}/line-${i}.wav`;
+					const gcsUrl = await uploadBufferToPrimaryBucket(audio, chunkFileName);
+					urls.push(gcsUrl);
 				}
-				const voice = line.speaker === "A" ? voiceA : voiceB;
-				const sanitizedText = sanitizeSpeakerLabels(line.text);
-				const audio = await ttsWithVoice(sanitizedText, voice);
-				const chunkFileName = `${tempPath}/line-${i}.wav`;
-				const gcsUrl = await uploadBufferToPrimaryBucket(audio, chunkFileName);
-				urls.push(gcsUrl);
 
+				console.log(`[TTS] Uploaded ${urls.length} dialogue chunks to GCS`);
+				return urls;
 			}
+		);
 
-			console.log(`[TTS] Uploaded ${urls.length} dialogue chunks to GCS`);
-			return urls;
-		});
+		const { gcsAudioUrl, durationSeconds } = await step.run(
+			"download-combine-upload-multi-voice",
+			async () => {
+				await prisma.userEpisode.update({
+					where: { episode_id: userEpisodeId },
+					data: {
+						progress_message: "Stitching dialogue segments into your final episode...",
+					},
+				});
 
-		const { gcsAudioUrl, durationSeconds } = await step.run("download-combine-upload-multi-voice", async () => {
-			await prisma.userEpisode.update({
-				where: { episode_id: userEpisodeId },
-				data: { progress_message: "Stitching dialogue segments into your final episode..." },
-			});
-			
-			// Download chunks from GCS, combine them, and upload final file
-			const { getStorageReader, parseGcsUri } = await import("@/lib/inngest/utils/gcs");
-			const storageReader = getStorageReader();
+				// Download chunks from GCS, combine them, and upload final file
+				const { getStorageReader, parseGcsUri } = await import("@/lib/inngest/utils/gcs");
+				const storageReader = getStorageReader();
 
-			console.log(`[COMBINE] Downloading ${lineChunkUrls.length} dialogue chunks from GCS`);
-			const lineAudioBase64: string[] = [];
+				console.log(
+					`[COMBINE] Downloading ${lineChunkUrls.length} dialogue chunks from GCS`
+				);
+				const lineAudioBase64: string[] = [];
 
-			for (const gcsUrl of lineChunkUrls) {
-				const parsed = parseGcsUri(gcsUrl);
-				if (!parsed) throw new Error(`Invalid GCS URI: ${gcsUrl}`);
-				const [buffer] = await storageReader.bucket(parsed.bucket).file(parsed.object).download();
-				lineAudioBase64.push(buffer.toString("base64"));
-			}
-
-			console.log(`[COMBINE] Downloaded ${lineAudioBase64.length} chunks, combining`);
-			const fileName = `user-episodes/${userEpisodeId}-duet-${Date.now()}.wav`;
-			const { finalBuffer, durationSeconds } = combineAndUploadWavChunks(lineAudioBase64, fileName);
-			const gcsUrl = await uploadBufferToPrimaryBucket(finalBuffer, fileName);
-
-			// Clean up temporary chunk files
-			try {
-				for (const chunkUrl of lineChunkUrls) {
-					const parsed = parseGcsUri(chunkUrl);
-					if (parsed)
-						await storageReader
-							.bucket(parsed.bucket)
-							.file(parsed.object)
-							.delete()
-							.catch(() => {});
+				for (const gcsUrl of lineChunkUrls) {
+					const parsed = parseGcsUri(gcsUrl);
+					if (!parsed) throw new Error(`Invalid GCS URI: ${gcsUrl}`);
+					const [buffer] = await storageReader
+						.bucket(parsed.bucket)
+						.file(parsed.object)
+						.download();
+					lineAudioBase64.push(buffer.toString("base64"));
 				}
-			} catch (cleanupError) {
-				console.warn(`[CLEANUP] Failed to delete temp chunks:`, cleanupError);
-			}
 
-			return { gcsAudioUrl: gcsUrl, durationSeconds };
-		});
+				console.log(`[COMBINE] Downloaded ${lineAudioBase64.length} chunks, combining`);
+				const fileName = `user-episodes/${userEpisodeId}-duet-${Date.now()}.wav`;
+				const { finalBuffer, durationSeconds } = await combineAndUploadWavChunks(
+					lineAudioBase64,
+					fileName
+				);
+				const gcsUrl = await uploadBufferToPrimaryBucket(finalBuffer, fileName);
+
+				// Clean up temporary chunk files
+				try {
+					for (const chunkUrl of lineChunkUrls) {
+						const parsed = parseGcsUri(chunkUrl);
+						if (parsed)
+							await storageReader
+								.bucket(parsed.bucket)
+								.file(parsed.object)
+								.delete()
+								.catch(() => {});
+					}
+				} catch (cleanupError) {
+					console.warn(`[CLEANUP] Failed to delete temp chunks:`, cleanupError);
+				}
+
+				return { gcsAudioUrl: gcsUrl, durationSeconds };
+			}
+		);
 
 		await step.run("finalize-episode", async () => {
 			return await prisma.userEpisode.update({
 				where: { episode_id: userEpisodeId },
-				data: { 
-					gcs_audio_url: gcsAudioUrl, 
-					status: "COMPLETED", 
+				data: {
+					gcs_audio_url: gcsAudioUrl,
+					status: "COMPLETED",
 					duration_seconds: durationSeconds,
-					transcript: duetLines.map(line => sanitizeSpeakerLabels(line.text)).join(' '),
+					transcript: duetLines.map(line => sanitizeSpeakerLabels(line.text)).join(" "),
 					progress_message: null, // Clear progress message on completion
 				},
 			});

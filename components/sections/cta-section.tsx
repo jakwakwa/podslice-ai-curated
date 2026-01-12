@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -19,7 +20,7 @@ export function CTASection({ isActive }: SectionProps) {
 	}, [isActive]);
 
 	return (
-		<div className="relative h-full w-full bg-linear-to-br from-purple-600 via-purple-600 to-cyan-500 overflow-hidden">
+		<div className="relative h-full w-full bg-linear-to-br from-purple-600 via-purple-600 to-emerald-500 overflow-hidden">
 			{/* Animated background elements */}
 			<div className="absolute inset-0">
 				<div
@@ -40,7 +41,7 @@ export function CTASection({ isActive }: SectionProps) {
 					className={`text-4xl md:text-5xl lg:text-7xl font-semibold text-white max-w-4xl leading-tight text-balance transition-all duration-1000 ${
 						mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 					}`}>
-					Ready to Get Started?
+					Ready to Upgrade Your Intelligence?
 				</h2>
 
 				<p
@@ -48,8 +49,8 @@ export function CTASection({ isActive }: SectionProps) {
 						mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 					}`}
 					style={{ transitionDelay: "200ms" }}>
-					Sign up for Podslice today and start turning information overload into
-					actionable insight.
+					Sign up for Podslice today and start extracting actionable signals from your
+					research pipeline in seconds.
 				</p>
 
 				<div
@@ -60,8 +61,10 @@ export function CTASection({ isActive }: SectionProps) {
 					<Button
 						variant="default"
 						size="lg"
-						className="bg-white hover:bg-gray-100 rounded-full px-10 py-6 text-lg font-semibold shadow-2xl hover:scale-105 transition-transform">
-						Start Your Free Trial
+						className="bg-black hover:bg-gray-100 rounded-full px-10 py-6 text-lg font-semibold shadow-2xl hover:scale-105 transition-transform">
+						<Link href="/sign-in" className="text-white">
+							Start Your Free Trial
+						</Link>
 					</Button>
 				</div>
 

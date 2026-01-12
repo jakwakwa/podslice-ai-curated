@@ -5,11 +5,11 @@
 
 export const episodesPageContent = {
 	header: {
-		title: "Your Active Channel Feeds",
+		title: "Curated Feed",
 		description: `A list of all generated summaries generated via channels you are actively subscribed to`,
 	},
 	filters: {
-		label: "Filter  by YOUR subscribed channels:",
+		label: "Filter:",
 		selectPlaceholder: "Select bundle type",
 		options: {
 			all: "All Subscribed Channels",

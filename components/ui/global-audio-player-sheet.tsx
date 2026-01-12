@@ -9,7 +9,7 @@ export function GlobalAudioPlayerSheet() {
 	return (
 		<AudioPlayerSheet
 			open={isSheetOpen}
-			onOpenChange={(open) => {
+			onOpenChange={open => {
 				if (!open) {
 					closeSheet();
 				}

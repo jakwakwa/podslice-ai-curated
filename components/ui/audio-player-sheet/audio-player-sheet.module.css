@@ -1,6 +1,6 @@
 /* Audio Player Sheet Styles */
 
-.hetealction {
+.herosection {
   @apply items-center flex-col align-middle h-full max-h-[600px] justify-center content-center backdrop-blur-sm bg-[#1f1a285c] p-6 pt-8 gap-4;
 }
 

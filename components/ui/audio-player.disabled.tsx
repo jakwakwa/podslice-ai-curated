@@ -38,7 +38,10 @@ export const formatTime = (time: number): string => {
 // TODO: use these exports in Titles and Descriptions
 // TODO: export these exports to utils/text-utils.ts
 // add .cursor  rules for this file
-export const truncateDescription = (description: string | null, maxLength: number): string => {
+export const truncateDescription = (
+	description: string | null,
+	maxLength: number
+): string => {
 	if (!description) return "";
 	if (description.length > maxLength) {
 		return `${description.substring(0, maxLength)}...`;
@@ -93,10 +96,15 @@ export default function AudioPlayer({ episode, onClose }: AudioPlayerProps) {
 	// Memoized expensive calculations
 	const formattedCurrentTime = useMemo(() => formatTime(currentTime), [currentTime]);
 	const formattedDuration = useMemo(() => formatTime(duration), [duration]);
-	const _truncatedDescription = useMemo(() => truncateDescription(episode.description, 100), [episode.description]);
+	const _truncatedDescription = useMemo(
+		() => truncateDescription(episode.description, 100),
+		[episode.description]
+	);
 
 	const audioSource = useMemo(() => {
-		return episode.audio_url !== "sample-for-simulated-tests.mp3" ? episode.audio_url : "/sample-for-simulated-tests.mp3";
+		return episode.audio_url !== "sample-for-simulated-tests.mp3"
+			? episode.audio_url
+			: "/sample-for-simulated-tests.mp3";
 	}, [episode.audio_url]);
 
 	const volumeIcon = useMemo(() => {
@@ -140,7 +148,9 @@ export default function AudioPlayer({ episode, onClose }: AudioPlayerProps) {
 			audio.addEventListener("error", onAudioError);
 
 			if (isPlaying) {
-				audio.play().catch(e => console.error("Error playing audio on episode change:", e));
+				audio
+					.play()
+					.catch(e => console.error("Error playing audio on episode change:", e));
 			} else {
 				audio.load();
 				audio.pause();
@@ -162,7 +172,16 @@ export default function AudioPlayer({ episode, onClose }: AudioPlayerProps) {
 				audio.removeEventListener("error", onAudioError);
 			}
 		};
-	}, [episode, isPlaying, onAudioEnd, audioSource, onAudioError, updateProgress, onLoadedMetadata, volume]);
+	}, [
+		episode,
+		isPlaying,
+		onAudioEnd,
+		audioSource,
+		onAudioError,
+		updateProgress,
+		onLoadedMetadata,
+		volume,
+	]);
 
 	useEffect(() => {
 		if (audioRef.current) {
@@ -228,7 +247,14 @@ export default function AudioPlayer({ episode, onClose }: AudioPlayerProps) {
 		<div className={styles.audioPlayer}>
 			<div className={styles.episodeImageContainer}>
 				{episode.image_url && !imageError ? (
-					<Image src={episode.image_url!} alt={episode.description ?? ""} width={56} height={56} className={styles.episodeImage} onError={() => setImageError(true)} />
+					<Image
+						src={episode.image_url!}
+						alt={episode.description ?? ""}
+						width={56}
+						height={56}
+						className={styles.episodeImage}
+						onError={() => setImageError(true)}
+					/>
 				) : (
 					<div className={styles.placeholderImage}>
 						<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -239,11 +265,17 @@ export default function AudioPlayer({ episode, onClose }: AudioPlayerProps) {
 			</div>
 
 			<div className="flex flex-col gap-2 episode-info">
-				<Typography className="text-custom-h5 font-medium truncate max-w-[200px]">{episode.title}</Typography>
+				<Typography className="text-custom-h5 font-medium truncate max-w-[200px]">
+					{episode.title}
+				</Typography>
 			</div>
 
 			<div className={styles.controls}>
-				<Button onClick={togglePlayPause} className={styles.playPauseButton} size={"sm"} variant="default">
+				<Button
+					onClick={togglePlayPause}
+					className={styles.playPauseButton}
+					size={"sm"}
+					variant="default">
 					{isPlaying ? (
 						<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
 							<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
@@ -257,7 +289,15 @@ export default function AudioPlayer({ episode, onClose }: AudioPlayerProps) {
 
 				<div className={styles.progressContainer}>
 					<span className={styles.timeDisplay}>{formattedCurrentTime}</span>
-					<div className={styles.progressBar} onClick={seekTo} role="slider" tabIndex={0} aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress} aria-label="Seek through audio">
+					<div
+						className={styles.progressBar}
+						onClick={seekTo}
+						role="slider"
+						tabIndex={0}
+						aria-valuemin={0}
+						aria-valuemax={100}
+						aria-valuenow={progress}
+						aria-label="Seek through audio">
 						<div className={styles.progress} style={{ width: `${progress}%` }} />
 					</div>
 					<span className={styles.timeDisplay}>{formattedDuration}</span>

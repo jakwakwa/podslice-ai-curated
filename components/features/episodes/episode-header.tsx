@@ -8,6 +8,7 @@ type BaseHeaderProps = {
 	durationSeconds?: number | null;
 	metaBadges?: ReactNode; // additional badges to inject
 	rightLink?: { href: string; label: string; external?: boolean } | null;
+	rightAction?: ReactNode;
 };
 
 export default function EpisodeHeader({
@@ -16,35 +17,45 @@ export default function EpisodeHeader({
 	durationSeconds,
 	metaBadges,
 	rightLink,
+	rightAction,
 }: BaseHeaderProps): ReactElement {
 	const created = new Date(createdAt);
 	const durationMin = durationSeconds ? Math.round(durationSeconds / 60) : null;
 	return (
-		<div className="pt-12 flex flex-col gap-2">
-			<div className="text-primary-foreground-muted text-xl font-bold text-shadow-md text-shadow-slate-900/10 lg:text-shadow-slate-800 lg:text-shadow-md md:text-5xl capitalize">
+		<div className="mt-0 flex flex-col gap-2 mb-8">
+			<div className="text-primary-foreground-muted text-3xl font-bold text-shadow-md text-shadow-slate-900/10 lg:text-shadow-slate-800 lg:text-shadow-md md:text-5xl capitalize">
 				{title}
 			</div>
 			<div className="text-sm text-[#8A97A5D4]/80 episode-p pr-[10%] mb-1">
-				<div className="flex flex-wrap items-center gap-2 my-2">
-					{durationMin ? <Badge variant="secondary">{durationMin} min</Badge> : null}
-					<Badge variant="default">{created.toLocaleString()}</Badge>
+				<div className="md:flex md:flex-wrap md:items-center block md:absolute gap-2 mt-4">
+					{durationMin ? (
+						<Badge className="bg-black text-white outline-1 outline-zinc-700 rounded-sm px-2 h-6 text-[10px] font-normal">
+							{durationMin} min
+						</Badge>
+					) : null}
+					<Badge className="bg-black text-white outline-1 outline-zinc-700 rounded-sm px-2 h-6 text-[10px] font-normal">
+						{created.toLocaleDateString("en-GB", {
+							day: "2-digit",
+							month: "short",
+							year: "numeric",
+						})}
+					</Badge>
 					{metaBadges}
 					{rightLink ? (
-						<div className="text-xs  break-words border-1 *:rounded px-2 py-0 flex rounded-sm gap-2 p-1 text-[#fff] outline-destructive-foreground-muted bg-destructive/70 items-center">
+						<div className="text-[10px] font-normal wrap-break-word border-0 px-2 h-6 flex rounded-md shadow-md shadow-black/20 gap-1.5 text-white bg-[#932a3d] hover:bg-red-800 cursor-pointer items-center md:my-0 my-3 transition-colors">
 							<a
-								className="no-underline text-white hover:underline"
+								className="no-underline text-white"
 								href={rightLink.href}
 								target={rightLink.external ? "_blank" : undefined}
 								rel={rightLink.external ? "noreferrer" : undefined}>
 								{rightLink.label}
 							</a>
 							{rightLink.external ? (
-								<span className="font-medium  uppercase text-[0.6rem] text-white">
-									<ExternalLink width={13} />
-								</span>
+								<ExternalLink width={10} height={10} className="text-white" />
 							) : null}
 						</div>
 					) : null}
+					{rightAction}
 				</div>
 			</div>
 		</div>

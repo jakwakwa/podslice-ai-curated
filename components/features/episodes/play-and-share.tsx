@@ -90,24 +90,24 @@ export default function PlayAndShare({
 
 	return (
 		<>
-			<div className="w-full max-w-[10vw] flex md:flex-row my-8 items-start gap-4">
+			<div className="md:w-full md:justify-end flex md:flex-row md:mt-8 md:items-center gap-4">
 				<Button
 					type="button"
-					className="outline-teal-400 outline-1 max-h-10"
-					variant="play"
-					size="playSmall"
+					className="outline-emerald-400 outline-1 max-h-10"
+					variant="default"
+					size="sm"
 					onClick={onPlay}
-					disabled={!canPlay}
-					icon={<Play className="text-teal-300" />}>
+					disabled={!canPlay}>
+					<Play className="text-emerald-300 mr-2" />
 					Play
 				</Button>
 				<Button
 					type="button"
-					className="outline-indigo-400 outline-1 max-h-10"
-					variant="play"
-					size="playSmall"
-					onClick={onShare}
-					icon={<Share2 className="text-indigo-300 max-h-7" />}>
+					className="outline-indigo-400 bg-indigo-500/10 outline-1 max-h-10"
+					variant="default"
+					size="sm"
+					onClick={onShare}>
+					<Share2 className="text-indigo-300 max-h-7 mr-2" />
 					Share
 				</Button>
 			</div>

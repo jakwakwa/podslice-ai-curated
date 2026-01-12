@@ -5,9 +5,14 @@ import { z } from "zod";
 import EpisodeActionsWrapper from "@/components/features/episodes/episode-actions-wrapper";
 import EpisodeHeader from "@/components/features/episodes/episode-header";
 import EpisodeShell from "@/components/features/episodes/episode-shell";
+import IntelligentSummaryView, {
+	type TradeRecommendation,
+	type DocumentContradiction,
+} from "@/components/features/episodes/intelligent-summary-view";
 import KeyTakeaways from "@/components/features/episodes/key-takeaways";
 import { Separator } from "@/components/ui/separator";
 import { getStorageReader, parseGcsUri } from "@/lib/inngest/utils/gcs";
+import { getHistoricalPrices, type ChartDataPoint } from "@/lib/marketstack";
 import { extractKeyTakeaways, extractNarrativeRecap } from "@/lib/markdown/episode-text";
 import { prisma } from "@/lib/prisma";
 import type { UserEpisode } from "@/lib/types";
@@ -27,8 +32,7 @@ const UserEpisodeSchema = z.object({
 	public_gcs_audio_url: z.string().nullable().optional(),
 	duration_seconds: z.number().nullable().optional(),
 	status: z.enum(["PENDING", "PROCESSING", "COMPLETED", "FAILED"]),
-	news_sources: z.string().nullable().optional(),
-	news_topic: z.string().nullable().optional(),
+	intelligence: z.any().nullable().optional(),
 	created_at: z.date(),
 	updated_at: z.date(),
 });
@@ -36,6 +40,7 @@ const UserEpisodeSchema = z.object({
 type EpisodeWithSigned = UserEpisode & {
 	signedAudioUrl: string | null;
 	is_public: boolean;
+	intelligence?: unknown;
 };
 
 async function getEpisodeWithSignedUrl(
@@ -89,28 +94,59 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 	const episode = await getEpisodeWithSignedUrl(id, userId);
 	if (!episode) notFound();
 
-	// Determine if this is a news episode and format the source display
-	const isNewsEpisode = episode.youtube_url === "news";
-	const sourceDisplay =
-		isNewsEpisode && episode.news_sources
-			? `Source/s: ${
-					episode.news_sources === "stocks"
-						? "PolyMarket, Traderview, Yahoo! Finance, CoinDesk, CoinGecko, Uphold"
-						: episode.news_sources
-								?.split(", ")
-								.map(s => s.charAt(0).toUpperCase() + s.slice(1))
-								.join(", ")
-				}`
-			: null;
+	// Determine if this is a news episode and format the source display - REMOVED per user request
 
-	// For YouTube videos, extract key takeaways; for news, use summary as-is
-	const takeaways = !isNewsEpisode ? extractKeyTakeaways(episode.summary) : [];
+	// For YouTube videos, extract key takeaways
+	const takeaways = extractKeyTakeaways(episode.summary);
 	const _narrativeRecap = extractNarrativeRecap(episode.summary);
 	const _hasSummary = Boolean(episode.summary);
 
+	// Reshape flat intelligence data from DB to nested structure expected by component
+	// The Inngest function flattens structuredData + writtenContent into the root of the JSON
+
+	interface StoredIntelligence {
+		sentimentScore: number;
+		sentimentLabel: "BULLISH" | "NEUTRAL" | "BEARISH";
+		tickers: string[];
+		sectorRotation?: string | null;
+		executiveBrief: string;
+		variantView?: string | null;
+		investmentImplications: string;
+		risksAndRedFlags: string;
+		tradeRecommendations?: TradeRecommendation[];
+		documentContradictions?: DocumentContradiction[];
+	}
+
+	let mappedIntelligence = null;
+	if (episode.intelligence) {
+		const raw = episode.intelligence as unknown as StoredIntelligence;
+		mappedIntelligence = {
+			structuredData: {
+				sentimentScore: raw.sentimentScore,
+				sentimentLabel: raw.sentimentLabel,
+				tickers: raw.tickers,
+				sectorRotation: raw.sectorRotation,
+			},
+			writtenContent: {
+				executiveBrief: raw.executiveBrief,
+				variantView: raw.variantView,
+				investmentImplications: raw.investmentImplications,
+				risksAndRedFlags: raw.risksAndRedFlags,
+				tradeRecommendations: raw.tradeRecommendations,
+				documentContradictions: raw.documentContradictions,
+			},
+		};
+	}
+
+	// Fetch historical data for the first ticker if available
+	let chartData: ChartDataPoint[] = [];
+	if (mappedIntelligence?.structuredData?.tickers?.[0]) {
+		chartData = await getHistoricalPrices(mappedIntelligence.structuredData.tickers[0]);
+	}
+
 	return (
 		<EpisodeShell>
-			<div>
+			<div className="w-full">
 				<EpisodeHeader
 					title={episode.episode_title}
 					createdAt={episode.created_at}
@@ -120,175 +156,33 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 							<span className="sr-only">status</span>
 						</span>
 					}
-					rightLink={
-						isNewsEpisode
-							? undefined
-							: {
-									href: episode.youtube_url,
-									label: "Youtube Url",
-									external: true,
-								}
-					}
+					rightLink={{
+						href: episode.youtube_url,
+						label: "Source",
+						external: true,
+					}}
 				/>
-				{sourceDisplay && (
-					<div className="mt-2 text-lg font-bold text-primary-foreground">
-						{sourceDisplay}
-					</div>
-				)}
-				<div className="">
+				<div className="m-0 w-full">
 					<EpisodeActionsWrapper
 						episode={episode}
 						signedAudioUrl={episode.signedAudioUrl}
 						isPublic={episode.is_public}
 					/>
 
-					<Separator className="my-8" />
-					{isNewsEpisode ? (
-						episode.summary && (
-							<div className="prose prose-sm max-w-none dark:prose-invert">
-								{(() => {
-									try {
-										// Clean the summary string first
-										let cleanSummary = episode.summary.trim();
-										// Try multiple approaches to extract clean JSON
-										if (cleanSummary.startsWith("```json")) {
-											cleanSummary = cleanSummary
-												.replace(/^```json\s*/, "")
-												.replace(/\s*```$/, "");
-										} else if (cleanSummary.startsWith("```")) {
-											cleanSummary = cleanSummary
-												.replace(/^```\s*/, "")
-												.replace(/\s*```$/, "");
-										} else if (cleanSummary.includes("```json")) {
-											// Extract JSON from within markdown blocks
-											const jsonMatch = cleanSummary.match(
-												/```json\s*(\{[\s\S]*?\})\s*```/
-											);
-											if (jsonMatch?.[1]) {
-												cleanSummary = jsonMatch[1];
-											}
-										} else if (cleanSummary.includes("```")) {
-											// Fallback: try to extract JSON from any markdown block
-											const jsonMatch = cleanSummary.match(/```\s*(\{[\s\S]*?\})\s*```/);
-											if (jsonMatch?.[1]) {
-												cleanSummary = jsonMatch[1];
-											}
-										}
-										// Trim any remaining whitespace
-										cleanSummary = cleanSummary.trim();
-										// parse the summary data
-										const summaryData = JSON.parse(cleanSummary);
-										return (
-											<div className="space-y-6 ">
-												{summaryData.top_headlines && (
-													<div className="text-cyan-200/70">
-														<h4 className="font-semibold text-lg mt-8 mb-4">
-															Top Headlines
-														</h4>
-														<p className="text-secondary-foreground text-base font-medium">
-															{summaryData.top_headlines}
-														</p>
-													</div>
-												)}
-												<hr />
-												<div className="flex flex-col flex-wrap gap-6 md:gap-8">
-													<div className="flex flex-row gap-4 min-w-[20%]">
-														{summaryData.topic && summaryData.topic.length > 0 && (
-															<div className="text-slate-400">
-																<h4 className="font-medium text-sm mb-4">Topic</h4>
-																<div className="flex flex-wrap gap-2">
-																	{summaryData.topic.map((t: string, i: number) => (
-																		<span
-																			key={i}
-																			className="px-2 py-[0.5px] bg-cyan-900 text-cyan-400  font-light rounded-md text-sm capitalize">
-																			{t}
-																		</span>
-																	))}
-																</div>
-															</div>
-														)}
-
-														{summaryData.sentiment && (
-															<div className="text-gray-200/70">
-																<h4 className="font-medium text-sm mb-4 text-slate-400">
-																	Sentiment
-																</h4>
-																<div className="flex flex-wrap gap-2 ">
-																	{Array.isArray(summaryData.sentiment) ? (
-																		summaryData.sentiment.map((s: string, i: number) => (
-																			<span
-																				key={i}
-																				className="px-2 py-[0.5px] bg-cyan-900 text-gray-100 rounded-md text-sm capitalize">
-																				{s}
-																			</span>
-																		))
-																	) : (
-																		<span className="px-2 py-1 rounded-md text-sm  bg-slate-600">
-																			{summaryData.sentiment}
-																		</span>
-																	)}
-																</div>
-															</div>
-														)}
-													</div>
-													{summaryData.tags && summaryData.tags.length > 0 && (
-														<div className="text-cyan-800/70 hidden">
-															<h4 className="font-medium text-sm mt-0 mb-4 text-purple-300/90">
-																Tags
-															</h4>
-															<div className="flex flex-wrap gap-1">
-																{summaryData.tags.map((tag: string, i: number) => (
-																	<span
-																		key={i}
-																		className="px-2 bg-violet-950/80  text-violet-300/70 rounded-md text-sm shadow-md">
-																		#{tag}
-																	</span>
-																))}
-															</div>
-														</div>
-													)}
-
-													{summaryData.target_audience && (
-														<div className="text-indigo-100">
-															<h4 className="font-medium text-sm mb-4 text-slate-400">
-																Target Audience
-															</h4>
-															<p className=" text-secondary-foreground text-sm">
-																{summaryData.target_audience}
-															</p>
-														</div>
-													)}
-												</div>
-												<hr />
-
-												{summaryData.ai_summary && (
-													<div className="text-indigo-400">
-														<h4 className="font-semibold text-lg mb-4">Ai Summary</h4>
-														<div className="whitespace-pre-wrap  text-sm text-secondary-foreground leading-[1.8] md:text-base">
-															{summaryData.ai_summary}
-														</div>
-													</div>
-												)}
-											</div>
-										);
-									} catch (error) {
-										// Fallback to raw text display if JSON parsing fails
-										console.error("Failed to parse news summary JSON:", error);
-										console.log("Raw summary that failed to parse:", episode.summary);
-										return (
-											<div>
-												<h3 className="text-lg font-semibold mb-4 text-[#ac91fc]">
-													Summary
-												</h3>
-												<div className="whitespace-pre-wrap text-[#F0BCFAD7]/90">
-													{episode.summary}
-												</div>
-											</div>
-										);
-									}
-								})()}
-							</div>
-						)
+					<Separator className="mb-4" />
+					{mappedIntelligence ? (
+						<IntelligentSummaryView
+							title={episode.episode_title}
+							audioUrl={episode.signedAudioUrl}
+							duration={episode.duration_seconds}
+							publishedAt={episode.created_at}
+							youtubeUrl={episode.youtube_url}
+							intelligence={mappedIntelligence}
+							documentContradictions={
+								mappedIntelligence?.writtenContent.documentContradictions
+							}
+							chartData={chartData}
+						/>
 					) : (
 						<KeyTakeaways items={takeaways} />
 					)}

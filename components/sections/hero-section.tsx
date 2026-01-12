@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -8,7 +9,7 @@ interface SectionProps {
 	isActive: boolean;
 }
 
-export function Hetealction({ isActive }: SectionProps) {
+export function HeroSection({ isActive }: SectionProps) {
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
@@ -20,23 +21,23 @@ export function Hetealction({ isActive }: SectionProps) {
 	}, [isActive]);
 
 	return (
-		<div className="relative h-full w-full bg-linear-to-br from-teal-950 via-purple-950 to-indigo-950 overflow-hidden">
+		<div className="relative h-full w-full bg-linear-to-br from-emerald-950 via-purple-950 to-indigo-950 overflow-hidden">
 			{/* Animated circles - Apple Health style */}
 			<div className="absolute inset-0">
 				<div
-					className={`absolute w-[600px] h-[600px] rounded-full bg-blue-400/30 -top-20 -left-40 transition-all duration-2000 ease-out ${
+					className={`absolute w-[600px] h-[600px] rounded-full bg-emerald-400/30 -top-20 -left-40 transition-all duration-2000 ease-out ${
 						mounted ? "scale-100 opacity-100" : "scale-50 opacity-0"
 					}`}
 					style={{ transitionDelay: "200ms" }}
 				/>
 				<div
-					className={`absolute w-[700px] h-[700px] rounded-full bg-cyan-400/20 top-1/4 right-[-200px] transition-all duration-2000 ease-out ${
+					className={`absolute w-[700px] h-[700px] rounded-full bg-emerald-400/20 top-1/4 right-[-200px] transition-all duration-2000 ease-out ${
 						mounted ? "scale-100 opacity-100" : "scale-50 opacity-0"
 					}`}
 					style={{ transitionDelay: "400ms" }}
 				/>
 				<div
-					className={`absolute w-[500px] h-[500px] rounded-full bg-blue-300/25 bottom-[-100px] left-1/3 transition-all duration-2000 ease-out ${
+					className={`absolute w-[500px] h-[500px] rounded-full bg-emerald-300/25 bottom-[-100px] left-1/3 transition-all duration-2000 ease-out ${
 						mounted ? "scale-100 opacity-100" : "scale-50 opacity-0"
 					}`}
 					style={{ transitionDelay: "600ms" }}
@@ -68,7 +69,7 @@ export function Hetealction({ isActive }: SectionProps) {
 						mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 					}`}
 					style={{ transitionDelay: "500ms" }}>
-					Turn information overload into actionable insight.
+					Institutional Intelligence for the Modern Portfolio.
 				</h1>
 
 				<p
@@ -76,8 +77,9 @@ export function Hetealction({ isActive }: SectionProps) {
 						mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 					}`}
 					style={{ transitionDelay: "700ms" }}>
-					Your personal AI assistant that transforms content into short, insightful audio
-					and text summaries.
+					Move beyond simple summaries. Podslice extracts actionable signals, ticker
+					sentiment, and contrarian insights from hours of audio and research documents in
+					seconds.
 				</p>
 
 				<div
@@ -88,8 +90,10 @@ export function Hetealction({ isActive }: SectionProps) {
 					<Button
 						variant="default"
 						size="lg"
-						className="bg-white hover:bg-gray-100 rounded-full px-8 py-6 text-lg font-medium">
-						Start Your Free Trial
+						className="bg-purple-500 hover:bg-gray-100 rounded-full px-8 py-6 text-lg font-medium">
+						<Link href="/sign-in" className="text-white">
+							Start Your Free Trial
+						</Link>
 					</Button>
 				</div>
 			</div>

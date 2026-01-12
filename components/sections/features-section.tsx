@@ -1,6 +1,13 @@
 "use client";
 
-import { FileAudio, Layers, ListChecks, Newspaper, Volume2, Youtube } from "lucide-react";
+import {
+	BarChart3,
+	Layers,
+	ListChecks,
+	Newspaper,
+	ShieldCheck,
+	Volume2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface SectionProps {
@@ -9,22 +16,22 @@ interface SectionProps {
 
 const features = [
 	{
-		icon: Youtube,
-		title: "Summarize YouTube Videos",
+		icon: BarChart3,
+		title: "Real-time Asset Intelligence",
 		description:
-			"Convert any YouTube video into a concise audio episode and detailed text breakdown with one click.",
+			"Automatically identify tickers across your research pipeline with proprietary sentiment scoring and rotation mapping.",
 	},
 	{
-		icon: FileAudio,
-		title: "Dual-Format Summaries",
+		icon: ShieldCheck,
+		title: "The Ground-Truth Protocol",
 		description:
-			"Every summary includes both a podcast-style audio episode and a dedicated, structured text page.",
+			"Our AI flags contradictions between speaker claims and your uploaded reference documents or live search results.",
 	},
 	{
-		icon: ListChecks,
-		title: "Structured Text Breakdowns",
+		icon: Volume2,
+		title: "The PM Briefing",
 		description:
-			"Get key takeaways, short summaries, target audience info, and relevant topics.",
+			"High-fidelity audio reports designed for the morning commute—synthesised analysis, not transcript echoes.",
 	},
 	{
 		icon: Newspaper,
@@ -33,10 +40,10 @@ const features = [
 			"Stay on top of current events with AI-powered news briefings in both audio and text.",
 	},
 	{
-		icon: Volume2,
-		title: "High-Quality AI Voices",
+		icon: ListChecks,
+		title: "Dual-Format Summaries",
 		description:
-			"Listen to smooth, natural-sounding audio powered by advanced AI voice technology.",
+			"Every summary includes both a podcast-style audio episode and a dedicated, structured text page.",
 	},
 	{
 		icon: Layers,
@@ -62,7 +69,7 @@ export function FeaturesSection({ isActive }: SectionProps) {
 			{/* Subtle background circles */}
 			<div className="absolute inset-0">
 				<div className="absolute w-[500px] h-[500px] rounded-full bg-purple-500/5 -top-40 -right-40" />
-				<div className="absolute w-[600px] h-[600px] rounded-full bg-blue-500/5 bottom-0 -left-40" />
+				<div className="absolute w-[600px] h-[600px] rounded-full bg-emerald-500/5 bottom-0 -left-40" />
 			</div>
 
 			<div className="relative z-10 h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
@@ -84,7 +91,7 @@ export function FeaturesSection({ isActive }: SectionProps) {
 								mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 							}`}
 							style={{ transitionDelay: `${150 + index * 100}ms` }}>
-							<feature.icon className="w-8 h-8 text-violet-400 mb-4" />
+							<feature.icon className="w-8 h-8 text-emerald-400 mb-4" />
 							<h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
 							<p className="text-gray-400 text-sm leading-relaxed">
 								{feature.description}

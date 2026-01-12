@@ -32,8 +32,34 @@ model User {
   sharedBundles        SharedBundle[]
   ingestionConfig      UserIngestionConfig?
   youtubeFeedEntries   YoutubeFeedEntry[]
+  researchAssets       ResearchAsset[]
 
   @@map("user")
+}
+
+/// ───────────────────────────────────
+/// RESEARCH VAULT ASSETS
+/// ───────────────────────────────────
+model ResearchAsset {
+  id            String   @id @default(cuid()) @map("id")
+  userId        String   @map("user_id")
+  user          User     @relation(fields: [userId], references: [user_id], onDelete: Cascade)
+  
+  // Source Data
+  sourceUrl     String   @map("source_url")
+  cachedContent String   @map("cached_content") @db.Text
+  
+  // User-Defined Metadata
+  title         String   @map("title")
+  description   String?  @map("description") @db.Text
+  assetType     String   @map("asset_type")
+  tags          String[] @map("tags")
+  
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("research_asset")
 }
 
 /// ───────────────────────────────────
@@ -53,9 +79,16 @@ model UserEpisode {
   duration_seconds     Int?                  @map("duration_seconds")
   status               UserEpisodeStatus     @default(PENDING) @map("status")
   progress_message     String?               @map("progress_message")
-  news_sources         String?               @map("news_sources")
-  news_topic           String?               @map("news_topic")
   auto_generated       Boolean               @default(false) @map("auto_generated")
+  // B2B Intelligence Fields
+  sentiment            MarketSentiment?      @map("sentiment")
+  sentiment_score      Float?                @map("sentiment_score") // -1.0 to 1.0
+  mentioned_assets     Json?                 @map("mentioned_assets") // JSON array of MentionedAsset
+  voice_archetype      String?               @map("voice_archetype")
+  reference_doc_url    String?               @map("reference_doc_url")
+  context_weight       Float?                @map("context_weight")
+  intelligence         Json?                 @map("intelligence") // Stores { sentiment, assets, risks }
+  
   created_at           DateTime              @default(now()) @map("created_at")
   updated_at           DateTime              @updatedAt @map("updated_at")
   user                 User                  @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
@@ -65,6 +98,12 @@ model UserEpisode {
   @@index([is_public])
   @@index([user_id, auto_generated])
   @@map("user_episode")
+}
+
+enum MarketSentiment {
+  BULLISH
+  NEUTRAL
+  BEARISH
 }
 
 /// ───────────────────────────────────

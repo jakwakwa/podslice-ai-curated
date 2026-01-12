@@ -28,7 +28,7 @@ export function AppSpinner({
 			case "success":
 				return "text-azure-500 text-center";
 			case "warning":
-				return "text-amber-500 text-center";
+				return "text-emerald-500 text-center";
 			case "danger":
 				return "text-red-500 text-center";
 			default:

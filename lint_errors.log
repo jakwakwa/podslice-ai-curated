@@ -1,0 +1,333 @@
+$ biome lint .
+app/(protected)/my-episodes/_components/episode-list.tsx:73:2 lint/correctness/useExhaustiveDependencies  FIXABLE  ━━━━━━━━━━
+
+  ! This hook specifies more dependencies than necessary: filter
+  
+    72 │ 	// Reset to page 1 when filter changes
+  > 73 │ 	useEffect(() => {
+       │ 	^^^^^^^^^
+    74 │ 		setCurrentPage(1);
+    75 │ 	}, [filter]);
+  
+  i This dependency can be removed from the list.
+  
+    73 │ 	useEffect(() => {
+    74 │ 		setCurrentPage(1);
+  > 75 │ 	}, [filter]);
+       │ 	    ^^^^^^
+    76 │ 
+    77 │ 	// If we arrived via deep link, fetch the single episode immediately to avoid showing stale progress
+  
+  i Unsafe fix: Remove the extra dependencies from the list.
+  
+    75 │ → },·[filter]);
+       │       ------   
+
+components/features/bundle-list.tsx:120:13 lint/performance/noImgElement ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Don't use <img> element.
+  
+    118 │ 										<div className="shrink-0 p-4">
+    119 │ 											{bundle.bundle_id ? (
+  > 120 │ 												<img
+        │ 												^^^^
+  > 121 │ 													src={`/api/bundles/${bundle.bundle_id}/image`}
+  > 122 │ 													alt={bundle.name}
+  > 123 │ 													className="w-20 h-20 object-cover rounded-lg"
+  > 124 │ 												/>
+        │ 												^^
+    125 │ 											) : (
+    126 │ 												<div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center">
+  
+  i Using the <img> can lead to slower LCP and higher bandwidth. Consider using <Image /> from next/image to automatically optimize images.
+  
+
+app/api/internal/send-email/route.ts:16:9 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Unexpected any. Specify a different type.
+  
+    14 │ 	templateId: string;
+    15 │ 	to: string;
+  > 16 │ 	props: any;
+       │ 	       ^^^
+    17 │ };
+    18 │ 
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+app/api/internal/send-email/route.ts:50:41 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Unexpected any. Specify a different type.
+  
+    48 │ 		if (isTemplateBody(body)) {
+    49 │ 			// Render template in Next.js runtime
+  > 50 │ 			const template = (EMAIL_TEMPLATES as any)[body.templateId];
+       │ 			                                     ^^^
+    51 │ 			if (!template) {
+    52 │ 				return NextResponse.json({ error: "Invalid template" }, { status: 400 });
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+app/api/public/shared-bundles/[bundleId]/episodes/[episodeId]/play/route.ts:64:9 lint/complexity/useOptionalChain  FIXABLE  ━━━━━━━━━━
+
+  × Change to an optional chain.
+  
+    62 │ 		});
+    63 │ 
+  > 64 │ 		if (!(bundleEpisode && bundleEpisode.sharedBundle.is_active)) {
+       │ 		      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    65 │ 			return new NextResponse("Episode not found in active bundle", { status: 404 });
+    66 │ 		}
+  
+  i Unsafe fix: Change to an optional chain.
+  
+    62 62 │   		});
+    63 63 │   
+    64    │ - → → if·(!(bundleEpisode·&&·bundleEpisode.sharedBundle.is_active))·{
+       64 │ + → → if·(!(bundleEpisode?.sharedBundle.is_active))·{
+    65 65 │   			return new NextResponse("Episode not found in active bundle", { status: 404 });
+    66 66 │   		}
+  
+
+app/api/user-curation-profiles/[id]/route.ts:181:11 lint/complexity/useOptionalChain  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Change to an optional chain.
+  
+    179 │ 					}),
+    180 │ 				]);
+  > 181 │ 				if (!(sharedBundle && sharedBundle.is_active)) {
+        │ 				      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    182 │ 					return NextResponse.json(
+    183 │ 						{ error: "Shared bundle not found or not active" },
+  
+  i Unsafe fix: Change to an optional chain.
+  
+    179 179 │   					}),
+    180 180 │   				]);
+    181     │ - → → → → if·(!(sharedBundle·&&·sharedBundle.is_active))·{
+        181 │ + → → → → if·(!(sharedBundle?.is_active))·{
+    182 182 │   					return NextResponse.json(
+    183 183 │   						{ error: "Shared bundle not found or not active" },
+  
+
+app/shared/episodes/[id]/page.tsx:38:17 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Unexpected any. Specify a different type.
+  
+    36 │ 	publicAudioUrl: string | null;
+    37 │ 	is_public: boolean;
+  > 38 │ 	intelligence?: any;
+       │ 	               ^^^
+    39 │ };
+    40 │ 
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+app/shared/episodes/[id]/page.tsx:183:26 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Unexpected any. Specify a different type.
+  
+    181 │ 		investmentImplications: string;
+    182 │ 		risksAndRedFlags: string;
+  > 183 │ 		tradeRecommendations?: any[];
+        │ 		                       ^^^
+    184 │ 		documentContradictions?: any[];
+    185 │ 	}
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+app/shared/episodes/[id]/page.tsx:184:28 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Unexpected any. Specify a different type.
+  
+    182 │ 		risksAndRedFlags: string;
+    183 │ 		tradeRecommendations?: any[];
+  > 184 │ 		documentContradictions?: any[];
+        │ 		                         ^^^
+    185 │ 	}
+    186 │ 
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+tests/env-helpers.test.ts:9:3 lint/performance/noDelete  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Avoid the delete operator which can impact performance.
+  
+     7 │ 	beforeEach(() => {
+     8 │ 		process.env = { ...originalEnv };
+   > 9 │ 		delete process.env.PROVIDER_WINDOW_SECONDS;
+       │ 		^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    10 │ 	});
+    11 │ 
+  
+  i Unsafe fix: Use an undefined assignment instead.
+  
+      7   7 │   	beforeEach(() => {
+      8   8 │   		process.env = { ...originalEnv };
+      9     │ - → → delete·process.env.PROVIDER_WINDOW_SECONDS;
+          9 │ + → → process.env.PROVIDER_WINDOW_SECONDS·=·undefined;
+     10  10 │   	});
+     11  11 │   
+  
+
+tests/env-helpers.test.ts:57:3 lint/performance/noDelete  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Avoid the delete operator which can impact performance.
+  
+    55 │ 	beforeEach(() => {
+    56 │ 		process.env = { ...originalEnv };
+  > 57 │ 		delete process.env.EPISODE_TARGET_MINUTES;
+       │ 		^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    58 │ 	});
+    59 │ 
+  
+  i Unsafe fix: Use an undefined assignment instead.
+  
+     55  55 │   	beforeEach(() => {
+     56  56 │   		process.env = { ...originalEnv };
+     57     │ - → → delete·process.env.EPISODE_TARGET_MINUTES;
+         57 │ + → → process.env.EPISODE_TARGET_MINUTES·=·undefined;
+     58  58 │   	});
+     59  59 │   
+  
+
+tests/paddle/process-webhook.test.ts:49:8 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Unexpected any. Specify a different type.
+  
+    47 │ 				items: [{ price: { id: "pri_test" } }],
+    48 │ 			},
+  > 49 │ 		} as any;
+       │ 		     ^^^
+    50 │ 
+    51 │ 		await processor.processEvent(mockEvent);
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+tests/paddle/process-webhook.test.ts:73:8 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Unexpected any. Specify a different type.
+  
+    71 │ 				items: [{ price: { id: "pri_test" } }],
+    72 │ 			},
+  > 73 │ 		} as any;
+       │ 		     ^^^
+    74 │ 
+    75 │ 		await processor.processEvent(mockEvent);
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+tests/paddle/process-webhook.test.ts:102:8 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Unexpected any. Specify a different type.
+  
+    100 │ 				},
+    101 │ 			},
+  > 102 │ 		} as any;
+        │ 		     ^^^
+    103 │ 
+    104 │ 		await processor.processEvent(mockEvent);
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+tests/paddle/process-webhook.test.ts:164:8 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Unexpected any. Specify a different type.
+  
+    162 │ 				},
+    163 │ 			},
+  > 164 │ 		} as any;
+        │ 		     ^^^
+    165 │ 
+    166 │ 		await processor.processEvent(mockEvent);
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+tests/paddle/process-webhook.test.ts:202:8 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Unexpected any. Specify a different type.
+  
+    200 │ 				items: [{ price: { id: "pri_test" } }],
+    201 │ 			},
+  > 202 │ 		} as any;
+        │ 		     ^^^
+    203 │ 
+    204 │ 		await processor.processEvent(mockEvent);
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+tests/paddle/process-webhook.test.ts:248:8 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Unexpected any. Specify a different type.
+  
+    246 │ 				items: [{ price: { id: "pri_test" } }],
+    247 │ 			},
+  > 248 │ 		} as any;
+        │ 		     ^^^
+    249 │ 
+    250 │ 		await processor.processEvent(mockEvent);
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+tests/paddle/process-webhook.test.ts:271:8 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Unexpected any. Specify a different type.
+  
+    269 │ 				items: [{ price: { id: "pri_test" } }],
+    270 │ 			},
+  > 271 │ 		} as any;
+        │ 		     ^^^
+    272 │ 
+    273 │ 		await processor.processEvent(mockEvent);
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+tests/paddle/process-webhook.test.ts:292:17 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Unexpected any. Specify a different type.
+  
+    291 │ 		// Access private method for testing
+  > 292 │ 		(processor as any).logWebhookSnapshot("test_event", { foo: "bar" });
+        │ 		              ^^^
+    293 │ 
+    294 │ 		expect(consoleSpy).toHaveBeenCalledWith(
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+tests/paddle/process-webhook.test.ts:311:17 lint/suspicious/noExplicitAny ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Unexpected any. Specify a different type.
+  
+    310 │ 		// Access private method for testing
+  > 311 │ 		(processor as any).logWebhookSnapshot("test_event", { foo: "bar" });
+        │ 		              ^^^
+    312 │ 
+    313 │ 		expect(consoleSpy).not.toHaveBeenCalled();
+  
+  i any disables many type checking rules. Its use should be avoided.
+  
+
+The number of diagnostics exceeds the limit allowed. Use --max-diagnostics to increase it.
+Diagnostics not shown: 30.
+Checked 485 files in 147ms. No fixes applied.
+Found 45 errors.
+Found 4 warnings.
+lint ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+
+error: script "lint" exited with code 1

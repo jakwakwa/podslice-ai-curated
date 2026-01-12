@@ -1,38 +1,36 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import type * as React from "react";
+import * as React from "react";
+
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-10 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer disabled:z-20 disabled:bg-[#000]   min-w-12 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-150",
+	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-not-allowed disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
 	{
 		variants: {
 			variant: {
 				default:
-					"bg-linear-to-br from-[#886FCD] to-violet-700 text-slate-100 hover:text-cyan-100 shadow-md text-shadow-black/20 text-shadow-md  md:min-w-[100px] px-4 text-lg leading-0 disabled:bg-[#000] text-[0.95rem] shadow-[0_2px_4px_1px]  shadow-slate-950/70 rounded-xl  shadow-md shadow-slate-900/30 h-12",
+					"bg-primary text-primary-foreground shadow-sm hover:bg-primary/50 cursor-pointer hover:shadow-md text-shadow-md text-shadow-[#00000060]",
 				destructive:
-					"bg-[#2909129B] border-2 border-[#763751] text-[#C67E98] shadow-[0_2px_4px_1px] shadow-slate-900/40 rounded-full px-0 w-10 h-14 shadow-lg shadow-slate-950/10 text-slate-300/80",
+					"bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
 				outline:
-					"border-[1.5px] border-border/50 bg-gray-900/50 disabled:bg-[#6B6791C8] text-primary-foreground font-bold disabled:text-[#A1B7F4D4] shadow-md shadow-slate-950/20 px-0 overflow-hidden w-[36px] px-4 w-fit max-w-full rounded-xl  disabled:bg-[#000] text-primary-foreground-muted",
+					"border border-border bg-transparent shadow-sm hover:bg-muted hover:text-foreground",
 				secondary:
-					"btn-secondary disabled:bg-[#5E5C6FC8]  rounded-lg border-1 border-[#86D2F5] text-slate-300/80 shadow-[0px_4px_rgba(26, 40, 46, 0.9)] w-full md:max-w-fit px-4 text-[1rem] hover:text-secondary-foreground hover:text-secondary-foreground shadow-lborder-cyan-300 shadow-black shadow-slate-950/20 h-8",
-				ghost: "text-secondary-foreground h-6 ",
-				link: "text-secondary-foreground underline-offset-4 text-slate-100 hover:underline h-6",
-				play: "p-0 m-0 h-8",
-				icon: "h-8 ",
+					"bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 cursor-pointer hover:shadow-md",
+				ghost: "hover:bg-muted hover:text-foreground",
+				link: "text-primary underline-offset-4 hover:underline",
+				play: "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 cursor-pointer rounded-full hover:shadow-md",
+				icon: "hover:bg-muted hover:text-foreground p-0",
 			},
 			size: {
-				default:
-					"h-12 md:px-4 flex items-center justify-center text-[0.8rem] capitalize font-semibold",
-				sm: "h-10 w-fit",
-				lg: "h-14",
-				md: " rounded-md text-[0.9rem]  font-medium",
-				xs: "p-0  h-8 text-xs",
-				icon: "h-8 w-8",
-				play: "btn-playicon",
-				playSmall:
-					"h-12 md:px-4 flex items-center justify-center text-[0.8rem] capitalize font-semibold bg-[var(--header)]/70 disabled:bg-[#fff] text-accent-foreground  font-bold disabled:text-[#A1B7F4D4] shadow-md shadow-slate-950/20 px-0 overflow-hidden w-[36px] px-4 w-fit min-w-full rounded-xl",
-				playLarge: "btn-playicon-lg",
+				default: "h-9 px-4 py-2",
+				sm: "h-8 rounded-md px-3 text-xs",
+				lg: "h-10 rounded-md px-8",
+				icon: "h-9 w-9",
+				xs: "h-6 rounded-md px-2 text-xs", // Added xs size
+				md: "h-9 px-4 py-2", // Added md size (same as default)
+				playSmall: "h-8 w-8 p-0", // Added playSmall
+				playLarge: "h-12 w-12 p-0", // Added playLarge
 			},
 		},
 		defaultVariants: {
@@ -48,47 +46,18 @@ export interface ButtonProps
 	asChild?: boolean;
 }
 
-function Button({
-	className,
-	variant,
-	size,
-	asChild = false,
-	children,
-	icon,
-	...props
-}: React.ComponentProps<"button"> & {
-	variant:
-		| "default"
-		| "destructive"
-		| "outline"
-		| "secondary"
-		| "ghost"
-		| "link"
-		| "play"
-		| "icon";
-	size?:
-		| "default"
-		| "sm"
-		| "xs"
-		| "md"
-		| "lg"
-		| "playLarge"
-		| "playSmall"
-		| "play"
-		| "icon";
-	asChild?: boolean;
-	icon?: React.ReactNode;
-}) {
-	const Comp = asChild ? Slot : "button";
-
-	return (
-		<Comp
-			data-slot="button"
-			className={cn(buttonVariants({ variant, size, className }))}
-			{...props}>
-			{variant === "play" && icon ? icon : children}
-		</Comp>
-	);
-}
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+	({ className, variant, size, asChild = false, ...props }, ref) => {
+		const Comp = asChild ? Slot : "button";
+		return (
+			<Comp
+				className={cn(buttonVariants({ variant, size, className }))}
+				ref={ref}
+				{...props}
+			/>
+		);
+	}
+);
+Button.displayName = "Button";
 
 export { Button, buttonVariants };

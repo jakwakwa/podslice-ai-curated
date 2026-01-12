@@ -49,7 +49,7 @@ export function LandingPageHeader() {
 						<Link href={getClerkSignInUrl()}>
 							<Button
 								variant="default"
-								size="md"
+								size="default"
 								className="text-[0.9rem] px-5 font-bold">
 								Log ins
 							</Button>

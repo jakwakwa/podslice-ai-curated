@@ -1,8 +1,8 @@
-import { CircleCheck } from "lucide-react"
-import type { PlanTier } from "@/lib/types"
+import { CircleCheck } from "lucide-react";
+import type { PlanTier } from "@/lib/types";
 
 interface Props {
-	tier: PlanTier
+	tier: PlanTier;
 }
 
 export function FeaturesList({ tier }: Props) {
@@ -15,5 +15,5 @@ export function FeaturesList({ tier }: Props) {
 				</li>
 			))}
 		</ul>
-	)
+	);
 }

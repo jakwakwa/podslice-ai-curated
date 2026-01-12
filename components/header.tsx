@@ -59,7 +59,7 @@ export function Header() {
 				<Link href={getClerkSignInUrl()}>
 					<Button
 						variant="default"
-						className="bg-white text-white hover:bg-gray-100 rounded-full px-6">
+						className="bg-emerald-500 text-white hover:bg-gray-100 rounded-full px-6">
 						Log in
 					</Button>
 				</Link>

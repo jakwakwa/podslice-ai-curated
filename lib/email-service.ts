@@ -1,6 +1,13 @@
 import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
-import type { EpisodeFailedEmailProps, EpisodeReadyEmailProps, SubscriptionExpiringEmailProps, TestEmailProps, TrialEndingEmailProps, WeeklyReminderEmailProps } from "@/src/emails";
+import type {
+	EpisodeFailedEmailProps,
+	EpisodeReadyEmailProps,
+	SubscriptionExpiringEmailProps,
+	TestEmailProps,
+	TrialEndingEmailProps,
+	WeeklyReminderEmailProps,
+} from "@/src/emails";
 import { EMAIL_TEMPLATES } from "@/src/emails";
 import { renderEmail } from "@/src/emails/render";
 import { getAppUrl } from "@/lib/env";
@@ -52,7 +59,9 @@ class EmailService {
 
 		// Check if Resend is configured
 		if (!process.env.RESEND_API_KEY) {
-			console.warn("Email service not configured. Set RESEND_API_KEY and EMAIL_FROM environment variables.");
+			console.warn(
+				"Email service not configured. Set RESEND_API_KEY and EMAIL_FROM environment variables."
+			);
 			return;
 		}
 
@@ -82,11 +91,17 @@ class EmailService {
 
 	private async sendViaInternalProxy(notification: EmailNotification): Promise<boolean> {
 		try {
-			const baseUrl = process.env.EMAIL_LINK_BASE_URL || getAppUrl() || process.env.NEXT_PUBLIC_APP_URL || "";
+			const baseUrl =
+				process.env.EMAIL_LINK_BASE_URL ||
+				getAppUrl() ||
+				process.env.NEXT_PUBLIC_APP_URL ||
+				"";
 			const url = `${baseUrl.replace(/\/$/, "")}/api/internal/send-email`;
 			const secret = process.env.INTERNAL_API_SECRET;
 			if (!(baseUrl && secret)) {
-				console.warn("Email proxy unavailable - missing NEXT_PUBLIC_APP_URL/getAppUrl or INTERNAL_API_SECRET");
+				console.warn(
+					"Email proxy unavailable - missing NEXT_PUBLIC_APP_URL/getAppUrl or INTERNAL_API_SECRET"
+				);
 				return false;
 			}
 			const res = await fetch(url, {
@@ -108,13 +123,23 @@ class EmailService {
 		}
 	}
 
-	private async sendTemplateViaProxy(templateId: string, to: string, props: any): Promise<boolean> {
+	private async sendTemplateViaProxy(
+		templateId: string,
+		to: string,
+		props: any
+	): Promise<boolean> {
 		try {
-			const baseUrl = process.env.EMAIL_LINK_BASE_URL || getAppUrl() || process.env.NEXT_PUBLIC_APP_URL || "";
+			const baseUrl =
+				process.env.EMAIL_LINK_BASE_URL ||
+				getAppUrl() ||
+				process.env.NEXT_PUBLIC_APP_URL ||
+				"";
 			const url = `${baseUrl.replace(/\/$/, "")}/api/internal/send-email`;
 			const secret = process.env.INTERNAL_API_SECRET;
 			if (!(baseUrl && secret)) {
-				console.warn("Email proxy unavailable - missing NEXT_PUBLIC_APP_URL/getAppUrl or INTERNAL_API_SECRET");
+				console.warn(
+					"Email proxy unavailable - missing NEXT_PUBLIC_APP_URL/getAppUrl or INTERNAL_API_SECRET"
+				);
 				return false;
 			}
 			const res = await fetch(url, {
@@ -130,7 +155,11 @@ class EmailService {
 				}),
 			});
 			if (!res.ok) {
-				console.error("Email template proxy request failed:", res.status, await res.text());
+				console.error(
+					"Email template proxy request failed:",
+					res.status,
+					await res.text()
+				);
 				return false;
 			}
 			return true;
@@ -152,11 +181,20 @@ class EmailService {
 
 		try {
 			// Defensive: ensure primitives are strings for Resend API
-			const to = typeof notification.to === "string" ? notification.to : String(notification.to);
+			const to =
+				typeof notification.to === "string" ? notification.to : String(notification.to);
 			const subject =
-				typeof notification.subject === "string" ? notification.subject : String(notification.subject);
-			const text = typeof notification.text === "string" ? notification.text : String(notification.text);
-			const html = typeof notification.html === "string" ? notification.html : String(notification.html);
+				typeof notification.subject === "string"
+					? notification.subject
+					: String(notification.subject);
+			const text =
+				typeof notification.text === "string"
+					? notification.text
+					: String(notification.text);
+			const html =
+				typeof notification.html === "string"
+					? notification.html
+					: String(notification.html);
 
 			const result = await this.client.emails.send({
 				from: process.env.EMAIL_FROM,
@@ -179,7 +217,11 @@ class EmailService {
 	}
 
 	// Episode ready notification
-	async sendEpisodeReadyEmail(userId: string, userEmail: string, data: EpisodeReadyEmailData): Promise<boolean> {
+	async sendEpisodeReadyEmail(
+		userId: string,
+		userEmail: string,
+		data: EpisodeReadyEmailData
+	): Promise<boolean> {
 		if (!(await this.canSendEmail(userId))) {
 			console.log(`Email notifications disabled for user ${userId}`);
 			return false;
@@ -194,7 +236,10 @@ class EmailService {
 
 		// Try to render email - if this fails (e.g., in Inngest runtime), send template data to proxy
 		try {
-			const { html, text } = await renderEmail(EMAIL_TEMPLATES.EPISODE_READY.component, emailProps);
+			const { html, text } = await renderEmail(
+				EMAIL_TEMPLATES.EPISODE_READY.component,
+				emailProps
+			);
 
 			const notification: EmailNotification = {
 				to: userEmail,
@@ -205,14 +250,21 @@ class EmailService {
 
 			return await this.sendEmail(notification);
 		} catch (renderError) {
-			console.warn("Email rendering failed in current runtime, using proxy with template data:", renderError);
+			console.warn(
+				"Email rendering failed in current runtime, using proxy with template data:",
+				renderError
+			);
 			// Send raw template data to proxy for rendering
 			return await this.sendTemplateViaProxy("EPISODE_READY", userEmail, emailProps);
 		}
 	}
 
 	// Episode failed notification
-	async sendEpisodeFailedEmail(userId: string, userEmail: string, data: EpisodeFailedEmailData): Promise<boolean> {
+	async sendEpisodeFailedEmail(
+		userId: string,
+		userEmail: string,
+		data: EpisodeFailedEmailData
+	): Promise<boolean> {
 		if (!(await this.canSendEmail(userId))) {
 			console.log(`Email notifications disabled for user ${userId}`);
 			return false;
@@ -224,7 +276,10 @@ class EmailService {
 		};
 
 		try {
-			const { html, text } = await renderEmail(EMAIL_TEMPLATES.EPISODE_FAILED.component, emailProps);
+			const { html, text } = await renderEmail(
+				EMAIL_TEMPLATES.EPISODE_FAILED.component,
+				emailProps
+			);
 
 			const notification: EmailNotification = {
 				to: userEmail,
@@ -241,7 +296,11 @@ class EmailService {
 	}
 
 	// Trial ending notification
-	async sendTrialEndingEmail(userId: string, userEmail: string, data: TrialEndingEmailData): Promise<boolean> {
+	async sendTrialEndingEmail(
+		userId: string,
+		userEmail: string,
+		data: TrialEndingEmailData
+	): Promise<boolean> {
 		if (!(await this.canSendEmail(userId))) {
 			console.log(`Email notifications disabled for user ${userId}`);
 			return false;
@@ -253,7 +312,10 @@ class EmailService {
 			upgradeUrl: data.upgradeUrl,
 		};
 
-		const { html, text } = await renderEmail(EMAIL_TEMPLATES.TRIAL_ENDING.component, emailProps);
+		const { html, text } = await renderEmail(
+			EMAIL_TEMPLATES.TRIAL_ENDING.component,
+			emailProps
+		);
 
 		const notification: EmailNotification = {
 			to: userEmail,
@@ -266,7 +328,11 @@ class EmailService {
 	}
 
 	// Subscription expiring notification
-	async sendSubscriptionExpiringEmail(userId: string, userEmail: string, data: SubscriptionExpiringEmailData): Promise<boolean> {
+	async sendSubscriptionExpiringEmail(
+		userId: string,
+		userEmail: string,
+		data: SubscriptionExpiringEmailData
+	): Promise<boolean> {
 		if (!(await this.canSendEmail(userId))) {
 			console.log(`Email notifications disabled for user ${userId}`);
 			return false;
@@ -278,7 +344,10 @@ class EmailService {
 			renewUrl: data.renewUrl,
 		};
 
-		const { html, text } = await renderEmail(EMAIL_TEMPLATES.SUBSCRIPTION_EXPIRING.component, emailProps);
+		const { html, text } = await renderEmail(
+			EMAIL_TEMPLATES.SUBSCRIPTION_EXPIRING.component,
+			emailProps
+		);
 
 		const notification: EmailNotification = {
 			to: userEmail,
@@ -291,7 +360,11 @@ class EmailService {
 	}
 
 	// Weekly reminder notification
-	async sendWeeklyReminderEmail(userId: string, userEmail: string, userName: string): Promise<boolean> {
+	async sendWeeklyReminderEmail(
+		userId: string,
+		userEmail: string,
+		userName: string
+	): Promise<boolean> {
 		if (!(await this.canSendEmail(userId))) {
 			console.log(`Email notifications disabled for user ${userId}`);
 			return false;
@@ -301,7 +374,10 @@ class EmailService {
 			userName,
 		};
 
-		const { html, text } = await renderEmail(EMAIL_TEMPLATES.WEEKLY_REMINDER.component, emailProps);
+		const { html, text } = await renderEmail(
+			EMAIL_TEMPLATES.WEEKLY_REMINDER.component,
+			emailProps
+		);
 
 		const notification: EmailNotification = {
 			to: userEmail,

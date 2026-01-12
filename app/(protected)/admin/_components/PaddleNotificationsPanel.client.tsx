@@ -478,10 +478,13 @@ export default function PaddleNotificationsPanelClient({
 						</Button>
 						<Button
 							onClick={handleCreate}
-							disabled={isSubmitting ||
+							disabled={
+								isSubmitting ||
 								!formData.description ||
 								!formData.destination ||
-								formData.subscribed_events.length === 0} variant={"default"}>
+								formData.subscribed_events.length === 0
+							}
+							variant={"default"}>
 							{isSubmitting ? "Creating..." : "Create Destination"}
 						</Button>
 					</DialogFooter>
@@ -595,10 +598,13 @@ export default function PaddleNotificationsPanelClient({
 						</Button>
 						<Button
 							onClick={handleEdit}
-							disabled={isSubmitting ||
+							disabled={
+								isSubmitting ||
 								!formData.description ||
 								!formData.destination ||
-								formData.subscribed_events.length === 0} variant={"link"}>
+								formData.subscribed_events.length === 0
+							}
+							variant={"link"}>
 							{isSubmitting ? "Updating..." : "Update Destination"}
 						</Button>
 					</DialogFooter>
@@ -651,7 +657,9 @@ export default function PaddleNotificationsPanelClient({
 					</div>
 
 					<DialogFooter>
-						<Button onClick={closeSecretDialog} variant={"link"}>I've Saved the Secret</Button>
+						<Button onClick={closeSecretDialog} variant={"link"}>
+							I've Saved the Secret
+						</Button>
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>

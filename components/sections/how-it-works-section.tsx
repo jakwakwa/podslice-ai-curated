@@ -13,42 +13,42 @@ interface SectionProps {
 const steps = [
 	{
 		icon: RiSearchEyeLine,
-		title: "Analyze Content",
+		title: "Input Research",
 		description:
-			"Simply provide a Youtube Video you don't have time to watch or select a News topic you want to catch up on.",
-		color: "from-teal-400 to-cyan-700",
-		bgColor: "bg-cyan-100",
+			"Drop in PDFs, earnings call transcripts, or point to research-heavy podcasts and videos you need to process.",
+		color: "from-emerald-400 to-emerald-700",
+		bgColor: "bg-emerald-100",
 	},
 	{
 		icon: HiOutlineSparkles,
-		title: "AI Analysis",
+		title: "Signal Extraction",
 		description:
-			"Our advanced AI (powered by Google's Gemini) instantly analyzes the content, identifies the key points, and understands the main arguments.",
+			"Our proprietary AI models instantly parse the audio and text for tickers, sentiment, and contrarian insights.",
 		color: "from-pink-400 to-violet-900",
 		bgColor: "bg-pink-50",
 	},
 	{
 		icon: Brain,
-		title: "Smart Summaries & Scripts",
+		title: "Intelligence Reports",
 		description:
-			"It then writes a detailed, structured text summary and generates a script for a conversational, mini-podcast.",
-		color: "from-teal-500 to-cyan-800",
-		bgColor: "bg-teal-50",
+			"Podslice generates a structured executive brief, mapping ticker-specific sentiment and rotation signals.",
+		color: "from-emerald-500 to-emerald-800",
+		bgColor: "bg-emerald-50",
 	},
 	{
 		icon: RiVoiceAiLine,
-		title: "Natural Audio",
+		title: "High-Fidelity Briefings",
 		description:
-			"We use a high-quality, natural-sounding AI voice to turn that script into a polished podcast episode.",
-		color: "from-amber-500 to-emerald-900",
-		bgColor: "bg-amber-50",
+			"Synthesized PM-style audio briefings are generated, perfect for your morning commute or desk-side review.",
+		color: "from-emerald-500 to-emerald-900",
+		bgColor: "bg-emerald-50",
 	},
 	{
 		icon: IconChecklist,
-		title: "Ready For You",
+		title: "Actionable Intelligence",
 		description:
-			"Your new summary lands in your personal feed, complete with its own structured text page and the polished audio episode.",
-		color: "from-pink-600 to-teal-950",
+			"Your dashboard updates with ground-truth audited insights, ready for deployment into your modern portfolio.",
+		color: "from-pink-600 to-emerald-950",
 		bgColor: "bg-violet-50",
 	},
 ];
@@ -90,7 +90,7 @@ export function HowItWorksSection({ isActive }: SectionProps) {
 	const canScrollRight = currentIndex < steps.length - 1;
 
 	return (
-		<div className="relative h-full w-full bg-gradient-to-b from-teal-50 to-cyan-50 overflow-hidden">
+		<div className="relative h-full w-full bg-gradient-to-b from-emerald-50 to-emerald-50 overflow-hidden">
 			<div className="relative z-10 h-full flex flex-col justify-center">
 				{/* Header */}
 				<div className="px-6 md:px-12 lg:px-24 max-w-7xl mx-auto w-full mb-8">
@@ -99,8 +99,8 @@ export function HowItWorksSection({ isActive }: SectionProps) {
 							mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
 						}`}>
 						<div className="flex items-center gap-2 mb-4">
-							<HiOutlineSparkles className="w-10 h-10 text-cyan-400" />
-							<span className="text-cyan-400 font-medium text-xl">AI Inside</span>
+							<HiOutlineSparkles className="w-10 h-10 text-emerald-400" />
+							<span className="text-emerald-400 font-medium text-xl">AI Inside</span>
 						</div>
 						<h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-900 text-balance">
 							How It Works

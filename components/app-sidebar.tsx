@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { Home, PlayCircleIcon, Radio, SparklesIcon } from "lucide-react";
+import { BookOpen, Home, PlayCircleIcon, Radio, SparklesIcon } from "lucide-react";
 import type * as React from "react";
 import { RiCompassDiscoverLine } from "react-icons/ri";
 import { NavMain } from "@/components/nav-main";
@@ -47,6 +47,11 @@ export const navItems: NavItem[] = [
 		title: "Your Ai Summaries",
 		url: "/my-episodes",
 		icon: PlayCircleIcon,
+	},
+	{
+		title: "Smart Research Vault",
+		url: "/smart-research-vault",
+		icon: BookOpen,
 	},
 	// {
 	// 	title: "Content Preferences",

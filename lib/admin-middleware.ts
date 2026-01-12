@@ -7,7 +7,10 @@ export async function requireAdminMiddleware(): Promise<Response | undefined> {
 		const { userId } = await auth();
 		if (!userId) return new NextResponse("Unauthorized", { status: 401 });
 
-		const user = await prisma.user.findUnique({ where: { user_id: userId }, select: { is_admin: true } });
+		const user = await prisma.user.findUnique({
+			where: { user_id: userId },
+			select: { is_admin: true },
+		});
 
 		if (!user?.is_admin) return new NextResponse("Forbidden", { status: 403 });
 		return undefined;

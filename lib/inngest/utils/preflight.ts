@@ -8,7 +8,10 @@ export type ProbeResult = {
 	suspectedAudio: boolean;
 };
 
-export async function preflightProbe(url: string, timeoutMs = 6000): Promise<Result<ProbeResult>> {
+export async function preflightProbe(
+	url: string,
+	timeoutMs = 6000
+): Promise<Result<ProbeResult>> {
 	try {
 		const controller = new AbortController();
 		const _t = setTimeout(() => controller.abort(), timeoutMs);
@@ -38,7 +41,10 @@ export async function preflightProbe(url: string, timeoutMs = 6000): Promise<Res
 			clearTimeout(t2);
 			const ct = range.headers.get("content-type") || undefined;
 			const buf = Buffer.from(await range.arrayBuffer());
-			const startsWithTag = buf.toString("utf8", 0, Math.min(buf.length, 32)).trimStart().startsWith("<");
+			const startsWithTag = buf
+				.toString("utf8", 0, Math.min(buf.length, 32))
+				.trimStart()
+				.startsWith("<");
 			const suspectedAudio = ct?.startsWith("audio/") === true || !startsWithTag;
 
 			// Per project "dos-and-donts": treat watch/watch?v (YouTube) HTML responses as
@@ -46,9 +52,17 @@ export async function preflightProbe(url: string, timeoutMs = 6000): Promise<Res
 			// rather than failing immediately on HTML from YouTube landing pages / consent walls.
 			if (!suspectedAudio) {
 				if (/youtu\.be|youtube\.com/i.test(url)) {
-					return success({ url, contentType: ct, contentLength: undefined, suspectedAudio: false });
+					return success({
+						url,
+						contentType: ct,
+						contentLength: undefined,
+						suspectedAudio: false,
+					});
 				}
-				return failure("invalid_input", `Source not audio. content-type: ${ct || "unknown"}`);
+				return failure(
+					"invalid_input",
+					`Source not audio. content-type: ${ct || "unknown"}`
+				);
 			}
 			return success({ url, contentType: ct, contentLength: undefined, suspectedAudio });
 		} finally {

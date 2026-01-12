@@ -4,7 +4,11 @@
  * video duration limits, and other processing parameters.
  */
 
-import { getEpisodeTargetMinutes, getMaxDurationSeconds, getProviderWindowSeconds } from "@/lib/env";
+import {
+	getEpisodeTargetMinutes,
+	getMaxDurationSeconds,
+	getProviderWindowSeconds,
+} from "@/lib/env";
 
 // Define the structure for our processing configuration
 interface ProcessingLimits {

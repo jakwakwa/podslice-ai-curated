@@ -3,13 +3,13 @@
 import { useRef, useState } from "react";
 import { CTASection } from "./sections/cta-section";
 import { FeaturesSection } from "./sections/features-section";
-import { Hetealction } from "./sections/hero-section";
+import { HeroSection } from "./sections/hero-section";
 import { HowItWorksSection } from "./sections/how-it-works-section";
 import { PersonalizedFeedSection } from "./sections/personalized-feed-section";
 import { PricingSection } from "./sections/pricing-section";
 
 const sections = [
-	{ id: "hero", component: Hetealction },
+	{ id: "hero", component: HeroSection },
 	{ id: "how-it-works", component: HowItWorksSection },
 	{ id: "personalized", component: PersonalizedFeedSection },
 	{ id: "features", component: FeaturesSection },
@@ -60,8 +60,8 @@ export function HeroCarousel() {
 						onClick={() => scrollToSection(index)}
 						className={`w-2 h-2 rounded-full transition-all duration-500 ${
 							index === activeIndex
-								? "bg-white scale-150 shadow-lg"
-								: "bg-white/40 hover:bg-white/60"
+								? "bg-violet-500 scale-150 shadow-lg"
+								: "bg-emerald/40 hover:bg-white/60"
 						}`}
 						aria-label={`Go to section ${index + 1}`}
 					/>

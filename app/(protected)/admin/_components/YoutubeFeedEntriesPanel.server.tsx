@@ -9,7 +9,7 @@ export default async function YoutubeFeedEntriesPanel() {
 		take: 100,
 	});
 
-	const shaped = entries.map((e) => ({
+	const shaped = entries.map(e => ({
 		id: e.id,
 		userId: e.user?.user_id ?? e.user_id,
 		userEmail: e.user?.email ?? null,
@@ -21,6 +21,3 @@ export default async function YoutubeFeedEntriesPanel() {
 
 	return <YoutubeFeedEntriesPanelClient entries={shaped} />;
 }
-
-
-

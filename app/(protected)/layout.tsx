@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth, useUser } from "@clerk/nextjs";
-import { HomeIcon, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -28,6 +28,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSubscriptionInit } from "@/hooks/useSubscriptionInit";
 import { Footer } from "./footer";
+// import Silk from "@/components/Silk";
 
 function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 	const { state } = useSidebar();
@@ -48,35 +49,30 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 
 			<SidebarInset>
 				<header
-					className={`fixed flex ${isMobile ? "h-18" : "h-16"} bg-header/90   backdrop-blur-[13px]   shadow-[0_1px_5px_3px_rgba(0,0.2,100,0.12)] overflow-hidden shrink-0 items-center border-none gap-4   group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 mt-0 max-w-screen justify-between px-4  py-0 overflow-y-scroll transition all  duration-200 ease-in-out ${state === "expanded" ? "" : "collapsed"}`}>
+					className={`fixed flex ${isMobile ? "h-18 w-screen left-0 top-0 ml-0" : `h-16 right-0 ${state === "expanded" ? "left-(--sidebar-width)" : "left-(--sidebar-width-icon)"}`} bg-gray-950 shadow-[0_1px_5px_3px_rgba(0,0.2,100,0.12)] overflow-hidden shrink-0 items-center border-none gap-4 z-50 group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 mt-0 justify-between px-0  py-0 overflow-y-scroll transition-all  duration-200 ease-in-out`}>
 					<div
-						className={`flex items-center ${isMobile ? "h-18" : "h-14"} justify-start  ${state === "expanded" ? "md:px-4 w-[240px]" : "md:px-0 w-[80px] "}`}>
-						<Link
-							href="/dashboard"
-							className={`flex items-center h-24 justify-start text-xs  ${state === "expanded" ? "px-0  ml-0 md:pl-0" : "md:pl-1"}`}>
-							{!isMobile ? (
-								<Image
-									className={`transition-all flex flex-row items-center  duration-300 ease-in-out w-full ${state === "expanded" ? "h-18 max-w-[124px] " : "max-w-[40px]   justify-center"}`}
-									src={`${state === "expanded" ? "/logo" : "/icon"}.svg`}
-									width={124}
-									height={14}
-									alt={`Menu`}
-								/>
-							) : (
-								<Image
-									className={`transition-all flex flex-row items-center  h-21 duration-300 ease-in-out w-full ${state === "expanded" ? "h-21 max-w-[124px] " : "max-w-[200px] h-21 justify-center"}`}
-									src={"/logo.svg"}
-									width={200}
-									height={28}
-									alt={`Menu`}
-								/>
-							)}
-							<HomeIcon className="mt-1 mr-4" height={14} />
-						</Link>
+						className={`flex items-center ${isMobile ? "h-18" : "h-6 mx-4 overflow-hidden"}   ${state === "expanded" ? "md:flex-row md:px-4" : "md:flex-row md:px-0"}`}>
+						{!isMobile ? (
+							<Image
+								className={`transition-all flex flex-row items-center ${isMobile ? "h-18" : "h-10"} duration-300  ease-in-out ${state === "expanded" ? "h-21 max-w-[124px] " : "max-w-[20px] h-21 justify-center"}`}
+								src={state === "expanded" ? "/logo.svg" : "/icon.svg"}
+								width={200}
+								height={28}
+								alt={`Podslice`}
+							/>
+						) : (
+							<Image
+								className={`transition-all flex flex-row items-center ${isMobile ? "h-18" : "h-14"} duration-300 ease-in-out w-full ${state === "expanded" ? "h-21 max-w-[124px] " : "max-w-[200px] h-21 justify-center"}`}
+								src={"/logo.svg"}
+								width={200}
+								height={28}
+								alt={`Podslice`}
+							/>
+						)}
 
 						<SidebarTrigger
-							className="hidden md:block md:w-[px] w-0 h-0 md:h-[14px] border border-[#50647a0] border-none shadow-none"
-							size={"xs"}
+							className="md:block md:w-[px] h-0 md:h-[14px] border border-[#50647a0] border-none shadow-none w-[54px]"
+							size="sm"
 							variant="outline"
 						/>
 					</div>
@@ -86,17 +82,17 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 						{isMobile && typeof window !== "undefined" && (
 							<Drawer open={openMobileDrawer} onOpenChange={setOpenMobileDrawer}>
 								<DrawerTrigger asChild>
-									<Button variant="outline" size="sm" className="">
+									<Button variant="outline" size="sm" className="mr-4">
 										<Menu />
 										<span className="hidden">Nav Menu Drawer</span>
 									</Button>
 								</DrawerTrigger>
 								<DrawerContent className="sm:max-w-screen flex flex-col justify-center items-center bg-header backdrop-blur-3xl border-none rounded-t-xl p-0 w-full ">
 									<DrawerHeader>
-										<DrawerTitle className=" text-center text-cyan-100/90">
+										<DrawerTitle className=" text-center text-emerald-100/90">
 											Menu
 										</DrawerTitle>
-										<DrawerDescription className="text-center text-cyan-100/50">
+										<DrawerDescription className="text-center text-emerald-100/50">
 											Navigate within the app
 										</DrawerDescription>
 										<ProfileForm setOpenMobileDrawer={setOpenMobileDrawer} />
@@ -107,15 +103,31 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 						{!isMobile && typeof window !== "undefined" && <NotificationBell />}
 
 						{isMobile && <UserNavMobile user={userData} />}
-						{/*<ModeToggle />*/}
 					</div>
 				</header>
 
 				<div
-					className={` flex flex-col flex-grow transition-all duration-300 ease-in-out px-0 md:px-0 mt-8 md:mt-0 mb-2 m-0 p-0 h-screen ${state === "expanded" ? "ml-0 w-full md:ml-0 md:p-0  " : "ml-0 md:ml-0 w-full md:min-w-[100vw]"}`}>
-					<div className={"bg-pattern layout-inset"} />
+					className={` flex flex-col grow transition-all duration-300 ease-in-out px-0 md:px-0 mt-8 md:mt-0 mb-2 m-0 p-0 h-screen ${state === "expanded" ? "ml-0 w-full md:ml-0 md:p-0  " : "ml-0 md:ml-0 w-full md:min-w-screen"}`}>
+					<div className={"layout-inset"} />
+
 					<div
-						className={`  w-screen md:min-w-none animated-gradient  backdrop-blur-[3px]  mx-0  p-0 flex flex-col my-0 md:flex-row pt-6 md:p-3 md:py-16 md:mx-0 pl-0  md:my-0   ${state === "expanded" ? "m-0 md:ml-0 md:p-0  lg:px-2 lg:pb-8 max-w-full" : "md:pl-12 pr-0 md:pr-24 md:ml-0  min-w-screen  "}`}>
+						className={` w-screen md:min-w-none   animated-gradient   backdrop-blur-xs z-0  mx-0  p-0 flex flex-col my-0 md:flex-row pt-6 md:p-3 md:py-16 md:mx-0 pl-0  md:my-0   ${state === "expanded" ? "m-0 md:ml-0 md:p-0  lg:px-2 lg:pb-8 max-w-full" : "md:pl-12 pr-0 md:pr-24 md:ml-0  min-w-screen "}`}>
+						{/* <HoleBackground
+							numberOfDiscs={200}
+							numberOfLines={100}
+							strokeColor="#000"
+							className="absolute inset-0 flex items-start justify-center   -z-1 top-0 opacity-40 backdrop-blur-2xl  size-250 w-screen md:min-w-none  mx-0  p-0  flex-col my-0 md:flex-row pt-6 md:p-3 md:py-16 md:mx-0 pl-0 md:my-0  "
+						/> */}
+						{/* <div className="absolute top-0  left-0 w-screen -z-1 h-full">
+							<Silk
+								speed={1.8}
+								scale={0.4}
+								color="#526066"
+								noiseIntensity={3.8}
+								rotation={2.7}
+							/>
+						</div> */}
+
 						{children}
 					</div>
 					<Footer />
@@ -131,7 +143,7 @@ const UserNavMobile = ({
 	user: { name: string; email: string; avatar: string };
 }) => {
 	return (
-		<div className=" rounded-lg relative  md:max-h-9 flex items-center md:items-start  max-w-[36px]  border-0 border-cyan-100/10 bg-sidebar/10 overflow-hidden justify-center  outline-0  p-1  transition-all duration-300 ease-in-out max-h-9 h-9 mx-auto ">
+		<div className=" rounded-lg relative  md:max-h-9 flex items-center md:items-start  max-w-[36px]  border-0 border-emerald-100/10 bg-sidebar/10 overflow-hidden justify-center  outline-0  p-1  transition-all duration-300 ease-in-out max-h-9 h-9 mx-auto ">
 			<NavUser user={user} />
 		</div>
 	);
@@ -227,13 +239,13 @@ function ProfileForm({
 					<li key={item.title} className=" text-left text-sm w-full ">
 						{item.subItems && item.subItems.length > 0 ? (
 							// Parent item with subItems - not clickable
-							<div className="  bg-black/0 flex flex-col text-left  items-start justify-center cursor-pointer my-0 mx-auto gap-2 font-medium border border-cyan-600/0 shadow-md text-base   shadow-slate-950/0 text-shadow-slate-950/80 text-cyan-300 max-w-[80%] md:max-w-fit ">
-								<div className="flex pl-8 flex-row items-center justify-start gap-2 mt-4 uppercase">
+							<div className="  bg-black/0 flex flex-col text-left  items-start justify-center cursor-pointer my-0 mx-auto gap-2 font-medium border border-emerald-600/0 shadow-md text-base   shadow-slate-950/0 text-shadow-slate-950/80 text-emerald-300 max-w-[80%] md:max-w-fit ">
+								<div className="flex pl-8 flex-row items-center justify-start gap-2 mt-4 uppercase ">
 									{item.icon && <item.icon className="size-6    text-violet-500" />}
 									{item.title}
 								</div>
 
-								<ul className="flex text-sm font-bold text-cyan-400 flex-col gap-2 py-2 px-8 w-full mt-0 mb-2 titlecase ">
+								<ul className="flex text-sm font-bold text-emerald-400 flex-col gap-2 py-2 px-8 w-full mt-0 mb-2 titlecase ">
 									{item.subItems.map(subItem => (
 										<li
 											key={subItem.name}
@@ -241,7 +253,7 @@ function ProfileForm({
 											<Link
 												href={subItem.url}
 												onClick={() => setOpenMobileDrawer(false)}
-												className="text-cyan-200 py-3 bg-black/0 rounded-lg flex text-left flex-row border-[1px] titlecase font-bold  border-cyan-800  items-center justify-start cursor-pointer gap-2  shadow-sm max-w-[60%] px-8 min-w-full my-0">
+												className="text-emerald-400 py-3 bg-black/0 rounded-lg flex text-left flex-row border titlecase font-bold  border-emerald-800  items-center justify-start cursor-pointer gap-2  shadow-sm max-w-[60%] px-8 min-w-full my-0">
 												{subItem.name}
 											</Link>
 										</li>
@@ -253,8 +265,8 @@ function ProfileForm({
 							<Link
 								href={item.url}
 								onClick={() => setOpenMobileDrawer(false)}
-								className="py-3 bg-black/10 rounded-lg flex text-left flex-row items-center justify-start cursor-pointer my-0 mx-auto gap-2 font-medium border border-slate-600 shadow-md shadow-slate-950/60 text-shadow-slate-950/80 text-cyan-200/80  max-w-[70%] md:max-w-fit pl-8">
-								{item.icon && <item.icon className="size-6	 me-2  text-teal-300 " />}
+								className="py-3 bg-black/10 rounded-lg flex text-left flex-row items-center justify-start cursor-pointer my-0 mx-auto gap-2 font-medium border border-slate-600 shadow-md shadow-slate-950/60 text-shadow-slate-950/80 text-emerald-400/80  max-w-[70%] md:max-w-fit pl-8">
+								{item.icon && <item.icon className="size-6	 me-2  text-emerald-300 " />}
 								{item.title}
 							</Link>
 						)}

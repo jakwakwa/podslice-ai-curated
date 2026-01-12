@@ -21,8 +21,7 @@ export function EmailHeader() {
 					style={{
 						textDecoration: "none",
 						display: "inline-block",
-					}}
-				>
+					}}>
 					<Img
 						src={logoUrl}
 						alt={alt}

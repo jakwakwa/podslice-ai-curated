@@ -7,9 +7,14 @@ declare module "motion/react" {
 		restDelta?: number;
 	}
 	export interface Variants {
-		[key: string]: Record<string, unknown> | ((...args: unknown[]) => Record<string, unknown>);
+		[key: string]:
+			| Record<string, unknown>
+			| ((...args: unknown[]) => Record<string, unknown>);
 	}
-	export const AnimatePresence: React.ComponentType<{ children?: React.ReactNode; initial?: boolean }>;
+	export const AnimatePresence: React.ComponentType<{
+		children?: React.ReactNode;
+		initial?: boolean;
+	}>;
 }
 
 declare module "motion/react-client" {

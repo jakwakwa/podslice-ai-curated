@@ -187,7 +187,7 @@ export function BundleList() {
 										<div className="mx-auto w-full flex flex-row flex-wrap lg:flex-row items-end gap-2">
 											<Button
 												variant="outline"
-												size="xs"
+												size="sm"
 												onClick={() => copyShareLink(bundle.shared_bundle_id)}>
 												{copiedId === bundle.shared_bundle_id ? (
 													<Check className="h-4 w-4 mr-1" />

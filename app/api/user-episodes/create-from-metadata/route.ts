@@ -2,7 +2,6 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { PRICING_TIER } from "@/config/paddle-config";
-import { VOICE_NAMES } from "@/lib/constants/voices";
 import { inngest } from "@/lib/inngest/client";
 import { prisma } from "@/lib/prisma";
 import {
@@ -18,9 +17,13 @@ const createFromMetadataSchema = z.object({
 	youtubeUrl: z.string().url().optional(),
 	lang: z.string().min(2).max(10).optional(),
 	generationMode: z.enum(["single", "multi"]).default("single").optional(),
-	voiceA: z.enum(VOICE_NAMES as unknown as [string, ...string[]]).optional(),
-	voiceB: z.enum(VOICE_NAMES as unknown as [string, ...string[]]).optional(),
+	voiceA: z.string().optional(), // Allow legacy or new voice names
+	voiceB: z.string().optional(),
 	summaryLength: z.enum(["SHORT", "MEDIUM", "LONG"]).default("SHORT"),
+	// B2B Research Lab
+	referenceDocUrl: z.string().url().optional().or(z.literal("")),
+	contextWeight: z.number().min(0).max(1).optional(),
+	voiceArchetype: z.string().optional(),
 });
 
 export async function POST(request: Request) {
@@ -42,6 +45,9 @@ export async function POST(request: Request) {
 			voiceA,
 			voiceB,
 			summaryLength,
+			referenceDocUrl,
+			contextWeight,
+			voiceArchetype,
 		} = parsed.data;
 
 		// Fetch completed episodes with their lengths (excluding auto-generated)
@@ -78,6 +84,10 @@ export async function POST(request: Request) {
 				episode_title: title,
 				summary_length: summaryLength,
 				status: "PENDING",
+				// B2B Fields
+				reference_doc_url: referenceDocUrl,
+				context_weight: contextWeight,
+				voice_archetype: voiceArchetype || voiceA, // Fallback or use selected voice
 			},
 		});
 
@@ -94,6 +104,10 @@ export async function POST(request: Request) {
 				voiceA,
 				voiceB,
 				summaryLength,
+				// B2B Fields
+				referenceDocUrl,
+				contextWeight,
+				voiceArchetype,
 			},
 		});
 

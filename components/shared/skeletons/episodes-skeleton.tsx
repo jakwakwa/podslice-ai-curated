@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function EpisodesFilterSkeleton() {
 	return (
-		<div className="flex flex-col gap-4">
+		<div className="flex flex-col gap-4 h-screen">
 			<Skeleton className="bg-[#2f4383]/40 h-[45px] w-full animate-pulse" />
 			<Skeleton className="bg-[#2f4383]/40 h-[45px] w-full animate-pulse max-w-1/3" />
 		</div>
@@ -16,12 +16,14 @@ export function EpisodesFilterSkeleton() {
 }
 
 export function EpisodeCardSkeleton() {
-	return <Skeleton className="bg-[#2f4383]/40 h-[105px] w-full animate-pulse" />;
+	return (
+		<Skeleton className="bg-[#2f4383]/40 h-[105px] w-full animate-pulse  min-h-screen" />
+	);
 }
 
 export function EpisodesListSkeleton({ count = 5 }: { count?: number }) {
 	return (
-		<CardContent className="md:episode-card-wrapper-dark space-y-2 flex-col flex w-full">
+		<CardContent className="md:episode-card-wrapper-dark  min-h-screen space-y-2 flex-col flex w-full">
 			{Array.from({ length: count }).map((_, i) => (
 				<EpisodeCardSkeleton key={i} />
 			))}
@@ -34,7 +36,8 @@ export function EpisodesPageSkeleton() {
 		<div className="px-6 py-14 md:px-8 md:pt-12 md:mt-4 border-1 border-border rounded-4xl mx-auto bg-big-card">
 			<div className="flex flex-col gap-4">
 				<EpisodesFilterSkeleton />
-				<EpisodesListSkeleton />
+				<EpisodesListSkeleton count={5} />
+				<EpisodesListSkeleton count={5} />
 			</div>
 		</div>
 	);

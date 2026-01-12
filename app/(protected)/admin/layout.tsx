@@ -10,7 +10,11 @@ export const metadata: Metadata = {
 	title: "Admin Portal",
 };
 
-export default async function AdminLayout({ children }: { children: ReactNode }): Promise<ReactElement> {
+export default async function AdminLayout({
+	children,
+}: {
+	children: ReactNode;
+}): Promise<ReactElement> {
 	// Server-side guard: only ADMIN members may access any /admin route
 	const { userId } = await auth();
 
@@ -19,7 +23,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 		redirect("/sign-in");
 	}
 
-	const user = await prisma.user.findUnique({ where: { user_id: userId }, select: { is_admin: true } });
+	const user = await prisma.user.findUnique({
+		where: { user_id: userId },
+		select: { is_admin: true },
+	});
 
 	if (!user?.is_admin) {
 		// Non-admins are redirected away from the admin portal

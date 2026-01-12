@@ -6,6 +6,7 @@ import type React from "react";
 import { Toaster } from "sonner";
 import { GlobalAudioPlayerSheet } from "@/components/ui/global-audio-player-sheet";
 import { GlobalProgressBar } from "@/components/ui/global-progress-bar";
+import { getAppUrl } from "@/lib/env";
 import { ClientProviders } from "./client-providers";
 import "./globals.css";
 
@@ -34,9 +35,9 @@ if (!clerkPublishableKey) {
 }
 
 export const metadata: Metadata = {
-	title: "Podslice - Turn Information Overload Into Actionable Insight",
+	title: "Podslice - Institutional Intelligence for the Modern Portfolio",
 	description:
-		"Your personal AI assistant that transforms content into short, insightful audio and text summaries. Filter out the noise and get just the key ideas.",
+		"Move beyond simple summaries. Podslice extracts actionable signals, ticker sentiment, and has a built in lie detector at your service for insights from hours of audio and research documents in seconds",
 	generator: "v0.app",
 	icons: {
 		icon: [
@@ -55,6 +56,16 @@ export const metadata: Metadata = {
 		],
 		apple: "/apple-icon.png",
 	},
+	metadataBase: new URL(getAppUrl() || "http://localhost:3000"),
+	openGraph: {
+		siteName: "Podslice",
+		type: "website",
+		locale: "en_US",
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: "Podslice", // Fallback
+	},
 };
 
 export default function RootLayout({
@@ -65,6 +76,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body
+				suppressHydrationWarning
 				className={`${geist.variable} ${geistMono.variable} ${sourceSerif4.variable} font-sans antialiased`}>
 				<GlobalProgressBar />
 				<ClerkProvider
