@@ -106,22 +106,6 @@ export default function SummaryCreator() {
 	const [selectedAssetTitle, setSelectedAssetTitle] = useState<string | null>(null);
 	const [contextWeight, setContextWeight] = useState([50]); // Default 50%
 
-	// News input state
-	const NEWS_SOURCES = [
-		{ id: "global", label: "Global", tip: "Guardian, BBC, Reuters, Al Jazeera" }, ///Guardian, BBC, Reuters, Al Jazeera"
-		{ id: "crypto", label: "Top Crypto Sources", tip: "Coindesk, TradingView" },
-		{ id: "us", label: "US News", tip: "CNN, SKY, ABC, NY TIMES" },
-		{
-			id: "finance",
-			label: "Financial Sources",
-			tip: "Bloomberg,Barrons, Tradingview, Yahoo Finance",
-		},
-		{ id: "geo", label: "United Nations, World Bank", tip: "UN, World Bank" },
-	] as const;
-
-	const [selectedSources, setSelectedSources] = useState<string[]>([]);
-	const [selectedTopic, setSelectedTopic] = useState("");
-
 	// Smart Suggestions State
 	const [suggestedAssets, setSuggestedAssets] = useState<AssetSuggestion[]>([]);
 
@@ -181,13 +165,7 @@ export default function SummaryCreator() {
 			? videoDuration <= maxDuration * 60
 			: videoDuration <= YT_MAX_DURATION_SECONDS);
 
-	const canSubmitNews =
-		!isBusy &&
-		selectedSources.length > 0 &&
-		Boolean(selectedTopic) &&
-		(generationMode === "single" || (voiceA && voiceB));
-
-	const canSubmit = creatorMode === "youtube" ? canSubmitYouTube : canSubmitNews;
+	const canSubmit = creatorMode === "youtube" ? canSubmitYouTube : false;
 
 	const fetchUsage = useCallback(async () => {
 		try {
@@ -348,34 +326,6 @@ export default function SummaryCreator() {
 		setError(null);
 
 		try {
-			if (creatorMode === "news") {
-				const payload = {
-					title: `News summary: ${selectedTopic}`,
-					sources: selectedSources,
-					topic: selectedTopic,
-					generationMode,
-					voiceA,
-					voiceB,
-					summaryLength,
-				};
-				const res = await fetch("/api/user-episodes/create-news", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(payload),
-				});
-				if (!res.ok) throw new Error(await res.text());
-				toast.message(
-					"We're processing your episode and will email you when it's ready.",
-					{
-						duration: Infinity,
-						action: { label: "Dismiss", onClick: () => {} },
-					}
-				);
-				resumeAfterSubmission();
-				router.push("/dashboard?from=generate");
-				return;
-			}
-
 			// YouTube mode validation
 			if (!videoTitle) {
 				console.log("[DEBUG] handleCreate blocked: no video title");
@@ -512,13 +462,6 @@ export default function SummaryCreator() {
 								disabled={isBusy}>
 								Intelligence Reporting
 							</TogglePill>
-							<TogglePill
-								className="opacity-50 cursor-not-allowed bg-gray-700"
-								isActive={creatorMode === "news"}
-								onClick={() => setCreatorMode("news")}
-								disabled={true}>
-								Research (coming soon)
-							</TogglePill>
 						</div>
 						<form
 							className=" w-full"
@@ -629,71 +572,6 @@ export default function SummaryCreator() {
 							)}
 
 							{/* Smart Suggestion UI - Phase 4 Integration -> Moved to Research Lab Context */}
-
-							{creatorMode === "news" && (
-								<div className="bg-transparent m-0 p-0 rounded-3xl flex flex-col gap-6 w-full">
-									<div className="w-full border border-zinc-800 rounded-3xl bg-[#16191d] shadow-md p-6">
-										<Label
-											htmlFor="selectedTopicId"
-											className="text-emerald-400 mb-2 block">
-											Topic
-										</Label>
-										<Input
-											placeholder="Research any topic..."
-											id="selectedTopicId"
-											onChange={e => setSelectedTopic(e.target.value)}
-											value={selectedTopic}
-											disabled={isBusy}
-											required
-										/>
-									</div>
-									<div className="border border-border rounded-3xl  shadow-md py-3 px-5 md:p-8 space-y-2 md:col-span-2 lg:min-w-full text-sm">
-										<Label className="font-extrabold">Sources</Label>
-										<span className="text-foreground/70">
-											Pick your sources, or leave it to the Ai to decide
-										</span>
-										<div className="flex w-full mt-4 justify-start items-start flex-wrap gap-4">
-											{NEWS_SOURCES.map(s => {
-												const active = selectedSources.includes(s.id);
-												return (
-													<div key={s.id} className="flex items-center gap-2">
-														<Button
-															type="button"
-															variant={active ? "outline" : "default"}
-															onClick={() =>
-																setSelectedSources(prev =>
-																	active ? prev.filter(p => p !== s.id) : [...prev, s.id]
-																)
-															}
-															disabled={isBusy}
-															className="px-3 py-1 my-1">
-															{s.label}
-															<Tooltip>
-																<TooltipTrigger asChild>
-																	<div className="inline-flex items-center">
-																		<InfoIcon
-																			className="text-xs text-muted-foreground hover:text-foreground"
-																			size={16}
-																		/>
-																		<span className="sr-only">
-																			More info about {s.label}
-																		</span>
-																	</div>
-																</TooltipTrigger>
-																<TooltipContent className="bg-white">
-																	<p className="text-sm text-black cursor-default">
-																		{s?.tip}
-																	</p>
-																</TooltipContent>
-															</Tooltip>
-														</Button>
-													</div>
-												);
-											})}
-										</div>
-									</div>
-								</div>
-							)}
 
 							{creatorMode === "youtube" && (
 								<FormAccordion
