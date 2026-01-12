@@ -277,7 +277,7 @@ export default function IntelligentSummaryView({
 			{/* Main Grid: Cards */}
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 				{documentContradictions && documentContradictions.length > 0 && (
-					<Card className="bg-linear-to-br from-amber-500 via-amber-500 lg:col-span-2 to-amber-500/70 border-0 rounded-3xl overflow-hidden relative md:max-h-[400px]">
+					<Card className="bg-linear-to-br from-amber-500 via-amber-500 lg:col-span-3 to-amber-500/70 border-0 rounded-3xl overflow-hidden relative md:max-h-[400px]">
 						<div className="absolute inset-0 bg-linear-to-r from-amber-500/10 to-transparent pointer-events-none" />
 						<CardContent className="p-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
 							<div className="flex-1 space-y-4">
@@ -317,7 +317,7 @@ export default function IntelligentSummaryView({
 				)}
 				{/* Trade Ideas Card (Full Width Highlight) */}
 				{tradeRecommendations && tradeRecommendations.length > 0 && (
-					<Card className="bg-linear-to-br lg:col-span-1 from-emerald-500/20 via-purple-500/20 to-indigo-500/10 border-0 rounded-3xl overflow-hidden relative">
+					<Card className="bg-linear-to-br lg:col-span-2 from-emerald-500/20 via-purple-500/20 to-indigo-500/10 border-0 rounded-3xl overflow-hidden relative">
 						<div className="absolute inset-0 bg-linear-to-r from-emerald-500/10 to-transparent pointer-events-none" />
 						<CardContent className="p-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
 							<div className="flex-1 space-y-4">
@@ -382,11 +382,11 @@ export default function IntelligentSummaryView({
 					</Card>
 				)}
 				{/* Key Asset Performance (Chart) */}
-				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden lg:col-span-2 hover:border-white/10 transition-colors min-h-[300px] flex flex-col">
+				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden lg:col-span- hover:border-white/10 transition-colors min-h-[300px] flex flex-col">
 					<CardHeader className="flex flex-row items-center justify-between pb-2 pt-6 px-6">
 						<CardTitle className="text-lg font-bold text-gray-100 flex flex-col">
 							<span>Key Asset Performance</span>
-							<span className="text-2xl font-mono text-amber-200 font-normal mt-1">
+							<span className="text-2xl text-emerald-200 font-black mt-1">
 								{tickers?.[0] || "MARKET"}
 							</span>
 						</CardTitle>
@@ -517,7 +517,7 @@ export default function IntelligentSummaryView({
 					</div>
 				</Card>
 				{/* Investment Implications */}
-				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden lg:col-span-3  hover:border-white/10 transition-colors h-auto">
+				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden lg:col-span-2  hover:border-white/10 transition-colors h-auto">
 					<CardHeader className="flex flex-row items-center gap-3 pb-2 pt-6 px-6">
 						<div className="p-2 bg-gray-800/50 rounded-lg">
 							<Lightbulb className="h-5 w-5 text-indigo-400" />
