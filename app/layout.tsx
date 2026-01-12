@@ -6,6 +6,7 @@ import type React from "react";
 import { Toaster } from "sonner";
 import { GlobalAudioPlayerSheet } from "@/components/ui/global-audio-player-sheet";
 import { GlobalProgressBar } from "@/components/ui/global-progress-bar";
+import { getAppUrl } from "@/lib/env";
 import { ClientProviders } from "./client-providers";
 import "./globals.css";
 
@@ -54,6 +55,16 @@ export const metadata: Metadata = {
 			},
 		],
 		apple: "/apple-icon.png",
+	},
+	metadataBase: new URL(getAppUrl() || "http://localhost:3000"),
+	openGraph: {
+		siteName: "Podslice",
+		type: "website",
+		locale: "en_US",
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: "Podslice", // Fallback
 	},
 };
 
