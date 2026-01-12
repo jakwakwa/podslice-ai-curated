@@ -77,7 +77,7 @@ export async function AutoEpisodesStatusCard() {
 					{config?.is_active && config?.rss_feed_url ? (
 						<Badge
 							variant="default"
-							className="bg-[#1ca896] shadow-md shadow-[#53998e91] text-[#fff]/80">
+							className="bg-[#1ca896] shadow-md shadow-[#53998e91] text-white/80">
 							<CheckCircle2 className="h-3 w-3 mr-1" />
 							Active
 						</Badge>
@@ -134,7 +134,7 @@ export async function AutoEpisodesStatusCard() {
 											}
 											className={
 												latestAutoEpisode.status === "COMPLETED"
-													? "bg-[#1ca896] text-[#fff]/80"
+													? "bg-[#1ca896] text-white/80"
 													: ""
 											}>
 											{latestAutoEpisode.status}

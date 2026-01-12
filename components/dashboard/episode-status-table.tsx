@@ -134,7 +134,7 @@ export function EpisodeStatusTable({ defaultExpanded = false }: EpisodeStatusTab
 	}
 
 	return (
-		<div className="mx-2 md:mx-0 border-1 outline-1 outline-ring border-border rounded-md md:rounded-xl bg-bigcard px-4 md:p-6">
+		<div className="mx-2 md:mx-0 border-gray-700 border-2 rounded-md md:rounded-xl bg-card px-4 md:p-6">
 			<div>
 				<div className="flex items-center gap-3 h-20 md:h-12">
 					<div
@@ -148,7 +148,7 @@ export function EpisodeStatusTable({ defaultExpanded = false }: EpisodeStatusTab
 						{episodeList.length > 0} in progress
 					</Badge>
 				</div>
-				<div className="border-t-[#fff]/10 border-t-0 show px-4">
+				<div className="border-t-white/10border-t-0 show px-4">
 					<Table>
 						<TableHeader>
 							<TableRow>
@@ -167,7 +167,7 @@ export function EpisodeStatusTable({ defaultExpanded = false }: EpisodeStatusTab
 										episode.status === "FAILED" && "bg-red-500/10"
 									)}>
 									<TableCell className="font-medium ">
-										<div className="flex flex-col gap-1">
+										<div className=" max-h-8">
 											<span className="line-clamp-1">{episode.episodeTitle}</span>
 											<span className="text-xs text-foreground/50">
 												Started {episode.formattedStartTime}
@@ -178,7 +178,7 @@ export function EpisodeStatusTable({ defaultExpanded = false }: EpisodeStatusTab
 										<StatusBadge status={episode.status} />
 									</TableCell>
 									<TableCell className="text-sm">
-										<div className="flex flex-col gap-1 ">
+										<div className="flex flex-col gap-1">
 											<span
 												className={` line-clamp-2 text-xs  ${cn(
 													episode.status === "PROCESSING" &&
