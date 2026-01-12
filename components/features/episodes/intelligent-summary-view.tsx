@@ -5,12 +5,9 @@ import {
 	ArrowRight,
 	BarChart3,
 	Briefcase,
-	Download,
 	Lightbulb,
-	MessageSquare,
 	Play,
 	Target,
-	Volume2,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import {
@@ -28,6 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useAudioPlayerStore } from "@/store/audioPlayerStore";
 
 // Types matching the FinancialResponse from summary.ts
 export interface TradeRecommendation {
@@ -96,6 +94,8 @@ export default function IntelligentSummaryView({
 	customAudioPlayer,
 	hideHeader,
 }: IntelligentSummaryViewProps) {
+	const { setEpisode } = useAudioPlayerStore();
+
 	// Fallback for null/undefined intelligence
 	if (!(intelligence?.structuredData && intelligence?.writtenContent)) {
 		return null;
@@ -128,12 +128,12 @@ export default function IntelligentSummaryView({
 		}).format(new Date(date));
 	};
 
-	const formatDuration = (seconds?: number | null) => {
-		if (!seconds) return "0:00";
-		const mins = Math.floor(seconds / 60);
-		const secs = Math.floor(seconds % 60);
-		return `${mins}:${secs.toString().padStart(2, "0")}`;
-	};
+	// const formatDuration = (seconds?: number | null) => {
+	// 	if (!seconds) return "0:00";
+	// 	const mins = Math.floor(seconds / 60);
+	// 	const secs = Math.floor(seconds % 60);
+	// 	return `${mins}:${secs.toString().padStart(2, "0")}`;
+	// };
 
 	const getSentimentColor = (label: string) => {
 		switch (label) {
@@ -151,7 +151,7 @@ export default function IntelligentSummaryView({
 	return (
 		<div className="flex flex-col gap-6 animate-in fade-in duration-500 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-[#0a0a0a] text-white rounded-3xl font-sans">
 			{/* Header */}
-			{!hideHeader && (
+			{hideHeader && (
 				<div className="space-y-1">
 					<h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
 						{title}
@@ -183,14 +183,7 @@ export default function IntelligentSummaryView({
 			{/* Top Row: Audio Spec + Sentiment */}
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 				{/* Audio Player Card */}
-				{/* Only show if we have audio, or just show placeholder if we want layout consistency. 
-				    Let's keep it always but maybe use audioUrl as key to force re-render if it changes? 
-				    Or better, just console.log/noop it for now or check it. 
-					Actually, let's strictly conditionally render if we want to be safe, 
-					BUT the design relies on this block. 
-					Let's just use it in a data attribute for now to silence the warning 
-					and maybe helpful for debugging. 
-				*/}
+
 				<Card
 					data-audio-url={audioUrl}
 					className="lg:col-span-2 bg-[#111] border-none shadow-2xl rounded-3xl overflow-hidden relative group">
@@ -220,26 +213,37 @@ export default function IntelligentSummaryView({
 								{/* Audio Controls */}
 								<div className="mt-auto z-20 space-y-4 w-full">
 									{/* Progress Bar */}
-									<div className="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
-										<div className="h-full w-1/3 bg-linear-to-r from-orange-400 to-red-500" />
-									</div>
 
 									<div className="flex items-center justify-between">
 										<div className="flex items-center gap-4">
 											<button
 												type="button"
+												onClick={() => {
+													if (!audioUrl) return;
+													// Normalize as UserEpisode since we have gcs_audio_url (which corresponds to audioUrl here)
+													// This mimics the logic in PlayAndShare for user episodes
+													const normalizedEpisode = {
+														episode_title: title,
+														gcs_audio_url: audioUrl,
+														duration_seconds: duration,
+														// We need a minimal valid object.
+														// ID is usually needed for keys. Use a hash or url if id missing?
+														// Ideally we should pass the whole episode object if available.
+														// But here we only have detached props.
+														episode_id: `preview-${crypto.randomUUID()}`, // Temp ID if none
+													};
+													// @ts-ignore - we are constructing a partial object, sufficient for player
+													setEpisode(normalizedEpisode);
+												}}
 												className="h-10 w-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-all backdrop-blur-md">
 												<Play className="h-4 w-4 fill-white" />
 											</button>
-											<span className="text-xs font-mono text-gray-400">
-												1:45 / {formatDuration(duration)}
-											</span>
 										</div>
 
 										<div className="flex items-center gap-4 text-gray-400">
-											<Volume2 className="h-4 w-4 hover:text-white cursor-pointer" />
-											<MessageSquare className="h-4 w-4 hover:text-white cursor-pointer" />
-											<Download className="h-4 w-4 hover:text-white cursor-pointer" />
+											{/* <Volume2 className="h-4 w-4 hover:text-white cursor-pointer" /> */}
+											{/* <MessageSquare className="h-4 w-4 hover:text-white cursor-pointer" /> */}
+											{/* <Download className="h-4 w-4 hover:text-white cursor-pointer" /> */}
 										</div>
 									</div>
 								</div>
