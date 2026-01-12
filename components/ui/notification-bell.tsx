@@ -171,7 +171,7 @@ export function NotificationBell() {
 						className="rounded-[9999999px] text-white/80 w-4 h-4"
 					/>
 					{unreadCount > 0 && (
-						<span className="absolute top-1 right-2 bg-destructive-foreground p-1 h-3 w-3 rounded-full text-[0.9rem]  flex items-center animate-pulse justify-center text-destructive-foreground">
+						<span className="absolute top-1 right-2 bg-destructive-foreground  h-2 w-2 rounded-full  flex items-center animate-bounce justify-center bg-emerald-500 p-[7px] text-white text-[9px]">
 							2
 						</span>
 					)}
@@ -213,8 +213,11 @@ export function NotificationBell() {
 
 				<div className="max-h-96 overflow-y-auto p-2">
 					{notifications.length === 0 ? (
-						<div className="flex flex-col items-center justify-center py-8 px-4 text-center text-muted-foreground">
-							<Bell size={32} className="mb-3 text-primary-foreground-muted/40" />
+						<div className="flex flex-col items-center justify-center py-8 px-4 text-center bg-red-600 text-muted-foreground">
+							<Bell
+								size={32}
+								className="mb-3 text-primary-foreground-muted/40 bg-red-600"
+							/>
 							<p className="mb-1 text-base font-medium text-primary-foreground-muted/70">
 								No notifications yet
 							</p>
