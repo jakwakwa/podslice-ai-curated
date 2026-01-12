@@ -28,7 +28,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSubscriptionInit } from "@/hooks/useSubscriptionInit";
 import { Footer } from "./footer";
-import Silk from "@/components/Silk";
+// import Silk from "@/components/Silk";
 
 function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 	const { state } = useSidebar();
@@ -51,7 +51,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 				<header
 					className={`fixed flex ${isMobile ? "h-18 w-screen left-0 top-0 ml-0" : `h-16 right-0 ${state === "expanded" ? "left-(--sidebar-width)" : "left-(--sidebar-width-icon)"}`} bg-gray-950 shadow-[0_1px_5px_3px_rgba(0,0.2,100,0.12)] overflow-hidden shrink-0 items-center border-none gap-4 z-50 group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 mt-0 justify-between px-0  py-0 overflow-y-scroll transition-all  duration-200 ease-in-out`}>
 					<div
-						className={`flex items-center ${isMobile ? "h-18" : "h-5"}   ${state === "expanded" ? "md:flex-row md:px-4" : "md:flex-row md:px-0"}`}>
+						className={`flex items-center ${isMobile ? "h-18" : "h-6 mx-4 overflow-hidden"}   ${state === "expanded" ? "md:flex-row md:px-4" : "md:flex-row md:px-0"}`}>
 						{!isMobile ? (
 							<Image
 								className={`transition-all flex flex-row items-center ${isMobile ? "h-18" : "h-10"} duration-300  ease-in-out ${state === "expanded" ? "h-21 max-w-[124px] " : "max-w-[20px] h-21 justify-center"}`}
@@ -118,7 +118,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 							strokeColor="#000"
 							className="absolute inset-0 flex items-start justify-center   -z-1 top-0 opacity-40 backdrop-blur-2xl  size-250 w-screen md:min-w-none  mx-0  p-0  flex-col my-0 md:flex-row pt-6 md:p-3 md:py-16 md:mx-0 pl-0 md:my-0  "
 						/> */}
-						<div className="absolute top-0  left-0 w-screen -z-1 h-full">
+						{/* <div className="absolute top-0  left-0 w-screen -z-1 h-full">
 							<Silk
 								speed={1.8}
 								scale={0.4}
@@ -126,7 +126,7 @@ function ProtectedLayoutInner({ children }: { children: React.ReactNode }) {
 								noiseIntensity={3.8}
 								rotation={2.7}
 							/>
-						</div>
+						</div> */}
 
 						{children}
 					</div>
