@@ -35,9 +35,9 @@ if (!clerkPublishableKey) {
 }
 
 export const metadata: Metadata = {
-	title: "Podslice - Turn Information Overload Into Actionable Insight",
+	title: "Podslice - Institutional Intelligence for the Modern Portfolio",
 	description:
-		"Your personal AI assistant that transforms content into short, insightful audio and text summaries. Filter out the noise and get just the key ideas.",
+		"Move beyond simple summaries. Podslice extracts actionable signals, ticker sentiment, and has a built in lie detector at your service for insights from hours of audio and research documents in seconds",
 	generator: "v0.app",
 	icons: {
 		icon: [
