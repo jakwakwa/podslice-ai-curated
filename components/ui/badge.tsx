@@ -13,11 +13,11 @@ const badgeVariants = cva(
 				secondary:
 					"flex items-center   text-[0.6rem] shadow-md shadow-black/10  font-light outline-1 outline-indigo-500 bg-indigo-950/30  rounded-sm",
 				status:
-					"outline-1 outline-emerald-700 bg-emerald-950/70 text-left overflow-hidden   text-emerald-100 font-light outline-1 rounded-sm animate-pulse shadow-md min-h-6",
+					"outline-1 outline-gray-700 bg-gray-950/70 text-left overflow-hidden   text-gray-100 font-light outline-1 rounded-sm animate-pulse shadow-md min-h-6",
 				destructive:
 					"border-destructive-foreground  text-destructive-foreground shadow hover:bg-emerald/80 font-light outline-1 rounded-sm min-h-6",
 				outline:
-					"text-xs flex  outline-1 outline-emerald-700 bg-emerald-950/30  font-sans items-center  min-h-5 shadow-md  px-2 py-1 text-left overflow-hidden rounded-xs",
+					"text-xs flex outline-1 outline-gray-200/30 bg-emerald-950/30  font-sans items-center  min-h-5 shadow-md  px-2 py-1 text-left overflow-hidden rounded-xs",
 			},
 		},
 		defaultVariants: {

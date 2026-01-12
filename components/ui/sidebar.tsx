@@ -159,7 +159,7 @@ function Sidebar({
 			<div
 				data-slot="sidebar"
 				className={cn(
-					" text-sidebar-foreground  border-none flex h-full w-(--sidebar-width) flex-col",
+					"bg-sidebar text-sidebar-foreground  border-none flex h-full w-(--sidebar-width) flex-col",
 					className
 				)}
 				{...props}>
@@ -174,7 +174,7 @@ function Sidebar({
 
 	return (
 		<div
-			className="group peer text-sidebar-foreground hidden md:block"
+			className="group peer text-sidebar-foreground hidden md:block "
 			data-state={state}
 			data-collapsible={state === "collapsed" ? collapsible : ""}
 			data-variant={variant}
@@ -195,7 +195,7 @@ function Sidebar({
 			<div
 				data-slot="sidebar-container"
 				className={cn(
-					"border-sidebar-container fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex",
+					"bg-sidebar fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex border-r-amber-50",
 					side === "left"
 						? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
 						: "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
@@ -209,7 +209,7 @@ function Sidebar({
 				<div
 					data-sidebar="sidebar"
 					data-slot="sidebar-inner"
-					className=" group-data-[variant=floating]:border-transparent flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm">
+					className="group-data-[variant=floating]:border-transparent flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm sidebar-container">
 					{children}
 				</div>
 			</div>
@@ -235,7 +235,7 @@ function SidebarTrigger({
 			data-slot="sidebar-trigger"
 			size="sm"
 			className={cn(
-				"inline-flex content-center outline-0 w-7 h-7 border-0 px-0 py-0 my-auto items-center justify-center gap-0 whitespace-nowrap leading-5 tracking-wide transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 outline-none  overflow-visible focus-visible:outline-0  z-50 w-full bg-red focus-visible:outline-offset-0 rounded-sm bg-[#000]/0 hover:bg-[#272244]/0 text-[#d6d0f6] hover:text-[#76e8ff]",
+				"inline-flex content-center outline-0 h-7 border-0 px-0 py-0 my-auto items-center justify-center gap-0 whitespace-nowrap leading-5 tracking-wide transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 outline-none  overflow-visible focus-visible:outline-0  z-50 w-full bg-red focus-visible:outline-offset-0 rounded-sm bg-black/0 hover:bg-[#272244]/0 text-[#d6d0f6] hover:text-[#76e8ff]",
 				className
 			)}
 			onClick={event => {
@@ -246,12 +246,12 @@ function SidebarTrigger({
 			{open ? (
 				<SidebarCloseIcon
 					size={16}
-					className="m-auto h-full w-full text-primary-white max-w-[20px] max-h-[20px]"
+					className="m-auto h-full w-full mt-1 text-primary-white max-w-[20px] max-h-[20px]"
 				/>
 			) : (
 				<IconLayoutSidebarRightCollapseFilled
 					size={16}
-					className="m-auto h-full w-full text-primary-white max-w-[20px] max-h-[20px]"
+					className="m-auto h-full w-full mt-px text-primary-white max-w-[20px] max-h-[20px]"
 				/>
 			)}
 			<span className="sr-only hidden">menu</span>

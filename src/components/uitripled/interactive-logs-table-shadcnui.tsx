@@ -101,34 +101,34 @@ function LogRow({
 					<motion.div
 						animate={{ rotate: expanded ? 180 : 0 }}
 						transition={{ duration: 0.2 }}
-						className="flex-shrink-0">
+						className="shrink-0">
 						<ChevronDown className="h-4 w-4 text-muted-foreground" />
 					</motion.div>
 
 					<Badge
 						variant="secondary"
-						className={`flex-shrink-0 capitalize ${levelStyles[log.level]}`}>
+						className={`shrink-0capitalize ${levelStyles[log.level]}`}>
 						{log.level}
 					</Badge>
 
-					<time className="w-20 flex-shrink-0 font-mono text-xs text-muted-foreground">
+					<time className="w-20 shrink-0font-mono text-xs text-muted-foreground">
 						{formattedTime}
 					</time>
 
-					<span className="flex-shrink-0 min-w-max text-sm font-medium text-foreground">
+					<span className="shrink-0 min-w-max text-sm font-medium text-foreground">
 						{log.service}
 					</span>
 
 					<p className="flex-1 truncate text-sm text-muted-foreground">{log.message}</p>
 
 					<span
-						className={`flex-shrink-0 font-mono text-sm font-semibold ${
+						className={`shrink-0 font-mono text-sm font-semibold ${
 							statusStyles[log.status] ?? "text-muted-foreground"
 						}`}>
 						{log.status}
 					</span>
 
-					<span className="w-16 flex-shrink-0 text-right font-mono text-xs text-muted-foreground">
+					<span className="w-16 shrink-0 text-right font-mono text-xs text-muted-foreground">
 						{log.duration}
 					</span>
 				</div>
