@@ -5,7 +5,10 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import EpisodeHeader from "@/components/features/episodes/episode-header";
 import EpisodeShell from "@/components/features/episodes/episode-shell";
-import IntelligentSummaryView from "@/components/features/episodes/intelligent-summary-view";
+import IntelligentSummaryView, {
+	type TradeRecommendation,
+	type DocumentContradiction,
+} from "@/components/features/episodes/intelligent-summary-view";
 import KeyTakeaways from "@/components/features/episodes/key-takeaways";
 import { Separator } from "@/components/ui/separator";
 
@@ -62,8 +65,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 		variantView?: string | null;
 		investmentImplications: string;
 		risksAndRedFlags: string;
-		tradeRecommendations?: any[];
-		documentContradictions?: any[];
+
+		tradeRecommendations?: TradeRecommendation[];
+		documentContradictions?: DocumentContradiction[];
 	}
 
 	let mappedIntelligence = null;
