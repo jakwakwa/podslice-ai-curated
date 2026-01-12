@@ -102,7 +102,7 @@ export default async function DashboardPage() {
 						</Suspense>
 					) : null}
 					<div className="flex flex-col gap-4 w-full">
-						<TickerTape />
+						<TickerTape episodes={userEpisodes} />
 						<MarketPulseTable episodes={userEpisodes} />
 					</div>
 				</Suspense>
@@ -231,6 +231,7 @@ async function fetchUserEpisodes(userId: string): Promise<UserEpisodeWithSignedU
 				sentiment_score: true,
 				mentioned_assets: true,
 				voice_archetype: true,
+				intelligence: true,
 
 				created_at: true,
 				updated_at: true,

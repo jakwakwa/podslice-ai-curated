@@ -1,7 +1,10 @@
 "use client";
 
-import { format } from "date-fns";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
 	Table,
 	TableBody,
@@ -10,12 +13,15 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { getEpisodeAssets } from "@/lib/intelligence-helpers";
 import type { UserEpisode } from "@/lib/types";
 import type { MentionedAsset } from "@/lib/types/intelligence";
 import { cn } from "@/lib/utils";
 import { useDashboardStore } from "@/store/dashboardStore";
-import { TickerBadge } from "./ticker-badge";
+import { format } from "date-fns";
+import { ArrowDown, ArrowUp, EllipsisIcon } from "lucide-react";
 import { CircularProgress } from "@/components/ui/circular-progress";
+import { TickerBadge } from "./ticker-badge";
 
 // Extended type for component props (casting from Prisma result)
 type MarketPulseEpisode = UserEpisode & {
@@ -32,10 +38,10 @@ export function MarketPulseTable({ episodes }: MarketPulseTableProps) {
 	const { selectedTicker, minSentiment } = useDashboardStore();
 
 	const filteredEpisodes = episodes.filter(ep => {
+		const assets = getEpisodeAssets(ep);
+
 		// Ticker Filter
 		if (selectedTicker) {
-			if (!(ep.mentioned_assets && Array.isArray(ep.mentioned_assets))) return false;
-			const assets = ep.mentioned_assets as unknown as MentionedAsset[];
 			const hasTicker = assets.some(a => a.ticker === selectedTicker);
 			if (!hasTicker) return false;
 		}
@@ -49,23 +55,23 @@ export function MarketPulseTable({ episodes }: MarketPulseTableProps) {
 	});
 
 	return (
-		<div className="rounded-2xl border border-zinc-800 bg-[#111216] overflow-hidden">
+		<div className="rounded-xl px-2 border border-zinc-800 bg-[#111216] overflow-hidden">
 			<Table>
 				<TableHeader>
 					<TableRow className="border-b border-zinc-800 hover:bg-transparent">
-						<TableHead className="w-[300px] text-xs text-zinc-400 uppercase tracking-wider font-medium">
+						<TableHead className="w-[300px] text-[9px] text-zinc-400 uppercase tracking-wider font-medium">
 							Source & Title
 						</TableHead>
-						<TableHead className="text-xs text-zinc-400 uppercase tracking-wider font-medium">
+						<TableHead className="text-[9px] text-zinc-400 uppercase tracking-wider font-medium">
 							Reliability
 						</TableHead>
-						<TableHead className="text-xs text-zinc-400 uppercase tracking-wider font-medium">
+						<TableHead className="text-[9px] text-zinc-400 uppercase tracking-wider font-medium">
 							Sentiment
 						</TableHead>
-						<TableHead className="text-xs text-zinc-400 uppercase tracking-wider font-medium">
+						<TableHead className="text-[9px] text-zinc-400 uppercase tracking-wider font-medium">
 							Tickers
 						</TableHead>
-						<TableHead className="text-right text-xs text-zinc-400 uppercase tracking-wider font-medium">
+						<TableHead className="text-right text-[9px] text-zinc-400 uppercase tracking-wider font-medium">
 							Date
 						</TableHead>
 					</TableRow>
@@ -79,9 +85,7 @@ export function MarketPulseTable({ episodes }: MarketPulseTableProps) {
 						</TableRow>
 					) : (
 						filteredEpisodes.map(episode => {
-							const assets = (Array.isArray(episode.mentioned_assets)
-								? episode.mentioned_assets
-								: []) as unknown as MentionedAsset[];
+							const assets = getEpisodeAssets(episode);
 
 							// Calculate gradient color for sentiment bar
 							const score = episode.sentiment_score ?? 0; // -1 to 1
@@ -103,17 +107,16 @@ export function MarketPulseTable({ episodes }: MarketPulseTableProps) {
 									className="border-b border-zinc-800/50 hover:bg-violet-500/5 transition-colors">
 									<TableCell className="font-medium py-5">
 										<div className="flex flex-col gap-1">
-											<span className="text-xs text-zinc-500 block">Source & Title</span>
-											<span className="text-foreground font-semibold text-sm truncate text-overflow-ellipsis max-w-[240px] leading-tight">
+											<span className="text-foreground font-semibold text-xs truncate text-overflow-ellipsis max-w-[310px]">
 												{episode.episode_title}
 											</span>
-											<span className="text-xs text-zinc-500 uppercase font-medium tracking-wider">
-												{episode.voice_archetype || "ANALYST"}
+											<span className="text-[10px] text-zinc-500 uppercase font-medium tracking-wider">
+												ARCHETYPE: {episode.voice_archetype || "ANALYST"}
 											</span>
 										</div>
 									</TableCell>
-									<TableCell className="py-5">
-										<div className="flex items-center gap-4">
+									<TableCell className="gap-0  items-center w-[70px] mx-auto">
+										<div className="flex items-center gap-4 justify-center w-[70px]">
 											<CircularProgress
 												value={reliability}
 												size={32}
@@ -124,8 +127,8 @@ export function MarketPulseTable({ episodes }: MarketPulseTableProps) {
 											/>
 										</div>
 									</TableCell>
-									<TableCell className="py-5">
-										<div className="flex items-center gap-3">
+									<TableCell className="gap-0  items-center  mx-auto">
+										<div className="flex items-center gap-4 justify-center w-[150px]">
 											<CircularProgress
 												value={reliabilityPercent} // Using score magnitude as %
 												size={32}
@@ -154,13 +157,36 @@ export function MarketPulseTable({ episodes }: MarketPulseTableProps) {
 										</div>
 									</TableCell>
 									<TableCell className="py-5">
-										<div className="flex flex-col gap-1">
-											<span className="text-xs text-zinc-500 mb-1"> N/A </span>
-											<div className="flex flex-wrap gap-2">
+										<div className="flex flex-row gap-1 w-full">
+											<div className="flex flex-nowrap gap-2 justify-center items-center h-6">
 												{assets.length > 0 ? (
-													assets.map(asset => (
-														<TickerBadge key={asset.ticker} ticker={asset.ticker} />
-													))
+													<>
+														{assets.slice(0, 2).map(asset => (
+															<TickerBadge key={asset.ticker} ticker={asset.ticker} />
+														))}
+														{assets.length > 2 && (
+															<DropdownMenu>
+																<DropdownMenuTrigger asChild>
+																	<button
+																		type="button"
+																		className="flex items-center justify-center p-1 h-full mt-4 rounded-full hover:bg-white/10 transition-colors focus:outline-none">
+																		<EllipsisIcon className="h-full w-4 text-muted-foreground" />
+																	</button>
+																</DropdownMenuTrigger>
+																<DropdownMenuContent
+																	align="start"
+																	className="w-[130px] px-4 py-2 max-h-[200px] bg-violet-500/20 rounded-xl shadow-2xs border-violet-400/50 border-2">
+																	<div className="flex flex-col flex-wrap items-center gap-4 p-1">
+																		{assets.slice(2).map(asset => (
+																			<div key={asset.ticker} className="max-w-[60px]">
+																				<TickerBadge ticker={asset.ticker} />
+																			</div>
+																		))}
+																	</div>
+																</DropdownMenuContent>
+															</DropdownMenu>
+														)}
+													</>
 												) : (
 													<span className="text-xs text-zinc-500">-</span>
 												)}

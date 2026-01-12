@@ -51,9 +51,9 @@ export function TickerBadge({ ticker, className }: TickerBadgeProps) {
 			variant="outline"
 			onClick={handleClick}
 			className={cn(
-				"cursor-pointer transition-all text-white font-bold text-[10px] border-0 rounded-full px-2 h-6",
+				"cursor-pointer transition-all text-white font-normal text-[10px] border-0 rounded-full px-2 h-6 min-w-[40px]",
 				tickerColor,
-				isSelected && "ring-2 ring-white ring-offset-2 ring-offset-background",
+				isSelected && "ring-2 ring-emerald-300 ring-offset-0 ring-offset-background",
 				className
 			)}>
 			{ticker}
