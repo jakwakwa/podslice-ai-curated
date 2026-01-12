@@ -323,7 +323,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 		return (
 			<div className="mb-8">
 				<div className="h-8 w-64 bg-[#2f4383]/30 animate-pulse rounded mb-4 px-2 md:px-12 xl:px-[40px]" />
-				<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 xl:grid-cols-3 xl:px-[40px] xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark lg:p-[40px] rounded-3xl border-1 border-[#513f8bfc] shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]">
+				<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 xl:grid-cols-3 xl:px-[40px] xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark lg:p-[40px] rounded-3xl border border-[#513f8bfc] shadow-[0px_0px_5px_5px_#261c4b5b] backdrop-blur-[3px]">
 					<div className="bg-[#2f4383]/40 h-[500px] w-full animate-pulse rounded-lg" />
 					<div className="bg-[#2f4383]/40 h-[500px] w-full animate-pulse rounded-lg" />
 					<div className="bg-[#2f4383]/40 h-[500px] w-full animate-pulse rounded-lg" />
@@ -393,7 +393,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 														<Badge
 															variant="outline"
 															className="text-secondary-foreground
-                             border-1  border-sidebar bg-emerald-500/0 text-[0.6rem] font-semibold px-2 py-0.5">
+                             border  border-sidebar bg-emerald-500/0 text-[0.6rem] font-semibold px-2 py-0.5">
 															{planMeta.statusLabel}
 														</Badge>
 													) : (
@@ -491,7 +491,7 @@ export function CuratedBundlesClient({ bundles, error }: CuratedBundlesClientPro
 					<H3 className="text-[1.2rem] text-[#d1a7e7] font-bold font-sans mb-4 px-2 md:px-12 xl:px-[40px]">
 						🎁 Shared by Community
 					</H3>
-					<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-2 xl:px-[40px] xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark  lg:px-[40px] rounded-3xl border-1 border-[#a497cdfc] backdrop-blur-[3px]">
+					<div className="relative transition-all duration-200 text-card-foreground p-0 px-2 md:px-12 w-full overflow-y-scroll z-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-2 xl:px-[40px] xl:justify-around items-start xl:gap-6 md:gap-4 h-fit episode-card-wrapper-dark  lg:px-[40px] rounded-3xl border border-[#a497cdfc] backdrop-blur-[3px]">
 						{sharedBundles.map(bundle => {
 							const planMeta = PLAN_GATE_META[bundle.min_plan];
 							const canInteract = bundle.canInteract;
