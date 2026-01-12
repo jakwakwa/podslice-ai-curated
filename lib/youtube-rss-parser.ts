@@ -107,7 +107,7 @@ function parseYouTubeRss(xml: string): RssEntry[] {
 	const parts = xml.split("<entry");
 	for (let i = 1; i < parts.length; i++) {
 		const chunk = parts[i];
-		const entryXml = "<entry" + chunk;
+		const entryXml = `<entry>${chunk}`;
 
 		const title = matchTagText(entryXml, "title");
 		const publishedRaw = matchTagText(entryXml, "published");
