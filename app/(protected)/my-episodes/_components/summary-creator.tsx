@@ -500,12 +500,12 @@ export default function SummaryCreator() {
 				{/* Main Form Area (2/3) */}
 				<div className="lg:col-span-2 space-y-6">
 					{/* Pick Summary Type Card */}
-					<div className="bg-[#0f1115] rounded-3xl p-6 md:p-8 border border-zinc-800 shadow-xl">
-						<span className="block text-xl font-black text-foreground mb-2">
+					<div className="bg-[#0f1115] rounded-3xl px-6 py-8 md:p-8 border border-zinc-800 shadow-xl">
+						<span className="block text-xl font-bold text-foreground">
 							Financial Intelligence Configurations
 						</span>
 
-						<div className="flex flex-wrap mt-12 gap-2">
+						<div className="flex flex-wrap mt-12 gap-3">
 							<TogglePill
 								isActive={creatorMode === "youtube"}
 								onClick={() => setCreatorMode("youtube")}
@@ -513,6 +513,7 @@ export default function SummaryCreator() {
 								Intelligence Reporting
 							</TogglePill>
 							<TogglePill
+								className="opacity-50 cursor-not-allowed bg-gray-700"
 								isActive={creatorMode === "news"}
 								onClick={() => setCreatorMode("news")}
 								disabled={true}>

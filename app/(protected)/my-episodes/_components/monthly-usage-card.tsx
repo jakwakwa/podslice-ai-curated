@@ -42,7 +42,7 @@ export function MonthlyUsageCard({ usage, isLoading }: MonthlyUsageCardProps) {
 								fill="transparent"
 								stroke="currentColor"
 								strokeWidth="8"
-								className="text-zinc-800"
+								className="text-[#191921]"
 							/>
 							{/* Progress circle */}
 							<circle
