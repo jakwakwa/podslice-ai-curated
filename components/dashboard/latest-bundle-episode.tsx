@@ -89,7 +89,7 @@ export function LatestBundleEpisode({
 			</p>
 
 			{/* Audio Player Card */}
-			<div className="bg-black/40 rounded-xl p-4 mb-4  border-zinc-800 border-2 relative overflow-hidden w-full h-fit max-h-[130px]">
+			<div className="bg-black/40 rounded-xl p-4 mb-4  border-zinc-800 border-2 relative overflow-hidden w-full h-fit max-h-[165px]">
 				<div className="flex flex-col justify-between w-full">
 					{/* Episode Title */}
 					<h4 className="font-semibold text-sm mb-0 max-w-[80%] leading-tight text-slate-200 w-full">
