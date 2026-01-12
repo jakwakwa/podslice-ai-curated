@@ -28,7 +28,7 @@ export function MonthlyUsageCard({ usage, isLoading }: MonthlyUsageCardProps) {
 			{/* Circular Progress Card */}
 			<div className="mt-8 p-6 rounded-3xl bg-[#0f1115] border border-zinc-800 relative overflow-hidden group">
 				{/* Background gradient overlay */}
-				<div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-violet-500/5 opacity-50" />
+				<div className="absolute inset-0 bg-linear-to-br from-emerald-500/5 to-violet-500/5 opacity-50" />
 
 				<div className="relative z-10 flex flex-col items-center justify-center py-6">
 					{/* Circular Progress */}

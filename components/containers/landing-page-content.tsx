@@ -133,7 +133,7 @@ export default function LandingPageContent() {
 				</section>
 				<div className="background-base bg-primary" />
 				{/* How It Works Section */}
-				<section className="overflow-hidden px-0 min-w-screen w-full md:h-full py-4 md:min-w-screen md:w-full md:px-4  bg-linear-to-b to-emerald-950 from-gray-950 my-0 md:py-0 md:gap-0 md:mb-0 md:-mt-0">
+				<section className="overflow-hidden px-0 min-w-screen w-full md:h-full py-4 md:min-w-screen md:w-full md:px-4  bg-linear-to-b to-emerald-950 from-gray-950 my-0 md:py-0 md:gap-0 md:mb-0 md:mt-0">
 					<div className="w-full max-w-screen md:min-w-7xl mx-auto md:px-12 px-0 py-8 md:py-24 mt-0 ">
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
@@ -199,7 +199,7 @@ export default function LandingPageContent() {
 							{SUBSCRIPTION_TIERS.map(tier => (
 								<div
 									key={tier.name}
-									className={`transition-all w-full min-h-[800px] duration-200 ease-in-out relative h-full flex  border-[#29264d] border-1  flex-col px-8 py-4 rounded-3xl overflow-hidden max-w-screen md:max-w-5xl hover:-translate-y-1 hover:shadow-lg shadow-4x  ${tier.popular ? "bg-[#000] border-[#6750f8]/50 border-2 " : "bg-[#0d0d0f]"} `}>
+									className={`transition-all w-full min-h-[800px] duration-200 ease-in-out relative h-full flex  border-[#29264d] border  flex-col px-8 py-4 rounded-3xl overflow-hidden max-w-screen md:max-w-5xl hover:-translate-y-1 hover:shadow-lg shadow-4x  ${tier.popular ? "bg-black border-[#6750f8]/50 border-2 " : "bg-[#0d0d0f]"} `}>
 									<div className="flex flex-col justify-start h-full min-h-[250px]">
 										<div className="flex flex-col mt-4">
 											<h5 className="text-3	xl font-bold tracking-normal  text-[#8f99f0] mb-2">
@@ -241,7 +241,7 @@ export default function LandingPageContent() {
 													className="flex content-center items-start gap-3 pb-3 text-foreground/60 text-sm font-light ">
 													<CheckCircle
 														size={16}
-														className="text-emerald flex-shrink-0 mt-[1px]"
+														className="text-emerald shrink-0 mt-px"
 														color={"#abf3f5"}
 													/>
 													{feature}

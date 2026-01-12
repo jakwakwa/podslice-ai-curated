@@ -1,4 +1,5 @@
 import { format, subYears } from "date-fns";
+import { unstable_cache } from "next/cache";
 
 export interface ChartDataPoint {
 	day: string;
@@ -33,24 +34,14 @@ interface MarketStackResponse {
 	data: MarketStackEodData[];
 }
 
-export async function getHistoricalPrices(symbol: string): Promise<ChartDataPoint[]> {
+// Internal fetcher function
+async function fetchMarketStackData(symbol: string): Promise<ChartDataPoint[]> {
 	if (!process.env.MARKET_STACK_KEY) {
 		console.warn("MARKET_STACK_KEY is not defined");
 		return [];
 	}
 
 	const dateFrom = format(subYears(new Date(), 1), "yyyy-MM-dd");
-
-	// MarketStack free tier does not support HTTPS consistently on some endpoints,
-	// but standard documentation suggests http is safer for free tier or use https if paid.
-	// We will try http to avoid SSL issues on broad tiers unless specified otherwise.
-	// However, usually API clients should default to HTTPS.
-	// The user specifically linked docs which show https example but let's stick to standard practice.
-	// If it fails we can adjust.
-	// Actually, most modern fetch implementations require HTTPS or allow HTTP.
-	// We'll use http as per plan note to be safe for free tier limits if applicable,
-	// or standard https if possible.
-	// Let's use http based on common free-tier restrictions for APILayer services if keys are free.
 	const baseUrl = "http://api.marketstack.com/v1/eod";
 
 	// Sanitize symbol: remove leading $ and trim whitespace
@@ -61,7 +52,7 @@ export async function getHistoricalPrices(symbol: string): Promise<ChartDataPoin
 		return [];
 	}
 
-	console.log(`[MarketStack] Fetching historical prices for symbol: '${cleanSymbol}'`);
+	// console.log(`[MarketStack] Fetching historical prices for symbol: '${cleanSymbol}'`);
 
 	const params = new URLSearchParams({
 		access_key: process.env.MARKET_STACK_KEY,
@@ -73,13 +64,13 @@ export async function getHistoricalPrices(symbol: string): Promise<ChartDataPoin
 
 	try {
 		const res = await fetch(`${baseUrl}?${params.toString()}`, {
-			next: { revalidate: 3600 * 24 }, // Cache for 24 hours
+			next: { revalidate: 86400 }, // 24 hours
 		});
 
 		if (!res.ok) {
 			console.error(`MarketStack API error: ${res.status} ${res.statusText}`);
-			const text = await res.text();
-			console.error("Response body:", text);
+			// const text = await res.text();
+			// console.error("Response body:", text);
 			return [];
 		}
 
@@ -91,7 +82,7 @@ export async function getHistoricalPrices(symbol: string): Promise<ChartDataPoin
 		}
 
 		return json.data.map(item => ({
-			day: format(new Date(item.date), "MMM d"), // e.g. "Jan 12"
+			day: format(new Date(item.date), "MMM d"),
 			value: item.close,
 		}));
 	} catch (error) {
@@ -99,3 +90,13 @@ export async function getHistoricalPrices(symbol: string): Promise<ChartDataPoin
 		return [];
 	}
 }
+
+// Aggressive caching wrapper
+export const getHistoricalPrices = unstable_cache(
+	async (symbol: string) => fetchMarketStackData(symbol),
+	["marketstack-history-v1"],
+	{
+		revalidate: 86400, // 24 hours
+		tags: ["marketstack"],
+	}
+);

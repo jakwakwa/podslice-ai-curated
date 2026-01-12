@@ -190,11 +190,27 @@ export default function IntelligentSummaryView({
 
 			{/* Top Row: Audio Spec + Sentiment */}
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+				{/* Executive Brief */}
+				<Card className="bg-[#111] lg:col-span-2 border border-white/5 rounded-3xl overflow-hidden hover:border-white/10 transition-colors">
+					<CardHeader className="flex flex-row items-center gap-3 pb-2 pt-6 px-6">
+						<div className="p-2 bg-gray-800/50 rounded-lg">
+							<Briefcase className="h-5 w-5 text-gray-400" />
+						</div>
+						<CardTitle className="text-lg font-bold text-gray-100">
+							Executive Brief
+						</CardTitle>
+					</CardHeader>
+					<CardContent className="px-6 pb-6">
+						<div className="prose prose-invert prose-sm max-w-none text-gray-400 leading-relaxed">
+							<ReactMarkdown>{executiveBrief}</ReactMarkdown>
+						</div>
+					</CardContent>
+				</Card>
 				{/* Audio Player Card */}
 
 				<Card
 					data-audio-url={audioUrl}
-					className="lg:col-span-2 bg-[#111] border-none shadow-2xl rounded-3xl overflow-hidden relative group">
+					className="lg:col-span-1 bg-[#111] border-none shadow-2xl rounded-3xl overflow-hidden relative group">
 					<CardContent className="p-6 md:p-8 flex flex-col justify-between h-full relative z-10 min-h-[220px]">
 						{customAudioPlayer ? (
 							<div className="flex flex-col h-full justify-center">
@@ -259,9 +275,79 @@ export default function IntelligentSummaryView({
 						)}
 					</CardContent>
 				</Card>
+			</div>
 
+			{/* Main Grid: Cards */}
+			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+				{/* Trade Ideas Card (Full Width Highlight) */}
+				{tradeRecommendations && tradeRecommendations.length > 0 && (
+					<Card className="bg-linear-to-br col-span-2 from-emerald-500/20 via-purple-500/20 to-indigo-500/10 border-0 rounded-3xl overflow-hidden relative">
+						<div className="absolute inset-0 bg-linear-to-r from-emerald-500/10 to-transparent pointer-events-none" />
+						<CardContent className="p-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+							<div className="flex-1 space-y-4">
+								<div className="flex items-center gap-3">
+									<Target className="h-6 w-6 text-emerald-400" />
+									<h3 className="text-xl font-bold text-white">Trade Ideas</h3>
+								</div>
+
+								<div className="space-y-4">
+									{tradeRecommendations.slice(0, 1).map((trade, idx) => (
+										<div key={idx} className="space-y-2">
+											<div className="flex items-center gap-3">
+												<span className="text-2xl font-bold tracking-tighter text-white">
+													{trade.ticker}
+												</span>
+												<Badge
+													variant="secondary"
+													className={cn(
+														"uppercase text-[10px] font-bold px-2 py-0.5 tracking-wider",
+														trade.direction === "LONG"
+															? "bg-emerald-500/20 text-emerald-300"
+															: "bg-red-500/20 text-red-300"
+													)}>
+													{trade.direction} {trade.conviction} CONVICTION
+												</Badge>
+											</div>
+											<p className="text-gray-300  leading-relaxed text-sm max-w-2xl">
+												{trade.rationale}
+											</p>
+										</div>
+									))}
+								</div>
+								<div>
+									<Button
+										onClick={() => {
+											window.open(
+												`https://finance.yahoo.com/quote/${tickers[0]?.replace(/^\$/, "")}/key-statistics/`,
+												"_blank"
+											);
+										}}
+										className="rounded-full px-6 bg-[#222] hover:bg-[#333] text-white border-0 transition-all font-medium"
+										size="lg">
+										View Statistics
+										<ArrowRight className="ml-2 h-4 w-4" />
+									</Button>
+								</div>
+								<div>
+									<Button
+										onClick={() => {
+											window.open(
+												`https://polymarket.com/search?_q=${tickers[0]?.replace(/^\$/, "")}`,
+												"_blank"
+											);
+										}}
+										className="rounded-full px-6 bg-[#222] hover:bg-[#333] text-white border-0 transition-all font-medium"
+										size="lg">
+										View Predictions
+										<ArrowRight className="ml-2 h-4 w-4" />
+									</Button>
+								</div>
+							</div>
+						</CardContent>
+					</Card>
+				)}
 				{/* Sentiment Gauge Card */}
-				<Card className="bg-[#111] border-none shadow-2xl rounded-3xl p-6 flex flex-col items-center justify-center relative">
+				<Card className="bg-[#111] border-none shadow-2xl rounded-3xl p-6 flex flex-col col-span-1 items-center justify-center relative">
 					<div className="relative w-40 h-40 flex items-center justify-center">
 						<ResponsiveContainer width="100%" height="100%">
 							<PieChart>
@@ -305,7 +391,7 @@ export default function IntelligentSummaryView({
 
 					<div className="text-center mt-2">
 						<p className="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-1">
-							Market Sentiment
+							Source Sentiment
 						</p>
 						<p
 							className="text-lg font-bold tracking-tight uppercase"
@@ -328,29 +414,24 @@ export default function IntelligentSummaryView({
 						</div>
 					</div>
 				</Card>
-			</div>
-
-			{/* Main Grid: Cards */}
-			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-				{/* Executive Brief */}
-				<Card className="bg-[#111] col-span-2 border border-white/5 rounded-3xl overflow-hidden hover:border-white/10 transition-colors">
+				{/* Investment Implications */}
+				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden col-span-2  hover:border-white/10 transition-colors h-auto">
 					<CardHeader className="flex flex-row items-center gap-3 pb-2 pt-6 px-6">
 						<div className="p-2 bg-gray-800/50 rounded-lg">
-							<Briefcase className="h-5 w-5 text-gray-400" />
+							<Lightbulb className="h-5 w-5 text-indigo-400" />
 						</div>
 						<CardTitle className="text-lg font-bold text-gray-100">
-							Executive Brief
+							Investment Implications
 						</CardTitle>
 					</CardHeader>
 					<CardContent className="px-6 pb-6">
-						<div className="prose prose-invert prose-sm max-w-none text-gray-400 leading-relaxed">
-							<ReactMarkdown>{executiveBrief}</ReactMarkdown>
+						<div className="prose prose-invert prose-sm max-w-none h-fit text-gray-400 leading-relaxed">
+							<ReactMarkdown>{investmentImplications}</ReactMarkdown>
 						</div>
 					</CardContent>
 				</Card>
-
 				{documentContradictions && documentContradictions.length > 0 && (
-					<Card className="bg-linear-to-br col-span-2 from-amber-500 via-amber-500 to-amber-500/70 border-0 rounded-3xl overflow-hidden relative">
+					<Card className="bg-linear-to-br from-amber-500 via-amber-500 col-span-1 to-amber-500/70 border-0 rounded-3xl overflow-hidden relative max-h-[400px]">
 						<div className="absolute inset-0 bg-linear-to-r from-amber-500/10 to-transparent pointer-events-none" />
 						<CardContent className="p-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
 							<div className="flex-1 space-y-4">
@@ -370,15 +451,15 @@ export default function IntelligentSummaryView({
 												<Badge
 													variant="secondary"
 													className={cn(
-														"uppercase text-[10px] font-bold px-2 py-0.5 tracking-wider",
+														"uppercase min-w-[60px] text-[9px] font-bold px-2 py-0.5 tracking-narrow",
 														truth.severity === "CRITICAL"
 															? "bg-red-500/80 text-red-200"
 															: "bg-emerald-500/80 text-emerald-200"
 													)}>
-													{truth.severity} Claim
+													{truth.severity}
 												</Badge>
 											</div>
-											<p className="text-gray-300 text-sm leading-relaxed max-w-2xl">
+											<p className="text-gray-300  leading-relaxed max-w-2xl">
 												{truth.groundTruth}
 											</p>
 										</div>
@@ -388,90 +469,8 @@ export default function IntelligentSummaryView({
 						</CardContent>
 					</Card>
 				)}
-				{/* Investment Implications */}
-				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden hover:border-white/10 transition-colors">
-					<CardHeader className="flex flex-row items-center gap-3 pb-2 pt-6 px-6">
-						<div className="p-2 bg-gray-800/50 rounded-lg">
-							<Lightbulb className="h-5 w-5 text-indigo-400" />
-						</div>
-						<CardTitle className="text-lg font-bold text-gray-100">
-							Investment Implications
-						</CardTitle>
-					</CardHeader>
-					<CardContent className="px-6 pb-6">
-						<div className="prose prose-invert prose-sm max-w-none text-gray-400 leading-relaxed">
-							<ReactMarkdown>{investmentImplications}</ReactMarkdown>
-						</div>
-					</CardContent>
-				</Card>
-				{/* Trade Ideas Card (Full Width Highlight) */}
-				{tradeRecommendations && tradeRecommendations.length > 0 && (
-					<Card className="bg-linear-to-br from-emerald-500/20 via-purple-500/20 to-indigo-500/10 border-0 rounded-3xl overflow-hidden relative">
-						<div className="absolute inset-0 bg-linear-to-r from-emerald-500/10 to-transparent pointer-events-none" />
-						<CardContent className="p-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-							<div className="flex-1 space-y-4">
-								<div className="flex items-center gap-3">
-									<Target className="h-6 w-6 text-emerald-400" />
-									<h3 className="text-xl font-bold text-white">Trade Ideas</h3>
-								</div>
-
-								<div className="space-y-4">
-									{tradeRecommendations.slice(0, 1).map((trade, idx) => (
-										<div key={idx} className="space-y-2">
-											<div className="flex items-center gap-3">
-												<span className="text-2xl font-bold tracking-tighter text-white">
-													{trade.ticker}
-												</span>
-												<Badge
-													variant="secondary"
-													className={cn(
-														"uppercase text-[10px] font-bold px-2 py-0.5 tracking-wider",
-														trade.direction === "LONG"
-															? "bg-emerald-500/20 text-emerald-300"
-															: "bg-red-500/20 text-red-300"
-													)}>
-													{trade.direction} {trade.conviction} CONVICTION
-												</Badge>
-											</div>
-											<p className="text-gray-300 text-sm leading-relaxed max-w-2xl">
-												{trade.rationale}
-											</p>
-										</div>
-									))}
-								</div>
-							</div>
-
-							<div>
-								<Button
-									className="rounded-full px-6 bg-[#222] hover:bg-[#333] text-white border-0 transition-all font-medium"
-									size="lg">
-									View Trades
-									<ArrowRight className="ml-2 h-4 w-4" />
-								</Button>
-							</div>
-						</CardContent>
-					</Card>
-				)}
-
-				{/* Risks & Red Flags */}
-				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden hover:border-white/10 transition-colors">
-					<CardHeader className="flex flex-row items-center gap-3 pb-2 pt-6 px-6">
-						<div className="p-2 bg-gray-800/50 rounded-lg">
-							<AlertTriangle className="h-5 w-5 text-red-500" />
-						</div>
-						<CardTitle className="text-lg font-bold text-gray-100">
-							Risks & Red Flags
-						</CardTitle>
-					</CardHeader>
-					<CardContent className="px-6 pb-6">
-						<div className="prose prose-invert prose-sm text-sm max-w-none text-gray-400 leading-relaxed">
-							<ReactMarkdown>{risksAndRedFlags}</ReactMarkdown>
-						</div>
-					</CardContent>
-				</Card>
-
 				{/* Key Asset Performance (Chart) */}
-				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden hover:border-white/10 transition-colors min-h-[300px] flex flex-col">
+				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden col-span-1 hover:border-white/10 transition-colors min-h-[300px] flex flex-col">
 					<CardHeader className="flex flex-row items-center justify-between pb-2 pt-6 px-6">
 						<CardTitle className="text-lg font-bold text-gray-100 flex flex-col">
 							<span>Key Asset Performance</span>
@@ -534,6 +533,22 @@ export default function IntelligentSummaryView({
 								/>
 							</LineChart>
 						</ResponsiveContainer>
+					</CardContent>
+				</Card>
+				{/* Risks & Red Flags */}
+				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden col-span-2 hover:border-white/10 transition-colors">
+					<CardHeader className="flex flex-row items-center gap-3 pb-2 pt-6 px-6">
+						<div className="p-2 bg-gray-800/50 rounded-lg">
+							<AlertTriangle className="h-5 w-5 text-red-500" />
+						</div>
+						<CardTitle className="text-lg font-bold text-gray-100">
+							Risks & Red Flags
+						</CardTitle>
+					</CardHeader>
+					<CardContent className="px-6 pb-6">
+						<div className="prose prose-invert prose-sm text-sm max-w-none text-gray-400 leading-relaxed">
+							<ReactMarkdown>{risksAndRedFlags}</ReactMarkdown>
+						</div>
 					</CardContent>
 				</Card>
 			</div>

@@ -925,7 +925,7 @@ export default function SummaryCreator() {
 								<Button
 									type="submit"
 									disabled={!canSubmit}
-									className="w-full md:w-auto px-8 py-6 rounded-xl bg-gradient-to-r from-emerald-500 via-[#078da2] to-violet-500 text-black font-bold text-lg flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(74,222,128,0.5)] transition-all transform hover:scale-[1.01] border-none">
+									className="w-full md:w-auto px-8 py-6 rounded-xl bg-linear-to-rrom-emerald-500 via-[#078da2] to-violet-500 text-black font-bold text-lg flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(74,222,128,0.5)] transition-all transform hover:scale-[1.01] border-none">
 									{isCreating ? "Creating..." : "Generate summary"}
 									<SparklesIcon className="w-5 h-5 text-black" />
 								</Button>
