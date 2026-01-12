@@ -66,6 +66,7 @@ export interface IntelligentSummaryViewProps {
 	};
 	customAudioPlayer?: React.ReactNode;
 	hideHeader?: boolean;
+	documentContradictions?: DocumentContradiction[];
 }
 
 // Mock data for asset performance line chart
@@ -93,6 +94,7 @@ export default function IntelligentSummaryView({
 	intelligence,
 	customAudioPlayer,
 	hideHeader,
+	documentContradictions,
 }: IntelligentSummaryViewProps) {
 	const { setEpisode } = useAudioPlayerStore();
 
@@ -325,7 +327,7 @@ export default function IntelligentSummaryView({
 			{/* Main Grid: Cards */}
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 				{/* Executive Brief */}
-				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden hover:border-white/10 transition-colors">
+				<Card className="bg-[#111] col-span-2 border border-white/5 rounded-3xl overflow-hidden hover:border-white/10 transition-colors">
 					<CardHeader className="flex flex-row items-center gap-3 pb-2 pt-6 px-6">
 						<div className="p-2 bg-gray-800/50 rounded-lg">
 							<Briefcase className="h-5 w-5 text-gray-400" />
@@ -341,6 +343,45 @@ export default function IntelligentSummaryView({
 					</CardContent>
 				</Card>
 
+				{documentContradictions && documentContradictions.length > 0 && (
+					<Card className="bg-linear-to-br col-span-2 from-amber-500 via-amber-500 to-amber-500/70 border-0 rounded-3xl overflow-hidden relative">
+						<div className="absolute inset-0 bg-linear-to-r from-amber-500/10 to-transparent pointer-events-none" />
+						<CardContent className="p-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+							<div className="flex-1 space-y-4">
+								<div className="flex items-center gap-3">
+									<Target className="h-6 w-6 text-amber-500" />
+									<h3 className="text-xl font-bold text-white">Lie Detector</h3>
+								</div>
+
+								<div className="space-y-4">
+									{documentContradictions.slice(0, 1).map((truth, idx) => (
+										<div key={idx} className="space-y-2">
+											<div className="flex items-center gap-3">
+												<div className="text-2xl font-bold tracking-tighter text-white">
+													<span className="text-amber-300">Claim:</span> "{truth.claim}"
+												</div>
+
+												<Badge
+													variant="secondary"
+													className={cn(
+														"uppercase text-[10px] font-bold px-2 py-0.5 tracking-wider",
+														truth.severity === "CRITICAL"
+															? "bg-red-500/80 text-red-200"
+															: "bg-emerald-500/80 text-emerald-200"
+													)}>
+													{truth.severity} Claim
+												</Badge>
+											</div>
+											<p className="text-gray-300 text-sm leading-relaxed max-w-2xl">
+												{truth.groundTruth}
+											</p>
+										</div>
+									))}
+								</div>
+							</div>
+						</CardContent>
+					</Card>
+				)}
 				{/* Investment Implications */}
 				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden hover:border-white/10 transition-colors">
 					<CardHeader className="flex flex-row items-center gap-3 pb-2 pt-6 px-6">
@@ -357,6 +398,54 @@ export default function IntelligentSummaryView({
 						</div>
 					</CardContent>
 				</Card>
+				{/* Trade Ideas Card (Full Width Highlight) */}
+				{tradeRecommendations && tradeRecommendations.length > 0 && (
+					<Card className="bg-linear-to-br from-emerald-500/20 via-purple-500/20 to-indigo-500/10 border-0 rounded-3xl overflow-hidden relative">
+						<div className="absolute inset-0 bg-linear-to-r from-emerald-500/10 to-transparent pointer-events-none" />
+						<CardContent className="p-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+							<div className="flex-1 space-y-4">
+								<div className="flex items-center gap-3">
+									<Target className="h-6 w-6 text-emerald-400" />
+									<h3 className="text-xl font-bold text-white">Trade Ideas</h3>
+								</div>
+
+								<div className="space-y-4">
+									{tradeRecommendations.slice(0, 1).map((trade, idx) => (
+										<div key={idx} className="space-y-2">
+											<div className="flex items-center gap-3">
+												<span className="text-2xl font-bold tracking-tighter text-white">
+													{trade.ticker}
+												</span>
+												<Badge
+													variant="secondary"
+													className={cn(
+														"uppercase text-[10px] font-bold px-2 py-0.5 tracking-wider",
+														trade.direction === "LONG"
+															? "bg-emerald-500/20 text-emerald-300"
+															: "bg-red-500/20 text-red-300"
+													)}>
+													{trade.direction} {trade.conviction} CONVICTION
+												</Badge>
+											</div>
+											<p className="text-gray-300 text-sm leading-relaxed max-w-2xl">
+												{trade.rationale}
+											</p>
+										</div>
+									))}
+								</div>
+							</div>
+
+							<div>
+								<Button
+									className="rounded-full px-6 bg-[#222] hover:bg-[#333] text-white border-0 transition-all font-medium"
+									size="lg">
+									View Trades
+									<ArrowRight className="ml-2 h-4 w-4" />
+								</Button>
+							</div>
+						</CardContent>
+					</Card>
+				)}
 
 				{/* Risks & Red Flags */}
 				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden hover:border-white/10 transition-colors">
@@ -369,7 +458,7 @@ export default function IntelligentSummaryView({
 						</CardTitle>
 					</CardHeader>
 					<CardContent className="px-6 pb-6">
-						<div className="prose prose-invert prose-sm max-w-none text-gray-400 leading-relaxed">
+						<div className="prose prose-invert prose-sm text-sm max-w-none text-gray-400 leading-relaxed">
 							<ReactMarkdown>{risksAndRedFlags}</ReactMarkdown>
 						</div>
 					</CardContent>
@@ -380,7 +469,7 @@ export default function IntelligentSummaryView({
 					<CardHeader className="flex flex-row items-center justify-between pb-2 pt-6 px-6">
 						<CardTitle className="text-lg font-bold text-gray-100 flex flex-col">
 							<span>Key Asset Performance</span>
-							<span className="text-xs font-mono text-gray-500 font-normal mt-1">
+							<span className="text-lg font-mono text-gray-500 font-normal mt-1">
 								{tickers?.[0] || "MARKET"}
 							</span>
 						</CardTitle>
@@ -434,55 +523,6 @@ export default function IntelligentSummaryView({
 					</CardContent>
 				</Card>
 			</div>
-
-			{/* Trade Ideas Card (Full Width Highlight) */}
-			{tradeRecommendations && tradeRecommendations.length > 0 && (
-				<Card className="bg-linear-to-br from-emerald-500/20 via-purple-500/20 to-indigo-500/10 border-0 rounded-3xl overflow-hidden relative">
-					<div className="absolute inset-0 bg-linear-to-r from-emerald-500/10 to-transparent pointer-events-none" />
-					<CardContent className="p-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-						<div className="flex-1 space-y-4">
-							<div className="flex items-center gap-3">
-								<Target className="h-6 w-6 text-emerald-400" />
-								<h3 className="text-xl font-bold text-white">Trade Ideas</h3>
-							</div>
-
-							<div className="space-y-4">
-								{tradeRecommendations.slice(0, 1).map((trade, idx) => (
-									<div key={idx} className="space-y-2">
-										<div className="flex items-center gap-3">
-											<span className="text-2xl font-bold tracking-tighter text-white">
-												{trade.ticker}
-											</span>
-											<Badge
-												variant="secondary"
-												className={cn(
-													"uppercase text-[10px] font-bold px-2 py-0.5 tracking-wider",
-													trade.direction === "LONG"
-														? "bg-emerald-500/20 text-emerald-300"
-														: "bg-red-500/20 text-red-300"
-												)}>
-												{trade.direction} {trade.conviction} CONVICTION
-											</Badge>
-										</div>
-										<p className="text-gray-300 text-sm leading-relaxed max-w-2xl">
-											{trade.rationale}
-										</p>
-									</div>
-								))}
-							</div>
-						</div>
-
-						<div>
-							<Button
-								className="rounded-full px-6 bg-[#222] hover:bg-[#333] text-white border-0 transition-all font-medium"
-								size="lg">
-								View Trades
-								<ArrowRight className="ml-2 h-4 w-4" />
-							</Button>
-						</div>
-					</CardContent>
-				</Card>
-			)}
 		</div>
 	);
 }

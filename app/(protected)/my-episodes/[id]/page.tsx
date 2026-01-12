@@ -171,6 +171,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 							publishedAt={episode.created_at}
 							youtubeUrl={episode.youtube_url}
 							intelligence={mappedIntelligence}
+							documentContradictions={
+								mappedIntelligence?.writtenContent.documentContradictions
+							}
 						/>
 					) : (
 						<KeyTakeaways items={takeaways} />
