@@ -154,7 +154,7 @@ export default function IntelligentSummaryView({
 
 	// Get latest price from chart data
 	const latestPrice =
-		chartData && chartData.length > 0 ? chartData[chartData.length - 1].value : null;
+		chartData && chartData.length > 0 ? chartData[chartData.length - 1]?.value : null;
 
 	return (
 		<div className="flex flex-col gap-6 animate-in fade-in duration-500 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-[#0a0a0a] text-white rounded-3xl font-sans">
@@ -189,7 +189,7 @@ export default function IntelligentSummaryView({
 			)}
 
 			{/* Top Row: Audio Spec + Sentiment */}
-			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+			<div className="flex flex-col-reverse md:grid md:grid-cols-1 lg:grid-cols-3 gap-6">
 				{/* Executive Brief */}
 				<Card className="bg-[#111] lg:col-span-2 border border-white/5 rounded-3xl overflow-hidden hover:border-white/10 transition-colors">
 					<CardHeader className="flex flex-row items-center gap-3 pb-2 pt-6 px-6">
@@ -210,8 +210,8 @@ export default function IntelligentSummaryView({
 
 				<Card
 					data-audio-url={audioUrl}
-					className="lg:col-span-1 bg-[#111] border-none shadow-2xl rounded-3xl overflow-hidden relative group">
-					<CardContent className="p-6 md:p-8 flex flex-col justify-between h-full relative z-10 min-h-[220px]">
+					className="lg:col-span-1 h-full max-h-[100px] md:max-h-[400px] bg-[#111] border-none shadow-2xl rounded-3xl overflow-hidden relative group">
+					<CardContent className="p-6 md:p-8 flex flex-col justify-between h-full relative z-10 max-h-[90px] md:max-h-[400px]">
 						{customAudioPlayer ? (
 							<div className="flex flex-col h-full justify-center">
 								{customAudioPlayer}
@@ -235,10 +235,10 @@ export default function IntelligentSummaryView({
 								</div>
 
 								{/* Audio Controls */}
-								<div className="mt-auto z-20 space-y-4 w-full">
+								<div className="mt-auto z-20 space-y-4 w-full h-full	">
 									{/* Progress Bar */}
 
-									<div className="flex items-center justify-between">
+									<div className="flex items-center justify-center h-full">
 										<div className="flex items-center gap-4">
 											<button
 												type="button"
@@ -281,7 +281,7 @@ export default function IntelligentSummaryView({
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 				{/* Trade Ideas Card (Full Width Highlight) */}
 				{tradeRecommendations && tradeRecommendations.length > 0 && (
-					<Card className="bg-linear-to-br col-span-2 from-emerald-500/20 via-purple-500/20 to-indigo-500/10 border-0 rounded-3xl overflow-hidden relative">
+					<Card className="bg-linear-to-br lg:col-span-2 from-emerald-500/20 via-purple-500/20 to-indigo-500/10 border-0 rounded-3xl overflow-hidden relative">
 						<div className="absolute inset-0 bg-linear-to-r from-emerald-500/10 to-transparent pointer-events-none" />
 						<CardContent className="p-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
 							<div className="flex-1 space-y-4">
@@ -347,7 +347,7 @@ export default function IntelligentSummaryView({
 					</Card>
 				)}
 				{/* Sentiment Gauge Card */}
-				<Card className="bg-[#111] border-none shadow-2xl rounded-3xl p-6 flex flex-col col-span-1 items-center justify-center relative">
+				<Card className="bg-[#111] border-none shadow-2xl rounded-3xl p-6 flex flex-col lg:col-span-1 items-center justify-center relative">
 					<div className="relative w-40 h-40 flex items-center justify-center">
 						<ResponsiveContainer width="100%" height="100%">
 							<PieChart>
@@ -415,7 +415,7 @@ export default function IntelligentSummaryView({
 					</div>
 				</Card>
 				{/* Investment Implications */}
-				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden col-span-2  hover:border-white/10 transition-colors h-auto">
+				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden lg:col-span-2  hover:border-white/10 transition-colors h-auto">
 					<CardHeader className="flex flex-row items-center gap-3 pb-2 pt-6 px-6">
 						<div className="p-2 bg-gray-800/50 rounded-lg">
 							<Lightbulb className="h-5 w-5 text-indigo-400" />
@@ -431,7 +431,7 @@ export default function IntelligentSummaryView({
 					</CardContent>
 				</Card>
 				{documentContradictions && documentContradictions.length > 0 && (
-					<Card className="bg-linear-to-br from-amber-500 via-amber-500 col-span-1 to-amber-500/70 border-0 rounded-3xl overflow-hidden relative max-h-[400px]">
+					<Card className="bg-linear-to-br from-amber-500 via-amber-500 lg:col-span-1 to-amber-500/70 border-0 rounded-3xl overflow-hidden relative max-h-[400px]">
 						<div className="absolute inset-0 bg-linear-to-r from-amber-500/10 to-transparent pointer-events-none" />
 						<CardContent className="p-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
 							<div className="flex-1 space-y-4">
@@ -470,7 +470,7 @@ export default function IntelligentSummaryView({
 					</Card>
 				)}
 				{/* Key Asset Performance (Chart) */}
-				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden col-span-1 hover:border-white/10 transition-colors min-h-[300px] flex flex-col">
+				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden lg:col-span-1 hover:border-white/10 transition-colors min-h-[300px] flex flex-col">
 					<CardHeader className="flex flex-row items-center justify-between pb-2 pt-6 px-6">
 						<CardTitle className="text-lg font-bold text-gray-100 flex flex-col">
 							<span>Key Asset Performance</span>
@@ -536,7 +536,7 @@ export default function IntelligentSummaryView({
 					</CardContent>
 				</Card>
 				{/* Risks & Red Flags */}
-				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden col-span-2 hover:border-white/10 transition-colors">
+				<Card className="bg-[#111] border border-white/5 rounded-3xl overflow-hidden lg:col-span-2 hover:border-white/10 transition-colors">
 					<CardHeader className="flex flex-row items-center gap-3 pb-2 pt-6 px-6">
 						<div className="p-2 bg-gray-800/50 rounded-lg">
 							<AlertTriangle className="h-5 w-5 text-red-500" />

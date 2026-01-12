@@ -9,16 +9,27 @@ import { cn } from "@/lib/utils";
 
 interface FormAccordionProps {
 	value: string;
-	title: string;
+	title: ReactNode;
 	children: ReactNode;
 	className?: string;
+	openValue?: string;
+	onOpenChange?: (value: string) => void;
 }
 
-export function FormAccordion({ value, title, children, className }: FormAccordionProps) {
+export function FormAccordion({
+	value,
+	title,
+	children,
+	className,
+	openValue,
+	onOpenChange,
+}: FormAccordionProps) {
 	return (
 		<Accordion
 			type="single"
 			collapsible
+			value={openValue}
+			onValueChange={onOpenChange}
 			className={cn(
 				"bg-[#16191d] rounded-2xl w-full border border-zinc-800 transition-all duration-200 hover:border-zinc-700",
 				className

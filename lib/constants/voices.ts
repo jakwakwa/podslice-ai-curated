@@ -30,28 +30,36 @@ export const VOICE_OPTIONS: readonly VoiceOption[] = [
 		id: "Strategist",
 		label: "The Strategist (Deep/Steady)",
 		sample: "Market signals are aligning with long-term macroeconomic trends.",
-		googleVoiceName: "en-GB-Journey-D",
-		elevenLabsId: "gs0tAILXbY5DNrJrsM6F", // Updated to 'George' (more authoritative)
-		// ADDED:
-		sampleUrl: "/gemini-sample.mp3",
+		googleVoiceName: "Charon",
+		elevenLabsId: "", // Deprecated
 	},
 	{
 		id: "Newsroom",
 		label: "The Newsroom (Fast/Daily)",
 		sample: "Breaking news: Major institutional inflow into spot ETFs today.",
-		googleVoiceName: "en-US-Journey-F", // Note: Changed to Journey-F (Female) to match your previous setup or keep News-N
-		elevenLabsId: "zZLmKvCp1i04X8E0FJ8B", // Updated to 'Nicole' (News anchor style)
-		// ADDED:
-		sampleUrl: "/gemini-sample.mp3",
+		googleVoiceName: "Kore", // Female, clear
+		elevenLabsId: "", // Deprecated
 	},
 	{
 		id: "TechnicalLead",
 		label: "The Technical Lead (Precise/Clear)",
 		sample: "Bitcoin's hash rate distribution shows significant resilience.",
-		googleVoiceName: "en-US-Journey-D",
-		elevenLabsId: "kPzsL2i3teMYv0FxEYQ6", // Updated to 'Charlie' (Conversational/Technical)
-		// ADDED:
-		sampleUrl: "/gemini-sample.mp3",
+		googleVoiceName: "Puck", // Generic male, clear
+		elevenLabsId: "", // Deprecated
+	},
+	{
+		id: "Analyst",
+		label: "The Analyst (Rough/Direct)",
+		sample: "The data suggests a strong reversal in the coming quarter.",
+		googleVoiceName: "Fenrir", // Deep, rough
+		elevenLabsId: "", // Deprecated
+	},
+	{
+		id: "Presenter",
+		label: "The Presenter (High/Energetic)",
+		sample: "Welcome back to the show! We have some exciting updates.",
+		googleVoiceName: "Aoede", // High-pitched female
+		elevenLabsId: "", // Deprecated
 	},
 ] as const;
 

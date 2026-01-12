@@ -11,6 +11,7 @@ import {
 	PlayCircle,
 	SparklesIcon,
 	VideoIcon,
+	Loader2,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -108,15 +109,24 @@ export default function SummaryCreator() {
 
 	// Smart Suggestions State
 	const [suggestedAssets, setSuggestedAssets] = useState<AssetSuggestion[]>([]);
+	const [researchAccordionValue, setResearchAccordionValue] = useState("");
+	const [isDetectingAssets, setIsDetectingAssets] = useState(false);
 
 	// Effect to trigger detection when metadata is loaded
 	useEffect(() => {
 		if (videoTitle && creatorMode === "youtube") {
 			const detect = async () => {
-				// Debounce or just run once when title is set
-				const assets = await detectRelevantAssets(videoTitle, ""); // Description not available in metadata yet?
-				if (assets.length > 0) {
-					setSuggestedAssets(assets);
+				setIsDetectingAssets(true);
+				try {
+					// Debounce or just run once when title is set
+					const assets = await detectRelevantAssets(videoTitle, ""); // Description not available in metadata yet?
+					if (assets.length > 0) {
+						setSuggestedAssets(assets);
+						setResearchAccordionValue("research-lab");
+						toast.success("Research assets detected!");
+					}
+				} finally {
+					setIsDetectingAssets(false);
 				}
 			};
 			detect();
@@ -125,8 +135,8 @@ export default function SummaryCreator() {
 
 	// Generation options
 	const [generationMode, setGenerationMode] = useState<"single" | "multi">("single");
-	const [voiceA, setVoiceA] = useState<string>("Leda");
-	const [voiceB, setVoiceB] = useState<string>("Orus");
+	const [voiceA, setVoiceA] = useState<string>("Strategist");
+	const [voiceB, setVoiceB] = useState<string>("Newsroom");
 	const [isPlaying, setIsPlaying] = useState<string | null>(null);
 	const [isLoadingSample, setIsLoadingSample] = useState<string | null>(null);
 	const [audioUrlCache, setAudioUrlCache] = useState<Record<string, string>>({});
@@ -576,8 +586,20 @@ export default function SummaryCreator() {
 							{creatorMode === "youtube" && (
 								<FormAccordion
 									value="research-lab"
+									openValue={researchAccordionValue}
+									onOpenChange={setResearchAccordionValue}
 									className="my-8"
-									title="Smart Research Lab">
+									title={
+										<div className="flex items-center gap-2">
+											Smart Research Lab
+											{isDetectingAssets && (
+												<span className="flex items-center gap-2 text-xs font-normal text-muted-foreground animate-pulse">
+													<Loader2 className="h-3 w-3 animate-spin" />
+													Analyzing source...
+												</span>
+											)}
+										</div>
+									}>
 									<div className="space-y-4 pt-2">
 										<div className="flex flex-col gap-4">
 											<div className="flex flex-row justify-between items-center">
