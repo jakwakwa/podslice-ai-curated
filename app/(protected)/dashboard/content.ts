@@ -18,7 +18,7 @@ export const dashboardCopy = {
 			personalFeedLabel: "User Data",
 			pesdonalFeedTitle: " Personal Content",
 			bundledEpisodesLabel: "Channel Summaries:",
-			planLabel: "Membersip Plan:",
+			planLabel: "Membership Plan:",
 		},
 		latestBundle: {
 			title: "Latest from your active bundle",
