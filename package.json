@@ -96,7 +96,7 @@
 		"motion": "^12.23.26",
 		"mpg123-decoder": "^1.0.3",
 		"music-metadata": "^11.8.3",
-		"next": "16.1.5",
+		"next": "15.5.9",
 		"next-themes": "^0.4.6",
 		"react": "19.2.3",
 		"react-day-picker": "^9.11.3",
