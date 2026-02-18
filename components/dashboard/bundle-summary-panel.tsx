@@ -137,7 +137,7 @@ export function BundleSummaryPanel({
 
 											<TableCell className="text-right font-mono">
 												{" "}
-												{bundleEpisodes?.length || "Pending"}
+												{bundleEpisodes === undefined ? "Pending" : bundleEpisodes.length}
 											</TableCell>
 										</TableRow>
 									</TableBody>
