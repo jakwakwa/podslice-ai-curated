@@ -72,3 +72,12 @@ export function getAdminPanelsFlags(defaults?: { bundles?: boolean; podcasts?: b
 		episodes: isAdminPanelsEpisodesEnabled(defaults?.episodes ?? false),
 	}
 }
+
+/**
+ * Auto-episodes feature flag
+ * Controls whether the auto-generated episodes feature is enabled.
+ * Defaults to false (disabled).
+ */
+export function isAutoEpisodesEnabled(defaultValue: boolean = false): boolean {
+	return isEnabled("AUTO_EPISODES_ENABLED", defaultValue)
+}
